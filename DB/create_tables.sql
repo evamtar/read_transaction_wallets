@@ -36,16 +36,19 @@ CREATE TABLE Token(
 
 CREATE TABLE Transactions
 (
-	ID                  UNIQUEIDENTIFIER,
-	[Signature]         VARCHAR(150),
-	DateOfTransaction   DateTime2,
-	AmountValue         decimal(38,20),
-	IdToken             UNIQUEIDENTIFIER,
-	IdWallet            UNIQUEIDENTIFIER,
-	TypeOperation       INT, -- 1 For Buy, 2 For Sell, 3 For Transfer
-	jsonResponse        NVARCHAR(MAX),
+	ID                     UNIQUEIDENTIFIER,
+	[Signature]            VARCHAR(150),
+	DateOfTransaction      DateTime2,
+	AmountValueSource      decimal(38,20),
+	AmountValueDestination decimal(38,20),
+	IdTokenSource          UNIQUEIDENTIFIER,
+	IdTokenDestination     UNIQUEIDENTIFIER,
+	IdWallet               UNIQUEIDENTIFIER,
+	TypeOperation          INT, -- 1 For Buy, 2 For Sell, 3 For Transfer
+	jsonResponse           NVARCHAR(MAX),
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdToken) REFERENCES Token(ID),
+	FOREIGN KEY (IdTokenSource) REFERENCES Token(ID),
+	FOREIGN KEY (IdTokenDestination) REFERENCES Token(ID),
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 );
 GO

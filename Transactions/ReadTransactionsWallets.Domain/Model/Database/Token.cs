@@ -13,6 +13,7 @@ namespace ReadTransactionsWallets.Domain.Model.Database
         public bool? IsMutable { get; set; }
         public int? Decimals { get; set; }
 
-        public virtual List<Transactions>? Transactions { get; set; }
+        public virtual List<Transactions>? TransactionsSource { get; set; }
+        public virtual List<Transactions>? TransactionsDestination { get; set; }
     }
 }

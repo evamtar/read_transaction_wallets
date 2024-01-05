@@ -13,13 +13,16 @@ namespace ReadTransactionsWallets.Infra.Data.Mapper
             builder.Property(t => t.ID);
             builder.Property(t => t.Signature);
             builder.Property(t => t.DateOfTransaction);
-            builder.Property(t => t.AmountValue).HasPrecision(38, 20);
-            builder.Property(t => t.IdToken);
+            builder.Property(t => t.AmountValueSource).HasPrecision(38, 20);
+            builder.Property(t => t.AmountValueDestination).HasPrecision(38, 20);
+            builder.Property(t => t.IdTokenSource);
+            builder.Property(t => t.IdTokenDestination);
             builder.Property(t => t.IdWallet);
             builder.Property(t => t.TypeOperation);
             builder.Property(t => t.JsonResponse);
             builder.HasOne(t => t.Wallet).WithMany(w => w.Transactions).HasForeignKey(t => t.IdWallet);
-            builder.HasOne(t => t.Token).WithMany(tk => tk.Transactions).HasForeignKey(t => t.IdToken);
+            builder.HasOne(t => t.TokenSource).WithMany(tk => tk.TransactionsSource).HasForeignKey(t => t.IdTokenSource);
+            builder.HasOne(t => t.TokenDestination).WithMany(tk => tk.TransactionsDestination).HasForeignKey(t => t.IdTokenDestination);
             builder.HasKey(t => t.ID);
         }
     }
