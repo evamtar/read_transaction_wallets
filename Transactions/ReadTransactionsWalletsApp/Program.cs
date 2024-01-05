@@ -14,6 +14,7 @@ using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
 using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Configs;
 using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Transfers.Configs;
 using ReadTransactionsWallets.Infra.Data.Context;
 using ReadTransactionsWallets.Infra.Data.Repository;
 using ReadTransactionsWallets.Service;
@@ -80,6 +81,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<TransfersConfig>(configuration.GetSection("Transfers"));
 
     #endregion
 
