@@ -39,7 +39,7 @@ CREATE TABLE Transactions
 	IdToken             UNIQUEIDENTIFIER,
 	IdWallet            UNIQUEIDENTIFIER,
 	TypeOperation       INT, -- 1 For Buy, 2 For Sell, 3 For Transfer
-	JsonResponse        NVARCHAR(MAX),
+	jsonResponse        NVARCHAR(MAX),
 	PRIMARY KEY (ID),
 	FOREIGN KEY (IdToken) REFERENCES Token(ID),
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
@@ -56,11 +56,13 @@ INSERT INTO Wallet VALUES (NEWID(), '3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskz
 INSERT INTO Wallet VALUES (NEWID(), 'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet);
 INSERT INTO Wallet VALUES (NEWID(), 'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc3', @IdClassWallet);
 
+
 CREATE TABLE RunTimeController
 (	
 	IdRuntime INT,
 	UnixTimeSeconds DECIMAL(20,0),
-	IsRunning BIT
+	IsRunning BIT,
+	PRIMARY KEY(IdRuntime)
 )
 
 INSERT INTO RunTimeController VALUES(1, 1703976485, 0);

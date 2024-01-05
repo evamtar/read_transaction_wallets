@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReadTransactionsWallets.Domain\ReadTransactionsWallets.Domain.csproj" />
+    <ProjectReference Include="..\ReadTransactionsWallets.Utils\ReadTransactionsWallets.Utils.csproj" />
   </ItemGroup>
 
 </Project>
