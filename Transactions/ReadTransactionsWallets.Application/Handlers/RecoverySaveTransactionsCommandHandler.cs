@@ -3,6 +3,8 @@ using ReadTransactionsWallets.Application.Commands;
 using ReadTransactionsWallets.Application.Response;
 using ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Request;
 using ReadTransactionsWallets.Domain.Model.CrossCutting.Transfers.Request;
+using ReadTransactionsWallets.Domain.Model.Database;
+using ReadTransactionsWallets.Domain.Model.Enum;
 using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
 
@@ -11,7 +13,6 @@ namespace ReadTransactionsWallets.Application.Handlers
     public class RecoverySaveTransactionsCommandHandler : IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>
     {
         private readonly IMediator _mediator;
-        private readonly ITokenRepository _tokenRepository;
         private readonly ITransactionsService _transactionsService;
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
@@ -22,7 +23,6 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                       ITransactionsRepository transactionsRepository)
         {
             this._mediator = mediator;
-            this._tokenRepository = tokenRepository;
             this._transactionsService = transactionsService;
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
@@ -57,26 +57,32 @@ namespace ReadTransactionsWallets.Application.Handlers
                                     {
                                         var transferFrom = transfers.First();
                                         var transferTo = transfers.Last();
+                                        var operationType = ETypeOperation.Transfer;
                                         if (transferFrom.Source == request.WalletHash || transferTo.Destination == request.WalletHash || transferFrom.Token == "So11111111111111111111111111111111111111112")
-                                        {
-                                            var tokenFrom = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferFrom.Token });
-                                            var tokenTO = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferTo.Token });
-                                            //BUY
-
-                                        }
+                                            operationType = ETypeOperation.Buy;
                                         else if (transferFrom.Destination == request.WalletHash || transferTo.Source == request.WalletHash || transferTo.Token == "So11111111111111111111111111111111111111112")
-                                        {
-                                            var tokenFrom = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferFrom.Token });
-                                            var tokenTO = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferTo.Token });
-                                            //SELL
-                                        }
-                                        else if (transferFrom.Token == transferTo.Token)
-                                        {
-                                            //RECEIVED TOKEN REWARD LIKE A BONKEARN
-                                        }
+                                            operationType = ETypeOperation.Sell;
+                                        else if (transferFrom.Token == transferTo.Token){ }  //RECEIVED TOKEN REWARD LIKE A BONKEARN
                                         else
                                         {
                                             Console.WriteLine($" TX {transaction.Signature}");
+                                        }
+                                        if (operationType == ETypeOperation.Buy || operationType == ETypeOperation.Sell) 
+                                        {
+                                            var tokenFrom = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferFrom.Token });
+                                            var tokenTO = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferTo.Token });
+                                            var transction  = await this._transactionsRepository.Add(new Transactions 
+                                            {
+                                                Signature = transaction.Signature,
+                                                DateOfTransaction = transaction.DateOfTransaction,
+                                                AmountValueSource = transferFrom.Amount / tokenFrom.Divisor,
+                                                AmountValueDestination = transferTo.Amount / tokenTO.Divisor,
+                                                IdTokenSource = tokenFrom.TokenId,
+                                                IdTokenDestination = tokenTO.TokenId,
+                                                IdWallet = request.WalletId,
+                                                TypeOperation = operationType,
+                                                JsonResponse = null
+                                            });
                                         }
                                     }
                                 }
