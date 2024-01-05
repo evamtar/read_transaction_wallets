@@ -20,10 +20,10 @@ namespace ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service
             this._httpClient = httpClient;
             this._config = config;
             this._httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
+            this._httpClient.DefaultRequestHeaders.Add("ApiKey", this._config.Value.ApiKey ?? string.Empty);
         }
         public async Task<TransactionsResponse> ExecuteRecoveryTransactionsAsync(TransactionsRequest request)
         {
-            this._httpClient.DefaultRequestHeaders.Add("ApiKey", this._config.Value.ApiKey ?? string.Empty);
             NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
             query["utcFrom"] = request.UtcFrom.ToString();
             query["utcTo"] = request.UtcTo.ToString();

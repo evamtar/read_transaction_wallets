@@ -6,7 +6,11 @@ namespace ReadTransactionsWallets.Domain.Model.Database
     {
         public string? Hash { get; set; }
         public string? TokenAlias { get; set; }
-        public string? TypeOfToken { get; set; }
+        public string? Symbol { get; set; }
+        public string? TokenType { get; set; }
+        public string? FreezeAuthority { get; set; }
+        public string? MintAuthority { get; set; }
+        public bool? IsMutable { get; set; }
         public int? Decimals { get; set; }
 
         public virtual List<Transactions>? Transactions { get; set; }

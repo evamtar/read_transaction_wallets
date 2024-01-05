@@ -16,11 +16,11 @@ namespace ReadTransactionsWallets.Infra.CrossCutting.Transfers.Service
             this._httpClient = httpClient;
             this._config = config;
             this._httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
+            this._httpClient.DefaultRequestHeaders.Add("ApiKey", this._config.Value.ApiKey ?? string.Empty);
         }
 
         public async Task<TransfersResponse> ExecuteRecoveryTransfersAsync(TransfersRequest request)
         {
-            this._httpClient.DefaultRequestHeaders.Add("ApiKey", this._config.Value.ApiKey ?? string.Empty);
             var response = await this._httpClient.GetAsync(string.Format(this._config.Value.ParametersUrl ?? string.Empty, request.Signature));
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TransfersResponse>(responseBody) ?? new TransfersResponse { };

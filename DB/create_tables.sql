@@ -25,7 +25,11 @@ CREATE TABLE Token(
 	ID               UNIQUEIDENTIFIER,
 	[Hash]           VARCHAR(50),
 	TokenAlias       VARCHAR(100),
-	TypeOfToken      VARCHAR(100),
+	Symbol			 VARCHAR(50),
+	TokenType        VARCHAR(100),
+	FreezeAuthority  VARCHAR(100),
+	MintAuthority    VARCHAR(100),
+	IsMutable        BIT,
 	Decimals         INT,
 	PRIMARY KEY (ID)
 );
