@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWalletsApp", "ReadTransactionsWalletsApp\ReadTransactionsWalletsApp.csproj", "{7A469D99-CBC9-4E2E-9BCC-0A24E251319C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Infra.CrossCutting", "ReadTransactionsWallets.External\ReadTransactionsWallets.Infra.CrossCutting.csproj", "{2C3081AD-B46B-41F3-9526-AF102C023C64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Domain", "ReadTransactionsWallets.Domain\ReadTransactionsWallets.Domain.csproj", "{73ACA336-FFEA-4BFF-A858-B4CCB5502E99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Application", "1 - Application", "{16C492A0-DEFD-4EF2-A18F-AF0261405580}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{89E059C2-88F5-49B4-9ACE-CD0F5F164940}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Infra.Data", "ReadTransactionsWallets.Infra.Data\ReadTransactionsWallets.Infra.Data.csproj", "{2FA3D204-5B83-4583-81B4-319948223BC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Service", "ReadTransactionsWallets.Service\ReadTransactionsWallets.Service.csproj", "{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Service", "3 - Service", "{61C0C4D8-BF0B-4DBF-AD6D-58F6CBC40C86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{A06C1B09-F570-4185-ACBF-42C05BADC092}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.1 - Data", "4.1 - Data", "{CB65C00E-C61B-4606-8B65-2D7C302806FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 - CrossCutting", "{3B78789B-FE8C-4374-AEBC-80DAAF73CDAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Utils", "5 - Utils", "{A09392CB-2A8B-4265-B27B-39FD96F58183}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Utils", "ReadTransactionsWallets.Utils\ReadTransactionsWallets.Utils.csproj", "{81EC6B42-112D-4798-A2A1-B89857FFDE4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTransactionsWallets.Application", "ReadTransactionsWallets.Application\ReadTransactionsWallets.Application.csproj", "{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A469D99-CBC9-4E2E-9BCC-0A24E251319C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A469D99-CBC9-4E2E-9BCC-0A24E251319C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A469D99-CBC9-4E2E-9BCC-0A24E251319C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A469D99-CBC9-4E2E-9BCC-0A24E251319C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C3081AD-B46B-41F3-9526-AF102C023C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3081AD-B46B-41F3-9526-AF102C023C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3081AD-B46B-41F3-9526-AF102C023C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3081AD-B46B-41F3-9526-AF102C023C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73ACA336-FFEA-4BFF-A858-B4CCB5502E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73ACA336-FFEA-4BFF-A858-B4CCB5502E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73ACA336-FFEA-4BFF-A858-B4CCB5502E99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73ACA336-FFEA-4BFF-A858-B4CCB5502E99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FA3D204-5B83-4583-81B4-319948223BC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FA3D204-5B83-4583-81B4-319948223BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FA3D204-5B83-4583-81B4-319948223BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FA3D204-5B83-4583-81B4-319948223BC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81EC6B42-112D-4798-A2A1-B89857FFDE4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81EC6B42-112D-4798-A2A1-B89857FFDE4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81EC6B42-112D-4798-A2A1-B89857FFDE4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81EC6B42-112D-4798-A2A1-B89857FFDE4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A469D99-CBC9-4E2E-9BCC-0A24E251319C} = {16C492A0-DEFD-4EF2-A18F-AF0261405580}
+		{2C3081AD-B46B-41F3-9526-AF102C023C64} = {3B78789B-FE8C-4374-AEBC-80DAAF73CDAD}
+		{73ACA336-FFEA-4BFF-A858-B4CCB5502E99} = {89E059C2-88F5-49B4-9ACE-CD0F5F164940}
+		{2FA3D204-5B83-4583-81B4-319948223BC8} = {CB65C00E-C61B-4606-8B65-2D7C302806FE}
+		{8431DCBA-F585-47D8-A368-F1A1C4D8DE7B} = {61C0C4D8-BF0B-4DBF-AD6D-58F6CBC40C86}
+		{CB65C00E-C61B-4606-8B65-2D7C302806FE} = {A06C1B09-F570-4185-ACBF-42C05BADC092}
+		{3B78789B-FE8C-4374-AEBC-80DAAF73CDAD} = {A06C1B09-F570-4185-ACBF-42C05BADC092}
+		{81EC6B42-112D-4798-A2A1-B89857FFDE4A} = {A09392CB-2A8B-4265-B27B-39FD96F58183}
+		{EE2EF70D-0F0B-493F-8B00-5B3329DA4B96} = {16C492A0-DEFD-4EF2-A18F-AF0261405580}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DE01E3D-9AAF-4DFC-95AF-630848C917B1}
+	EndGlobalSection
+EndGlobal
