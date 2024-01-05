@@ -18,7 +18,6 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Tokens.Response
         public string? Name { get; set; }
         public string? Symbol { get; set; }
         public string? Image { get; set; }
-        public string? Extensions { get; set; }
         public int? ChainId { get; set; }
     }
 

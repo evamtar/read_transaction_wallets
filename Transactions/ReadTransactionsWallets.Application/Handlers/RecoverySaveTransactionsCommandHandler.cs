@@ -58,11 +58,13 @@ namespace ReadTransactionsWallets.Application.Handlers
                                         var transferFrom = transfers.First();
                                         var transferTo = transfers.Last();
                                         var operationType = ETypeOperation.Transfer;
-                                        if (transferFrom.Source == request.WalletHash || transferTo.Destination == request.WalletHash || transferFrom.Token == "So11111111111111111111111111111111111111112")
+                                        if (transferFrom.Token == transferTo.Token) { }  //RECEIVED TOKEN REWARD LIKE A BONKEARN
+                                        else if (transferFrom.Source == request.WalletHash || transferTo.Destination == request.WalletHash || transferFrom.Token == "So11111111111111111111111111111111111111112")
                                             operationType = ETypeOperation.Buy;
-                                        else if (transferFrom.Destination == request.WalletHash || transferTo.Source == request.WalletHash || transferTo.Token == "So11111111111111111111111111111111111111112")
+                                        else if (transferFrom.Destination == request.WalletHash || 
+                                                 transferTo.Source == request.WalletHash || 
+                                                 transferTo.Token == "So11111111111111111111111111111111111111112")
                                             operationType = ETypeOperation.Sell;
-                                        else if (transferFrom.Token == transferTo.Token){ }  //RECEIVED TOKEN REWARD LIKE A BONKEARN
                                         else
                                         {
                                             Console.WriteLine($" TX {transaction.Signature}");
