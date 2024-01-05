@@ -11,9 +11,16 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
         public ResultResponse? Result { get; set; }
     }
 
+    public class PaginationResponse 
+    { 
+        public int? CurrentPage { get; set; }
+        public int? TotalPages { get; set; }
+    }
+
     public class ResultResponse 
     { 
         public List<TransactionResponse>? Data { get; set; }
+        public PaginationResponse? Pagination { get; set; }
     }
 
     public class TransactionResponse 

@@ -21,7 +21,13 @@ namespace ReadTransactionsWallets.Application.Handlers
             IEnumerable<Wallet> walletsTracked = await this._walletRepository.GetAll();
             foreach (var walletTracked in walletsTracked)
             {
-                Console.WriteLine($"Wallet Hash: {walletTracked.Hash}");
+                await this._mediator.Send(new RecoverySaveTransactionsCommand 
+                { 
+                    WalletId = walletTracked.ID,
+                    WalletHash = walletTracked.Hash,
+                    InitialTicks = request.InitialTicks,
+                    FinalTicks = request.FinalTicks
+                });
             }
             return new ReadWalletsCommandResponse { };
         }

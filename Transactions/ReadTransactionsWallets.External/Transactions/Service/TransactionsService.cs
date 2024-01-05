@@ -5,7 +5,9 @@ using ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Request;
 using ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Response;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
 using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Configs;
+using System.Collections.Specialized;
 using System.Text.Json.Nodes;
+using System.Web;
 
 namespace ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service
 {
@@ -22,7 +24,13 @@ namespace ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service
         public async Task<TransactionsResponse> ExecuteRecoveryTransactionsAsync(TransactionsRequest request)
         {
             this._httpClient.DefaultRequestHeaders.Add("ApiKey", this._config.Value.ApiKey ?? string.Empty);
-            var response = await this._httpClient.GetAsync(string.Format(this._config.Value.ParametersUrl ?? string.Empty, request.WalletPublicKey, request.UtcFrom, request.UtcTo, this._config.Value.Inflow, this._config.Value.Outflow, request.Page));
+            NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
+            query["utcFrom"] = request.UtcFrom.ToString();
+            query["utcTo"] = request.UtcTo.ToString();
+            query["inflow"] = _config.Value.Inflow?.ToString().ToLower();
+            query["outflow"] = _config.Value.Outflow?.ToString().ToLower();
+            query["page"] = request.Page?.ToString();
+            var response = await this._httpClient.GetAsync(string.Format(this._config.Value.ParametersUrl ?? string.Empty, request.WalletPublicKey) + "?" + query.ToString());
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TransactionsResponse>(responseBody) ?? new TransactionsResponse { };
         }

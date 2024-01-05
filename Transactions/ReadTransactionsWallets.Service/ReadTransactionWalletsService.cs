@@ -33,21 +33,20 @@ namespace ReadTransactionsWallets.Service
                 var runtimeController = await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false);
                 if (runtimeController != null && (!runtimeController!.IsRunning ?? true))
                 {
-                    Console.WriteLine("Init Read: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+                    Console.WriteLine($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     var initialTicks = runtimeController?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddDays(-1));
                     var finalTicks = DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
                     runtimeController = await SetRuntimeController(runtimeController!, true, initialTicks, false);
-                    Console.WriteLine("Initial Ticks: " + initialTicks.ToString());
-                    Console.WriteLine("Final Ticks: " + finalTicks.ToString());
+                    Console.WriteLine($"Initial Ticks: {initialTicks}");
+                    Console.WriteLine($"Final Ticks: {finalTicks}");
                     await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
                     runtimeController = await SetRuntimeController(runtimeController!, false, finalTicks, true);
-                    Console.WriteLine("End Read: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+                    Console.WriteLine($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     Console.WriteLine($"Waiting for next tick in {timer.Period}");
                 }
                 else 
                 {
-                    runtimeController = await DetachedRuntimeController(runtimeController!);
-                    Console.WriteLine("Aplicativo rodando" + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+                    Console.WriteLine($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}" );
                 }
             }
             Console.WriteLine("Finalizado");
