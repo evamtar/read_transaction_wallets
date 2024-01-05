@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\CrossCutting\" />
-    <Folder Include="Service\" />
+    <ProjectReference Include="..\ReadTransactionsWallets.Utils\ReadTransactionsWallets.Utils.csproj" />
   </ItemGroup>
 
 </Project>

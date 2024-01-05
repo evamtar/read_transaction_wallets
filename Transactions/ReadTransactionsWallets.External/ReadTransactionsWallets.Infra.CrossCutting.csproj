@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Transactions\Configs\" />
-    <Folder Include="Transactions\Service\" />
     <Folder Include="Transfers\Configs\" />
     <Folder Include="Transfers\Service\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReadTransactionsWallets.Domain\ReadTransactionsWallets.Domain.csproj" />
   </ItemGroup>
 
 </Project>

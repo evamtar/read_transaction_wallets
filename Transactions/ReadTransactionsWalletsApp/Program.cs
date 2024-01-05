@@ -4,11 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
+using Polly.Extensions.Http;
 using ReadTransactionsWallets.Application.Commands;
 using ReadTransactionsWallets.Application.Handlers;
 using ReadTransactionsWallets.Application.Response;
 using ReadTransactionsWallets.Domain.Model.Configs;
 using ReadTransactionsWallets.Domain.Repository;
+using ReadTransactionsWallets.Domain.Service.CrossCutting;
+using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service;
 using ReadTransactionsWallets.Infra.Data.Context;
 using ReadTransactionsWallets.Infra.Data.Repository;
 using ReadTransactionsWallets.Service;
@@ -53,6 +58,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Handlers
 
     services.AddScoped<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
+    services.AddScoped<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
 
     #endregion
 
@@ -64,6 +70,16 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<ITransactionsRepository, TransactionsRepository>();
 
+
+    #endregion
+
+    #region External Services
+
+    services.Configure<TransactionsConfig>(configuration.GetSection("Transactions"));
+    services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     #endregion
 
