@@ -14,6 +14,7 @@ namespace ReadTransactionsWallets.Infra.Data.Mapper
             builder.Property(rt => rt.UnixTimeSeconds);
             builder.Property(rt => rt.IsRunning);
             builder.Ignore(rt => rt.ID);
+            builder.HasNoKey();
         }
     }
 }

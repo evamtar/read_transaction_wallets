@@ -1,8 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReadTransactionsWallets.Domain.Model.Configs;
+using ReadTransactionsWallets.Domain.Repository;
+using ReadTransactionsWallets.Infra.Data.Context;
+using ReadTransactionsWallets.Infra.Data.Repository;
 using ReadTransactionsWallets.Service;
 
 
@@ -23,6 +27,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #endregion
 
+    #region Context
+
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")));
+
+    #endregion
+
     #region Hosted Service
 
     services.AddHostedService<ReadTransactionWalletsService>();
@@ -34,6 +44,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region Repositories
+
+    services.AddScoped<IRunTimeControllerRepository, RunTimeControllerRepository>();
+    services.AddScoped<IClassWalletRepository, ClassWalletRepository>();
+    services.AddScoped<IWalletRepository, WalletRepository>();
+    services.AddScoped<ITokenRepository, TokenRepository>();
+    services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+
 
     #endregion
 

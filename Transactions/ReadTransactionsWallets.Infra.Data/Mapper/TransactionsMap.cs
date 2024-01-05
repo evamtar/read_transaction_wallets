@@ -13,7 +13,7 @@ namespace ReadTransactionsWallets.Infra.Data.Mapper
             builder.Property(t => t.ID);
             builder.Property(t => t.Signature);
             builder.Property(t => t.DateOfTransaction);
-            builder.Property(t => t.AmountValue);
+            builder.Property(t => t.AmountValue).HasPrecision(38, 20);
             builder.Property(t => t.IdToken);
             builder.Property(t => t.IdWallet);
             builder.Property(t => t.TypeOperation);
