@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using MediatR;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using ReadTransactionsWallets.Application.Commands;
 using ReadTransactionsWallets.Domain.Model.Configs;
 using ReadTransactionsWallets.Domain.Model.Database;
 using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Utils;
+
 
 namespace ReadTransactionsWallets.Service
 {
@@ -11,8 +14,12 @@ namespace ReadTransactionsWallets.Service
     {
         private readonly IOptions<ReadTransactionWalletsConfig> _options;
         private readonly IRunTimeControllerRepository _runTimeControllerRepository;
-        public ReadTransactionWalletsService(IOptions<ReadTransactionWalletsConfig> options, IRunTimeControllerRepository runTimeControllerRepository)
+        private readonly IMediator _mediator;
+        public ReadTransactionWalletsService(IMediator mediator,
+                                             IOptions<ReadTransactionWalletsConfig> options, 
+                                             IRunTimeControllerRepository runTimeControllerRepository)
         {
+            this._mediator = mediator;
             this._options = options;
             this._runTimeControllerRepository = runTimeControllerRepository;
         }
@@ -32,6 +39,7 @@ namespace ReadTransactionsWallets.Service
                     runtimeController = await SetRuntimeController(runtimeController!, true, initialTicks, false);
                     Console.WriteLine("Initial Ticks: " + initialTicks.ToString());
                     Console.WriteLine("Final Ticks: " + finalTicks.ToString());
+                    await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
                     runtimeController = await SetRuntimeController(runtimeController!, false, finalTicks, true);
                     Console.WriteLine("End Read: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                     Console.WriteLine($"Waiting for next tick in {timer.Period}");
