@@ -27,9 +27,9 @@ namespace ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Service
 
         public async Task<TelegramBotResponse> ExecuteSendMessageAsync(TelegramBotRequest request)
         {
-            var response = await this._httpClient.GetAsync(string.Format(this._config.Value.ParametersUrlSendMessage ?? string.Empty, this._config.Value.Token ?? string.Empty));
+            var response = await this._httpClient.GetAsync(string.Format(this._config.Value.ParametersUrlSendMessage ?? string.Empty, this._config.Value.Token ?? string.Empty, request.ChatId, request.Message));
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TelegramBotResponse>(responseBody) ?? new TelegramBotResponse { };
+            return new TelegramBotResponse { };
         }
     }
 }
