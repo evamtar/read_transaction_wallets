@@ -1,6 +1,4 @@
-﻿
-
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace ReadTransactionsWallets.Domain.Model.CrossCutting.TelegramBot.Response
 {
@@ -11,9 +9,9 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.TelegramBot.Response
     }
     public class ResultResponse
     {
-        [JsonPropertyName("update_id")]
+        [JsonProperty("update_id")]
         public long? UpdateId { get; set; }
-        [JsonPropertyName("my_chat_member")]
+        [JsonProperty("my_chat_member")]
         public ChatMemberResponse? ChatMember {get;set;}
     }
     public class ChatMemberResponse 
