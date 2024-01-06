@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Polly;
 using Polly.Extensions.Http;
 using ReadTransactionsWallets.Application.Commands;
@@ -12,6 +13,8 @@ using ReadTransactionsWallets.Application.Response;
 using ReadTransactionsWallets.Domain.Model.Configs;
 using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
+using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Service;
 using ReadTransactionsWallets.Infra.CrossCutting.Tokens.Configs;
 using ReadTransactionsWallets.Infra.CrossCutting.Tokens.Service;
 using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Configs;
@@ -21,7 +24,9 @@ using ReadTransactionsWallets.Infra.CrossCutting.Transfers.Service;
 using ReadTransactionsWallets.Infra.Data.Context;
 using ReadTransactionsWallets.Infra.Data.Repository;
 using ReadTransactionsWallets.Service;
+using System.Net;
 using System.Reflection;
+using System.Text;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -63,6 +68,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
     services.AddScoped<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
     services.AddScoped<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
+    services.AddScoped<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
+
     #endregion
 
     #region Repositories
@@ -84,14 +91,22 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
+
     services.Configure<TransfersConfig>(configuration.GetSection("Transfers"));
     services.AddHttpClient<ITransfersService, TransfersService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
+
     services.Configure<TokensConfig>(configuration.GetSection("Tokens"));
     services.AddHttpClient<ITokensService, TokensService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<TelegramBotConfig>(configuration.GetSection("TelegramBot"));
+    services.AddHttpClient<ITelegramBotService, TelegramBotService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
