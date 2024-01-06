@@ -42,10 +42,12 @@ namespace ReadTransactionsWallets.Service
                     await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
                     runtimeController = await SetRuntimeController(runtimeController!, false, finalTicks, true);
                     Console.WriteLine($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                    await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = $"**Execução do aplicativo de calll solana {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}. Proxima execução no perído do timer de --> {timer.Period}" });
                     Console.WriteLine($"Waiting for next tick in {timer.Period}");
                 }
                 else 
                 {
+                    await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = $"**Aplicativo está rodando. Não irá efetuar essa execução {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}. Proxima tentativa execução no perído do timer de --> {timer.Period}" });
                     Console.WriteLine($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}" );
                 }
             }

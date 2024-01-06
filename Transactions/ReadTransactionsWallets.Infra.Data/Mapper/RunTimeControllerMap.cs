@@ -11,7 +11,7 @@ namespace ReadTransactionsWallets.Infra.Data.Mapper
         {
             builder.ToTable("RunTimeController");
             builder.Property(rt => rt.IdRuntime);
-            builder.Property(rt => rt.UnixTimeSeconds);
+            builder.Property(rt => rt.UnixTimeSeconds).HasPrecision(20, 0);
             builder.Property(rt => rt.IsRunning);
             builder.Ignore(rt => rt.ID);
             builder.HasKey(rt => rt.IdRuntime);
