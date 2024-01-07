@@ -30,26 +30,42 @@ namespace ReadTransactionsWallets.Service
             using var timer = new PeriodicTimer(TimeSpan.FromMinutes(this._options.Value.ConfigurationTimer ?? 5));
             while (await timer.WaitForNextTickAsync(stoppingToken))
             {
+
                 var runtimeController = await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false);
+                Console.WriteLine($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                var initialTicks = runtimeController?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddDays(-1));
                 if (runtimeController != null && (!runtimeController!.IsRunning ?? true))
                 {
-                    Console.WriteLine($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    var initialTicks = runtimeController?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddDays(-1));
-                    var finalTicks = DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
-                    runtimeController = await SetRuntimeController(runtimeController!, true, initialTicks, false);
-                    Console.WriteLine($"Initial Ticks: {initialTicks}");
-                    Console.WriteLine($"Final Ticks: {finalTicks}");
-                    await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
-                    runtimeController = await SetRuntimeController(runtimeController!, false, finalTicks, true);
-                    Console.WriteLine($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = $"*Execução do aplicativo de calll solana  . Proxima execução no perído do timer de --> {timer.Period}*" });
-                    Console.WriteLine($"Waiting for next tick in {timer.Period}");
+                    try
+                    {
+                        var finalTicks = DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
+                        runtimeController = await SetRuntimeController(runtimeController!, true, initialTicks, false);
+                        Console.WriteLine($"Initial Ticks: {initialTicks}");
+                        Console.WriteLine($"Final Ticks: {finalTicks}");
+                        await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
+                        runtimeController = await SetRuntimeController(runtimeController!, false, finalTicks, true);
+                        Console.WriteLine($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                        await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE, new object[] { DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), timer.Period }) });
+                        Console.WriteLine($"Waiting for next tick in {timer.Period}");
+                    }
+                    catch (Exception ex)
+                    {
+                        await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE_ERROR, new object[] { ex.Message, ex.StackTrace?? string.Empty, timer.Period }) });
+                        Console.WriteLine($"Exceção: {ex.Message}");
+                        Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                        Console.WriteLine($"Waiting for next tick in {timer.Period}");
+                    }
+                    finally 
+                    {
+                        runtimeController = await SetRuntimeController(runtimeController!, false, initialTicks, true);
+                    }
                 }
-                else 
+                else
                 {
-                    await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = $"**Aplicativo está rodando. Não irá efetuar essa execução {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}. Proxima tentativa execução no perído do timer de --> {timer.Period}" });
-                    Console.WriteLine($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}" );
+                    await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_RUNNING, new object[] { DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), timer.Period }) });
+                    Console.WriteLine($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                 }
+
             }
             Console.WriteLine("Finalizado");
             return;
@@ -67,9 +83,11 @@ namespace ReadTransactionsWallets.Service
 
         private async Task<RunTimeController> DetachedRuntimeController(RunTimeController runTimeController)
         {
-            runTimeController = await this._runTimeControllerRepository.DetachedItem(runTimeController);
+            try { runTimeController = await this._runTimeControllerRepository.DetachedItem(runTimeController); }
+            catch { }//NOTHING HERE 
             return runTimeController;
         }
         
     }
 }
+

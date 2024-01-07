@@ -20,6 +20,7 @@ namespace ReadTransactionsWallets.Application.Handlers
         public async Task<SendTelegramMessageCommandResponse> Handle(SendTelegramMessageCommand request, CancellationToken cancellationToken)
         {
             var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotRequest { });
+
             long? chatId = long.MinValue;
             switch (request.Channel)
             {
