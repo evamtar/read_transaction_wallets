@@ -66,3 +66,5 @@ dkms.conf
 /Transactions/ReadTransactionsWallets.Utils/obj
 /Transactions/ReadTransactionsWalletsApp/bin/Debug/net8.0
 /Transactions/ReadTransactionsWalletsApp/obj
+/Transactions/.vs/ProjectEvaluation/transactions.metadata.v7.bin
+/Transactions/.vs/ProjectEvaluation
