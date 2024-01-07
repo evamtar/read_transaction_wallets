@@ -10,6 +10,7 @@ namespace ReadTransactionsWallets.Domain.Model.Enum
     {
         Buy = 1,
         Sell = 2,
-        Transfer = 3
+        Transfer = 3,
+        Received = 4,
     }
 }
