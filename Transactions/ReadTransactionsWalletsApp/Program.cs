@@ -13,6 +13,8 @@ using ReadTransactionsWallets.Application.Response;
 using ReadTransactionsWallets.Domain.Model.Configs;
 using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
+using ReadTransactionsWallets.Infra.CrossCutting.Accounts.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Accounts.Service;
 using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Configs;
 using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Service;
 using ReadTransactionsWallets.Infra.CrossCutting.Tokens.Configs;
@@ -48,6 +50,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Configs
 
     services.Configure<ReadTransactionWalletsConfig>(configuration.GetSection("ReadTransactionWallets"));
+    services.Configure<MappedTokensConfig> (configuration.GetSection("MappedTokens"));
 
     #endregion
 
@@ -107,6 +110,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.Configure<TelegramBotConfig>(configuration.GetSection("TelegramBot"));
     services.AddHttpClient<ITelegramBotService, TelegramBotService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<AccountsConfig>(configuration.GetSection("Accounts"));
+    services.AddHttpClient<IAccountsService, AccountsService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
