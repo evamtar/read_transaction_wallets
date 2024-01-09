@@ -82,7 +82,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IWalletRepository, WalletRepository>();
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<ITransactionsRepository, TransactionsRepository>();
-
+    services.AddScoped<IWalletBalanceRepository, WalletBalanceRepository>();
 
     #endregion
 

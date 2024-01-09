@@ -73,6 +73,19 @@ CREATE TABLE RunTimeController
 	UnixTimeSeconds DECIMAL(20,0),
 	IsRunning BIT,
 	PRIMARY KEY(IdRuntime)
-)
+);
+
+CREATE TABLE WalletBalance
+(
+	ID         UNIQUEIDENTIFIER,
+	DateUpdate DATETIME2,
+	IdWallet   UNIQUEIDENTIFIER,
+	IdToken    UNIQUEIDENTIFIER,
+	Quantity   DECIMAL(38,18),
+	PRIMARY KEY (ID),
+	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
+	FOREIGN KEY(IdToken) REFERENCES Token(ID),
+);
+
 
 INSERT INTO RunTimeController VALUES(1, 1703976485, 0);
