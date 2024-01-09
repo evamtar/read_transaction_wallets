@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using Polly;
 using Polly.Extensions.Http;
 using ReadTransactionsWallets.Application.Commands;
@@ -13,22 +12,22 @@ using ReadTransactionsWallets.Application.Response;
 using ReadTransactionsWallets.Domain.Model.Configs;
 using ReadTransactionsWallets.Domain.Repository;
 using ReadTransactionsWallets.Domain.Service.CrossCutting;
-using ReadTransactionsWallets.Infra.CrossCutting.Accounts.Configs;
-using ReadTransactionsWallets.Infra.CrossCutting.Accounts.Service;
-using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Configs;
-using ReadTransactionsWallets.Infra.CrossCutting.TelegramBot.Service;
-using ReadTransactionsWallets.Infra.CrossCutting.Tokens.Configs;
-using ReadTransactionsWallets.Infra.CrossCutting.Tokens.Service;
-using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Configs;
-using ReadTransactionsWallets.Infra.CrossCutting.Transactions.Service;
-using ReadTransactionsWallets.Infra.CrossCutting.Transfers.Configs;
-using ReadTransactionsWallets.Infra.CrossCutting.Transfers.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.AccountInfo.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Accounts.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Accounts.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Tokens.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Tokens.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Transactions.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Transactions.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Transfers.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Solanafm.Transfers.Service;
+using ReadTransactionsWallets.Infra.CrossCutting.Telegram.TelegramBot.Configs;
+using ReadTransactionsWallets.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using ReadTransactionsWallets.Infra.Data.Context;
 using ReadTransactionsWallets.Infra.Data.Repository;
 using ReadTransactionsWallets.Service;
-using System.Net;
 using System.Reflection;
-using System.Text;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -62,7 +61,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
 
@@ -72,7 +72,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
     services.AddScoped<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddScoped<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
-
+    services.AddScoped<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     #endregion
 
     #region Repositories
@@ -116,6 +116,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.Configure<AccountsConfig>(configuration.GetSection("Accounts"));
     services.AddHttpClient<IAccountsService, AccountsService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    
+    services.Configure<AccountInfoConfig>(configuration.GetSection("AccountInfo"));
+    services.AddHttpClient<IAccountInfoService, AccountInfoService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));

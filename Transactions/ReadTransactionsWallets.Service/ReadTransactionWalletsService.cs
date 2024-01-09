@@ -26,7 +26,7 @@ namespace ReadTransactionsWallets.Service
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Iniciando o bot de leitura de transações efetuadas nas wallets mapeadas");
+            Console.WriteLine("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
             using var timer = new PeriodicTimer(TimeSpan.FromMinutes(this._options.Value.ConfigurationTimer ?? 5));
             while (await timer.WaitForNextTickAsync(stoppingToken))
             {
