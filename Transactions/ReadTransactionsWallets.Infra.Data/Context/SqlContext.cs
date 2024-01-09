@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using ReadTransactionsWallets.Domain.Model.Database;
 using ReadTransactionsWallets.Infra.Data.Mapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ReadTransactionsWallets.Infra.Data.Context
 {
@@ -25,6 +20,7 @@ namespace ReadTransactionsWallets.Infra.Data.Context
         public DbSet<RunTimeController> RunTimeControllers { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<Token> Tokens { get; set; }
+        public DbSet<WalletBalance> WalletBalances { get; set; }
 
         #endregion
 
@@ -37,6 +33,7 @@ namespace ReadTransactionsWallets.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new TokenMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
+            modelBuilder.ApplyConfiguration(new WalletBalanceMap());
             base.OnModelCreating(modelBuilder);
         }
 

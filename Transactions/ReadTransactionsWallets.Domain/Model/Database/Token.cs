@@ -15,5 +15,6 @@ namespace ReadTransactionsWallets.Domain.Model.Database
 
         public virtual List<Transactions>? TransactionsSource { get; set; }
         public virtual List<Transactions>? TransactionsDestination { get; set; }
+        public virtual List<WalletBalance>? Balances { get; set; }
     }
 }

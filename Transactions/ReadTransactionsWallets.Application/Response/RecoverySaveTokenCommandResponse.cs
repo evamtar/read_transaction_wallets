@@ -5,12 +5,13 @@
         public Guid? TokenId { get; set; }
         public int? Decimals { get; set; }
         public string? TokenAlias { get; set; }
+        public string? TokenHash { get; set; }
         public string? FreezeAuthority { get; set; }
         public string? MintAuthority { get; set; }
         public bool? IsMutable { get; set; }
         public int Divisor
         {
-            get 
+            get
             {
                 string number = "1";
                 for (int i = 0; i < this.Decimals; i++)
@@ -18,5 +19,7 @@
                 return int.Parse(number);
             }
         }
+
+
     }
 }

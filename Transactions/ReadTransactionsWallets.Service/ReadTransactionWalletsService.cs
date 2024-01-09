@@ -26,7 +26,7 @@ namespace ReadTransactionsWallets.Service
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Iniciando o bot de leitura de transações efetuadas nas wallets mapeadas");
+            Console.WriteLine("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
             using var timer = new PeriodicTimer(TimeSpan.FromMinutes(this._options.Value.ConfigurationTimer ?? 5));
             while (await timer.WaitForNextTickAsync(stoppingToken))
             {
@@ -50,14 +50,11 @@ namespace ReadTransactionsWallets.Service
                     }
                     catch (Exception ex)
                     {
+                        runtimeController = await SetRuntimeController(runtimeController!, false, initialTicks, true);
                         await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE_ERROR, new object[] { ex.Message, ex.StackTrace?? string.Empty, timer.Period }) });
                         Console.WriteLine($"Exceção: {ex.Message}");
                         Console.WriteLine($"StackTrace: {ex.StackTrace}");
                         Console.WriteLine($"Waiting for next tick in {timer.Period}");
-                    }
-                    finally 
-                    {
-                        runtimeController = await SetRuntimeController(runtimeController!, false, initialTicks, true);
                     }
                 }
                 else
