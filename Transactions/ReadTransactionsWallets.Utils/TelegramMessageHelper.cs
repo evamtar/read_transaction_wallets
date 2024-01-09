@@ -58,7 +58,7 @@ namespace ReadTransactionsWallets.Utils
                                                            "<i>Quantity:</i> {7}\r\n" +
                                                            "<i>Price:</i> {8}\r\n" +
                                                            "<i>Date:</i> {9}\r\n" +
-                                                           "Cc: @all";
+                                                           "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
         private const string MESSAGE_MM_REBUY_MESSAGE = "<b>*** NEW MM REBUY ALERT ***</b>\r\n" +
                                                         "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n" +
                                                         "<i>WalletHash:</i> {0}\r\n" +
@@ -79,7 +79,7 @@ namespace ReadTransactionsWallets.Utils
                                                        "<i>Quantity:</i> {3}\r\n" +
                                                        "<i>Price:</i> {4}\r\n" +
                                                        "<i>Date:</i> {5}\r\n" +
-                                                       "Cc @all";
+                                                       "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
             switch (eTypeMessage)
