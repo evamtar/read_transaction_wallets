@@ -61,8 +61,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
+    services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
 

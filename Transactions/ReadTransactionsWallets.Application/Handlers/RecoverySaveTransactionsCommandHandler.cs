@@ -184,6 +184,24 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                 })
                         });
                     }
+                    else if (transferCompose?.TypeOperation == ETypeOperation.Swap) 
+                    {
+                        await this._mediator.Send(new SendTelegramMessageCommand
+                        {
+                            Channel = EChannel.CallSolana,
+                            Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.SWAP_MESSAGE,
+                                                                                  new object[]
+                                                                                  {
+                                                                                       request.WalletHash ?? string.Empty,
+                                                                                       ((EClassWalletAlert)request.IdClassification).ToString(),
+                                                                                       tokenFrom?.TokenAlias ?? string.Empty,
+                                                                                       (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
+                                                                                       tokenTO?.TokenAlias ?? string.Empty,
+                                                                                       tokenTO?.TokenHash ?? string.Empty,
+                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                  })
+                        });
+                    }
                     break;
                 case EClassWalletAlert.MM:
                     if (transferCompose?.TypeOperation == ETypeOperation.Buy)
@@ -246,6 +264,24 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                     ((transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenTO?.TokenAlias ?? string.Empty,
                                                                                     transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
                                                                                 })
+                        });
+                    }
+                    else if (transferCompose?.TypeOperation == ETypeOperation.Swap)
+                    {
+                        await this._mediator.Send(new SendTelegramMessageCommand
+                        {
+                            Channel = EChannel.CallSolana,
+                            Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.MM_SWAP_MESSAGE,
+                                                                                  new object[]
+                                                                                  {
+                                                                                       request.WalletHash ?? string.Empty,
+                                                                                       ((EClassWalletAlert)request.IdClassification).ToString(),
+                                                                                       tokenFrom?.TokenAlias ?? string.Empty,
+                                                                                       (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
+                                                                                       tokenTO?.TokenAlias ?? string.Empty,
+                                                                                       tokenTO?.TokenHash ?? string.Empty,
+                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                  })
                         });
                     }
                     break;

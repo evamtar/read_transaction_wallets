@@ -46,6 +46,15 @@ namespace ReadTransactionsWallets.Utils
                                                     "<i>Quantity:</i> {3}\r\n" +
                                                     "<i>Price:</i> {4}\r\n" +
                                                     "<i>Date:</i> {5}";
+        private const string MESSAGE_SWAP_MESSAGE = "<b>*** SWAP ALERT ***</b>\r\n" +
+                                                    "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n" +
+                                                    "<i>WalletHash:</i> {0}\r\n" +
+                                                    "<i>ClassWallet:</i> {1} \r\n" +
+                                                    "<i>Token Change:</i> {2}\r\n" +
+                                                    "<i>Quantity:</i> {3}\r\n" +
+                                                    "<i>Token Received:</i> {4}\r\n" +
+                                                    "<i>Ca:</i> {5}\r\n" +
+                                                    "<i>Date:</i> {6}";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE = "<b>*** NEW MM BUY ALERT ***</b>\r\n" +
                                                            "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n" +
                                                            "<i>WalletHash:</i> {0}\r\n" +
@@ -80,6 +89,16 @@ namespace ReadTransactionsWallets.Utils
                                                        "<i>Price:</i> {4}\r\n" +
                                                        "<i>Date:</i> {5}\r\n" +
                                                        "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
+        private const string MESSAGE_MM_SWAP_MESSAGE = "<b>*** SWAP MM ALERT ***</b>\r\n" +
+                                                       "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n" +
+                                                       "<i>WalletHash:</i> {0}\r\n" +
+                                                       "<i>ClassWallet:</i> {1} \r\n" +
+                                                       "<i>Token Change:</i> {2}\r\n" +
+                                                       "<i>Quantity:</i> {3}\r\n" +
+                                                       "<i>Token Received:</i> {4}\r\n" +
+                                                       "<i>Ca:</i> {5}\r\n" +
+                                                       "<i>Date:</i> {6}\r\n" +
+                                                       "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
             switch (eTypeMessage)
@@ -96,12 +115,16 @@ namespace ReadTransactionsWallets.Utils
                     return string.Format(MESSAGE_REBUY_MESSAGE, args);
                 case ETypeMessage.SELL_MESSAGE:
                     return string.Format(MESSAGE_SELL_MESSAGE, args);
+                case ETypeMessage.SWAP_MESSAGE:
+                    return string.Format(MESSAGE_SWAP_MESSAGE, args); 
                 case ETypeMessage.MM_NEW_BUY_MESSAGE:
                     return string.Format(MESSAGE_MM_NEW_BUY_MESSAGE, args);
                 case ETypeMessage.MM_REBUY_MESSAGE:
                     return string.Format(MESSAGE_MM_REBUY_MESSAGE, args);
                 case ETypeMessage.MM_SELL_MESSAGE:
                     return string.Format(MESSAGE_MM_SELL_MESSAGE, args);
+                case ETypeMessage.MM_SWAP_MESSAGE:
+                    return string.Format(MESSAGE_MM_SWAP_MESSAGE, args); 
                 default:
                     return string.Empty;
             }
@@ -116,8 +139,10 @@ namespace ReadTransactionsWallets.Utils
         BUY_MESSAGE,
         REBUY_MESSAGE,
         SELL_MESSAGE,
+        SWAP_MESSAGE,
         MM_NEW_BUY_MESSAGE,
         MM_REBUY_MESSAGE,
-        MM_SELL_MESSAGE
+        MM_SELL_MESSAGE,
+        MM_SWAP_MESSAGE
     }
 }
