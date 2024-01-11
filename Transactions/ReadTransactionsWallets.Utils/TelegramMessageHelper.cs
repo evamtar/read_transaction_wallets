@@ -105,6 +105,27 @@ namespace ReadTransactionsWallets.Utils
                                                        "<i>Ca:</i> {5}\r\n" +
                                                        "<i>Date:</i> {6}\r\n" +
                                                        "Cc:@evandrotartari , @euRodrigo, @xton_eth";
+        private const string MESSAGE_POOL_CREATED_MESSAGE = "<b>*** POOL CREATED ***</b>\r\n" +
+                                                            "<tg-emoji emoji-id='5368324170671202286'>🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊</tg-emoji>\r\n" +
+                                                            "<i>Signature:</i> {0}\r\n" +
+                                                            "<i>WalletHash:</i> {1}\r\n" +
+                                                            "<i>ClassWallet:</i> {2} \r\n" +
+                                                            "<i>Amount Pool:</i> {3}\r\n" +
+                                                            "<i>Amount Pool:</i> {4}\r\n" +
+                                                            "<i>Ca Token Pool:</i> {5}\r\n" +
+                                                            "<i>Ca Token Pool:</i> {6}\r\n" +
+                                                            "<i>Date:</i> {7}\r\n";
+
+        private const string MESSAGE_POOL_FINALIZED_MESSAGE = "<b>*** POOL FINALIZED ***</b>\r\n" +
+                                                              "<tg-emoji emoji-id='5368324170671202286'>❌❌❌❌❌❌❌❌❌❌❌</tg-emoji>\r\n" +
+                                                              "<i>Signature:</i> {0}\r\n" +
+                                                              "<i>WalletHash:</i> {1}\r\n" +
+                                                              "<i>ClassWallet:</i> {2} \r\n" +
+                                                              "<i>Amount Pool:</i> {3}\r\n" +
+                                                              "<i>Amount Pool:</i> {4}\r\n" +
+                                                              "<i>Ca Token Pool:</i> {5}\r\n" +
+                                                              "<i>Ca Token Pool:</i> {6}\r\n" +
+                                                              "<i>Date:</i> {7}\r\n";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
             switch (eTypeMessage)
@@ -130,7 +151,11 @@ namespace ReadTransactionsWallets.Utils
                 case ETypeMessage.MM_SELL_MESSAGE:
                     return string.Format(MESSAGE_MM_SELL_MESSAGE, args);
                 case ETypeMessage.MM_SWAP_MESSAGE:
-                    return string.Format(MESSAGE_MM_SWAP_MESSAGE, args); 
+                    return string.Format(MESSAGE_MM_SWAP_MESSAGE, args);
+                case ETypeMessage.POOL_CREATED_MESSAGE:
+                    return string.Format(MESSAGE_POOL_CREATED_MESSAGE, args);
+                case ETypeMessage.POOL_FINALIZED_MESSAGE:
+                    return string.Format(MESSAGE_POOL_FINALIZED_MESSAGE, args);
                 default:
                     return string.Empty;
             }
@@ -149,6 +174,8 @@ namespace ReadTransactionsWallets.Utils
         MM_NEW_BUY_MESSAGE,
         MM_REBUY_MESSAGE,
         MM_SELL_MESSAGE,
-        MM_SWAP_MESSAGE
+        MM_SWAP_MESSAGE,
+        POOL_CREATED_MESSAGE,
+        POOL_FINALIZED_MESSAGE
     }
 }

@@ -9,6 +9,8 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Transfer
         SELL,
         SENDED,
         RECEIVED,
-        SWAP
+        SWAP,
+        POOLCREATE,
+        POOLFINALIZED
     }
 }

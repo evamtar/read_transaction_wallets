@@ -36,7 +36,9 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Helpers
             else 
             {
                 TransferToken tokenSended = new TransferToken();
+                TransferToken tokenSendedPool = new TransferToken();
                 TransferToken tokenReceived = new TransferToken();
+                TransferToken tokenReceivedPool = new TransferToken();
                 if (finalBalance != null) 
                 {
                     foreach (var balance in finalBalance)
@@ -51,11 +53,23 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Helpers
                                 tokenSended.Amount = balance.Value;
                                 transferInfo.TokenSended = tokenSended;
                             }
+                            else if (tokenSended.Amount > 0 && tokenSendedPool.Amount == 0 && balance.Value < 0) 
+                            {
+                                tokenSendedPool.Token = balance.Key;
+                                tokenSendedPool.Amount = balance.Value;
+                                transferInfo.TokenSendedPool = tokenSendedPool;
+                            }
                             else if (tokenReceived.Amount == 0 && balance.Value > 0)
                             {
                                 tokenReceived.Token = balance.Key;
                                 tokenReceived.Amount = balance.Value;
                                 transferInfo.TokenReceived = tokenReceived;
+                            }
+                            else if (tokenReceived.Amount > 0 && tokenReceivedPool.Amount == 0 && balance.Value > 0)
+                            {
+                                tokenReceivedPool.Token = balance.Key;
+                                tokenReceivedPool.Amount = balance.Value;
+                                transferInfo.TokenReceivedPool = tokenReceivedPool;
                             }
                             else
                                 throw new Exception("Mapping has problem. Verify!");

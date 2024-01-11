@@ -1,6 +1,52 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalance')
+BEGIN
+	DROP TABLE [WalletBalance]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'RunTimeController')
+BEGIN
+	DROP TABLE [RunTimeController]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Transactions')
+BEGIN
+	DROP TABLE [Transactions]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Token')
+BEGIN
+	DROP TABLE [Token]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Wallet')
+BEGIN
+	DROP TABLE [Wallet]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'ClassWallet')
+BEGIN
+	DROP TABLE [ClassWallet]
+END
+GO
+
+IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
+BEGIN
+	CREATE TABLE TelegramChannel(
+		ID           UNIQUEIDENTIFIER,
+		ChannelId    DECIMAL(30,0),
+		ChannelName  VARCHAR(50),
+		PRIMARY KEY (ID)
+	)
+END
+GO 
 CREATE TABLE ClassWallet(
 	ID               UNIQUEIDENTIFIER,
 	IdClassification INT,
@@ -37,19 +83,24 @@ CREATE TABLE Token(
 
 CREATE TABLE Transactions
 (
-	ID                     UNIQUEIDENTIFIER,
-	[Signature]            VARCHAR(150),
-	DateOfTransaction      DateTime2,
-	AmountValueSource      decimal(38,18),
-	AmountValueDestination decimal(38,18),
-	IdTokenSource          UNIQUEIDENTIFIER,
-	IdTokenDestination     UNIQUEIDENTIFIER,
-	IdWallet               UNIQUEIDENTIFIER,
-	TypeOperation          INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received
-	jsonResponse           NVARCHAR(MAX),
+	ID                         UNIQUEIDENTIFIER,
+	[Signature]                VARCHAR(150),
+	DateOfTransaction          DATETIME2,
+	AmountValueSource          DECIMAL(38,18),
+	AmountValueSourcePool      DECIMAL(38,18),
+	AmountValueDestination     DECIMAL(38,18),
+	AmountValueDestinationPool DECIMAL(38,18),
+	IdTokenSource              UNIQUEIDENTIFIER,
+	IdTokenSourcePool          UNIQUEIDENTIFIER,
+	IdTokenDestination         UNIQUEIDENTIFIER,
+	IdTokenDestinationPool     UNIQUEIDENTIFIER,
+	IdWallet                   UNIQUEIDENTIFIER,
+	TypeOperation              INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
 	PRIMARY KEY (ID),
 	FOREIGN KEY (IdTokenSource) REFERENCES Token(ID),
+	FOREIGN KEY (IdTokenSourcePool) REFERENCES Token(ID),
 	FOREIGN KEY (IdTokenDestination) REFERENCES Token(ID),
+	FOREIGN KEY (IdTokenDestinationPool) REFERENCES Token(ID),
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 );
 GO
@@ -86,6 +137,5 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
-
 
 INSERT INTO RunTimeController VALUES(1, 1703976485, 0);
