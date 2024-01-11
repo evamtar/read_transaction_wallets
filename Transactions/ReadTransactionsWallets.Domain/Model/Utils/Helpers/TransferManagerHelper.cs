@@ -53,7 +53,7 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Helpers
                                 tokenSended.Amount = balance.Value;
                                 transferInfo.TokenSended = tokenSended;
                             }
-                            else if (tokenSended.Amount > 0 && tokenSendedPool.Amount == 0 && balance.Value < 0) 
+                            else if (tokenSended.Amount != 0 && tokenSendedPool.Amount == 0 && balance.Value < 0) 
                             {
                                 tokenSendedPool.Token = balance.Key;
                                 tokenSendedPool.Amount = balance.Value;
@@ -65,7 +65,7 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Helpers
                                 tokenReceived.Amount = balance.Value;
                                 transferInfo.TokenReceived = tokenReceived;
                             }
-                            else if (tokenReceived.Amount > 0 && tokenReceivedPool.Amount == 0 && balance.Value > 0)
+                            else if (tokenReceived.Amount != 0 && tokenReceivedPool.Amount == 0 && balance.Value > 0)
                             {
                                 tokenReceivedPool.Token = balance.Key;
                                 tokenReceivedPool.Amount = balance.Value;
