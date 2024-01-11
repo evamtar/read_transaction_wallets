@@ -19,23 +19,8 @@ namespace ReadTransactionsWallets.Application.Handlers
 
         public async Task<SendTelegramMessageCommandResponse> Handle(SendTelegramMessageCommand request, CancellationToken cancellationToken)
         {
-            var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotRequest { });
-
-            long? chatId = long.MinValue;
-            switch (request.Channel)
-            {
-                case EChannel.CallSolanaLog:
-                    var chatLog = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == EChannel.CallSolanaLog.ToString());
-                    chatId = chatLog?.ChatMember?.Chat?.Id;
-                    break;
-                case EChannel.CallSolana:
-                    var chatCall = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == EChannel.CallSolana.ToString());
-                    chatId = chatCall?.ChatMember?.Chat?.Id;
-                    break;
-                default:
-                    break;
-            }
-            await this._telegramBotService.ExecuteSendMessageAsync(new TelegramBotRequest { ChatId = chatId, Message = request.Message });
+            var channel = await this._mediator.Send(new RecoverySaveTelegramChannel { Channel = request.Channel });
+            await this._telegramBotService.ExecuteSendMessageAsync(new TelegramBotRequest { ChatId = channel.ChannelId, Message = request.Message });
             return new SendTelegramMessageCommandResponse { };
         }
     }

@@ -8,7 +8,7 @@ namespace ReadTransactionsWallets.Infra.Data.Mapper
     {
         public void Configure(EntityTypeBuilder<WalletBalance> builder)
         {
-            builder.ToTable("ClassWallet");
+            builder.ToTable("WalletBalance");
             builder.Property(wb => wb.ID);
             builder.Property(wb => wb.DateUpdate);
             builder.Property(wb => wb.IdWallet);

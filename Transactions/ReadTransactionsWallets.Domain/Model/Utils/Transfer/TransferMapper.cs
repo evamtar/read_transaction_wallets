@@ -1,26 +1,21 @@
-﻿using ReadTransactionsWallets.Utils;
+﻿using ReadTransactionsWallets.Domain.Model.CrossCutting.Transfers.Response;
+using ReadTransactionsWallets.Utils;
 
 
 namespace ReadTransactionsWallets.Domain.Model.Utils.Transfer
 {
-    public class TransferNode
+    public class TransferMapper
     {
-        public TransferNode? ParentNode { get; set; }
-        public TransferNode? NextNode
+        public TransferMapper()
         {
-            get
-            {
-                return (this.HasChildren ?? false) ? this.Childrens![0] : null;
-            }
+            
         }
-        public TransferNode[]? Childrens { get; set; } = new TransferNode[] { };
-        public bool? HasChildren
+
+        public TransferMapper(TransferResponse? transferResponse)
         {
-            get
-            {
-                return this.Childrens != null && this.Childrens.Any();
-            }
+            ConvertToTransferMapper(transferResponse);
         }
+
         public int? InstructionIndex { get; set; }
         public int? InnerInstructionIndex { get; set; }
         public string? Action { get; set; }
@@ -64,6 +59,21 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Transfer
                 else
                     return DateTime.MinValue;
             }
+        }
+
+        private void ConvertToTransferMapper(TransferResponse? transferResponse)
+        {
+            this.InstructionIndex = transferResponse?.InstructionIndex;
+            this.InnerInstructionIndex = transferResponse?.InnerInstructionIndex;
+            this.Action = transferResponse?.Action;
+            this.Status = transferResponse?.Status;
+            this.Source = transferResponse?.Source;
+            this.SourceAssociation = transferResponse?.SourceAssociation;
+            this.Destination = transferResponse?.Destination;
+            this.DestinationAssociation = transferResponse?.DestinationAssociation;
+            this.Token = transferResponse?.Token;
+            this.Amount = transferResponse?.Amount;
+            this.Timestamp = transferResponse?.Timestamp;
         }
     }
 }

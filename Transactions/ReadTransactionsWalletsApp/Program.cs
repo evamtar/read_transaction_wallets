@@ -73,6 +73,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddScoped<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
     services.AddScoped<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
+    services.AddScoped<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
+
     #endregion
 
     #region Repositories
@@ -83,6 +85,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<ITransactionsRepository, TransactionsRepository>();
     services.AddScoped<IWalletBalanceRepository, WalletBalanceRepository>();
+    services.AddScoped<ITelegramChannelRepository, TelegramChannelRepository>();
 
     #endregion
 

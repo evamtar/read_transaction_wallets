@@ -58,49 +58,38 @@ namespace ReadTransactionsWallets.Application.Handlers
                         foreach (var transaction in transactionResponse.Result!.Data)
                         {
                             var transactionDetails = await this._transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
-                            if (transactionDetails.Result != null)
+                            if (transactionDetails.Result != null && transactionDetails.Result.Data?.Count > 0)
                             {
-                                if (transactionDetails.Result.Data?.Count > 0)
+                                var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails.Result.Data);
+                                var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);
+                                var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, this._mappedTokensConfig.Value);
+                                if (transferInfo.TransactionType == ETransactionType.INDEFINED)
+                                { }
+                                var tokenSended = (RecoverySaveTokenCommandResponse?)null;
+                                var tokenReceived = (RecoverySaveTokenCommandResponse?)null;
+                                try
                                 {
-                                    var transfersCompose = TransferComposeHelper.GetTransfersCompose(request.WalletHash, TransferDocumentHelper.CreateTransferDocument(transactionDetails.Result.Data), this._mappedTokensConfig.Value);
-                                    if (transfersCompose != null) 
+                                    if (transferInfo?.TokenSended != null)
+                                        tokenSended = await this._mediator.Send(new RecoverySaveTokenCommand{ TokenHash = transferInfo?.TokenSended?.Token });
+                                    if (transferInfo?.TokenReceived != null)
+                                        tokenReceived = await this._mediator.Send(new RecoverySaveTokenCommand{ TokenHash = transferInfo.TokenReceived?.Token });
+                                    var transactionDB = await this._transactionsRepository.Add(new Transactions
                                     {
-                                        foreach (var transferCompose in transfersCompose)
-                                        {
-                                            var tokenFrom = (RecoverySaveTokenCommandResponse?)null;
-                                            if (transferCompose.TypeOperation != ETypeOperation.Send && transferCompose.TypeOperation != ETypeOperation.Received)
-                                            {
-                                                tokenFrom = await this._mediator.Send(new RecoverySaveTokenCommand
-                                                {
-                                                    TokenHash = string.IsNullOrEmpty(transferCompose?.TransactionSended?.Token) ? "So11111111111111111111111111111111111111112" : transferCompose?.TransactionSended?.Token
-                                                });
-                                            }
-                                            var tokenTO = await this._mediator.Send(new RecoverySaveTokenCommand
-                                            {
-                                                TokenHash = string.IsNullOrEmpty(transferCompose?.TransactionReceived?.Token) ? "So11111111111111111111111111111111111111112" : transferCompose?.TransactionReceived?.Token
-                                            });
-                                            try
-                                            {
-                                                var transactionDB = await this._transactionsRepository.Add(new Transactions
-                                                {
-                                                    Signature = transaction.Signature,
-                                                    DateOfTransaction = transaction.DateOfTransaction,
-                                                    AmountValueSource = (transferCompose?.TransactionSended?.Amount ?? 0) / tokenFrom?.Divisor ?? 1,
-                                                    AmountValueDestination = (transferCompose?.TransactionReceived?.Amount ?? 0) / tokenTO?.Divisor ?? 1,
-                                                    IdTokenSource = tokenFrom?.TokenId,
-                                                    IdTokenDestination = tokenTO?.TokenId,
-                                                    IdWallet = request.WalletId,
-                                                    TypeOperation = transferCompose?.TypeOperation ?? ETypeOperation.None,
-                                                    JsonResponse = null
-                                                });
-                                                await SendAlertTransacionForTelegram(request, transactionDB, transferCompose, tokenFrom, tokenTO);
-                                            }
-                                            catch (Exception ex) 
-                                            {
-                                                throw new Exception(ex.Message + " Signature: " + transaction.Signature);
-                                            }
-                                        }
-                                    }
+                                        Signature = transaction.Signature,
+                                        DateOfTransaction = transaction.DateOfTransaction,
+                                        AmountValueSource = (transferInfo?.TokenSended?.Amount ?? 0) / tokenSended?.Divisor ?? 1,
+                                        AmountValueDestination = (transferInfo?.TokenReceived?.Amount ?? 0) / tokenReceived?.Divisor ?? 1,
+                                        IdTokenSource = tokenSended?.TokenId,
+                                        IdTokenDestination = tokenReceived?.TokenId,
+                                        IdWallet = request.WalletId,
+                                        TypeOperation = ((ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)),
+                                        JsonResponse = null
+                                    });
+                                    await SendAlertTransacionForTelegram(request, transaction.Signature, transactionDB, transferInfo, tokenSended, tokenReceived);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception(ex.Message + " Signature: " + transaction.Signature);
                                 }
                             }
                         }
@@ -112,7 +101,7 @@ namespace ReadTransactionsWallets.Application.Handlers
             return new RecoverySaveTransactionsCommandResponse { };
         }
 
-        private async Task SendAlertTransacionForTelegram(RecoverySaveTransactionsCommand request, Transactions? transaction, TransferCompose? transferCompose, RecoverySaveTokenCommandResponse? tokenFrom, RecoverySaveTokenCommandResponse? tokenTO)
+        private async Task SendAlertTransacionForTelegram(RecoverySaveTransactionsCommand request, string? signature, Transactions? transaction, TransferInfo? transferInfo, RecoverySaveTokenCommandResponse? tokenSended, RecoverySaveTokenCommandResponse? tokenReceived)
         {
             switch ((EClassWalletAlert)request.IdClassification!)
             {
@@ -121,26 +110,27 @@ namespace ReadTransactionsWallets.Application.Handlers
                 case EClassWalletAlert.Whale:
                 case EClassWalletAlert.Asians:
                 case EClassWalletAlert.Arbitrator:
-                    if (transferCompose?.TypeOperation == ETypeOperation.Buy)
+                    if (transferInfo?.TransactionType == ETransactionType.BUY)
                     {
-                        var anotherTransactions = this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
-                        if (anotherTransactions != null)
+                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
+                        if (anotherTransactions == null)
                         {
                             await this._mediator.Send(new SendTelegramMessageCommand
                             {
                                 Channel = EChannel.CallSolana,
                                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.REBUY_MESSAGE,
                                                                                    new object[] {
+                                                                                       signature ?? string.Empty,
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                       tokenTO?.TokenAlias ?? string.Empty,
-                                                                                       tokenTO?.TokenHash ?? string.Empty,
-                                                                                       tokenTO?.MintAuthority ?? "NO",
-                                                                                       tokenTO?.FreezeAuthority ?? "NO",
-                                                                                       (tokenTO?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                       (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0,
-                                                                                       ((transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 1).ToString() + " " +tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                       tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenHash ?? string.Empty,
+                                                                                       tokenReceived?.MintAuthority ?? "NO",
+                                                                                       tokenReceived?.FreezeAuthority ?? "NO",
+                                                                                       (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                    })
                             });
                         }
@@ -152,22 +142,23 @@ namespace ReadTransactionsWallets.Application.Handlers
                                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.BUY_MESSAGE,
                                                                                    new object[]
                                                                                    {
+                                                                                       signature ?? string.Empty,
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                       tokenTO?.TokenAlias ?? string.Empty,
-                                                                                       tokenTO?.TokenHash ?? string.Empty,
-                                                                                       tokenTO?.MintAuthority ?? "NO",
-                                                                                       tokenTO?.FreezeAuthority ?? "NO",
-                                                                                       (tokenTO?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                       (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0,
-                                                                                       ((transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                       tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenHash ?? string.Empty,
+                                                                                       tokenReceived?.MintAuthority ?? "NO",
+                                                                                       tokenReceived?.FreezeAuthority ?? "NO",
+                                                                                       (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                    })
                             });
 
                         }
                     }
-                    else if (transferCompose?.TypeOperation == ETypeOperation.Sell)
+                    else if (transferInfo?.TransactionType == ETransactionType.SELL)
                     {
                         await this._mediator.Send(new SendTelegramMessageCommand
                         {
@@ -175,16 +166,17 @@ namespace ReadTransactionsWallets.Application.Handlers
                             Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.SELL_MESSAGE,
                                                                                 new object[]
                                                                                 {
+                                                                                    signature ?? string.Empty,
                                                                                     request.WalletHash ?? string.Empty,
                                                                                     ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                    tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                    (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
-                                                                                    ((transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenTO?.TokenAlias ?? string.Empty,
-                                                                                    transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                    tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                 })
                         });
                     }
-                    else if (transferCompose?.TypeOperation == ETypeOperation.Swap) 
+                    else if (transferInfo?.TransactionType == ETransactionType.SWAP)
                     {
                         await this._mediator.Send(new SendTelegramMessageCommand
                         {
@@ -192,22 +184,23 @@ namespace ReadTransactionsWallets.Application.Handlers
                             Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.SWAP_MESSAGE,
                                                                                   new object[]
                                                                                   {
+                                                                                       signature ?? string.Empty,
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                       tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                       (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
-                                                                                       tokenTO?.TokenAlias ?? string.Empty,
-                                                                                       tokenTO?.TokenHash ?? string.Empty,
-                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenHash ?? string.Empty,
+                                                                                       transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                   })
                         });
                     }
                     break;
                 case EClassWalletAlert.MM:
-                    if (transferCompose?.TypeOperation == ETypeOperation.Buy)
+                    if (transferInfo?.TransactionType == ETransactionType.BUY)
                     {
-                        var anotherTransactions = this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
-                        if (anotherTransactions != null)
+                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
+                        if (anotherTransactions == null)
                         {
                             await this._mediator.Send(new SendTelegramMessageCommand
                             {
@@ -215,16 +208,17 @@ namespace ReadTransactionsWallets.Application.Handlers
                                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.MM_NEW_BUY_MESSAGE,
                                                                                     new object[]
                                                                                     {
+                                                                                        signature ?? string.Empty,
                                                                                         request.WalletHash ?? string.Empty,
                                                                                         ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                        tokenTO?.TokenAlias ?? string.Empty,
-                                                                                        tokenTO?.TokenHash ?? string.Empty,
-                                                                                        tokenTO?.MintAuthority ?? "NO",
-                                                                                        tokenTO?.FreezeAuthority ?? "NO",
-                                                                                        (tokenTO?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                        (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0,
-                                                                                        ((transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                        transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                        tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                        tokenReceived?.TokenHash ?? string.Empty,
+                                                                                        tokenReceived?.MintAuthority ?? "NO",
+                                                                                        tokenReceived?.FreezeAuthority ?? "NO",
+                                                                                        (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                     })
                             });
                         }
@@ -235,21 +229,22 @@ namespace ReadTransactionsWallets.Application.Handlers
                                 Channel = EChannel.CallSolana,
                                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.MM_REBUY_MESSAGE,
                                                                                     new object[] {
+                                                                                        signature ?? string.Empty,
                                                                                         request.WalletHash ?? string.Empty,
                                                                                         ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                        tokenTO?.TokenAlias ?? string.Empty,
-                                                                                        tokenTO?.TokenHash ?? string.Empty,
-                                                                                        tokenTO?.MintAuthority ?? "NO",
-                                                                                        tokenTO?.FreezeAuthority ?? "NO",
-                                                                                        (tokenTO?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                        (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0,
-                                                                                        ((transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                        transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                        tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                        tokenReceived?.TokenHash ?? string.Empty,
+                                                                                        tokenReceived?.MintAuthority ?? "NO",
+                                                                                        tokenReceived?.FreezeAuthority ?? "NO",
+                                                                                        (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                     })
                             });
                         }
                     }
-                    else if (transferCompose?.TypeOperation == ETypeOperation.Sell)
+                    else if (transferInfo?.TransactionType == ETransactionType.SELL)
                     {
                         await this._mediator.Send(new SendTelegramMessageCommand
                         {
@@ -257,16 +252,17 @@ namespace ReadTransactionsWallets.Application.Handlers
                             Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.MM_SELL_MESSAGE,
                                                                                 new object[]
                                                                                 {
+                                                                                    signature ?? string.Empty,
                                                                                     request.WalletHash ?? string.Empty,
                                                                                     ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                    tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                    (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
-                                                                                    ((transferCompose?.TransactionReceived?.Amount / (tokenTO?.Divisor ?? 1)) ?? 0 / (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 1).ToString() + " " + tokenTO?.TokenAlias ?? string.Empty,
-                                                                                    transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                    tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                 })
                         });
                     }
-                    else if (transferCompose?.TypeOperation == ETypeOperation.Swap)
+                    else if (transferInfo?.TransactionType == ETransactionType.SWAP)
                     {
                         await this._mediator.Send(new SendTelegramMessageCommand
                         {
@@ -274,13 +270,14 @@ namespace ReadTransactionsWallets.Application.Handlers
                             Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.MM_SWAP_MESSAGE,
                                                                                   new object[]
                                                                                   {
+                                                                                       signature ?? string.Empty,
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
-                                                                                       tokenFrom?.TokenAlias ?? string.Empty,
-                                                                                       (transferCompose?.TransactionSended?.Amount / (tokenFrom?.Divisor ?? 1)) ?? 0,
-                                                                                       tokenTO?.TokenAlias ?? string.Empty,
-                                                                                       tokenTO?.TokenHash ?? string.Empty,
-                                                                                       transferCompose?.TransactionReceived?.DateOfTransfer ?? DateTime.MinValue
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenAlias ?? string.Empty,
+                                                                                       tokenReceived?.TokenHash ?? string.Empty,
+                                                                                       transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                   })
                         });
                     }
@@ -288,6 +285,11 @@ namespace ReadTransactionsWallets.Application.Handlers
                 default:
                     break;
             }
+        }
+
+        private decimal CalculatedAmoutValue(decimal? value, int? divisor) 
+        {
+            return (value / (divisor ?? 1)) ?? 0;
         }
 
         private async Task<Token> GetToken(string? tokenHash)

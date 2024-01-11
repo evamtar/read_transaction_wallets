@@ -13,92 +13,98 @@ namespace ReadTransactionsWallets.Utils
                                                          "<i><b>Mensagem de erro:</b> {0}</i>.\r\n" +
                                                          "StackTrace: {1}\r\n" +
                                                          "<i><b>Proxima execução</b> no período timer de --> {2}. \r\n" +
-                                                         "<b>Dev's Favor verificar</b> Cc:@morpheus.gmd , @euRodrigo</i>";
+                                                         "<b>Dev's Favor verificar</b> Cc:@evandrotartari , @euRodrigo</i>";
         private const string MESSAGE_BUY_MESSAGE = "<b>*** NEW BUY ALERT ***</b>\r\n" +
                                                    "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n" +
-                                                   "<i>WalletHash:</i> {0}\r\n" +
-                                                   "<i>ClassWallet:</i> {1} \r\n" +
-                                                   "<i>Token:</i> {2}\r\n" +
-                                                   "<i>Ca:</i> {3}\r\n" +
-                                                   "<i>Minth Authority:</i> {4}\r\n" +
-                                                   "<i>Freeze Authority:</i> {5}\r\n" +
-                                                   "<i>Is Mutable:</i> {6}\r\n" +
-                                                   "<i>Quantity:</i> {7}\r\n" +
-                                                   "<i>Price:</i> {8}\r\n" +
-                                                   "<i>Date:</i> {9}";
+                                                   "<i>Signature:</i> {0}\r\n" +
+                                                   "<i>WalletHash:</i> {1}\r\n" +
+                                                   "<i>ClassWallet:</i> {2} \r\n" +
+                                                   "<i>Token:</i> {3}\r\n" +
+                                                   "<i>Ca:</i> {4}\r\n" +
+                                                   "<i>Minth Authority:</i> {5}\r\n" +
+                                                   "<i>Freeze Authority:</i> {6}\r\n" +
+                                                   "<i>Is Mutable:</i> {7}\r\n" +
+                                                   "<i>Quantity:</i> {8}\r\n" +
+                                                   "<i>Value Spent:</i> {9}\r\n" +
+                                                   "<i>Date:</i> {10}";
         private const string MESSAGE_REBUY_MESSAGE = "<b>*** NEW REBUY ALERT ***</b>\r\n" +
                                                      "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n" +
-                                                     "<i>WalletHash:</i> {0}\r\n" +
-                                                     "<i>ClassWallet:</i> {1} \r\n" +
-                                                     "<i>Token:</i> {2}\r\n" +
-                                                     "<i>Ca:</i> {3}\r\n" +
-                                                     "<i>Minth Authority:</i> {4}\r\n" +
-                                                     "<i>Freeze Authority:</i> {5}\r\n" +
-                                                     "<i>Is Mutable:</i> {6}\r\n" +
-                                                     "<i>Quantity:</i> {7}\r\n" +
-                                                     "<i>Price:</i> {8}\r\n" +
-                                                     "<i>Date:</i> {9}";
+                                                     "<i>Signature:</i> {0}\r\n" +
+                                                     "<i>WalletHash:</i> {1}\r\n" +
+                                                     "<i>ClassWallet:</i> {2} \r\n" +
+                                                     "<i>Token:</i> {3}\r\n" +
+                                                     "<i>Ca:</i> {4}\r\n" +
+                                                     "<i>Minth Authority:</i> {5}\r\n" +
+                                                     "<i>Freeze Authority:</i> {6}\r\n" +
+                                                     "<i>Is Mutable:</i> {7}\r\n" +
+                                                     "<i>Quantity:</i> {8}\r\n" +
+                                                     "<i>Value Spent:</i> {9}\r\n" +
+                                                     "<i>Date:</i> {10}";
         private const string MESSAGE_SELL_MESSAGE = "<b>*** NEW SELL ALERT ***</b>\r\n" +
                                                     "<tg-emoji emoji-id='5368324170671202286'>🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴</tg-emoji>\r\n" +
-                                                    "<i>WalletHash:</i> {0}\r\n" +
-                                                    "<i>ClassWallet:</i> {1} \r\n" +
-                                                    "<i>Token:</i> {2}\r\n" +
-                                                    "<i>Quantity:</i> {3}\r\n" +
-                                                    "<i>Price:</i> {4}\r\n" +
-                                                    "<i>Date:</i> {5}";
+                                                    "<i>Signature:</i> {0}\r\n" +
+                                                    "<i>WalletHash:</i> {1}\r\n" +
+                                                    "<i>ClassWallet:</i> {2} \r\n" +
+                                                    "<i>Token:</i> {3}\r\n" +
+                                                    "<i>Quantity:</i> {4}\r\n" +
+                                                    "<i>Value Received:</i> {5}\r\n" +
+                                                    "<i>Date:</i> {6}";
         private const string MESSAGE_SWAP_MESSAGE = "<b>*** SWAP ALERT ***</b>\r\n" +
                                                     "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n" +
-                                                    "<i>WalletHash:</i> {0}\r\n" +
-                                                    "<i>ClassWallet:</i> {1} \r\n" +
-                                                    "<i>Token Change:</i> {2}\r\n" +
-                                                    "<i>Quantity:</i> {3}\r\n" +
+                                                    "<i>Signature:</i> {0}\r\n" +
+                                                    "<i>WalletHash:</i> {1}\r\n" +
+                                                    "<i>ClassWallet:</i> {2} \r\n" +
+                                                    "<i>Token Change:</i> {3}\r\n" +
                                                     "<i>Token Received:</i> {4}\r\n" +
                                                     "<i>Ca:</i> {5}\r\n" +
                                                     "<i>Date:</i> {6}";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE = "<b>*** NEW MM BUY ALERT ***</b>\r\n" +
                                                            "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n" +
-                                                           "<i>WalletHash:</i> {0}\r\n" +
-                                                           "<i>ClassWallet:</i> {1} \r\n" +
-                                                           "<i>Token:</i> {2}\r\n" +
-                                                           "<i>Ca:</i> {3}\r\n" +
-                                                           "<i>Minth Authority:</i> {4}\r\n" +
-                                                           "<i>Freeze Authority:</i> {5}\r\n" +
-                                                           "<i>Is Mutable:</i> {6}\r\n" +
-                                                           "<i>Quantity:</i> {7}\r\n" +
-                                                           "<i>Price:</i> {8}\r\n" +
-                                                           "<i>Date:</i> {9}\r\n" +
-                                                           "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
+                                                           "<i>Signature:</i> {0}\r\n" +
+                                                           "<i>WalletHash:</i> {1}\r\n" +
+                                                           "<i>ClassWallet:</i> {2} \r\n" +
+                                                           "<i>Token:</i> {3}\r\n" +
+                                                           "<i>Ca:</i> {4}\r\n" +
+                                                           "<i>Minth Authority:</i> {5}\r\n" +
+                                                           "<i>Freeze Authority:</i> {6}\r\n" +
+                                                           "<i>Is Mutable:</i> {7}\r\n" +
+                                                           "<i>Quantity:</i> {8}\r\n" +
+                                                           "<i>Value Spent:</i> {9}\r\n" +
+                                                           "<i>Date:</i> {10}\r\n" +
+                                                           "Cc:@evandrotartari , @euRodrigo, @xton_eth";
         private const string MESSAGE_MM_REBUY_MESSAGE = "<b>*** NEW MM REBUY ALERT ***</b>\r\n" +
                                                         "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n" +
-                                                        "<i>WalletHash:</i> {0}\r\n" +
-                                                        "<i>ClassWallet:</i> {1} \r\n" +
-                                                        "<i>Token:</i> {2}\r\n" +
-                                                        "<i>Ca:</i> {3}\r\n" +
-                                                        "<i>Minth Authority:</i> {4}\r\n" +
-                                                        "<i>Freeze Authority:</i> {5}\r\n" +
-                                                        "<i>Is Mutable:</i> {6}\r\n" +
-                                                        "<i>Quantity:</i> {7}\r\n" +
-                                                        "<i>Price:</i> {8}\r\n" +
-                                                        "<i>Date:</i> {9}";
+                                                        "<i>Signature:</i> {0}\r\n" +
+                                                        "<i>WalletHash:</i> {1}\r\n" +
+                                                        "<i>ClassWallet:</i> {2} \r\n" +
+                                                        "<i>Token:</i> {3}\r\n" +
+                                                        "<i>Ca:</i> {4}\r\n" +
+                                                        "<i>Minth Authority:</i> {5}\r\n" +
+                                                        "<i>Freeze Authority:</i> {6}\r\n" +
+                                                        "<i>Is Mutable:</i> {7}\r\n" +
+                                                        "<i>Quantity:</i> {8}\r\n" +
+                                                        "<i>Value Spent:</i> {9}\r\n" +
+                                                        "<i>Date:</i> {10}";
         private const string MESSAGE_MM_SELL_MESSAGE = "<b>*** NEW MM SELL ALERT ***</b>\r\n" +
                                                        "<tg-emoji emoji-id='5368324170671202286'>🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴</tg-emoji>\r\n" +
-                                                       "<i>WalletHash:</i> {0}\r\n" +
-                                                       "<i>ClassWallet:</i> {1} \r\n" +
-                                                       "<i>Token:</i> {2}\r\n" +
-                                                       "<i>Quantity:</i> {3}\r\n" +
-                                                       "<i>Price:</i> {4}\r\n" +
-                                                       "<i>Date:</i> {5}\r\n" +
-                                                       "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
+                                                       "<i>Signature:</i> {0}\r\n" +
+                                                       "<i>WalletHash:</i> {1}\r\n" +
+                                                       "<i>ClassWallet:</i> {2} \r\n" +
+                                                       "<i>Token:</i> {3}\r\n" +
+                                                       "<i>Quantity:</i> {4}\r\n" +
+                                                       "<i>Value Received:</i> {5}\r\n" +
+                                                       "<i>Date:</i> {6}\r\n" +
+                                                       "Cc:@evandrotartari , @euRodrigo, @xton_eth";
         private const string MESSAGE_MM_SWAP_MESSAGE = "<b>*** SWAP MM ALERT ***</b>\r\n" +
                                                        "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n" +
-                                                       "<i>WalletHash:</i> {0}\r\n" +
-                                                       "<i>ClassWallet:</i> {1} \r\n" +
-                                                       "<i>Token Change:</i> {2}\r\n" +
-                                                       "<i>Quantity:</i> {3}\r\n" +
+                                                       "<i>Signature:</i> {0}\r\n" +
+                                                       "<i>WalletHash:</i> {1}\r\n" +
+                                                       "<i>ClassWallet:</i> {2} \r\n" +
+                                                       "<i>Token Change:</i> {3}\r\n" +
                                                        "<i>Token Received:</i> {4}\r\n" +
                                                        "<i>Ca:</i> {5}\r\n" +
                                                        "<i>Date:</i> {6}\r\n" +
-                                                       "Cc:@morpheus.gmd , @euRodrigo, @xton_eth";
+                                                       "Cc:@evandrotartari , @euRodrigo, @xton_eth";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
             switch (eTypeMessage)
