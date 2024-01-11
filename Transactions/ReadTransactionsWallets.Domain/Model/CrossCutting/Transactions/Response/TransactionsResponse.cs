@@ -1,6 +1,7 @@
 ﻿
 
 using ReadTransactionsWallets.Utils;
+using System.Text.Json.Nodes;
 
 namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Response
 {
@@ -27,6 +28,8 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
     {
         public decimal? BlockTime { get; set; }
         public string? ConfirmationStatus { get; set; }
+        public JsonObject? Err { get; set; }
+        public JsonObject? Memo { get; set; }
         public string? Signature { get; set; }
         public decimal? Slot { get; set; }
         public DateTime DateOfTransaction 
