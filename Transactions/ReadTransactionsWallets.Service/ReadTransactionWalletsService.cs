@@ -50,11 +50,10 @@ namespace ReadTransactionsWallets.Service
                     }
                     catch (Exception ex)
                     {
-                        runtimeController = await SetRuntimeController(runtimeController!, false, initialTicks, true);
-                        await this._mediator.Send(new SendTelegramMessageCommand { Channel = EChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE_ERROR, new object[] { ex.Message, ex.StackTrace?? string.Empty, timer.Period }) });
                         Console.WriteLine($"Exceção: {ex.Message}");
                         Console.WriteLine($"StackTrace: {ex.StackTrace}");
                         Console.WriteLine($"Waiting for next tick in {timer.Period}");
+                        throw ex;
                     }
                 }
                 else

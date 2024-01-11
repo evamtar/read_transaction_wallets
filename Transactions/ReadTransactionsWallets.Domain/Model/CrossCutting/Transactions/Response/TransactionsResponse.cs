@@ -27,8 +27,6 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
     {
         public decimal? BlockTime { get; set; }
         public string? ConfirmationStatus { get; set; }
-        public string? Err { get; set; }
-        public string? Memo { get; set; }
         public string? Signature { get; set; }
         public decimal? Slot { get; set; }
         public DateTime DateOfTransaction 
@@ -41,6 +39,7 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
                     return DateTime.MinValue;
             }  
         }
-        
     }
+
+    
 }
