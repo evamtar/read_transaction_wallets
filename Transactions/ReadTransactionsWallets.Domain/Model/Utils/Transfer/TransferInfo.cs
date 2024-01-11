@@ -39,14 +39,16 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Transfer
                         return ETransactionType.POOLCREATE;
                     else if (this.TokenReceivedPool != null)
                         return ETransactionType.POOLFINALIZED;
+                    else if (this.TokenSended != null && this.TokenReceived == null)
+                        return ETransactionType.SENDED;
+                    else if (this.TokenSended == null && this.TokenReceived != null)
+                        return ETransactionType.RECEIVED;
                     else if (this._mappedTokensConfig.Tokens!.Contains(this.TokenSended?.Token?.Trim() ?? string.Empty))
                         return ETransactionType.BUY;
                     else if (this._mappedTokensConfig.Tokens!.Contains(this.TokenReceived?.Token?.Trim() ?? string.Empty))
                         return ETransactionType.SELL;
-                    else if(this.TokenSended != null && this.TokenReceived == null)
-                        return ETransactionType.SENDED;
-                    else if (this.TokenSended == null && this.TokenReceived != null)
-                        return ETransactionType.RECEIVED;
+                    else if (this.TokenSended == null && this.TokenReceived == null)
+                        return ETransactionType.BURN;
                     return ETransactionType.SWAP;
                 }
             }  

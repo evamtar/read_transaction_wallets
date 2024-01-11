@@ -132,7 +132,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                             await this._mediator.Send(new SendTelegramMessageCommand
                             {
                                 Channel = EChannel.CallSolana,
-                                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.REBUY_MESSAGE,
+                                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.BUY_MESSAGE,
                                                                                    new object[] {
                                                                                        signature ?? string.Empty,
                                                                                        request.WalletHash ?? string.Empty,
@@ -153,7 +153,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                             await this._mediator.Send(new SendTelegramMessageCommand
                             {
                                 Channel = EChannel.CallSolana,
-                                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.BUY_MESSAGE,
+                                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.REBUY_MESSAGE,
                                                                                    new object[]
                                                                                    {
                                                                                        signature ?? string.Empty,

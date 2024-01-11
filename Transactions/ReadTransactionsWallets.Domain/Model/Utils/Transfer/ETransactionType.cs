@@ -11,6 +11,7 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Transfer
         RECEIVED,
         SWAP,
         POOLCREATE,
-        POOLFINALIZED
+        POOLFINALIZED,
+        BURN
     }
 }

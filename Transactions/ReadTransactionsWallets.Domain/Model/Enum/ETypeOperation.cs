@@ -8,11 +8,14 @@ namespace ReadTransactionsWallets.Domain.Model.Enum
 {
     public enum ETypeOperation
     {
-        None = 0,
-        Buy = 1,
-        Sell = 2,
-        Send = 3,
-        Received = 4,
-        Swap = 5
+        NONE = 0,
+        BUY = 1,
+        SELL = 2,
+        SEND = 3,
+        RECEIVED = 4,
+        SWAP = 5,
+        POOLCREATE,
+        POOLFINALIZED,
+        BURN
     }
 }
