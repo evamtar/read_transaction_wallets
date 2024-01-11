@@ -27,13 +27,15 @@ namespace ReadTransactionsWallets.Application.Handlers
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
+        private readonly IOptions<ReadTransactionWalletsConfig> _readTransactionWalletsConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITokenRepository tokenRepository,
                                                       ITransactionsService transactionsService,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
-                                                      IOptions<MappedTokensConfig> mappedTokensConfig)
+                                                      IOptions<MappedTokensConfig> mappedTokensConfig,
+                                                      IOptions<ReadTransactionWalletsConfig> readTransactionWalletsConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;
@@ -41,6 +43,7 @@ namespace ReadTransactionsWallets.Application.Handlers
             this._transactionsRepository = transactionsRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
+            this._readTransactionWalletsConfig = readTransactionWalletsConfig;
         }
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
@@ -211,7 +214,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                         (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
                         CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                         CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
+                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer)
                 };
                 case ETransactionType.SELL:
                     return new object[] 
@@ -222,7 +225,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                         tokenSended?.TokenAlias ?? string.Empty,
                         CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                         CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
-                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
+                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer)
                     };
                 case ETransactionType.SWAP:
                     return new object[]
@@ -233,7 +236,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                         CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                         CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                         tokenReceived?.TokenHash ?? string.Empty,
-                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
+                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer)
                     };
                 case ETransactionType.POOLCREATE:
                     return new object[] 
@@ -245,7 +248,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                         CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor).ToString() + " " + tokenSendedPool?.TokenAlias ?? string.Empty,
                         tokenSended?.TokenHash ?? string.Empty,
                         tokenSendedPool?.TokenHash ?? string.Empty,
-                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
+                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer)
                      };
                 case ETransactionType.POOLFINALIZED:
                     return new object[]
@@ -257,7 +260,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                         CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor).ToString() + " " + tokenReceivedPool?.TokenAlias ?? string.Empty,
                         tokenReceived?.TokenHash ?? string.Empty,
                         tokenReceivedPool?.TokenHash ?? string.Empty,
-                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
+                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer)
                     };
                 default:
                     return null;
@@ -277,6 +280,11 @@ namespace ReadTransactionsWallets.Application.Handlers
         {
             if (value == null || divisor == null) return null;
             return (value / (divisor ?? 1)) ?? 0;
+        }
+
+        private DateTime AdjustDateTimeToPtBR(DateTime? dateTime) 
+        {
+            return dateTime?.AddHours(this._readTransactionWalletsConfig.Value.GTMHoursAdjust?? 0) ?? DateTime.MinValue; 
         }
         
     }

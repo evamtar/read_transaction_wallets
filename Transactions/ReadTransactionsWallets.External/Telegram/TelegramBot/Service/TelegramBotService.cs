@@ -27,8 +27,8 @@ namespace ReadTransactionsWallets.Infra.CrossCutting.Telegram.TelegramBot.Servic
 
         public async Task<TelegramBotResponse> ExecuteSendMessageAsync(TelegramBotRequest request)
         {
-            //var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrlSendMessage ?? string.Empty, _config.Value.Token ?? string.Empty, request.ChatId, request.Message));
-            //var responseBody = await response.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrlSendMessage ?? string.Empty, _config.Value.Token ?? string.Empty, request.ChatId, request.Message));
+            var responseBody = await response.Content.ReadAsStringAsync();
             return new TelegramBotResponse { };
         }
     }
