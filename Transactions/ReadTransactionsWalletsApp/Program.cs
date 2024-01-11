@@ -86,6 +86,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<ITransactionsRepository, TransactionsRepository>();
     services.AddScoped<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddScoped<ITelegramChannelRepository, TelegramChannelRepository>();
+    services.AddScoped<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
 
     #endregion
 

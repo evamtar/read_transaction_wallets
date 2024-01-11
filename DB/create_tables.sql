@@ -1,6 +1,11 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactioNotMapped')
+BEGIN
+	DROP TABLE [TransactioNotMapped]
+END
+GO
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalance')
 BEGIN
 	DROP TABLE [WalletBalance]
@@ -137,5 +142,15 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
+
+CREATE TABLE TransactionNotMapped(
+	ID                UNIQUEIDENTIFIER,
+	[Signature]       VARCHAR(150),
+	[Link]            VARCHAR(500),
+	[Error]           VARCHAR(500),
+	[StackTrace]      NVARCHAR(MAX),
+	[DateTimeRunner]  DATETIME2,
+	PRIMARY KEY (ID)
+)
 
 INSERT INTO RunTimeController VALUES(1, 1703976485, 0);

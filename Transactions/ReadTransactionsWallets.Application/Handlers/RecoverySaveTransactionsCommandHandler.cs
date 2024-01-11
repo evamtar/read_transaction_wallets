@@ -15,6 +15,7 @@ using ReadTransactionsWallets.Domain.Service.CrossCutting;
 using ReadTransactionsWallets.Utils;
 using System.Transactions;
 using System.Xml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ReadTransactionsWallets.Application.Handlers
 {
@@ -24,18 +25,21 @@ namespace ReadTransactionsWallets.Application.Handlers
         private readonly ITransactionsService _transactionsService;
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
+        private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITokenRepository tokenRepository,
                                                       ITransactionsService transactionsService,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
+                                                      ITransactionNotMappedRepository transactionNotMappedRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
+            this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
         }
 
@@ -61,17 +65,18 @@ namespace ReadTransactionsWallets.Application.Handlers
                             var transactionDetails = await this._transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
                             if (transactionDetails.Result != null && transactionDetails.Result.Data?.Count > 0)
                             {
-                                var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails.Result.Data);
-                                var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);
-                                var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, this._mappedTokensConfig.Value);
-                                if (transferInfo.TransactionType != ETransactionType.INDEFINED)
+                                try
                                 {
-                                    var tokenSended = (RecoverySaveTokenCommandResponse?)null;
-                                    var tokenSendedPool = (RecoverySaveTokenCommandResponse?)null;
-                                    var tokenReceived = (RecoverySaveTokenCommandResponse?)null;
-                                    var tokenReceivedPool = (RecoverySaveTokenCommandResponse?)null;
-                                    try
+                                    var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails.Result.Data);
+                                    var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);
+                                    var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, this._mappedTokensConfig.Value);
+                                    if (transferInfo.TransactionType != ETransactionType.INDEFINED)
                                     {
+                                        var tokenSended = (RecoverySaveTokenCommandResponse?)null;
+                                        var tokenSendedPool = (RecoverySaveTokenCommandResponse?)null;
+                                        var tokenReceived = (RecoverySaveTokenCommandResponse?)null;
+                                        var tokenReceivedPool = (RecoverySaveTokenCommandResponse?)null;
+
                                         if (transferInfo?.TokenSended != null)
                                             tokenSended = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferInfo?.TokenSended?.Token });
                                         if (transferInfo?.TokenSendedPool != null)
@@ -97,14 +102,28 @@ namespace ReadTransactionsWallets.Application.Handlers
                                         });
                                         await SendAlertTransacionForTelegram(request, transaction.Signature, transactionDB, transferInfo, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool);
                                     }
-                                    catch (Exception ex)
+                                    else
                                     {
-                                        throw new Exception(ex.Message + " Signature: " + transaction.Signature);
+                                        await this._transactionNotMappedRepository.Add(new TransactionNotMapped
+                                        {
+                                            Signature = transaction.Signature,
+                                            Link = "https://solscan.io/tx/" + transaction.Signature,
+                                            Error = ETransactionType.INDEFINED.ToString(),
+                                            StackTrace = null,
+                                            DateTimeRunner = DateTime.Now
+                                        });
                                     }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    Console.WriteLine("*********************** Signature: ************************   " + transaction.Signature);
+                                    await this._transactionNotMappedRepository.Add(new TransactionNotMapped
+                                    {
+                                        Signature = transaction.Signature,
+                                        Link = "https://solscan.io/tx/" + transaction.Signature,
+                                        Error = ex.Message,
+                                        StackTrace = ex.StackTrace,
+                                        DateTimeRunner = DateTime.Now
+                                    });
                                 }
                             }
                         }

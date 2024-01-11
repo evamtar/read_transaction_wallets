@@ -28,10 +28,9 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
     {
         public decimal? BlockTime { get; set; }
         public string? ConfirmationStatus { get; set; }
-        public JsonObject? Err { get; set; }
-        public JsonObject? Memo { get; set; }
         public string? Signature { get; set; }
         public decimal? Slot { get; set; }
+        public ErrorResponse? Err { get; set; }
         public DateTime DateOfTransaction 
         { 
             get 
@@ -44,5 +43,16 @@ namespace ReadTransactionsWallets.Domain.Model.CrossCutting.Transactions.Respons
         }
     }
 
-    
+    public class ErrorResponse
+    {
+        public List<object>? InstructionError { get; set; }
+    }
+
+    public class CustomResponse 
+    { 
+        public int? Custom { get; set; }
+    }
+
+
+
 }
