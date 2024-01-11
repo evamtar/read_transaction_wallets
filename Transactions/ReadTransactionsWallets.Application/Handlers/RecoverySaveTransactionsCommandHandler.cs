@@ -126,7 +126,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                 case EClassWalletAlert.Arbitrator:
                     if (transferInfo?.TransactionType == ETransactionType.BUY)
                     {
-                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
+                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature != transaction!.Signature && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
                         if (anotherTransactions == null)
                         {
                             await this._mediator.Send(new SendTelegramMessageCommand
@@ -142,7 +142,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                        tokenReceived?.MintAuthority ?? "NO",
                                                                                        tokenReceived?.FreezeAuthority ?? "NO",
                                                                                        (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                    })
@@ -164,7 +164,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                        tokenReceived?.MintAuthority ?? "NO",
                                                                                        tokenReceived?.FreezeAuthority ?? "NO",
                                                                                        (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                    })
@@ -185,7 +185,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                     ((EClassWalletAlert)request.IdClassification).ToString(),
                                                                                     tokenSended?.TokenAlias ?? string.Empty,
                                                                                     CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                     transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                 })
                         });
@@ -202,7 +202,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        tokenReceived?.TokenHash ?? string.Empty,
                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue
@@ -251,7 +251,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                 case EClassWalletAlert.MM:
                     if (transferInfo?.TransactionType == ETransactionType.BUY)
                     {
-                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.ID != transaction!.ID && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
+                        var anotherTransactions = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature != transaction!.Signature && x.IdWallet == request.WalletId && x.IdTokenDestination == transaction!.IdTokenDestination);
                         if (anotherTransactions == null)
                         {
                             await this._mediator.Send(new SendTelegramMessageCommand
@@ -268,7 +268,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                         tokenReceived?.MintAuthority ?? "NO",
                                                                                         tokenReceived?.FreezeAuthority ?? "NO",
                                                                                         (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                         CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                                                                                         transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                     })
@@ -289,7 +289,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                         tokenReceived?.MintAuthority ?? "NO",
                                                                                         tokenReceived?.FreezeAuthority ?? "NO",
                                                                                         (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
-                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                         CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
                                                                                         transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                     })
@@ -309,7 +309,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                     ((EClassWalletAlert)request.IdClassification).ToString(),
                                                                                     tokenSended?.TokenAlias ?? string.Empty,
                                                                                     CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                    CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                     transferInfo?.DataOfTransfer ?? DateTime.MinValue
                                                                                 })
                         });
@@ -326,7 +326,7 @@ namespace ReadTransactionsWallets.Application.Handlers
                                                                                        request.WalletHash ?? string.Empty,
                                                                                        ((EClassWalletAlert)request.IdClassification).ToString(),
                                                                                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                                                                                       CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        tokenReceived?.TokenAlias ?? string.Empty,
                                                                                        tokenReceived?.TokenHash ?? string.Empty,
                                                                                        transferInfo?.DataOfTransfer ?? DateTime.MinValue

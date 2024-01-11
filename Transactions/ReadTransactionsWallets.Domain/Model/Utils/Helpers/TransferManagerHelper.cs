@@ -29,8 +29,8 @@ namespace ReadTransactionsWallets.Domain.Model.Utils.Helpers
         public static TransferInfo GetTransferInfo(TransferAccount? transferAccount, MappedTokensConfig mappedTokensConfig) 
         {
             var transferInfo = new TransferInfo(mappedTokensConfig);
-            transferInfo.DataOfTransfer = transferAccount?.DateOfTransfer;
             var finalBalance = transferAccount?.GetFinalBalance();
+            transferInfo.DataOfTransfer = transferAccount?.DateOfTransfer;
             if ((finalBalance != null && finalBalance.ContainsKey(PAYMENT_FEE) && finalBalance.Keys.Count > 3) || (finalBalance != null && !finalBalance.ContainsKey(PAYMENT_FEE) && finalBalance.Keys.Count > 2))
                 throw new Exception("Mapped nethod needs verify");
             else 
