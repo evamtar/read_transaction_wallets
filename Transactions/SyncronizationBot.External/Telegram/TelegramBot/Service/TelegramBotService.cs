@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 
 namespace SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service

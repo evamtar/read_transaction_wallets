@@ -11,10 +11,16 @@ using SyncronizationBot.Application.Handlers;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
+using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
+using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Configs;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenOverview.Configs;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenOverview.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Configs;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Service;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
@@ -100,26 +106,25 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region External Services
     
-
     #region Birdeye
 
     services.Configure<TokenOverviewConfig>(configuration.GetSection("TokenOverview"));
-    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
-    //            .HandleTransientHttpError()
-    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    services.AddHttpClient<ITokenOverviewService, TokenOverviewService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokenSecurityConfig>(configuration.GetSection("TokenSecurity"));
-    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
-    //            .HandleTransientHttpError()
-    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    services.AddHttpClient<ITokenSecurityService, TokenSecurityService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokenCreationConfig>(configuration.GetSection("TokenCreation"));
-    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
-    //            .HandleTransientHttpError()
-    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    services.AddHttpClient<ITokenCreationService, TokenCreationService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     #endregion
 
     #region SolanaFM

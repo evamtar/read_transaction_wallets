@@ -1,7 +1,7 @@
 ﻿using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response;
 
-namespace SyncronizationBot.Domain.Service.CrossCutting
+namespace SyncronizationBot.Domain.Service.CrossCutting.Telegram
 {
     public interface ITelegramBotService
     {

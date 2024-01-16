@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 
 namespace SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service

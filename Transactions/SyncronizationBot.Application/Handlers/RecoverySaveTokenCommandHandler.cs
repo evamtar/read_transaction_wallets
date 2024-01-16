@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Accounts.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 
 namespace SyncronizationBot.Application.Handlers

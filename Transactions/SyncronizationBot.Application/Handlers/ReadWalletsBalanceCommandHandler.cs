@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers
 {

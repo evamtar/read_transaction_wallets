@@ -10,7 +10,7 @@ using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
 
 

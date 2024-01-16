@@ -14,10 +14,4 @@
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Birdeye\TokenCreation\Service\" />
-    <Folder Include="Birdeye\TokenOverview\Service\" />
-    <Folder Include="Birdeye\TokenSecurity\Service\" />
-  </ItemGroup>
-
 </Project>

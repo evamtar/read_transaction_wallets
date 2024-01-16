@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Response;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Configs;
 
 namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service

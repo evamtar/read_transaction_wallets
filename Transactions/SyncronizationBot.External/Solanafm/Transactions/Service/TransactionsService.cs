@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Response;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using System.Collections.Specialized;
 using System.Text.Json.Nodes;

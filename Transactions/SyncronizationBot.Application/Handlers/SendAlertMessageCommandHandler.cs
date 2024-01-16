@@ -6,7 +6,7 @@ using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.Handlers

@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
-using SyncronizationBot.Domain.Service.CrossCutting;
+using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
 namespace SyncronizationBot.Application.Handlers
 {

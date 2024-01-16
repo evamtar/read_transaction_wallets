@@ -2,7 +2,7 @@
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Response;
 
 
-namespace SyncronizationBot.Domain.Service.CrossCutting
+namespace SyncronizationBot.Domain.Service.CrossCutting.Solanafm
 {
     public interface IAccountInfoService
     {
