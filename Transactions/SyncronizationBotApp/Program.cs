@@ -21,6 +21,8 @@ using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenOverview.Configs;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenOverview.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Configs;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Service;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortofolio.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
@@ -125,6 +127,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<WalletPortifolioConfig>(configuration.GetSection("WalletPortifolio"));
+    services.AddHttpClient<IWalletPortifolioService, WalletPortifolioService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
     #endregion
 
     #region SolanaFM
