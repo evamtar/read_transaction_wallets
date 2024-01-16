@@ -1,5 +1,5 @@
 ﻿using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.CrossCutting.Transfers.Response;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Response;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 
 

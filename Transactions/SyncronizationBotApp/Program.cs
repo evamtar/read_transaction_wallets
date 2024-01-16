@@ -12,7 +12,10 @@ using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting;
-using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Config;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Configs;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenOverview.Configs;
+using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Configs;
+using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Service;
@@ -57,13 +60,14 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")));
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
 
     #endregion
 
     #region Hosted Service
 
     services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<AlertPriceService>();
     //services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
@@ -76,12 +80,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
     services.AddScoped<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddScoped<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
+    services.AddScoped<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
 
     #endregion
 
     #region Repositories
 
-    services.AddScoped<IRunTimeControllerRepository, RunTimeControllerRepository>();
+    services.AddTransient<IRunTimeControllerRepository, RunTimeControllerRepository>();
     services.AddScoped<IClassWalletRepository, ClassWalletRepository>();
     services.AddScoped<IWalletRepository, WalletRepository>();
     services.AddScoped<ITokenRepository, TokenRepository>();
@@ -90,10 +95,34 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<ITelegramChannelRepository, TelegramChannelRepository>();
     services.AddScoped<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddScoped<IAlertPriceRepository, AlertPriceRepository>();
-    
+
     #endregion
 
     #region External Services
+    
+
+    #region Birdeye
+
+    services.Configure<TokenOverviewConfig>(configuration.GetSection("TokenOverview"));
+    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
+    //            .HandleTransientHttpError()
+    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<TokenSecurityConfig>(configuration.GetSection("TokenSecurity"));
+    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
+    //            .HandleTransientHttpError()
+    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    services.Configure<TokenCreationConfig>(configuration.GetSection("TokenCreation"));
+    //services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
+    //            .HandleTransientHttpError()
+    //            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+    //            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    #endregion
+
+    #region SolanaFM
 
     services.Configure<TransactionsConfig>(configuration.GetSection("Transactions"));
     services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
@@ -101,22 +130,14 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
-
     services.Configure<TransfersConfig>(configuration.GetSection("Transfers"));
     services.AddHttpClient<ITransfersService, TransfersService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
-
     services.Configure<TokensConfig>(configuration.GetSection("Tokens"));
     services.AddHttpClient<ITokensService, TokensService>().AddPolicyHandler(HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
-
-    services.Configure<TelegramBotConfig>(configuration.GetSection("TelegramBot"));
-    services.AddHttpClient<ITelegramBotService, TelegramBotService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
@@ -132,12 +153,28 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    #endregion
+
+    #region Jupiter
 
     services.Configure<JupiterPriceConfig>(configuration.GetSection("JupiterPrice"));
     services.AddHttpClient<IJupiterPriceService, JupiterPriceService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))); 
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
+    #region Telegram
+
+    services.Configure<TelegramBotConfig>(configuration.GetSection("TelegramBot"));
+    services.AddHttpClient<ITelegramBotService, TelegramBotService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
     #endregion
 
 }

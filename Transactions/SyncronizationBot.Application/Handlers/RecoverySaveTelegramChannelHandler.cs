@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.TelegramBot.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;

@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.Accounts.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Tokens.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Accounts.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting;
-using System;
+
 
 namespace SyncronizationBot.Application.Handlers
 {

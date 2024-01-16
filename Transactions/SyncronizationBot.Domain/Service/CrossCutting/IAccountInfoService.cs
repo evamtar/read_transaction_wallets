@@ -1,5 +1,5 @@
-﻿using SyncronizationBot.Domain.Model.CrossCutting.AccountInfo.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.AccountInfo.Response;
+﻿using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Response;
 
 
 namespace SyncronizationBot.Domain.Service.CrossCutting

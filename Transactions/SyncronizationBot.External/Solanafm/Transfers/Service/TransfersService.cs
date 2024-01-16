@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SyncronizationBot.Domain.Model.CrossCutting.Transfers.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Transfers.Response;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Response;
 using SyncronizationBot.Domain.Service.CrossCutting;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Configs;
 

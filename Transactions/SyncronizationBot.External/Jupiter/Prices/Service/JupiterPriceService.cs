@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using SyncronizationBot.Domain.Model.CrossCutting.Prices.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Prices.Response;
+using Newtonsoft.Json;
+using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 using SyncronizationBot.Domain.Service.CrossCutting;
-using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Config;
+using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 
 namespace SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service
 {
@@ -16,9 +17,11 @@ namespace SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service
             _config = config;
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
         }
-        public Task<JupiterPricesResponse> ExecuteRecoveryPriceAsync(JupiterPricesRequest request)
+        public async Task<JupiterPricesResponse> ExecuteRecoveryPriceAsync(JupiterPricesRequest request)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, string.Join(",", request.Ids?? new List<string>())));
+            var responseBody = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<JupiterPricesResponse>(responseBody) ?? new JupiterPricesResponse { };
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SyncronizationBot.Domain.Model.CrossCutting.Transactions.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Transactions.Response;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Response;
 using SyncronizationBot.Domain.Service.CrossCutting;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using System.Collections.Specialized;

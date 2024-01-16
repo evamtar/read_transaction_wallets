@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SyncronizationBot.Domain.Model.CrossCutting.TelegramBot.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.TelegramBot.Response;
+using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response;
 using SyncronizationBot.Domain.Service.CrossCutting;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 

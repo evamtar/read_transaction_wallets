@@ -36,6 +36,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertPrice')
+BEGIN
+	DROP TABLE [AlertPrice]
+END
+GO
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
 	CREATE TABLE TelegramChannel(
@@ -57,10 +63,16 @@ BEGIN
 		TokenHash         VARCHAR(50),
 		PriceValue        MONEY,
 		PricePercent      DECIMAL(5,2),
+		TypeAlert         INT,
+		IsRecurrence      BIT,
 		TelegramChannelId UNIQUEIDENTIFIER,   
 		PRIMARY KEY(ID),
 		FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
 	);
+	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
+	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '7.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '9', null, 1, 1, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '95.60', 'So11111111111111111111111111111111111111112', '88.58', null, 2, 1, @TelegramChannelId);
 END
 GO
 
@@ -75,7 +87,7 @@ BEGIN
 		IsRunning BIT,
 		PRIMARY KEY(IdRuntime)
 	);
-	INSERT INTO RunTimeController VALUES(1, 1705354334, 1, 1, 0);
+	INSERT INTO RunTimeController VALUES(1, 1705375588, 1, 1, 0);
 	INSERT INTO RunTimeController VALUES(2, null, 1, 2, 0);
 	INSERT INTO RunTimeController VALUES(3, null, 1, 3, 0);
 END

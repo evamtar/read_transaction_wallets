@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.AccountInfo.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Service.CrossCutting;
 
 namespace SyncronizationBot.Application.Handlers

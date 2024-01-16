@@ -41,7 +41,7 @@ namespace SyncronizationBot.Service
                             await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
                             await SetRuntimeControllerAsync(false, finalTicks, true);
                             base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await this._mediator.Send(new SendTelegramMessageCommand { Channel = ETelegramChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE, new object[] { DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), timer.Period }) });
+                            await base.SendAlertExecute(ETypeService.Transaction, timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
                         }
                         catch (Exception ex)
@@ -55,7 +55,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await this._mediator.Send(new SendTelegramMessageCommand { Channel = ETelegramChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_RUNNING, new object[] { DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), timer.Period }) });
+                        await base.SendAlertAppRunning(ETypeService.Transaction, timer);
                         base.LogMessage($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 
@@ -63,7 +63,7 @@ namespace SyncronizationBot.Service
             }
             else 
             {
-                await this._mediator.Send(new SendTelegramMessageCommand { Channel = ETelegramChannel.CallSolanaLog, Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_TIME_NULL, new object[] { DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") }) });
+                await base.SendAlertTimerIsNull(ETypeService.Transaction);
                 base.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
             base.LogMessage("Finalizado");

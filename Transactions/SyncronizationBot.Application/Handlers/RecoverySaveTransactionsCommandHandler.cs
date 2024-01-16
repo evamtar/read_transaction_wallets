@@ -3,9 +3,8 @@ using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.CrossCutting.Transactions.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Transfers.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Transfers.Response;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
@@ -13,9 +12,7 @@ using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting;
 using SyncronizationBot.Utils;
-using System.Transactions;
-using System.Xml;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace SyncronizationBot.Application.Handlers
 {

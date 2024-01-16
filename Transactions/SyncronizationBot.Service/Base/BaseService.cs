@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Utils;
 
 
 namespace SyncronizationBot.Service.Base
@@ -30,7 +32,7 @@ namespace SyncronizationBot.Service.Base
             return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 10));
         }
 
-        protected async Task SetRuntimeControllerAsync(bool isRunning, decimal unixTimeSeconds, bool detachedItem)
+        protected async Task SetRuntimeControllerAsync(bool isRunning, decimal? unixTimeSeconds, bool detachedItem)
         {
             this.RunTimeController!.IsRunning = isRunning;
             this.RunTimeController!.UnixTimeSeconds = unixTimeSeconds;
@@ -46,6 +48,48 @@ namespace SyncronizationBot.Service.Base
             return this.RunTimeController;
         }
 
+        protected async Task SendAlertExecute(ETypeService typeService, PeriodicTimer timer) 
+        {
+            await this._mediator.Send(new SendTelegramMessageCommand
+            {
+                Channel = ETelegramChannel.CallSolanaLog,
+                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE,
+                                new object[] {
+                                    EnumExtension.GetDescription(typeService) ?? string.Empty,
+                                    DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
+                                    timer.Period
+                                })
+            });
+        }
+
+        protected async Task SendAlertAppRunning(ETypeService typeService, PeriodicTimer timer)
+        {
+            await this._mediator.Send(new SendTelegramMessageCommand
+            {
+                Channel = ETelegramChannel.CallSolanaLog,
+                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_RUNNING,
+                            new object[] {
+                                EnumExtension.GetDescription(typeService) ?? string.Empty,
+                                DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
+                                timer.Period
+                            })
+            });
+        }
+
+        protected async Task SendAlertTimerIsNull(ETypeService typeService)
+        {
+            await this._mediator.Send(new SendTelegramMessageCommand
+            {
+                Channel = ETelegramChannel.CallSolanaLog,
+                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_TIME_NULL,
+                    new object[] {
+                        EnumExtension.GetDescription(typeService) ?? string.Empty,
+                        DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+                    })
+            });
+        }
+
+
         protected void LogMessage(string message) 
         {
             Console.WriteLine(message);
@@ -55,5 +99,7 @@ namespace SyncronizationBot.Service.Base
         {
             return await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false && x.TypeService == typeService);
         }
+
+        
     }
 }

@@ -3,17 +3,17 @@ namespace SyncronizationBot.Utils
 {
     public static class TelegramMessageHelper
     {
-        private const string MESSAGE_LOG_EXECUTE = "<b>Execução do aplicativo de call solana</b>\r\n" +
-                                                   "<b>Data Execução: </b>{0}.\r\n" +
-                                                   "<i><b>Proxima execução</b> no período timer de --> {1}</i>";
-        private const string MESSAGE_LOG_APP_RUNNING = "<b>Aplicativo está rodando.</b>\r\n" +
-                                                       "<i><b>Não irá efetuar essa execução:</b> {0}</i>.\r\n";
-        private const string MESSAGE_LOG_APP_TIME_NULL = "<b>Timer está nulo ou não configurado.</b>\r\n" +
-                                                         "<i><b>Não irá efetuar essa execução:</b> {0}</i>.\r\n";
-        private const string MESSAGE_LOG_EXECUTE_ERROR = "<b>Aplicativo suspendeu a execução.</b>\r\n" +
-                                                         "<i><b>Mensagem de erro:</b> {0}</i>.\r\n" +
-                                                         "StackTrace: {1}\r\n" +
-                                                         "<i><b>Proxima execução</b> no período timer de --> {2}. \r\n" +
+        private const string MESSAGE_LOG_EXECUTE = "<b>Execução do serviço {0} de call solana</b>\r\n" +
+                                                   "<b>Data Execução: </b>{1}.\r\n" +
+                                                   "<i><b>Proxima execução</b> no período timer de --> {2}</i>";
+        private const string MESSAGE_LOG_APP_RUNNING = "<b>O serviço {0} está rodando.</b>\r\n" +
+                                                       "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
+        private const string MESSAGE_LOG_APP_TIME_NULL = "<b>Timer do serviço {0} está nulo ou não configurado.</b>\r\n" +
+                                                         "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
+        private const string MESSAGE_LOG_EXECUTE_ERROR = "<b>O serviço {2} suspendeu a execução.</b>\r\n" +
+                                                         "<i><b>Mensagem de erro:</b> {1}</i>.\r\n" +
+                                                         "StackTrace: {2}\r\n" +
+                                                         "<i><b>Proxima execução</b> no período timer de --> {3}. \r\n" +
                                                          "<b>Dev's Favor verificar</b> Cc:@evandrotartari , @euRodrigo</i>";
         private const string MESSAGE_BUY_MESSAGE_HEADER = "<b>*** NEW BUY ALERT ***</b>\r\n";
         private const string MESSAGE_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
@@ -84,6 +84,19 @@ namespace SyncronizationBot.Utils
                                                               "<i>Date:</i> {7}\r\n";
         private const string MESSAGE_POOL_FINALIZED_CHART_1 = "<a href=\"https://birdeye.so/token/{8}?chain=solana\"> Chart1</a>}\r\n";
         private const string MESSAGE_POOL_FINALIZED_CHART_2 = "<a href=\"https://birdeye.so/token/{9}?chain=solana\"> Chart2</a>";
+        private const string MESSAGE_ALERT_PRICE_UP = "<b>*** PRICE UP ***</b>\r\n" +
+                                                      "<tg-emoji emoji-id='5368324170671202286'>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</tg-emoji>\r\n" +
+                                                      "<i>Token Id:</i> {0}\r\n" +
+                                                      "<i>Token Name:</i> {1}\r\n" +
+                                                      "<i>New Price Change:</i> {2}\r\n" +
+                                                      "<i>Is Recurrency Alert:</i> {3}\r\n";
+        private const string MESSAGE_ALERT_PRICE_DOWN = "<b>*** PRICE DOWN ***</b>\r\n" +
+                                                      "<tg-emoji emoji-id='5368324170671202286'>🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨</tg-emoji>\r\n" +
+                                                      "<i>Token Id:</i> {0}\r\n" +
+                                                      "<i>Token Name:</i> {1}\r\n" +
+                                                      "<i>New Price Change:</i> {2}\r\n" +
+                                                      "<i>Is Recurrency Alert:</i> {3}\r\n" +
+                                                      "<tg-emoji emoji-id='5368324170671202286'>💸💸💸💸💸💸💸💸💸💸💸</tg-emoji>\r\n";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
             switch (eTypeMessage)
@@ -116,6 +129,11 @@ namespace SyncronizationBot.Utils
                     return string.Format(MESSAGE_POOL_CREATED_MESSAGE + MESSAGE_POOL_CREATED_CHART_1 + MESSAGE_POOL_CREATED_CHART_2, args);
                 case ETypeMessage.POOL_FINALIZED_MESSAGE:
                     return string.Format(MESSAGE_POOL_FINALIZED_MESSAGE + MESSAGE_POOL_FINALIZED_CHART_1 + MESSAGE_POOL_FINALIZED_CHART_2, args);
+                case ETypeMessage.PRICE_UP_MESSAGE:
+                case ETypeMessage.PRICE_INFO_MESSAGE:
+                    return string.Format(MESSAGE_ALERT_PRICE_UP, args);
+                case ETypeMessage.PRICE_DOWN_MESSAGE:
+                    return string.Format(MESSAGE_ALERT_PRICE_DOWN, args); 
                 default:
                     return string.Empty;
             }
@@ -137,6 +155,9 @@ namespace SyncronizationBot.Utils
         MM_SELL_MESSAGE,
         MM_SWAP_MESSAGE,
         POOL_CREATED_MESSAGE,
-        POOL_FINALIZED_MESSAGE
+        POOL_FINALIZED_MESSAGE,
+        PRICE_UP_MESSAGE,
+        PRICE_DOWN_MESSAGE,
+        PRICE_INFO_MESSAGE
     }
 }
