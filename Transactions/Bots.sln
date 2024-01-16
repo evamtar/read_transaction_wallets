@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Application", "1 - Application", "{16C492A0-DEFD-4EF2-A18F-AF0261405580}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{89E059C2-88F5-49B4-9ACE-CD0F5F164940}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Service", "3 - Service", "{61C0C4D8-BF0B-4DBF-AD6D-58F6CBC40C86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{A06C1B09-F570-4185-ACBF-42C05BADC092}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.1 - Data", "4.1 - Data", "{CB65C00E-C61B-4606-8B65-2D7C302806FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 - CrossCutting", "{3B78789B-FE8C-4374-AEBC-80DAAF73CDAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Utils", "5 - Utils", "{A09392CB-2A8B-4265-B27B-39FD96F58183}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBotApp", "SyncronizationBotApp\SyncronizationBotApp.csproj", "{A8AA272B-3AE1-4209-A770-6F1F800CF3F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Application", "SyncronizationBot.Application\SyncronizationBot.Application.csproj", "{734C7A51-7D31-4199-9462-00621E2947A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Domain", "SyncronizationBot.Domain\SyncronizationBot.Domain.csproj", "{49EEB2D8-47F0-410C-BA64-234DFD8E9E76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Service", "SyncronizationBot.Service\SyncronizationBot.Service.csproj", "{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Infra.Data", "SyncronizationBot.Infra.Data\SyncronizationBot.Infra.Data.csproj", "{595381CC-5D14-481E-BF0D-90E54BF2B1A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Infra.CrossCutting", "SyncronizationBot.External\SyncronizationBot.Infra.CrossCutting.csproj", "{50974CD4-F7B5-4455-85AF-DE7056F39FDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Utils", "SyncronizationBot.Utils\SyncronizationBot.Utils.csproj", "{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8AA272B-3AE1-4209-A770-6F1F800CF3F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8AA272B-3AE1-4209-A770-6F1F800CF3F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8AA272B-3AE1-4209-A770-6F1F800CF3F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8AA272B-3AE1-4209-A770-6F1F800CF3F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734C7A51-7D31-4199-9462-00621E2947A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734C7A51-7D31-4199-9462-00621E2947A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734C7A51-7D31-4199-9462-00621E2947A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734C7A51-7D31-4199-9462-00621E2947A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49EEB2D8-47F0-410C-BA64-234DFD8E9E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49EEB2D8-47F0-410C-BA64-234DFD8E9E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49EEB2D8-47F0-410C-BA64-234DFD8E9E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49EEB2D8-47F0-410C-BA64-234DFD8E9E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{595381CC-5D14-481E-BF0D-90E54BF2B1A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{595381CC-5D14-481E-BF0D-90E54BF2B1A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{595381CC-5D14-481E-BF0D-90E54BF2B1A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{595381CC-5D14-481E-BF0D-90E54BF2B1A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50974CD4-F7B5-4455-85AF-DE7056F39FDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50974CD4-F7B5-4455-85AF-DE7056F39FDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50974CD4-F7B5-4455-85AF-DE7056F39FDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50974CD4-F7B5-4455-85AF-DE7056F39FDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CB65C00E-C61B-4606-8B65-2D7C302806FE} = {A06C1B09-F570-4185-ACBF-42C05BADC092}
+		{3B78789B-FE8C-4374-AEBC-80DAAF73CDAD} = {A06C1B09-F570-4185-ACBF-42C05BADC092}
+		{A8AA272B-3AE1-4209-A770-6F1F800CF3F3} = {16C492A0-DEFD-4EF2-A18F-AF0261405580}
+		{734C7A51-7D31-4199-9462-00621E2947A2} = {16C492A0-DEFD-4EF2-A18F-AF0261405580}
+		{49EEB2D8-47F0-410C-BA64-234DFD8E9E76} = {89E059C2-88F5-49B4-9ACE-CD0F5F164940}
+		{BEDFC921-17AD-4B04-91E7-84E70ACA5B5D} = {61C0C4D8-BF0B-4DBF-AD6D-58F6CBC40C86}
+		{595381CC-5D14-481E-BF0D-90E54BF2B1A5} = {CB65C00E-C61B-4606-8B65-2D7C302806FE}
+		{50974CD4-F7B5-4455-85AF-DE7056F39FDE} = {3B78789B-FE8C-4374-AEBC-80DAAF73CDAD}
+		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65} = {A09392CB-2A8B-4265-B27B-39FD96F58183}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DE01E3D-9AAF-4DFC-95AF-630848C917B1}
+	EndGlobalSection
+EndGlobal
