@@ -27,7 +27,7 @@ namespace SyncronizationBot.Utils
                                                           "<i>Is Mutable:</i> {7}\r\n" +
                                                           "<i>Quantity:</i> {8}\r\n" +
                                                           "<i>Value Spent:</i> {9}\r\n" +
-                                                          "<i>Date:</i> {10}}\r\n";
+                                                          "<i>Date:</i> {10}\r\n";
         private const string MESSAGE_BUY_CHART = "<a href=\"https://birdeye.so/token/{11}?chain=solana\">Chart</a>";
         private const string MESSAGE_REBUY_MESSAGE_HEADER = "<b>*** NEW REBUY ALERT ***</b>\r\n";
         private const string MESSAGE_REBUY_MESSAGE_ICONS = "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n";
@@ -39,7 +39,7 @@ namespace SyncronizationBot.Utils
                                                            "<i>Token:</i> {3}\r\n" +
                                                            "<i>Quantity:</i> {4}\r\n" +
                                                            "<i>Value Received:</i> {5}\r\n" +
-                                                           "<i>Date:</i> {6}}\r\n";
+                                                           "<i>Date:</i> {6}\r\n";
         private const string MESSAGE_SELL_CHART = "<a href=\"https://birdeye.so/token/{7}?chain=solana\"> Chart</a>";
         private const string MESSAGE_SWAP_MESSAGE_HEADER = "<b>*** SWAP ALERT ***</b>\r\n";
         private const string MESSAGE_SWAP_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n";
@@ -49,8 +49,8 @@ namespace SyncronizationBot.Utils
                                                          "<i>Token Change:</i> {3}\r\n" +
                                                          "<i>Token Received:</i> {4}\r\n" +
                                                          "<i>Ca:</i> {5}\r\n" +
-                                                         "<i>Date:</i> {6}}\r\n";
-        private const string MESSAGE_SWAP_CHART_1 = "<a href=\"https://birdeye.so/token/{7}?chain=solana\"> Chart1</a>}\r\n";
+                                                         "<i>Date:</i> {6}\r\n";
+        private const string MESSAGE_SWAP_CHART_1 = "<a href=\"https://birdeye.so/token/{7}?chain=solana\"> Chart1</a>\r\n";
         private const string MESSAGE_SWAP_CHART_2 = "<a href=\"https://birdeye.so/token/{8}?chain=solana\"> Chart2</a>";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE_HEADER = "<b>*** NEW MM BUY ALERT ***</b>\r\n";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
