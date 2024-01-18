@@ -14,10 +14,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ts => ts.IdToken);
             builder.Property(ts => ts.CreatorAddress);
             builder.Property(ts => ts.CreationTime);
-            builder.Property(ts => ts.Top10HolderBalance);
-            builder.Property(ts => ts.Top10HolderPercent);
-            builder.Property(ts => ts.Top10UserBalance);
-            builder.Property(ts => ts.Top10UserPercent);
+            builder.Property(ts => ts.Top10HolderBalance).HasConversion<string?>();
+            builder.Property(ts => ts.Top10HolderPercent).HasConversion<string?>();
+            builder.Property(ts => ts.Top10UserBalance).HasConversion<string?>();
+            builder.Property(ts => ts.Top10UserPercent).HasConversion<string?>();
             builder.Property(ts => ts.IsTrueToken);
             builder.Property(ts => ts.LockInfo);
             builder.Property(ts => ts.Freezeable);

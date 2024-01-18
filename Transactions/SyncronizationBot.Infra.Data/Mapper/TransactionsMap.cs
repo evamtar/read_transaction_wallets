@@ -13,10 +13,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.ID);
             builder.Property(t => t.Signature);
             builder.Property(t => t.DateOfTransaction);
-            builder.Property(t => t.AmountValueSource);
-            builder.Property(t => t.AmountValueSourcePool);
-            builder.Property(t => t.AmountValueDestination);
-            builder.Property(t => t.AmountValueDestinationPool);
+            builder.Property(t => t.AmountValueSource).HasConversion<string?>();
+            builder.Property(t => t.AmountValueSourcePool).HasConversion<string?>();
+            builder.Property(t => t.AmountValueDestination).HasConversion<string?>();
+            builder.Property(t => t.AmountValueDestinationPool).HasConversion<string?>();
             builder.Property(t => t.IdTokenSource);
             builder.Property(t => t.IdTokenSourcePool);
             builder.Property(t => t.IdTokenDestination);

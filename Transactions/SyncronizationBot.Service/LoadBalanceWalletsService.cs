@@ -1,8 +1,5 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands;
-using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
@@ -31,9 +28,8 @@ namespace SyncronizationBot.Service
                         try
                         {
                             await base.SetRuntimeControllerAsync(true, null, false);
-                            await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "J9qyPtHnS4FJSfJ8Xok5oSv8JtyiMEBZTZD44xSJxUae" });
-                            //await this._mediator.Send(new ReadWalletsBalanceCommand { });
-                            //await this._mediator.Send(new UpdateWalletsBalanceCommand{ });
+                            await this._mediator.Send(new ReadWalletsBalanceCommand { });
+                            await this._mediator.Send(new UpdateWalletsBalanceCommand{ });
                             await SetRuntimeControllerAsync(false, null, true);
                             base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(ETypeService.Balance, timer);

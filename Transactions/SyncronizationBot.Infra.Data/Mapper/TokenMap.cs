@@ -15,9 +15,9 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.Hash);
             builder.Property(t => t.Symbol);
             builder.Property(t => t.Name);
-            builder.Property(t => t.Supply).HasPrecision(38, 10).HasConversion<decimal?>();
-            builder.Property(t => t.MarketCap);
-            builder.Property(t => t.Liquidity);
+            builder.Property(t => t.Supply).HasConversion<string?>();
+            builder.Property(t => t.MarketCap).HasConversion<string?>();
+            builder.Property(t => t.Liquidity).HasConversion<string?>();
             builder.Property(t => t.UniqueWallet24h);
             builder.Property(t => t.UniqueWalletHistory24h);
             builder.Property(t => t.Decimals);

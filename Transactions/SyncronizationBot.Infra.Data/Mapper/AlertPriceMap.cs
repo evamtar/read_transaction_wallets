@@ -13,10 +13,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ap => ap.ID);
             builder.Property(ap => ap.CreateDate);
             builder.Property(ap => ap.EndDate);
-            builder.Property(ap => ap.PriceBase);
+            builder.Property(ap => ap.PriceBase).HasConversion<string?>();
             builder.Property(ap => ap.TokenHash);
-            builder.Property(ap => ap.PriceValue);
-            builder.Property(ap => ap.PricePercent);
+            builder.Property(ap => ap.PriceValue).HasConversion<string?>();
+            builder.Property(ap => ap.PricePercent).HasPrecision(5, 2);
             builder.Property(ap => ap.TelegramChannelId);
             builder.HasOne(ap => ap.TelegramChannel).WithMany(tc => tc.AlertPrices).HasForeignKey(ap => ap.TelegramChannelId);
             builder.HasKey(ap => ap.ID);
