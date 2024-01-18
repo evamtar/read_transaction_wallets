@@ -1,10 +1,8 @@
 ﻿using MediatR;
-using Newtonsoft.Json.Linq;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
-using System.Diagnostics;
 
 namespace SyncronizationBot.Application.Handlers
 {

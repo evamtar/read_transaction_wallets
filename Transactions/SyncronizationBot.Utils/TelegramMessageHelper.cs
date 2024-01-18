@@ -17,41 +17,44 @@ namespace SyncronizationBot.Utils
                                                          "<b>Dev's Favor verificar</b> Cc:@evandrotartari , @euRodrigo</i>";
         private const string MESSAGE_BUY_MESSAGE_HEADER = "<b>*** NEW BUY ALERT ***</b>\r\n";
         private const string MESSAGE_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
-        private const string MESSAGE_BUY_MESSAGE_BODY   = "<i>Signature:</i> {0}\r\n" +
-                                                          "<i>WalletHash:</i> {1}\r\n" +
-                                                          "<i>ClassWallet:</i> {2} \r\n" +
-                                                          "<i>Token:</i> {3}\r\n" +
-                                                          "<i>Ca:</i> {4}\r\n" +
-                                                          "<i>Minth Authority:</i> {5}\r\n" +
-                                                          "<i>Freeze Authority:</i> {6}\r\n" +
-                                                          "<i>Is Mutable:</i> {7}\r\n" +
-                                                          "<i>Quantity:</i> {8}\r\n" +
-                                                          "<i>Value Spent:</i> {9}\r\n" +
-                                                          "<i>Date:</i> {10}\r\n";
-        private const string MESSAGE_BUY_CHART = "<a href=\"https://birdeye.so/token/{11}?chain=solana\">Chart</a>";
+        private const string MESSAGE_BUY_MESSAGE_BODY   = "<s>Signature:</s> {0}\r\n" +
+                                                          "<s>WalletHash:</s> {1}\r\n" +
+                                                          "<s>ClassWallet:</s> {2} \r\n" +
+                                                          "<s>Token:</s> {3}\r\n" +
+                                                          "<s>Ca:</s> {4}\r\n" +
+                                                          "<s>Minth Authority:</s> {5}\r\n" +
+                                                          "<s>Freeze Authority:</s> {6}\r\n" +
+                                                          "<s>Is Mutable:</s> {7}\r\n" +
+                                                          "<s>Quantity:</s> {8}\r\n" +
+                                                          "<S>Value Spent:</s> {9}\r\n" +
+                                                          "<s>Date:</s> {10}\r\n" + 
+                                                          "<s>Position Increase</s> {11}\r\n";
+        private const string MESSAGE_BUY_CHART = "<a href='https://birdeye.so/token/{12}?chain=solana'>Chart</a>";
         private const string MESSAGE_REBUY_MESSAGE_HEADER = "<b>*** NEW REBUY ALERT ***</b>\r\n";
         private const string MESSAGE_REBUY_MESSAGE_ICONS = "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n";
         private const string MESSAGE_SELL_MESSAGE_HEADER = "<b>*** NEW SELL ALERT ***</b>\r\n";
         private const string MESSAGE_SELL_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴</tg-emoji>\r\n";
-        private const string MESSAGE_SELL_MESSAGE_BODY   = "<i>Signature:</i> {0}\r\n" +
-                                                           "<i>WalletHash:</i> {1}\r\n" +
-                                                           "<i>ClassWallet:</i> {2} \r\n" +
-                                                           "<i>Token:</i> {3}\r\n" +
-                                                           "<i>Quantity:</i> {4}\r\n" +
-                                                           "<i>Value Received:</i> {5}\r\n" +
-                                                           "<i>Date:</i> {6}\r\n";
-        private const string MESSAGE_SELL_CHART = "<a href=\"https://birdeye.so/token/{7}?chain=solana\"> Chart</a>";
+        private const string MESSAGE_SELL_MESSAGE_BODY   = "<s>Signature:</s> {0}\r\n" +
+                                                           "<s>WalletHash:</s> {1}\r\n" +
+                                                           "<s>ClassWallet:</s> {2} \r\n" +
+                                                           "<s>Token:</s> {3}\r\n" +
+                                                           "<s>Quantity:</s> {4}\r\n" +
+                                                           "<s>Value Received:</s> {5}\r\n" +
+                                                           "<s>Date:</s> {6}\r\n" +
+                                                           "<s>Position Sell:</s> {7}\r\n";
+        private const string MESSAGE_SELL_CHART = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart</a>";
         private const string MESSAGE_SWAP_MESSAGE_HEADER = "<b>*** SWAP ALERT ***</b>\r\n";
         private const string MESSAGE_SWAP_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n";
-        private const string MESSAGE_SWAP_MESSAGE_BODY = "<i>Signature:</i> {0}\r\n" +
-                                                         "<i>WalletHash:</i> {1}\r\n" +
-                                                         "<i>ClassWallet:</i> {2} \r\n" +
-                                                         "<i>Token Change:</i> {3}\r\n" +
-                                                         "<i>Token Received:</i> {4}\r\n" +
-                                                         "<i>Ca:</i> {5}\r\n" +
-                                                         "<i>Date:</i> {6}\r\n";
-        private const string MESSAGE_SWAP_CHART_1 = "<a href=\"https://birdeye.so/token/{7}?chain=solana\"> Chart1</a>\r\n";
-        private const string MESSAGE_SWAP_CHART_2 = "<a href=\"https://birdeye.so/token/{8}?chain=solana\"> Chart2</a>";
+        private const string MESSAGE_SWAP_MESSAGE_BODY = "<s>Signature:</s> {0}\r\n" +
+                                                         "<s>WalletHash:</s> {1}\r\n" +
+                                                         "<s>ClassWallet:</s> {2} \r\n" +
+                                                         "<s>Token Change:</s> {3}\r\n" +
+                                                         "<s>Token Received:</s> {4}\r\n" +
+                                                         "<s>Ca:</s> {5}\r\n" +
+                                                         "<s>Date:</s> {6}\r\n" +
+                                                         "<s>Position Swap:</s> {7}\r\n";
+        private const string MESSAGE_SWAP_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart1</a>\r\n";
+        private const string MESSAGE_SWAP_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'>Chart2</a>";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE_HEADER = "<b>*** NEW MM BUY ALERT ***</b>\r\n";
         private const string MESSAGE_MM_NEW_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
         private const string MESSAGE_MM_FOOTER                 = "Cc:@evandrotartari , @euRodrigo, @xton_eth";
@@ -62,40 +65,40 @@ namespace SyncronizationBot.Utils
         private const string MESSAGE_MM_SWAP_MESSAGE_HEADER = "<b>*** SWAP MM ALERT ***</b>\r\n";
         private const string MESSAGE_POOL_CREATED_MESSAGE = "<b>*** POOL CREATED ***</b>\r\n" +
                                                             "<tg-emoji emoji-id='5368324170671202286'>🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊</tg-emoji>\r\n" +
-                                                            "<i>Signature:</i> {0}\r\n" +
-                                                            "<i>WalletHash:</i> {1}\r\n" +
-                                                            "<i>ClassWallet:</i> {2} \r\n" +
-                                                            "<i>Amount Pool:</i> {3}\r\n" +
-                                                            "<i>Amount Pool:</i> {4}\r\n" +
-                                                            "<i>Ca Token Pool:</i> {5}\r\n" +
-                                                            "<i>Ca Token Pool:</i> {6}\r\n" +
-                                                            "<i>Date:</i> {7}\r\n";
-        private const string MESSAGE_POOL_CREATED_CHART_1 = "<a href=\"https://birdeye.so/token/{8}?chain=solana\"> Chart1</a>}\r\n";
-        private const string MESSAGE_POOL_CREATED_CHART_2 = "<a href=\"https://birdeye.so/token/{9}?chain=solana\"> Chart2</a>";
+                                                            "<s>Signature:</s> {0}\r\n" +
+                                                            "<s>WalletHash:</s> {1}\r\n" +
+                                                            "<s>ClassWallet:</s> {2} \r\n" +
+                                                            "<s>Amount Pool:</s> {3}\r\n" +
+                                                            "<s>Amount Pool:</s> {4}\r\n" +
+                                                            "<s>Ca Token Pool:</s> {5}\r\n" +
+                                                            "<s>Ca Token Pool:</s> {6}\r\n" +
+                                                            "<s>Date:</s> {7}\r\n";
+        private const string MESSAGE_POOL_CREATED_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'> Chart1</a>}\r\n";
+        private const string MESSAGE_POOL_CREATED_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'> Chart2</a>";
         private const string MESSAGE_POOL_FINALIZED_MESSAGE = "<b>*** POOL FINALIZED ***</b>\r\n" +
                                                               "<tg-emoji emoji-id='5368324170671202286'>❌❌❌❌❌❌❌❌❌❌❌</tg-emoji>\r\n" +
-                                                              "<i>Signature:</i> {0}\r\n" +
-                                                              "<i>WalletHash:</i> {1}\r\n" +
-                                                              "<i>ClassWallet:</i> {2} \r\n" +
-                                                              "<i>Amount Pool:</i> {3}\r\n" +
-                                                              "<i>Amount Pool:</i> {4}\r\n" +
-                                                              "<i>Ca Token Pool:</i> {5}\r\n" +
-                                                              "<i>Ca Token Pool:</i> {6}\r\n" +
-                                                              "<i>Date:</i> {7}\r\n";
-        private const string MESSAGE_POOL_FINALIZED_CHART_1 = "<a href=\"https://birdeye.so/token/{8}?chain=solana\"> Chart1</a>}\r\n";
-        private const string MESSAGE_POOL_FINALIZED_CHART_2 = "<a href=\"https://birdeye.so/token/{9}?chain=solana\"> Chart2</a>";
+                                                              "<s>Signature:</s> {0}\r\n" +
+                                                              "<s>WalletHash:</s> {1}\r\n" +
+                                                              "<s>ClassWallet:</s> {2} \r\n" +
+                                                              "<s>Amount Pool:</s> {3}\r\n" +
+                                                              "<s>Amount Pool:</s> {4}\r\n" +
+                                                              "<s>Ca Token Pool:</s> {5}\r\n" +
+                                                              "<s>Ca Token Pool:</s> {6}\r\n" +
+                                                              "<s>Date:</s> {7}\r\n";
+        private const string MESSAGE_POOL_FINALIZED_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart1</a>\r\n";
+        private const string MESSAGE_POOL_FINALIZED_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'>Chart2</a>";
         private const string MESSAGE_ALERT_PRICE_UP = "<b>*** PRICE UP ***</b>\r\n" +
                                                       "<tg-emoji emoji-id='5368324170671202286'>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</tg-emoji>\r\n" +
-                                                      "<i>Token Id:</i> {0}\r\n" +
-                                                      "<i>Token Name:</i> {1}\r\n" +
-                                                      "<i>New Price Change:</i> {2}\r\n" +
-                                                      "<i>Is Recurrency Alert:</i> {3}\r\n";
+                                                      "<s>Token Id:</s> {0}\r\n" +
+                                                      "<s>Token Name:</s> {1}\r\n" +
+                                                      "<s>New Price Change:</s> {2}\r\n" +
+                                                      "<s>Is Recurrency Alert:</s> {3}\r\n";
         private const string MESSAGE_ALERT_PRICE_DOWN = "<b>*** PRICE DOWN ***</b>\r\n" +
                                                       "<tg-emoji emoji-id='5368324170671202286'>🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨</tg-emoji>\r\n" +
-                                                      "<i>Token Id:</i> {0}\r\n" +
-                                                      "<i>Token Name:</i> {1}\r\n" +
-                                                      "<i>New Price Change:</i> {2}\r\n" +
-                                                      "<i>Is Recurrency Alert:</i> {3}\r\n" +
+                                                      "<s>Token Id:</s> {0}\r\n" +
+                                                      "<s>Token Name:</s> {1}\r\n" +
+                                                      "<s>New Price Change:</s> {2}\r\n" +
+                                                      "<s>Is Recurrency Alert:</s> {3}\r\n" +
                                                       "<tg-emoji emoji-id='5368324170671202286'>💸💸💸💸💸💸💸💸💸💸💸</tg-emoji>\r\n";
         public static string GetFormatedMessage(ETypeMessage eTypeMessage, object[] args)
         {
