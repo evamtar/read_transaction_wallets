@@ -3,14 +3,12 @@ using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenOverview.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Accounts.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
-using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
-using System.Xml.Linq;
+
 
 
 namespace SyncronizationBot.Application.Handlers
@@ -23,14 +21,12 @@ namespace SyncronizationBot.Application.Handlers
         private readonly ITokenRepository _tokenRepository;
         private readonly ITokenSecurityRepository _tokenSecurityRepository;
         private readonly IAccountsService _accountsService;
-        private readonly IJupiterPriceService _jupiterPriceService;
         public RecoverySaveTokenCommandHandler(IMediator mediator,
                                                ITokenOverviewService tokensOverviewService,
                                                ITokenSecurityService tokenSecurityService,
                                                ITokenRepository tokenRepository,
                                                ITokenSecurityRepository tokenSecurityRepository,
-                                               IAccountsService accountsService,
-                                               IJupiterPriceService jupiterPriceService)
+                                               IAccountsService accountsService)
         {
             this._mediator = mediator;
             this._tokensOverviewService = tokensOverviewService;
@@ -38,7 +34,6 @@ namespace SyncronizationBot.Application.Handlers
             this._tokenRepository = tokenRepository;
             this._tokenSecurityRepository = tokenSecurityRepository;
             this._accountsService = accountsService;
-            this._jupiterPriceService = jupiterPriceService;
         }
         public async Task<RecoverySaveTokenCommandResponse> Handle(RecoverySaveTokenCommand request, CancellationToken cancellationToken)
         {
@@ -49,7 +44,7 @@ namespace SyncronizationBot.Application.Handlers
                 if (tokenResponse.Data == null || tokenResponse.Data.Decimals == null)
                 {
                     var tokenAccount = await this._accountsService.ExecuteRecoveryAccountAsync(new AccountsRequest { AccountHashes = new List<string> { request!.TokenHash! } });
-                    var tokenSymbol = await this._jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { request!.TokenHash! } });
+                    var tokenSymbol = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
                     var tokenAdded = await this._tokenRepository.Add(new Token
                     {
                         Hash = request.TokenHash,

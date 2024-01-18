@@ -4,6 +4,6 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.R
 {
     public class WalletPortifolioRequest
     {
-        public string? TokenHash { get; set; }
+        public string? WalletHash { get; set; }
     }
 }

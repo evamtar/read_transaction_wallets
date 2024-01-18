@@ -10,10 +10,14 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("WalletBalance");
             builder.Property(wb => wb.ID);
-            builder.Property(wb => wb.DateUpdate);
             builder.Property(wb => wb.IdWallet);
             builder.Property(wb => wb.IdToken);
+            builder.Property(wb => wb.TokenHash); 
             builder.Property(wb => wb.Quantity);
+            builder.Property(wb => wb.Price);
+            builder.Property(wb => wb.TotalValueUSD);
+            builder.Property(wb => wb.IsActive); 
+            builder.Property(wb => wb.LastUpdate);
             builder.HasOne(wb => wb.Wallet).WithMany(w => w.Balances).HasForeignKey(wb => wb.IdWallet);
             builder.HasOne(wb => wb.Token).WithMany(t => t.Balances).HasForeignKey(wb => wb.IdToken);
             builder.HasKey(cw => cw.ID);

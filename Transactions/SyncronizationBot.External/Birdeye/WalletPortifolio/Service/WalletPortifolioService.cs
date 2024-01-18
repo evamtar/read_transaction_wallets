@@ -21,7 +21,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service
         }
         public async Task<WalletPortifolioResponse> ExecuteRecoveryWalletPortifolioAsync(WalletPortifolioRequest request)
         {
-            var response = await this._httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.TokenHash));
+            var response = await this._httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletHash));
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<WalletPortifolioResponse>(responseBody) ?? new WalletPortifolioResponse { };
         }
