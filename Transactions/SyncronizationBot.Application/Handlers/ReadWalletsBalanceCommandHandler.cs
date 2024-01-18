@@ -29,7 +29,7 @@ namespace SyncronizationBot.Application.Handlers
         }
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
-            var wallets = await this._walletRepository.Get(x => x.IsLoadBalance == false);
+            var wallets = await this._walletRepository.Get(x => x.IsLoadBalance == false && x.IsActive == true);
             foreach (var wallet in wallets)
             {
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });

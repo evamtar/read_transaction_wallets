@@ -12,10 +12,8 @@ namespace SyncronizationBot.Service
 {
     public class LoadBalanceWalletsService : BaseService
     {
-        private readonly IMediator _mediator;
         public LoadBalanceWalletsService(IMediator mediator,
-                                         IRunTimeControllerRepository runTimeControllerRepository,
-                                         IOptions<SyncronizationBotConfig> options):base(mediator, runTimeControllerRepository)
+                                         IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository)
         {
             this._mediator = mediator;
         }
