@@ -48,7 +48,8 @@ namespace SyncronizationBot.Application.Handlers
                     balance.TotalValueUSD = request.Quantity * price?.Data?[request.TokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
-                
+                balance = await this._walletBalanceRepository.Edit(balance);
+                try { await this._walletBalanceRepository.DetachedItem(balance); } catch { }
             }
             return new RecoveryAddUpdateBalanceItemCommandResponse 
             {

@@ -41,7 +41,7 @@ namespace SyncronizationBot.Application.Handlers
                         await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet.ID,
-                            IdToken = token.TokenId,
+                            IdToken = token?.TokenId,
                             TokenHash = item.Address,
                             Quantity = item.UiAmount,
                             Price = item.PriceUsd,
@@ -53,6 +53,7 @@ namespace SyncronizationBot.Application.Handlers
                 }
                 wallet.IsLoadBalance = true;
                 await this._walletRepository.Edit(wallet);
+                try { await this._walletRepository.DetachedItem(wallet); } catch { }
             }
             return new ReadWalletsBalanceCommandResponse { };
         }

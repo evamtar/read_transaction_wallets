@@ -6,6 +6,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
+using SyncronizationBot.Utils;
 
 
 namespace SyncronizationBot.Service
@@ -36,6 +37,7 @@ namespace SyncronizationBot.Service
                             base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(ETypeService.Balance, timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
+                            base.LogMessage($"Final Ticks {DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)}");
                         }
                         catch (Exception ex)
                         {

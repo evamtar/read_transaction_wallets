@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SyncronizationBot.Domain.Model.Database;
 
 
@@ -14,7 +15,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.Hash);
             builder.Property(t => t.Symbol);
             builder.Property(t => t.Name);
-            builder.Property(t => t.Supply);
+            builder.Property(t => t.Supply).HasPrecision(38, 10).HasConversion<decimal?>();
             builder.Property(t => t.MarketCap);
             builder.Property(t => t.Liquidity);
             builder.Property(t => t.UniqueWallet24h);

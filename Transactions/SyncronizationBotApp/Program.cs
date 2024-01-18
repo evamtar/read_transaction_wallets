@@ -74,7 +74,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<AlertPriceService>();
     services.AddHostedService<LoadBalanceWalletsService>();
 
@@ -98,15 +98,15 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Repositories
 
     services.AddTransient<IRunTimeControllerRepository, RunTimeControllerRepository>();
-    services.AddScoped<IClassWalletRepository, ClassWalletRepository>();
-    services.AddScoped<IWalletRepository, WalletRepository>();
-    services.AddScoped<ITokenRepository, TokenRepository>();
-    services.AddScoped<ITokenSecurityRepository, TokenSecurityRepository>();
-    services.AddScoped<ITransactionsRepository, TransactionsRepository>();
-    services.AddScoped<IWalletBalanceRepository, WalletBalanceRepository>();
-    services.AddScoped<ITelegramChannelRepository, TelegramChannelRepository>();
-    services.AddScoped<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
-    services.AddScoped<IAlertPriceRepository, AlertPriceRepository>();
+    services.AddTransient<IClassWalletRepository, ClassWalletRepository>();
+    services.AddTransient<IWalletRepository, WalletRepository>();
+    services.AddTransient<ITokenRepository, TokenRepository>();
+    services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
+    services.AddTransient<ITransactionsRepository, TransactionsRepository>();
+    services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
+    services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
+    services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
+    services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();
 
     #endregion
 

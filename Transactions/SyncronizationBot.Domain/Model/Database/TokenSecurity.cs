@@ -12,9 +12,9 @@ namespace SyncronizationBot.Domain.Model.Database
         { 
             get 
             {
-                if(this.CreationTimeDate != null)
+                if (this.CreationTime != null) 
                     return DateTimeTicks.Instance.ConvertTicksToDateTime(this.CreationTime ?? 0);
-                return null;
+                return null!;
             } 
         }
         public decimal? Top10HolderBalance { get; set; }

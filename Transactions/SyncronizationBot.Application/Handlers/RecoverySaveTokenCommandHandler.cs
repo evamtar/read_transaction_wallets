@@ -45,6 +45,8 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     var tokenAccount = await this._accountsService.ExecuteRecoveryAccountAsync(new AccountsRequest { AccountHashes = new List<string> { request!.TokenHash! } });
                     var tokenSymbol = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
+                    if (!tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
+                        return null!;
                     var tokenAdded = await this._tokenRepository.Add(new Token
                     {
                         Hash = request.TokenHash,
