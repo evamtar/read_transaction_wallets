@@ -31,8 +31,9 @@ namespace SyncronizationBot.Service
                         try
                         {
                             await base.SetRuntimeControllerAsync(true, null, false);
-                            await this._mediator.Send(new ReadWalletsBalanceCommand { });
-                            await this._mediator.Send(new UpdateWalletsBalanceCommand{ });
+                            await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "J9qyPtHnS4FJSfJ8Xok5oSv8JtyiMEBZTZD44xSJxUae" });
+                            //await this._mediator.Send(new ReadWalletsBalanceCommand { });
+                            //await this._mediator.Send(new UpdateWalletsBalanceCommand{ });
                             await SetRuntimeControllerAsync(false, null, true);
                             base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(ETypeService.Balance, timer);

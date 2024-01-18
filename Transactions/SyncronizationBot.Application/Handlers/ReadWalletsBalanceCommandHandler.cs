@@ -2,9 +2,11 @@
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using System.Diagnostics;
 
 
@@ -16,22 +18,42 @@ namespace SyncronizationBot.Application.Handlers
         private readonly IWalletRepository _walletRepository;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
-        
+        private readonly IAccountInfoService _accountInfoService;
+
+
         public ReadWalletsBalanceCommandHandler(IMediator mediator,
                                                 IWalletRepository walletRepository,
                                                 IWalletBalanceRepository walletBalanceRepository,
-                                                IWalletPortifolioService walletPortifolioService) 
+                                                IWalletPortifolioService walletPortifolioService,
+                                                IAccountInfoService accountInfoService) 
         {
             this._mediator = mediator;
             this._walletRepository = walletRepository;
             this._walletBalanceRepository = walletBalanceRepository;
             this._walletPortifolioService = walletPortifolioService;
+            this._accountInfoService = accountInfoService;
         }
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
             var wallets = await this._walletRepository.Get(x => x.IsLoadBalance == false && x.IsActive == true);
             foreach (var wallet in wallets)
             {
+                var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet.Hash });
+                if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0) 
+                {
+                    var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                    await this._walletBalanceRepository.Add(new WalletBalance
+                    {
+                        IdWallet = wallet.ID,
+                        IdToken = token?.TokenId,
+                        TokenHash = "So11111111111111111111111111111111111111112",
+                        Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
+                        Price = token?.MarketCap / token?.Supply,
+                        TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
+                        IsActive = accountInfo.Result?.Value?.Lamports > 0,
+                        LastUpdate = DateTime.Now
+                    });
+                }
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null) 
                 {
@@ -56,6 +78,14 @@ namespace SyncronizationBot.Application.Handlers
                 try { await this._walletRepository.DetachedItem(wallet); } catch { }
             }
             return new ReadWalletsBalanceCommandResponse { };
+        }
+
+        private decimal? GetDivisor(int? decimals) 
+        {
+            string number = "1";
+            for (int i = 0; i < decimals; i++)
+                number += "0";
+            return decimal.Parse(number);
         }
     }
 }
