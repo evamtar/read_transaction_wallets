@@ -79,7 +79,7 @@ namespace SyncronizationBot.Application.Handlers
                 Message = TelegramMessageHelper.GetFormatedMessage(type,
                                     new object[] {
                                         alert.TokenHash ?? string.Empty,
-                                        token.TokenAlias ?? string.Empty,
+                                        token.Name ?? string.Empty,
                                         price.Price ?? 0,
                                         (alert.IsRecurrence ?? false) ? "YES" : "NO",
                                     })

@@ -13,6 +13,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenSecurity')
+BEGIN
+	DROP TABLE [TokenSecurity]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Token')
 BEGIN
 	DROP TABLE [Token]
@@ -87,7 +93,7 @@ BEGIN
 		IsRunning BIT,
 		PRIMARY KEY(IdRuntime)
 	);
-	INSERT INTO RunTimeController VALUES(1, 1705375588, 1, 1, 0);
+	INSERT INTO RunTimeController VALUES(1, 1705534101, 1, 1, 0);
 	INSERT INTO RunTimeController VALUES(2, null, 1, 2, 0);
 	INSERT INTO RunTimeController VALUES(3, null, 1, 3, 0);
 END
@@ -130,16 +136,43 @@ CREATE TABLE Wallet(
 );
 
 CREATE TABLE Token(
-	ID               UNIQUEIDENTIFIER,
-	[Hash]           VARCHAR(50),
-	TokenAlias       VARCHAR(100),
-	Symbol			 VARCHAR(50),
-	TokenType        VARCHAR(100),
-	FreezeAuthority  VARCHAR(100),
-	MintAuthority    VARCHAR(100),
-	IsMutable        BIT,
-	Decimals         INT,
+	ID                     UNIQUEIDENTIFIER,
+	[Hash]                 VARCHAR(50),
+	Symbol                 VARCHAR(50),
+	[Name]			       VARCHAR(50),
+	Supply                 MONEY,
+	MarketCap              MONEY,
+	Liquidity              MONEY,
+	UniqueWallet24h        INT,
+	UniqueWalletHistory24h INT,
+	Decimals               INT,
+	NumberMarkets          INT,
+	CreateDate             DATETIME,
+	LastUpdate             DATETIME,
 	PRIMARY KEY (ID)
+);
+
+CREATE TABLE TokenSecurity(
+    ID                 UNIQUEIDENTIFIER,
+	IdToken            UNIQUEIDENTIFIER,
+	CreatorAddress     VARCHAR(100),
+	CreationTime       INT,
+	Top10HolderBalance MONEY,
+	Top10HolderPercent MONEY,
+	Top10UserBalance   MONEY,
+	Top10UserPercent   MONEY,
+	IsTrueToken        BIT,
+	LockInfo		   VARCHAR(100),
+	Freezeable		   VARCHAR(100),
+	FreezeAuthority    VARCHAR(100),
+	TransferFeeEnable  VARCHAR(100),
+	TransferFeeData    VARCHAR(100),
+	IsToken2022        BIT,
+	NonTransferable    VARCHAR(100),
+	MintAuthority      VARCHAR(100),
+	IsMutable          BIT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (IdToken) REFERENCES Token(ID)
 );
 
 CREATE TABLE Transactions
@@ -168,11 +201,8 @@ GO
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 1
 
-INSERT INTO Wallet VALUES (NEWID(), 'FZNrSiYifncDHTRNB6L8AyGX3sQu4T5Jb9k56S1zgTsz', @IdClassWallet, 1, 1);
-INSERT INTO Wallet VALUES (NEWID(), 'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, 1, 1);
-INSERT INTO Wallet VALUES (NEWID(), '6hqR9urgXPXnPFYybvwYdhLZ7TRKS4NcLcNivJhRr7Jf', @IdClassWallet, 1, 1);
+INSERT INTO Wallet VALUES (NEWID(), 'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, 1, 0);
 INSERT INTO Wallet VALUES (NEWID(), 'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYNn', @IdClassWallet, 1, 1);
-INSERT INTO Wallet VALUES (NEWID(), '3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskzS', @IdClassWallet, 1, 1);
 INSERT INTO Wallet VALUES (NEWID(), 'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, 1, 1);
 INSERT INTO Wallet VALUES (NEWID(), 'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, 1, 1);
 
@@ -250,9 +280,7 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
 
-
 ------------------------------------------------------------
-
 
 UPDATE RunTimeController
 SET IsRunning = 0

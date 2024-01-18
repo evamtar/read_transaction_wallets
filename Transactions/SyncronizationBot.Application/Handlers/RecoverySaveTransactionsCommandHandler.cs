@@ -205,15 +205,15 @@ namespace SyncronizationBot.Application.Handlers
                         signature ?? string.Empty,
                         request.WalletHash ?? string.Empty,
                         ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        tokenReceived?.TokenAlias ?? string.Empty,
-                        tokenReceived?.TokenHash ?? string.Empty,
+                        tokenReceived?.Name ?? string.Empty,
+                        tokenReceived?.Hash ?? string.Empty,
                         tokenReceived?.MintAuthority ?? "NO",
                         tokenReceived?.FreezeAuthority ?? "NO",
                         (tokenReceived?.IsMutable ?? false) ? "YES" : "NO",
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
                         AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenReceived?.TokenHash ?? string.Empty
+                        tokenReceived?.Hash ?? string.Empty
                 };
                 case ETransactionType.SELL:
                     return new object[] 
@@ -221,11 +221,11 @@ namespace SyncronizationBot.Application.Handlers
                         signature ?? string.Empty,
                         request.WalletHash ?? string.Empty,
                         ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        tokenSended?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
+                        tokenSended?.Hash ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
                         AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenSended?.TokenHash ?? string.Empty
+                        tokenSended?.Hash ?? string.Empty
                     };
                 case ETransactionType.SWAP:
                     return new object[]
@@ -233,12 +233,12 @@ namespace SyncronizationBot.Application.Handlers
                         signature ?? string.Empty,
                         request.WalletHash ?? string.Empty,
                         ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
-                        tokenReceived?.TokenHash ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
+                        tokenReceived?.Name ?? string.Empty,
                         AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenReceived?.TokenHash ?? string.Empty,
-                        tokenSended?.TokenHash ?? string.Empty
+                        tokenReceived?.Hash ?? string.Empty,
+                        tokenSended?.Hash ?? string.Empty
                     };
                 case ETransactionType.POOLCREATE:
                     return new object[] 
@@ -246,13 +246,13 @@ namespace SyncronizationBot.Application.Handlers
                         signature ?? string.Empty,
                         request.WalletHash ?? string.Empty,
                         ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor).ToString() + " " + tokenSendedPool?.TokenAlias ?? string.Empty,
-                        tokenSended?.TokenHash ?? string.Empty,
-                        tokenSendedPool?.TokenHash ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor).ToString() + " " + tokenSendedPool?.Symbol ?? string.Empty,
+                        tokenSended?.Hash ?? string.Empty,
+                        tokenSendedPool?.Hash ?? string.Empty,
                         AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenSended?.TokenHash ?? string.Empty,
-                        tokenSendedPool?.TokenHash ?? string.Empty
+                        tokenSended?.Hash ?? string.Empty,
+                        tokenSendedPool?.Hash ?? string.Empty
                      };
                 case ETransactionType.POOLFINALIZED:
                     return new object[]
@@ -260,13 +260,13 @@ namespace SyncronizationBot.Application.Handlers
                         signature ?? string.Empty,
                         request.WalletHash ?? string.Empty,
                         ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.TokenAlias ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor).ToString() + " " + tokenReceivedPool?.TokenAlias ?? string.Empty,
-                        tokenReceived?.TokenHash ?? string.Empty,
-                        tokenReceivedPool?.TokenHash ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
+                        CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor).ToString() + " " + tokenReceivedPool?.Symbol ?? string.Empty,
+                        tokenReceived?.Hash ?? string.Empty,
+                        tokenReceivedPool?.Hash?? string.Empty,
                         AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenReceived?.TokenHash ?? string.Empty,
-                        tokenReceivedPool?.TokenHash ?? string.Empty
+                        tokenReceived?.Hash ?? string.Empty,
+                        tokenReceivedPool?.Hash ?? string.Empty
                     };
                 default:
                     return null!;

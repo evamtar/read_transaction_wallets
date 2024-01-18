@@ -20,6 +20,7 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<RunTimeController> RunTimeControllers { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<Token> Tokens { get; set; }
+        public DbSet<TokenSecurity> TokenSecurities { get; set; }
         public DbSet<WalletBalance> WalletBalances { get; set; }
         public DbSet<TelegramChannel> TelegramChannels { get; set; }
         public DbSet<TransactionNotMapped> TransactionsNotMapped { get; set; }
@@ -34,6 +35,7 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new ClassWalletMap());
             modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             modelBuilder.ApplyConfiguration(new TokenMap());
+            modelBuilder.ApplyConfiguration(new TokenSecurityMap()); 
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());

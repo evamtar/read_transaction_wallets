@@ -98,6 +98,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddScoped<IClassWalletRepository, ClassWalletRepository>();
     services.AddScoped<IWalletRepository, WalletRepository>();
     services.AddScoped<ITokenRepository, TokenRepository>();
+    services.AddScoped<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddScoped<ITransactionsRepository, TransactionsRepository>();
     services.AddScoped<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddScoped<ITelegramChannelRepository, TelegramChannelRepository>();
