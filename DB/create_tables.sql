@@ -156,7 +156,7 @@ CREATE TABLE TokenSecurity(
     ID                 UNIQUEIDENTIFIER,
 	IdToken            UNIQUEIDENTIFIER,
 	CreatorAddress     VARCHAR(100),
-	CreationTime       INT,
+	CreationTime       DECIMAL(20,0),
 	Top10HolderBalance MONEY,
 	Top10HolderPercent MONEY,
 	Top10UserBalance   MONEY,
@@ -201,7 +201,7 @@ GO
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 1
 
-INSERT INTO Wallet VALUES (NEWID(), 'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, 1, 0);
+INSERT INTO Wallet VALUES (NEWID(), 'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, 1, 1);
 INSERT INTO Wallet VALUES (NEWID(), 'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYNn', @IdClassWallet, 1, 1);
 INSERT INTO Wallet VALUES (NEWID(), 'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, 1, 1);
 INSERT INTO Wallet VALUES (NEWID(), 'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, 1, 1);
@@ -270,11 +270,15 @@ SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 5
 INSERT INTO Wallet VALUES (NEWID(),'F3SexpfyD785mndnj38EGoxZdAAQEMxBmJCvNe15rz5B', @IdClassWallet, 1, 1);
 CREATE TABLE WalletBalance
 (
-	ID         UNIQUEIDENTIFIER,
-	DateUpdate DATETIME2,
-	IdWallet   UNIQUEIDENTIFIER,
-	IdToken    UNIQUEIDENTIFIER,
-	Quantity   DECIMAL(38,18),
+	ID            UNIQUEIDENTIFIER,
+	IdWallet      UNIQUEIDENTIFIER,
+	IdToken       UNIQUEIDENTIFIER,
+	TokenHash     VARCHAR(100),
+	Quantity      DECIMAL(38,18),
+	Price         MONEY,
+	TotalValueUSD MONEY,
+	IsActive      BIT,
+	LastUpdate    DATETIME2,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
