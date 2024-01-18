@@ -15,7 +15,6 @@ namespace SyncronizationBot.Service
         public LoadBalanceWalletsService(IMediator mediator,
                                          IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository)
         {
-            this._mediator = mediator;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
         {
