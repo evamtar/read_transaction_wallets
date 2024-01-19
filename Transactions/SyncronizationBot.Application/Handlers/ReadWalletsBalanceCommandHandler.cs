@@ -32,11 +32,12 @@ namespace SyncronizationBot.Application.Handlers
         }
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
-            var wallets = await base.GetWallets(x => x.IsLoadBalance == false && x.IsActive == true);
-            foreach (var wallet in wallets)
+            var wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
+            var hasNext = wallet != null;
+            while (hasNext) 
             {
                 var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet.Hash });
-                if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0) 
+                if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
                 {
                     var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                     await this._walletBalanceRepository.Add(new WalletBalance
@@ -53,7 +54,7 @@ namespace SyncronizationBot.Application.Handlers
                 }
                 var finalTicks = base.GetFinalTicks();
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
-                if (walletPortifolio?.Data?.Items != null) 
+                if (walletPortifolio?.Data?.Items != null)
                 {
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
@@ -73,7 +74,10 @@ namespace SyncronizationBot.Application.Handlers
                 }
                 wallet.IsLoadBalance = true;
                 await base.UpdateUnixTimeSeconds(finalTicks, wallet);
+                wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
+                hasNext = wallet != null;
             }
+            
             return new ReadWalletsBalanceCommandResponse { };
         }
 
