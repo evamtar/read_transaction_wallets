@@ -27,9 +27,9 @@ namespace SyncronizationBot.Service
                     {
                         try
                         {
-                            await base.SetRuntimeControllerAsync(true, null, false);
+                            await base.SetRuntimeControllerAsync(true, false);
                             await this._mediator.Send(new SendAlertMessageCommand { });
-                            await SetRuntimeControllerAsync(false, null, true);
+                            await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Alert Price: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(ETypeService.Price, timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
@@ -37,7 +37,7 @@ namespace SyncronizationBot.Service
                         catch (Exception ex)
                         {
                             await this.DetachedRuntimeControllerAsync();
-                            await SetRuntimeControllerAsync(false, null, true);
+                            await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
                             base.LogMessage($"StackTrace: {ex.StackTrace}");
                             base.LogMessage($"Waiting for next tick in {timer.Period}");

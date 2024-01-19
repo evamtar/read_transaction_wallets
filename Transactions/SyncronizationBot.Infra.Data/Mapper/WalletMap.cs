@@ -13,6 +13,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(w => w.ID);
             builder.Property(w => w.Hash);
             builder.Property(w => w.IdClassWallet);
+            builder.Property(w => w.UnixTimeSeconds).HasPrecision(20, 0);
             builder.HasOne(w => w.ClassWallet).WithMany(cw => cw.Wallets).HasForeignKey(w => w.IdClassWallet);
             builder.HasKey(w => w.ID);
         }

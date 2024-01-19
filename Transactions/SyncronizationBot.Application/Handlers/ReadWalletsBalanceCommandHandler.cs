@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SyncronizationBot.Application.Base;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
@@ -12,10 +13,8 @@ using System.Diagnostics;
 
 namespace SyncronizationBot.Application.Handlers
 {
-    public class ReadWalletsBalanceCommandHandler : IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>
+    public class ReadWalletsBalanceCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>
     {
-        private readonly IMediator _mediator;
-        private readonly IWalletRepository _walletRepository;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
         private readonly IAccountInfoService _accountInfoService;
@@ -25,17 +24,15 @@ namespace SyncronizationBot.Application.Handlers
                                                 IWalletRepository walletRepository,
                                                 IWalletBalanceRepository walletBalanceRepository,
                                                 IWalletPortifolioService walletPortifolioService,
-                                                IAccountInfoService accountInfoService) 
+                                                IAccountInfoService accountInfoService) : base(mediator, walletRepository)
         {
-            this._mediator = mediator;
-            this._walletRepository = walletRepository;
             this._walletBalanceRepository = walletBalanceRepository;
             this._walletPortifolioService = walletPortifolioService;
             this._accountInfoService = accountInfoService;
         }
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
-            var wallets = await this._walletRepository.Get(x => x.IsLoadBalance == false && x.IsActive == true);
+            var wallets = await base.GetWallets(x => x.IsLoadBalance == false && x.IsActive == true);
             foreach (var wallet in wallets)
             {
                 var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet.Hash });
@@ -54,6 +51,7 @@ namespace SyncronizationBot.Application.Handlers
                         LastUpdate = DateTime.Now
                     });
                 }
+                var finalTicks = base.GetFinalTicks();
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null) 
                 {
@@ -74,8 +72,7 @@ namespace SyncronizationBot.Application.Handlers
                     }
                 }
                 wallet.IsLoadBalance = true;
-                await this._walletRepository.Edit(wallet);
-                try { await this._walletRepository.DetachedItem(wallet); } catch { }
+                await base.UpdateUnixTimeSeconds(finalTicks, wallet);
             }
             return new ReadWalletsBalanceCommandResponse { };
         }

@@ -29,17 +29,13 @@ namespace SyncronizationBot.Service
                 while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
                     base.LogMessage($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    var initialTicks = base.RunTimeController?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddDays(-1));
                     if (base.RunTimeController != null && (!base.RunTimeController!.IsRunning ?? true))
                     {
                         try
                         {
-                            var finalTicks = DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
-                            await base.SetRuntimeControllerAsync(true, initialTicks, false);
-                            base.LogMessage($"Initial Ticks: {initialTicks}");
-                            base.LogMessage($"Final Ticks: {finalTicks}");
-                            await this._mediator.Send(new ReadWalletsCommand { InitialTicks = initialTicks, FinalTicks = finalTicks });
-                            await SetRuntimeControllerAsync(false, finalTicks, true);
+                            await base.SetRuntimeControllerAsync(true, false);
+                            await this._mediator.Send(new ReadWalletsCommand { });
+                            await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(ETypeService.Transaction, timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
@@ -47,7 +43,7 @@ namespace SyncronizationBot.Service
                         catch (Exception ex)
                         {
                             await this.DetachedRuntimeControllerAsync();
-                            await SetRuntimeControllerAsync(false, initialTicks, true);
+                            await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
                             base.LogMessage($"StackTrace: {ex.StackTrace}");
                             base.LogMessage($"Waiting for next tick in {timer.Period}");

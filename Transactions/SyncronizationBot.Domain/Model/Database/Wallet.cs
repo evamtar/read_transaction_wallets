@@ -7,6 +7,7 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public string? Hash { get; set; }
         public Guid? IdClassWallet { get; set; }
+        public decimal? UnixTimeSeconds { get; set; }
         public bool? IsLoadBalance { get; set; }
         public bool? IsActive { get; set; }
         public virtual ClassWallet? ClassWallet { get; set; }

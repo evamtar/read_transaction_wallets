@@ -32,10 +32,9 @@ namespace SyncronizationBot.Service.Base
             return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 10));
         }
 
-        protected async Task SetRuntimeControllerAsync(bool isRunning, decimal? unixTimeSeconds, bool detachedItem)
+        protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
         {
             this.RunTimeController!.IsRunning = isRunning;
-            this.RunTimeController!.UnixTimeSeconds = unixTimeSeconds;
             this.RunTimeController = await this._runTimeControllerRepository.Edit(this.RunTimeController);
             if (detachedItem)
                 this.RunTimeController = await DetachedRuntimeControllerAsync();
