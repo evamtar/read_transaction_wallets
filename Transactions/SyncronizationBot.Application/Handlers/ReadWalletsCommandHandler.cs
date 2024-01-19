@@ -35,7 +35,7 @@ namespace SyncronizationBot.Application.Handlers
                     InitialTicks = walletTracked?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddMinutes(-10)),
                     FinalTicks = finalTicks ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)
                 });
-                walletTracked.LastUpdate = DateTime.Now;
+                walletTracked!.LastUpdate = DateTime.Now;
                 await base.UpdateUnixTimeSeconds(finalTicks, walletTracked);
                 walletTracked = await base.GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
                 hasNext = walletTracked != null;
