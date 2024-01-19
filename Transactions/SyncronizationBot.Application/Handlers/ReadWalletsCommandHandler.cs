@@ -26,7 +26,7 @@ namespace SyncronizationBot.Application.Handlers
             while (hasNext) 
             {
                 var finalTicks = base.GetFinalTicks();
-                var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked.IdClassWallet);
+                var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.IdClassWallet);
                 await this._mediator.Send(new RecoverySaveTransactionsCommand
                 {
                     WalletId = walletTracked?.ID,
