@@ -26,13 +26,13 @@ namespace SyncronizationBot.Application.Handlers
             while (hasNext) 
             {
                 var finalTicks = base.GetFinalTicks();
-                walletTracked!.ClassWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked.IdClassWallet);
+                var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked.IdClassWallet);
                 await this._mediator.Send(new RecoverySaveTransactionsCommand
                 {
-                    WalletId = walletTracked.ID,
-                    WalletHash = walletTracked.Hash,
-                    IdClassification = walletTracked.ClassWallet?.IdClassification,
-                    InitialTicks = walletTracked.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddMinutes(-10)),
+                    WalletId = walletTracked?.ID,
+                    WalletHash = walletTracked?.Hash,
+                    IdClassification = classWallet?.IdClassification,
+                    InitialTicks = walletTracked?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddMinutes(-10)),
                     FinalTicks = finalTicks ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)
                 });
                 walletTracked.LastUpdate = DateTime.Now;

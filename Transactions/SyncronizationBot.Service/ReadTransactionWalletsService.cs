@@ -7,7 +7,6 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
-using SyncronizationBot.Utils;
 
 
 namespace SyncronizationBot.Service
@@ -15,7 +14,7 @@ namespace SyncronizationBot.Service
     public class ReadTransactionWalletsService: BaseService
     {
         public ReadTransactionWalletsService(IMediator mediator,
-                                             IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository)
+                                             IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository, ETypeService.Transaction)
         {
 
         }
@@ -23,7 +22,7 @@ namespace SyncronizationBot.Service
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             base.LogMessage("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
-            using var timer = await base.GetPeriodicTimer(ETypeService.Transaction);
+            using var timer = await base.GetPeriodicTimer();
             if (timer != null)
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -37,7 +36,7 @@ namespace SyncronizationBot.Service
                             await this._mediator.Send(new ReadWalletsCommand { });
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await base.SendAlertExecute(ETypeService.Transaction, timer);
+                            await base.SendAlertExecute(timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
                         }
                         catch (Exception ex)
@@ -51,7 +50,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning(ETypeService.Transaction, timer);
+                        await base.SendAlertAppRunning(timer);
                         base.LogMessage($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 
@@ -59,7 +58,7 @@ namespace SyncronizationBot.Service
             }
             else 
             {
-                await base.SendAlertTimerIsNull(ETypeService.Transaction);
+                await base.SendAlertTimerIsNull();
                 base.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
             base.LogMessage("Finalizado");

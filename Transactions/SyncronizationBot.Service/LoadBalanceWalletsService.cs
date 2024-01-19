@@ -11,13 +11,13 @@ namespace SyncronizationBot.Service
     public class LoadBalanceWalletsService : BaseService
     {
         public LoadBalanceWalletsService(IMediator mediator,
-                                         IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository)
+                                         IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository, ETypeService.Balance)
         {
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
         {
             base.LogMessage("Iniciando o serviço de atualização de saldo de conta");
-            using var timer = await base.GetPeriodicTimer(ETypeService.Balance);
+            using var timer = await base.GetPeriodicTimer();
             if (timer != null)
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -32,7 +32,7 @@ namespace SyncronizationBot.Service
                             await this._mediator.Send(new UpdateWalletsBalanceCommand{ });
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await base.SendAlertExecute(ETypeService.Balance, timer);
+                            await base.SendAlertExecute(timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
                             base.LogMessage($"Final Ticks {DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)}");
                         }
@@ -47,7 +47,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning(ETypeService.Balance, timer);
+                        await base.SendAlertAppRunning(timer);
                         base.LogMessage($"Atualização de saldo Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 
@@ -55,7 +55,7 @@ namespace SyncronizationBot.Service
             }
             else
             {
-                await base.SendAlertTimerIsNull(ETypeService.Balance);
+                await base.SendAlertTimerIsNull();
                 base.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
             base.LogMessage("Finalizado");

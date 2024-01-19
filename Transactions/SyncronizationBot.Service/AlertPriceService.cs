@@ -9,7 +9,7 @@ namespace SyncronizationBot.Service
     public class AlertPriceService : BaseService
     {
         public AlertPriceService(IMediator mediator, 
-                                 IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository)
+                                 IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository, ETypeService.Price)
         {
         
         }
@@ -17,7 +17,7 @@ namespace SyncronizationBot.Service
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
         {
             base.LogMessage("Iniciando o serviço de alerta de preços");
-            using var timer = await base.GetPeriodicTimer(ETypeService.Price);
+            using var timer = await base.GetPeriodicTimer();
             if (timer != null)
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -31,7 +31,7 @@ namespace SyncronizationBot.Service
                             await this._mediator.Send(new SendAlertMessageCommand { });
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Alert Price: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await base.SendAlertExecute(ETypeService.Price, timer);
+                            await base.SendAlertExecute(timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
                         }
                         catch (Exception ex)
@@ -45,7 +45,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning(ETypeService.Price, timer);
+                        await base.SendAlertAppRunning(timer);
                         base.LogMessage($"Alerta de Preços Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 
@@ -53,7 +53,7 @@ namespace SyncronizationBot.Service
             }
             else
             {
-                await base.SendAlertTimerIsNull(ETypeService.Price);
+                await base.SendAlertTimerIsNull();
                 base.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
             base.LogMessage("Finalizado");

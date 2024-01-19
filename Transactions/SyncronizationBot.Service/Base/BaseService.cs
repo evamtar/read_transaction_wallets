@@ -15,19 +15,22 @@ namespace SyncronizationBot.Service.Base
     {
         protected readonly IMediator _mediator;
         protected readonly IRunTimeControllerRepository _runTimeControllerRepository;
+        protected readonly ETypeService _typeService;
         public RunTimeController? RunTimeController { get; private set; }
         public BaseService(IMediator mediator,
-                           IRunTimeControllerRepository runTimeControllerRepository)
+                           IRunTimeControllerRepository runTimeControllerRepository,
+                           ETypeService typeService)
         {
             this._mediator = mediator;
             this._runTimeControllerRepository = runTimeControllerRepository;
+            this._typeService = typeService;
         }
 
-        protected async Task<PeriodicTimer?> GetPeriodicTimer(ETypeService typeService) 
+        protected async Task<PeriodicTimer?> GetPeriodicTimer() 
         { 
             if(this.RunTimeController == null) 
             { 
-                this.RunTimeController = await this.GetRunTimeControllerAsync(typeService);
+                this.RunTimeController = await this.GetRunTimeControllerAsync();
             }
             return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 10));
         }
@@ -47,56 +50,69 @@ namespace SyncronizationBot.Service.Base
             return this.RunTimeController;
         }
 
-        protected async Task SendAlertExecute(ETypeService typeService, PeriodicTimer timer) 
+        protected async Task SendAlertExecute(PeriodicTimer timer) 
         {
             await this._mediator.Send(new SendTelegramMessageCommand
             {
                 Channel = ETelegramChannel.CallSolanaLog,
                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE,
                                 new object[] {
-                                    EnumExtension.GetDescription(typeService) ?? string.Empty,
+                                    EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                                     DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
                                     timer.Period
                                 })
             });
         }
 
-        protected async Task SendAlertAppRunning(ETypeService typeService, PeriodicTimer timer)
+        protected async Task SendAlertAppRunning(PeriodicTimer timer)
         {
             await this._mediator.Send(new SendTelegramMessageCommand
             {
                 Channel = ETelegramChannel.CallSolanaLog,
                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_RUNNING,
                             new object[] {
-                                EnumExtension.GetDescription(typeService) ?? string.Empty,
+                                EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                                 DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
                                 timer.Period
                             })
             });
         }
 
-        protected async Task SendAlertTimerIsNull(ETypeService typeService)
+        protected async Task SendAlertTimerIsNull()
         {
             await this._mediator.Send(new SendTelegramMessageCommand
             {
                 Channel = ETelegramChannel.CallSolanaLog,
                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_TIME_NULL,
                     new object[] {
-                        EnumExtension.GetDescription(typeService) ?? string.Empty,
+                        EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                         DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
                     })
             });
         }
 
-
         protected void LogMessage(string message) 
         {
+            switch (this._typeService)
+            {
+                case ETypeService.Transaction:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    break;
+                case ETypeService.Balance:
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
+                case ETypeService.Price:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                default:
+                    break;
+            }
             Console.WriteLine(message);
         }
 
-        private async Task<RunTimeController?> GetRunTimeControllerAsync(ETypeService typeService)
+        private async Task<RunTimeController?> GetRunTimeControllerAsync()
         {
-            return await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false && x.TypeService == typeService);
+            return await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false && x.TypeService == this._typeService);
         }
 
         
