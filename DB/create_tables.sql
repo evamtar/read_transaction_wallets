@@ -285,7 +285,6 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
-
 ------------------------------------------------------------
 
 UPDATE RunTimeController

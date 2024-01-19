@@ -21,7 +21,7 @@ namespace SyncronizationBot.Application.Handlers
         public async Task<ReadWalletsCommandResponse> Handle(ReadWalletsCommand request, CancellationToken cancellationToken)
         {
             var datetimeLimit = DateTime.Now;
-            var walletTracked = await base.GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
+            var walletTracked = await base.GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit), x=> x.UnixTimeSeconds!);
             var hasNext = walletTracked != null;
             while (hasNext) 
             {

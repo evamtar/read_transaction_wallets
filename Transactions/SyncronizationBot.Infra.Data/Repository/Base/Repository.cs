@@ -84,9 +84,12 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
             return await _context.Set<T>().Where(predicate).AsNoTracking().ToListAsync();
         }
 
-        public virtual async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate)
+        public virtual async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
-            return await _context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
+            if (keySelector != null)
+                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).AsNoTracking().FirstOrDefaultAsync();
+            else
+                return await _context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public virtual async Task<IEnumerable<T>> GetAll()

@@ -36,7 +36,7 @@ namespace SyncronizationBot.Application.Handlers
             var hasNext = wallet != null;
             while (hasNext) 
             {
-                var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet.Hash });
+                var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
                 if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
                 {
                     var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });

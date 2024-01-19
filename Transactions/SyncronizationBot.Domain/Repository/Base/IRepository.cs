@@ -9,7 +9,7 @@ namespace SyncronizationBot.Domain.Repository.Base
         Task<IEnumerable<T>> GetAll();
         Task<T?> Get(Guid id);
         Task<IEnumerable<T>> Get(Expression<Func<T, bool>> predicate);
-        Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate);
+        Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T> Add(T item);
         Task<T> DetachedItem(T item);
         Task<T> AddSingleItem(T item);

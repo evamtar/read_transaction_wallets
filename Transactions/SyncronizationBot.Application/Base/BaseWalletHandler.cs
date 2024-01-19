@@ -24,9 +24,9 @@ namespace SyncronizationBot.Application.Base
             return await this._walletRepository.Get(predicate);
         }
 
-        protected async Task<Wallet?> GetWallet(Expression<Func<Wallet, bool>> predicate)
+        protected async Task<Wallet?> GetWallet(Expression<Func<Wallet, bool>> predicate, Expression<Func<Wallet, object>> keySelector = null!)
         {
-            return await this._walletRepository.FindFirstOrDefault(predicate);
+            return await this._walletRepository.FindFirstOrDefault(predicate, keySelector);
         }
 
         protected long? GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
