@@ -60,12 +60,17 @@ namespace SyncronizationBot.Application.Handlers
             };
         }
 
-        private decimal? CalculatePercentege(decimal? quantityEnter, decimal? quantity) 
+        private decimal? CalculatePercentege(decimal? quantityEnter, decimal? quantity)
         {
-            if (quantity - quantityEnter <= 0)
+            if (quantity + quantityEnter <= 0)
                 return -100;
-            else 
-                return quantityEnter / quantity * 100;
+            else
+            {
+                var percentage = (quantityEnter / quantity) * 100;
+                if (percentage != null)
+                    return Math.Round(percentage.Value, 5);
+                return percentage;
+            }
         }
     }
 }

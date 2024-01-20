@@ -136,14 +136,24 @@ namespace SyncronizationBot.Application.Handlers
             return new RecoverySaveTransactionsCommandResponse { };
         }
 
-        private async Task<RecoveryAddUpdateBalanceItemCommandResponse> UpdateBalance(Transactions? transactions, RecoverySaveTokenCommandResponse? tokenSended, RecoverySaveTokenCommandResponse? tokenSendedPool, RecoverySaveTokenCommandResponse? tokenReceived, RecoverySaveTokenCommandResponse? tokenReceivedPool) 
+        private async Task<RecoveryAddUpdateBalanceItemCommandResponse> UpdateBalance(Transactions? transactions, TransferInfo? transferInfo, RecoverySaveTokenCommandResponse? tokenSended, RecoverySaveTokenCommandResponse? tokenSendedPool, RecoverySaveTokenCommandResponse? tokenReceived, RecoverySaveTokenCommandResponse? tokenReceivedPool) 
         {
             switch (transactions?.TypeOperation)
             {
-                
                 case ETypeOperation.BUY:
                 case ETypeOperation.SELL:
                 case ETypeOperation.SWAP:
+                    if (transferInfo?.PaymentFee > 0) 
+                    {
+                        var solTokenForFee = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" }); 
+                        await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                        {
+                            WalleId = transactions?.IdWallet,
+                            TokenId = solTokenForFee?.TokenId,
+                            Quantity = transferInfo?.PaymentFee,
+                            TokenHash = tokenSended?.Hash,
+                        });
+                    }
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                     {
                         WalleId = transactions?.IdWallet,
@@ -159,6 +169,17 @@ namespace SyncronizationBot.Application.Handlers
                         TokenHash = tokenReceived?.Hash,
                     });
                 case ETypeOperation.SEND:
+                    if (transferInfo?.PaymentFee > 0)
+                    {
+                        var solTokenForFee = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                        await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                        {
+                            WalleId = transactions?.IdWallet,
+                            TokenId = solTokenForFee?.TokenId,
+                            Quantity = transferInfo?.PaymentFee,
+                            TokenHash = tokenSended?.Hash,
+                        });
+                    }
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                     {
                         WalleId = transactions?.IdWallet,
@@ -177,6 +198,17 @@ namespace SyncronizationBot.Application.Handlers
                     });
                     break;
                 case ETypeOperation.POOLCREATE:
+                    if (transferInfo?.PaymentFee > 0)
+                    {
+                        var solTokenForFee = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                        await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                        {
+                            WalleId = transactions?.IdWallet,
+                            TokenId = solTokenForFee?.TokenId,
+                            Quantity = transferInfo?.PaymentFee,
+                            TokenHash = tokenSended?.Hash,
+                        });
+                    }
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                     {
                         WalleId = transactions?.IdWallet,
@@ -193,6 +225,17 @@ namespace SyncronizationBot.Application.Handlers
                     });
                     break;
                 case ETypeOperation.POOLFINALIZED:
+                    if (transferInfo?.PaymentFee > 0)
+                    {
+                        var solTokenForFee = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                        await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                        {
+                            WalleId = transactions?.IdWallet,
+                            TokenId = solTokenForFee?.TokenId,
+                            Quantity = transferInfo?.PaymentFee,
+                            TokenHash = tokenSended?.Hash,
+                        });
+                    }
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                     {
                         WalleId = transactions?.IdWallet,
