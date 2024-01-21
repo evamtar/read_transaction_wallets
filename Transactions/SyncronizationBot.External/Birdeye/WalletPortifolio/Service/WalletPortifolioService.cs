@@ -18,6 +18,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service
             this._httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
             this._httpClient.DefaultRequestHeaders.Add("X-API-KEY", config.Value.ApiKey ?? string.Empty);
             this._httpClient.DefaultRequestHeaders.Add("x-chain", config.Value.Chain ?? string.Empty);
+            this._httpClient.Timeout = TimeSpan.FromMinutes(10);
         }
         public async Task<WalletPortifolioResponse> ExecuteRecoveryWalletPortifolioAsync(WalletPortifolioRequest request)
         {

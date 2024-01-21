@@ -45,7 +45,7 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
                     balance.Price = price?.Data?[request.TokenHash!].Price ?? 0;
-                    balance.TotalValueUSD = request.Quantity * price?.Data?[request.TokenHash!].Price;
+                    balance.TotalValueUSD = balance.Quantity * price?.Data?[request.TokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
                 balance = await this._walletBalanceRepository.Edit(balance);

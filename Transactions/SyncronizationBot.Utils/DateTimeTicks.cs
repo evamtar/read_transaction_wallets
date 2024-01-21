@@ -30,7 +30,7 @@ namespace SyncronizationBot.Utils
 
         public long ConvertDateTimeToTicks(DateTime dateTime) 
         {
-            return new DateTimeOffset(dateTime).ToUnixTimeSeconds();
+            return new DateTimeOffset(dateTime, TimeSpan.Zero).ToUnixTimeSeconds();
         }
 
         public DateTime ConvertTicksToDateTime(long ticks)

@@ -34,7 +34,6 @@ namespace SyncronizationBot.Service
                             base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(timer);
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
-                            base.LogMessage($"Final Ticks {DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)}");
                         }
                         catch (Exception ex)
                         {
