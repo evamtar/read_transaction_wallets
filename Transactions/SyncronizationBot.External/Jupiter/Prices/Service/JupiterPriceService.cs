@@ -19,7 +19,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service
         }
         public async Task<JupiterPricesResponse> ExecuteRecoveryPriceAsync(JupiterPricesRequest request)
         {
-            var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, string.Join(",", request.Ids?? new List<string>())));
+            var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, string.Join(",", request.Ids?? new List<string>()), this._config.Value.VsToken?? string.Empty));
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<JupiterPricesResponse>(responseBody) ?? new JupiterPricesResponse { };
         }
