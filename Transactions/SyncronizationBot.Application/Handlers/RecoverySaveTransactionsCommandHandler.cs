@@ -71,7 +71,7 @@ namespace SyncronizationBot.Application.Handlers
                                     if (exists == null && request.DateLoadBalance < AdjustDateTimeToPtBR(transactionDetails?.Result?.Data[0].DateOfTransfer))
                                     {
                                         var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails?.Result?.Data);
-                                        var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);
+                                        var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails?.Result.Data[0].Source, transferManager);
                                         var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, this._mappedTokensConfig.Value);
                                         if (transferInfo.TransactionType != ETransactionType.INDEFINED)
                                         {
@@ -92,10 +92,10 @@ namespace SyncronizationBot.Application.Handlers
                                             {
                                                 Signature = transaction.Signature,
                                                 DateOfTransaction = transaction.DateOfTransaction,
-                                                AmountValueSource = CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
-                                                AmountValueSourcePool = CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
-                                                AmountValueDestination = (transferInfo?.TokenReceived?.Amount ?? 0) / tokenReceived?.Divisor ?? 1,
-                                                AmountValueDestinationPool = CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
+                                                AmountValueSource = this.CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
+                                                AmountValueSourcePool = this.CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
+                                                AmountValueDestination = this.CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
+                                                AmountValueDestinationPool = this.CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
                                                 IdTokenSource = tokenSended?.TokenId,
                                                 IdTokenSourcePool = tokenSendedPool?.TokenId,
                                                 IdTokenDestination = tokenReceived?.TokenId,
