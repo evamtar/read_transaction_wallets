@@ -14,7 +14,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(w => w.Hash);
             builder.Property(w => w.IdClassWallet);
             builder.Property(w => w.UnixTimeSeconds).HasPrecision(20, 0);
-            builder.Property(w => w.LastUpdate);
+            builder.Property(w => w.IsLoadBalance);
+            builder.Property(w => w.DateLoadBalance);
+            builder.Property(w => w.IsActive);
+            builder.Property(w => w.LastUpdate); 
             builder.HasOne(w => w.ClassWallet).WithMany(cw => cw.Wallets).HasForeignKey(w => w.IdClassWallet);
             builder.HasKey(w => w.ID);
         }

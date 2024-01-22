@@ -68,7 +68,7 @@ namespace SyncronizationBot.Application.Handlers
                                 try
                                 {
                                     var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
-                                    if (exists == null)
+                                    if (exists == null && request.DateLoadBalance < transactionDetails?.Result?.Data[0].DateOfTransfer)
                                     {
                                         var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails.Result.Data);
                                         var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);

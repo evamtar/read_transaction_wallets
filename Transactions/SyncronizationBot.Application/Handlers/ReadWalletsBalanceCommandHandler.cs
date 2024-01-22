@@ -56,6 +56,7 @@ namespace SyncronizationBot.Application.Handlers
                     });
                 }
                 var finalTicks = base.GetFinalTicks();
+                wallet!.DateLoadBalance = DateTime.Now;
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
