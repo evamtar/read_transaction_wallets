@@ -9,6 +9,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? IdClassWallet { get; set; }
         public decimal? UnixTimeSeconds { get; set; }
         public bool? IsLoadBalance { get; set; }
+        public DateTime? DateLoadBalance { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? LastUpdate { get; set; }
         public virtual ClassWallet? ClassWallet { get; set; }

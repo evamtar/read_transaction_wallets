@@ -33,6 +33,7 @@ namespace SyncronizationBot.Application.Handlers
                     WalletId = walletTracked?.ID,
                     WalletHash = walletTracked?.Hash,
                     IdClassification = classWallet?.IdClassification,
+                    DateLoadBalance = walletTracked?.DateLoadBalance,
                     InitialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds),
                     FinalTicks = finalTicks
                 });

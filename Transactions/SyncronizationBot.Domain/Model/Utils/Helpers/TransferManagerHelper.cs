@@ -9,14 +9,17 @@ namespace SyncronizationBot.Domain.Model.Utils.Helpers
     {
         private const string PAYMENT_FEE = "PAYMENT_FEE";
 
-        public static async Task<TransferManager?> GetTransferManager(List<TransferResponse> transfersResponse)
+        public static async Task<TransferManager?> GetTransferManager(List<TransferResponse>? transfersResponse)
         {
             TransferManager transferManager = new TransferManager();
-            foreach (var transferResponse in transfersResponse)
+            if (transfersResponse != null) 
             {
-                var transferMapper = new TransferMapper(transferResponse);
-                if(transferMapper != null && transferMapper.Type != ETransferType.CreateAccount && transferMapper.Type != ETransferType.CloseAccount) 
-                    await transferManager.AddTransfer(transferMapper);
+                foreach (var transferResponse in transfersResponse)
+                {
+                    var transferMapper = new TransferMapper(transferResponse);
+                    if (transferMapper != null && transferMapper.Type != ETransferType.CreateAccount && transferMapper.Type != ETransferType.CloseAccount)
+                        await transferManager.AddTransfer(transferMapper);
+                }
             }
             return transferManager;
         }

@@ -34,9 +34,14 @@ namespace SyncronizationBot.Application.Base
             return await this._walletRepository.FindFirstOrDefault(predicate, keySelector);
         }
 
-        protected long GetInitialTicks(decimal? initialTicks) => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes((this._config.Value.UTCTransactionMinutesAdjust * -1) ?? -1));
+        protected long GetInitialTicks(decimal? initialTicks) 
+        {
+            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes((this._config.Value.UTCTransactionMinutesAdjust * -1) ?? -1);
+            return DateTimeTicks.Instance.ConvertDateTimeToTicks(dateAjusted);
 
-        protected long GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
+        }
+
+        protected long GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.UtcNow);
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet) 
         {

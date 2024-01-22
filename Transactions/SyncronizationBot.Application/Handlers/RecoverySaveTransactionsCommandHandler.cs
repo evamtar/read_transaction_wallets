@@ -68,9 +68,9 @@ namespace SyncronizationBot.Application.Handlers
                                 try
                                 {
                                     var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
-                                    if (exists == null)
+                                    if (exists == null && request.DateLoadBalance < AdjustDateTimeToPtBR(transactionDetails?.Result?.Data[0].DateOfTransfer))
                                     {
-                                        var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails.Result.Data);
+                                        var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails?.Result?.Data);
                                         var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails.Result.Data[0].Source, transferManager);
                                         var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, this._mappedTokensConfig.Value);
                                         if (transferInfo.TransactionType != ETransactionType.INDEFINED)

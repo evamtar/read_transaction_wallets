@@ -40,6 +40,7 @@ using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
 using SyncronizationBot.Infra.Data.Repository;
 using SyncronizationBot.Service;
+using SyncronizationBot.Utils;
 using System.Reflection;
 
 
@@ -75,8 +76,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Hosted Service
 
     services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
-    //services.AddHostedService<LoadBalanceWalletsService>();
+    services.AddHostedService<AlertPriceService>();
+    services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
 
