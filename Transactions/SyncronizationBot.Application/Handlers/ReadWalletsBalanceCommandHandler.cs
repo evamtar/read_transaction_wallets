@@ -56,6 +56,7 @@ namespace SyncronizationBot.Application.Handlers
                     });
                 }
                 var finalTicks = base.GetFinalTicks();
+                wallet!.DateLoadBalance = DateTime.Now;
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
@@ -76,7 +77,6 @@ namespace SyncronizationBot.Application.Handlers
                     }
                 }
                 wallet.IsLoadBalance = true;
-                wallet!.DateLoadBalance = DateTime.Now;
                 await base.UpdateUnixTimeSeconds(finalTicks, wallet);
                 wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
                 hasNext = wallet != null;
