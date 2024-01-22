@@ -8,6 +8,7 @@
         public string? Name { get; set; }
         public decimal? Supply { get; set; }
         public decimal? MarketCap { get; set; }
+        public decimal? Price { get; set; }
         public decimal? Liquidity { get; set; }
         public int? UniqueWallet24h { get; set; }
         public int? UniqueWalletHistory24h { get; set; }

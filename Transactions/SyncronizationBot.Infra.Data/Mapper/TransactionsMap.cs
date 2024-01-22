@@ -17,6 +17,11 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.AmountValueSourcePool).HasConversion<string?>();
             builder.Property(t => t.AmountValueDestination).HasConversion<string?>();
             builder.Property(t => t.AmountValueDestinationPool).HasConversion<string?>();
+            builder.Property(t => t.MtkcapTokenSource).HasConversion<string?>();
+            builder.Property(t => t.MtkcapTokenSourcePool).HasConversion<string?>();
+            builder.Property(t => t.MtkcapTokenDestination).HasConversion<string?>();
+            builder.Property(t => t.MtkcapTokenDestinationPool).HasConversion<string?>();
+            builder.Property(t => t.PriceSol).HasConversion<string?>();
             builder.Property(t => t.IdTokenSource);
             builder.Property(t => t.IdTokenSourcePool);
             builder.Property(t => t.IdTokenDestination);

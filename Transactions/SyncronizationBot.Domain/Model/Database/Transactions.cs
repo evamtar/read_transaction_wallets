@@ -11,6 +11,11 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? AmountValueSourcePool { get; set; }
         public decimal? AmountValueDestination { get; set;}
         public decimal? AmountValueDestinationPool { get; set; }
+        public decimal? MtkcapTokenSource { get; set; }
+        public decimal? MtkcapTokenSourcePool { get; set; }
+        public decimal? MtkcapTokenDestination { get; set; }
+        public decimal? MtkcapTokenDestinationPool { get; set; }
+        public decimal? PriceSol { get; set; }
         public Guid? IdTokenSource { get; set; }
         public Guid? IdTokenSourcePool { get; set; }
         public Guid? IdTokenDestination { get; set; }
