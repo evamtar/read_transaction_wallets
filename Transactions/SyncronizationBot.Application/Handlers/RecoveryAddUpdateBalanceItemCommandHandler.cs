@@ -45,7 +45,7 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
                     balance.Price = price?.Data?[request.TokenHash!].Price ?? 0;
-                    balance.TotalValueUSD = request.Quantity * price?.Data?[request.TokenHash!].Price;
+                    balance.TotalValueUSD = balance.Quantity * price?.Data?[request.TokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
                 balance = await this._walletBalanceRepository.Edit(balance);
@@ -60,12 +60,17 @@ namespace SyncronizationBot.Application.Handlers
             };
         }
 
-        private decimal? CalculatePercentege(decimal? quantityEnter, decimal? quantity) 
+        private decimal? CalculatePercentege(decimal? quantityEnter, decimal? quantity)
         {
-            if (quantity - quantityEnter <= 0)
+            if (quantity + quantityEnter <= 0)
                 return -100;
-            else 
-                return quantityEnter / quantity * 100;
+            else
+            {
+                var percentage = (quantityEnter / quantity) * 100;
+                if (percentage != null)
+                    return Math.Round(percentage.Value, 5);
+                return percentage;
+            }
         }
     }
 }

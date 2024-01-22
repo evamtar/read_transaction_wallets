@@ -1,6 +1,8 @@
 ﻿
 
 using MediatR;
+using Microsoft.Extensions.Options;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Utils;
@@ -12,11 +14,14 @@ namespace SyncronizationBot.Application.Base
     {
         protected readonly IMediator _mediator;
         protected readonly IWalletRepository _walletRepository;
+        protected readonly IOptions<SyncronizationBotConfig> _config;
         public BaseWalletHandler(IMediator mediator,
-                                 IWalletRepository walletRepository)
+                                 IWalletRepository walletRepository,
+                                 IOptions<SyncronizationBotConfig> config)
         {
             this._mediator = mediator;
             this._walletRepository = walletRepository;
+            this._config = config;
         }
 
         protected async Task<IEnumerable<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate) 
@@ -29,7 +34,9 @@ namespace SyncronizationBot.Application.Base
             return await this._walletRepository.FindFirstOrDefault(predicate, keySelector);
         }
 
-        protected long? GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
+        protected long GetInitialTicks(decimal? initialTicks) => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes((this._config.Value.UTCTransactionMinutesAdjust * -1) ?? -1));
+
+        protected long GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now);
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet) 
         {

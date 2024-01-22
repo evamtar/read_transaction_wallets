@@ -1,7 +1,9 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Base;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Model.Database;
@@ -22,9 +24,10 @@ namespace SyncronizationBot.Application.Handlers
 
         public ReadWalletsBalanceCommandHandler(IMediator mediator,
                                                 IWalletRepository walletRepository,
+                                                IOptions<SyncronizationBotConfig> config,
                                                 IWalletBalanceRepository walletBalanceRepository,
                                                 IWalletPortifolioService walletPortifolioService,
-                                                IAccountInfoService accountInfoService) : base(mediator, walletRepository)
+                                                IAccountInfoService accountInfoService) : base(mediator, walletRepository, config)
         {
             this._walletBalanceRepository = walletBalanceRepository;
             this._walletPortifolioService = walletPortifolioService;

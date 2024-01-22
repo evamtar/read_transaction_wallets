@@ -1,10 +1,10 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Base;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
-using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.Handlers
 {
@@ -14,7 +14,8 @@ namespace SyncronizationBot.Application.Handlers
         
         public ReadWalletsCommandHandler(IMediator mediator,
                                          IWalletRepository walletRepository,
-                                         IClassWalletRepository classWalletRepository): base(mediator, walletRepository)
+                                         IClassWalletRepository classWalletRepository,
+                                         IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, config)
         {
             this._classWalletRepository = classWalletRepository;
         }
@@ -32,8 +33,8 @@ namespace SyncronizationBot.Application.Handlers
                     WalletId = walletTracked?.ID,
                     WalletHash = walletTracked?.Hash,
                     IdClassification = classWallet?.IdClassification,
-                    InitialTicks = walletTracked?.UnixTimeSeconds ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddMinutes(-10)),
-                    FinalTicks = finalTicks ?? DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now)
+                    InitialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds),
+                    FinalTicks = finalTicks
                 });
                 walletTracked!.LastUpdate = DateTime.Now;
                 await base.UpdateUnixTimeSeconds(finalTicks, walletTracked);
