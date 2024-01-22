@@ -209,7 +209,7 @@ INSERT INTO Wallet VALUES (NEWID(), 'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYN
 INSERT INTO Wallet VALUES (NEWID(), 'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, null, 0, null, 1, null);
 INSERT INTO Wallet VALUES (NEWID(), 'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, null, 0, null, 1, null);
 
---SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
+SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
 INSERT INTO Wallet VALUES (NEWID(), 'GhuBeitd7eh8KwCurXy1tFCRxGphpVxa8X4rUX8dQxHc', @IdClassWallet, null, 0, null, 1, null);
 
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 3
