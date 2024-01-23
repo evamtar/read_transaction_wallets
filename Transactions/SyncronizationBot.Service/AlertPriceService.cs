@@ -45,7 +45,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning(timer);
+                        await base.SendAlertAppRunning();
                         base.LogMessage($"Alerta de Preços Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 

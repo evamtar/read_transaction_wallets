@@ -10,7 +10,7 @@ namespace SyncronizationBot.Utils
                                                        "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
         private const string MESSAGE_LOG_APP_TIME_NULL = "<b>Timer do serviço {0} está nulo ou não configurado.</b>\r\n" +
                                                          "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
-        private const string MESSAGE_LOG_EXECUTE_ERROR = "<b>O serviço {2} suspendeu a execução.</b>\r\n" +
+        private const string MESSAGE_LOG_EXECUTE_ERROR = "<b>O serviço {0} suspendeu a execução.</b>\r\n" +
                                                          "<i><b>Mensagem de erro:</b> {1}</i>.\r\n" +
                                                          "StackTrace: {2}\r\n" +
                                                          "<i><b>Proxima execução</b> no período timer de --> {3}. \r\n" +

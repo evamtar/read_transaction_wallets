@@ -32,7 +32,7 @@ namespace SyncronizationBot.Service.Base
             { 
                 this.RunTimeController = await this.GetRunTimeControllerAsync();
             }
-            return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 10));
+            return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 1));
         }
 
         protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
@@ -64,7 +64,7 @@ namespace SyncronizationBot.Service.Base
             });
         }
 
-        protected async Task SendAlertAppRunning(PeriodicTimer timer)
+        protected async Task SendAlertAppRunning()
         {
             await this._mediator.Send(new SendTelegramMessageCommand
             {
@@ -72,8 +72,7 @@ namespace SyncronizationBot.Service.Base
                 Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_APP_RUNNING,
                             new object[] {
                                 EnumExtension.GetDescription(this._typeService) ?? string.Empty,
-                                DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
-                                timer.Period
+                                DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
                             })
             });
         }
@@ -96,13 +95,16 @@ namespace SyncronizationBot.Service.Base
             switch (this._typeService)
             {
                 case ETypeService.Transaction:
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ETypeService.Balance:
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ETypeService.Price:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
                     break;
                 default:
                     break;
