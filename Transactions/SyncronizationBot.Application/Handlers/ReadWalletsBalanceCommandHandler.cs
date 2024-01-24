@@ -19,16 +19,19 @@ namespace SyncronizationBot.Application.Handlers
     {
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
-        
+        private readonly IAccountInfoService _accountInfoService;
+
 
         public ReadWalletsBalanceCommandHandler(IMediator mediator,
                                                 IWalletRepository walletRepository,
                                                 IOptions<SyncronizationBotConfig> config,
                                                 IWalletBalanceRepository walletBalanceRepository,
-                                                IWalletPortifolioService walletPortifolioService) : base(mediator, walletRepository, config)
+                                                IWalletPortifolioService walletPortifolioService,
+                                                IAccountInfoService accountInfoService) : base(mediator, walletRepository, config)
         {
             this._walletBalanceRepository = walletBalanceRepository;
             this._walletPortifolioService = walletPortifolioService;
+            this._accountInfoService = accountInfoService;
         }
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
@@ -36,14 +39,38 @@ namespace SyncronizationBot.Application.Handlers
             var hasNext = wallet != null;
             while (hasNext) 
             {
+                var token = (RecoverySaveTokenCommandResponse)null!;
                 var finalTicks = base.GetFinalTicks();
                 wallet!.DateLoadBalance = DateTime.Now;
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
+                    if (walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111111") == null && walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111112") == null) 
+                    {
+                        token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                        var checkedExists = this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
+                        if (checkedExists == null)
+                        {
+                            var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
+                            if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
+                            {
+                                await this._walletBalanceRepository.Add(new WalletBalance
+                                {
+                                    IdWallet = wallet.ID,
+                                    IdToken = token?.TokenId,
+                                    TokenHash = "So11111111111111111111111111111111111111112",
+                                    Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
+                                    Price = token?.MarketCap / token?.Supply,
+                                    TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
+                                    IsActive = accountInfo.Result?.Value?.Lamports > 0,
+                                    LastUpdate = DateTime.Now
+                                });
+                            }
+                        }
+                    }
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
-                        var token = (RecoverySaveTokenCommandResponse)null!;
+                            
                         if (item.Address == "So11111111111111111111111111111111111111112")
                             continue;
                         else if (item.Address == "So11111111111111111111111111111111111111111")
@@ -68,7 +95,6 @@ namespace SyncronizationBot.Application.Handlers
                 wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
                 hasNext = wallet != null;
             }
-            
             return new ReadWalletsBalanceCommandResponse { };
         }
 
