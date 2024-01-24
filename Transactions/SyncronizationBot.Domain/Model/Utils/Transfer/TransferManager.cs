@@ -1,10 +1,13 @@
 ﻿
 
+using System.Security.Principal;
+
 namespace SyncronizationBot.Domain.Model.Utils.Transfer
 {
     public class TransferManager
     {
         private const string PAYMENT_FEE = "PAYMENT_FEE";
+        private const string DIRECT_TRANSFER = "DIRECT_TRANSFER";
         public Dictionary<string, TransferAccount> Accounts { get; set; } = new Dictionary<string, TransferAccount>();
 
         public async Task AddTransfer(TransferMapper? transferMapper) 
@@ -20,11 +23,14 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
                 case ETransferType.Transfer:
                 case ETransferType.TransferChecked:
                     if (transferMapper.SourceAssociation != null)
-                    {    
+                    {
+                        await ExistsAndRemoveDuplicateDirectTransfer(DIRECT_TRANSFER, transferMapper, transferAccountSource);
                         await MakeTransfer(transferMapper.SourceAssociation, transferMapper, transferAccountSource, ETypeOfTransfer.DEBIT);
                         if (transferAccountDestination != null)
                             await MakeTransfer(transferMapper.DestinationAssociation, transferMapper, transferAccountDestination, ETypeOfTransfer.CREDIT);
                     }
+                    else 
+                        await MakeTransfer(DIRECT_TRANSFER, transferMapper, transferAccountSource, ETypeOfTransfer.DEBIT);
                     break;
                 case ETransferType.None:
                 case ETransferType.CreateAccount:
@@ -33,6 +39,18 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
                 default:
                     break;
             }
+        }
+
+        private Task ExistsAndRemoveDuplicateDirectTransfer(string? subAccountHash, TransferMapper? transferMapper, TransferAccount? account) 
+        {
+            if (account?.SubAccounts?.ContainsKey(subAccountHash!) ?? false) 
+            {
+                var subAccount = account?.SubAccounts?[subAccountHash!];
+                if (subAccount?.Balance?.ContainsKey(transferMapper?.Token ?? string.Empty) ?? false) 
+                    if (Math.Abs(subAccount?.Balance?[transferMapper?.Token ?? string.Empty] ?? 0) == Math.Abs(transferMapper?.Amount ?? 0))
+                        account?.SubAccounts?.Remove(subAccountHash!);
+            }
+            return Task.CompletedTask;
         }
 
         private async Task MakeTransfer(string? subAccountHash, TransferMapper? transferMapper, TransferAccount? account, ETypeOfTransfer typeOfTransfer) 

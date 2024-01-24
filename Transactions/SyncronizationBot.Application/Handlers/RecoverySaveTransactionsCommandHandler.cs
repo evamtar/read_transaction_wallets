@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
@@ -104,7 +105,7 @@ namespace SyncronizationBot.Application.Handlers
                                                 MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
                                                 MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
                                                 MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
-                                                FeeTransaction = transferInfo?.PaymentFee,
+                                                FeeTransaction = this.CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
                                                 PriceTokenSourceUSD = tokenSended?.Price,
                                                 PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
                                                 PriceTokenDestinationUSD = tokenReceived?.Price,
@@ -433,6 +434,12 @@ namespace SyncronizationBot.Application.Handlers
             var ajustedAmount = ((decimal?)amount ?? 0) / ((decimal?)divisor ?? 1);
             return ajustedAmount * price;
         }
+        private decimal? CalculatedFeeTransaction(decimal? value, int? divisor)
+        {
+            if (value == null || divisor == null) return null;
+            return (value / (divisor ?? 1)) ?? 0;
+        }
+        
 
     }
 }
