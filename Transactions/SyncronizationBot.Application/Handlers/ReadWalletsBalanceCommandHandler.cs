@@ -54,7 +54,7 @@ namespace SyncronizationBot.Application.Handlers
                         {
                             IdWallet = wallet?.ID,
                             IdToken = token?.TokenId,
-                            TokenHash = item.Address,
+                            TokenHash = item.Address == "So11111111111111111111111111111111111111111" ? "So11111111111111111111111111111111111111112" : item.Address,
                             Quantity = item.UiAmount,
                             Price = item.PriceUsd,
                             TotalValueUSD = item.ValueUsd,
