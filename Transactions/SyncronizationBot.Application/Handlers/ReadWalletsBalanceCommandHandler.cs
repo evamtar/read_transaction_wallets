@@ -74,9 +74,9 @@ namespace SyncronizationBot.Application.Handlers
                         if (item.Address == "So11111111111111111111111111111111111111112")
                             continue;
                         else if (item.Address == "So11111111111111111111111111111111111111111")
-                            await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                            token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                         else
-                            await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
+                            token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
                         await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet?.ID,
