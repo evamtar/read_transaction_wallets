@@ -48,7 +48,7 @@ namespace SyncronizationBot.Application.Handlers
                     if (walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111111") == null && walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111112") == null) 
                     {
                         token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
-                        var checkedExists = this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
+                        var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
                         if (checkedExists == null)
                         {
                             var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
@@ -70,10 +70,7 @@ namespace SyncronizationBot.Application.Handlers
                     }
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
-                            
-                        if (item.Address == "So11111111111111111111111111111111111111112")
-                            continue;
-                        else if (item.Address == "So11111111111111111111111111111111111111111")
+                        if (item.Address == "So11111111111111111111111111111111111111111")
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                         else
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });

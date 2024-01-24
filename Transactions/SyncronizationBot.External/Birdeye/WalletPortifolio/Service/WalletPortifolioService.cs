@@ -22,9 +22,24 @@ namespace SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service
         }
         public async Task<WalletPortifolioResponse> ExecuteRecoveryWalletPortifolioAsync(WalletPortifolioRequest request)
         {
-            var response = await this._httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletHash));
-            var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<WalletPortifolioResponse>(responseBody) ?? new WalletPortifolioResponse { };
+            var makeRetry = true;
+            var retryMaxCount = 5;
+            var retryCount = 0;
+            var responseValue = (WalletPortifolioResponse)null!;
+            while (makeRetry) 
+            {
+                var response = await this._httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletHash));
+                var responseBody = await response.Content.ReadAsStringAsync();
+                responseValue = JsonConvert.DeserializeObject<WalletPortifolioResponse>(responseBody);
+                if ((responseValue?.Success ?? false) && responseValue?.Data?.Items?.Count > 0 && retryCount <= retryMaxCount)
+                    makeRetry = false;
+                else
+                {
+                    Thread.Sleep((retryCount * 2) + 2);
+                    retryCount++;
+                }
+            }
+            return responseValue ?? new WalletPortifolioResponse { };
         }
     }
 }
