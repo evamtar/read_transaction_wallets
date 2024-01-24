@@ -50,10 +50,9 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning(timer);
+                        await base.SendAlertAppRunning();
                         base.LogMessage($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
-
                 }
             }
             else 

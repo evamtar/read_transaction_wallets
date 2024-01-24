@@ -9,6 +9,7 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
     public class TransferAccount
     {
         private const string PAYMENT_FEE = "PAYMENT_FEE";
+        
         public DateTime? DateOfTransfer { get; set; }
         public Dictionary<string, TransferSubAccount>? SubAccounts { get; set; } = new Dictionary<string, TransferSubAccount>();
 
@@ -26,8 +27,8 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
                         {
                             if(subaccount.Key == PAYMENT_FEE)
                                 finalBalance = AddToBalance(finalBalance, PAYMENT_FEE, token.Value);
-                            else
-                                finalBalance = AddToBalance(finalBalance, token.Key, token.Value);
+                            else 
+                               finalBalance = AddToBalance(finalBalance, token.Key, token.Value);
                         }
                     }
                 }
@@ -54,6 +55,7 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
             }
             return balance;
         }
+
         private void SetDateOfTransfer(DateTime? dateOfTransfer) 
         {
             if (this.DateOfTransfer == null)

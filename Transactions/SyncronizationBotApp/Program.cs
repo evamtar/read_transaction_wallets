@@ -40,7 +40,6 @@ using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
 using SyncronizationBot.Infra.Data.Repository;
 using SyncronizationBot.Service;
-using SyncronizationBot.Utils;
 using System.Reflection;
 
 
@@ -55,6 +54,7 @@ host.Run();
 static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
     #region MediatR
+
 
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 

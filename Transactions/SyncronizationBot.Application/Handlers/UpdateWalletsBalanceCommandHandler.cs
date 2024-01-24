@@ -32,12 +32,11 @@ namespace SyncronizationBot.Application.Handlers
                     var prices = await this._mediator.Send(new RecoveryPriceCommand { Ids = this.GetIdsTokens(balances) });
                     foreach (var balance in balances)
                     {
-                        if (prices?.Data?.ContainsKey(balance.TokenHash!) ?? false) 
-                        {
+                        if (prices?.Data?.ContainsKey(balance.TokenHash!) ?? false)
                             balance.TotalValueUSD = balance.Quantity * (prices?.Data?[balance.TokenHash!].Price ?? 0);
-                            balance.LastUpdate = DateTime.Now;
-                            await this._walletBalanceRepository.Edit(balance);
-                        }
+                        balance.LastUpdate = DateTime.Now;
+                        await this._walletBalanceRepository.Edit(balance);
+                        try { await this._walletBalanceRepository.DetachedItem(balance); } catch { }
                     }
                 }
             }

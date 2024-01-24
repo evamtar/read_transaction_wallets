@@ -3,6 +3,7 @@ using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenOverview.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Accounts.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
@@ -38,6 +39,7 @@ namespace SyncronizationBot.Application.Handlers
         public async Task<RecoverySaveTokenCommandResponse> Handle(RecoverySaveTokenCommand request, CancellationToken cancellationToken)
         {
             var token = await this._tokenRepository.FindFirstOrDefault(x => x.Hash == request.TokenHash);
+            var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
             if (token == null || (token.LastUpdate != null && token.LastUpdate.Value.AddDays(7) <= DateTime.Now))
             {
                 var tokenResponse = await this._tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
@@ -89,6 +91,7 @@ namespace SyncronizationBot.Application.Handlers
                         Name = tokenAdded.Name,
                         Supply = tokenAdded.Supply,
                         MarketCap = tokenAdded.MarketCap,
+                        Price = this.GetPrice(request.TokenHash, price.Data),
                         Liquidity = tokenAdded.Liquidity,
                         UniqueWallet24h = tokenAdded.UniqueWallet24h,
                         UniqueWalletHistory24h = tokenAdded.UniqueWalletHistory24h,
@@ -146,6 +149,7 @@ namespace SyncronizationBot.Application.Handlers
                         Name = tokenAdded?.Name,
                         Supply = tokenAdded?.Supply,
                         MarketCap = tokenAdded?.MarketCap,
+                        Price = this.GetPrice(request.TokenHash, price.Data),
                         Liquidity = tokenAdded?.Liquidity,
                         UniqueWallet24h = tokenAdded?.UniqueWallet24h,
                         UniqueWalletHistory24h = tokenAdded?.UniqueWalletHistory24h,
@@ -169,6 +173,7 @@ namespace SyncronizationBot.Application.Handlers
                     Name = token?.Name,
                     Supply = token?.Supply,
                     MarketCap = token?.MarketCap,
+                    Price = this.GetPrice(request.TokenHash, price.Data),
                     Liquidity = token?.Liquidity,
                     UniqueWallet24h = token?.UniqueWallet24h,
                     UniqueWalletHistory24h = token?.UniqueWalletHistory24h,
@@ -180,6 +185,18 @@ namespace SyncronizationBot.Application.Handlers
                     IsMutable = tokenSecurity?.IsMutable,
                 };
             }
+        }
+
+        private decimal? GetPrice(string? tokenHash, Dictionary<string, TokenData>? tokenDatadictionary) 
+        {
+            if (tokenHash != null) 
+            {
+                if (tokenDatadictionary?.ContainsKey(tokenHash) ?? false)
+                {
+                    return tokenDatadictionary[tokenHash].Price;
+                }
+            }
+            return null;
         }
     }
 }
