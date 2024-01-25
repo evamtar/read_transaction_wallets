@@ -36,7 +36,7 @@ namespace SyncronizationBot.Application.Base
 
         protected long GetInitialTicks(decimal? initialTicks) 
         {
-            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes((this._config.Value.UTCTransactionMinutesAdjust * -1) ?? -1);
+            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes(this._config.Value.UTCTransactionMinutesAdjust ?? -5);
             return DateTimeTicks.Instance.ConvertDateTimeToTicks(dateAjusted);
 
         }
