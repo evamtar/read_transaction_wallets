@@ -75,11 +75,11 @@ BEGIN
 		PRIMARY KEY(ID),
 		FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
 	);
+	--DELETE FROM AlertPrice
 	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
 	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '7.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '9', null, 1, 1, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '3.134', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '2.52', null, 2, 0, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '95.60', 'So11111111111111111111111111111111111111112', '88.58', null, 2, 1, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '1.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '22.3', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
 END
 GO
 
@@ -180,16 +180,30 @@ CREATE TABLE TokenSecurity(
 
 CREATE TABLE Transactions
 (
-	ID                         UNIQUEIDENTIFIER,
-	[Signature]                VARCHAR(150),
-	DateOfTransaction          DATETIME2,
-	AmountValueSource          VARCHAR(150),
-	AmountValueSourcePool      VARCHAR(150),
-	AmountValueDestination     VARCHAR(150),
-	AmountValueDestinationPool VARCHAR(150),
-	IdTokenSource              UNIQUEIDENTIFIER,
-	IdTokenSourcePool          UNIQUEIDENTIFIER,
-	IdTokenDestination         UNIQUEIDENTIFIER,
+	ID                           UNIQUEIDENTIFIER,
+	[Signature]                  VARCHAR(150),
+	DateOfTransaction            DATETIME2,
+	AmountValueSource            VARCHAR(150),
+	AmountValueSourcePool        VARCHAR(150),
+	AmountValueDestination       VARCHAR(150),
+	AmountValueDestinationPool   VARCHAR(150),
+	FeeTransaction               VARCHAR(150),
+	MtkcapTokenSource            VARCHAR(150),
+	MtkcapTokenSourcePool        VARCHAR(150),
+	MtkcapTokenDestination       VARCHAR(150),
+	MtkcapTokenDestinationPool   VARCHAR(150),
+	PriceTokenSourceUSD          VARCHAR(150),
+	PriceTokenSourcePoolUSD      VARCHAR(150),
+	PriceTokenDestinationUSD     VARCHAR(150),
+	PriceTokenDestinationPoolUSD VARCHAR(150),
+	PriceSol				     VARCHAR(150),
+	TotalTokenSource             VARCHAR(150),
+	TotalTokenSourcePool         VARCHAR(150),
+	TotalTokenDestination        VARCHAR(150),
+	TotalTokenDestinationPool    VARCHAR(150),
+	IdTokenSource                UNIQUEIDENTIFIER,
+	IdTokenSourcePool            UNIQUEIDENTIFIER,
+	IdTokenDestination           UNIQUEIDENTIFIER,
 	IdTokenDestinationPool     UNIQUEIDENTIFIER,
 	IdWallet                   UNIQUEIDENTIFIER,
 	TypeOperation              INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
