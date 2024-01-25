@@ -40,45 +40,42 @@ namespace SyncronizationBot.Application.Handlers
             while (hasNext) 
             {
                 var token = (RecoverySaveTokenCommandResponse)null!;
-                var finalTicks = base.GetFinalTicks();
+                var finalTicks = base.GetInitialTicks(base.GetFinalTicks());
                 wallet!.DateLoadBalance = DateTime.Now;
                 var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
-                    if (walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111111") == null && walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111112") == null) 
+                    token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                    var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
+                    if (checkedExists == null)
                     {
-                        token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
-                        var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
-                        if (checkedExists == null)
+                        var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
+                        if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
                         {
-                            var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
-                            if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
+                            await this._walletBalanceRepository.Add(new WalletBalance
                             {
-                                await this._walletBalanceRepository.Add(new WalletBalance
-                                {
-                                    IdWallet = wallet.ID,
-                                    IdToken = token?.TokenId,
-                                    TokenHash = "So11111111111111111111111111111111111111112",
-                                    Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
-                                    Price = token?.MarketCap / token?.Supply,
-                                    TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
-                                    IsActive = accountInfo.Result?.Value?.Lamports > 0,
-                                    LastUpdate = DateTime.Now
-                                });
-                            }
+                                IdWallet = wallet.ID,
+                                IdToken = token?.TokenId,
+                                TokenHash = "So11111111111111111111111111111111111111112",
+                                Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
+                                Price = token?.MarketCap / token?.Supply,
+                                TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
+                                IsActive = accountInfo.Result?.Value?.Lamports > 0,
+                                LastUpdate = DateTime.Now
+                            });
                         }
                     }
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
                         if (item.Address == "So11111111111111111111111111111111111111111")
-                            token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                            continue;
                         else
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
                         await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet?.ID,
                             IdToken = token?.TokenId,
-                            TokenHash = item.Address == "So11111111111111111111111111111111111111111" ? "So11111111111111111111111111111111111111112" : item.Address,
+                            TokenHash = item.Address,
                             Quantity = item.UiAmount,
                             Price = item.PriceUsd,
                             TotalValueUSD = item.ValueUsd,

@@ -95,16 +95,13 @@ namespace SyncronizationBot.Service.Base
             switch (this._typeService)
             {
                 case ETypeService.Transaction:
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     break;
                 case ETypeService.Balance:
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     break;
                 case ETypeService.Price:
-                    Console.BackgroundColor = ConsoleColor.Yellow;
-                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
                 default:
                     break;
