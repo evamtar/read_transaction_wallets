@@ -7,6 +7,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalanceHistory')
+BEGIN
+	DROP TABLE [WalletBalanceHistory]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Transactions')
 BEGIN
 	DROP TABLE [Transactions]
