@@ -176,7 +176,6 @@ namespace SyncronizationBot.Application.Handlers
             switch (transactions?.TypeOperation)
             {
                 case ETypeOperation.BUY:
-                case ETypeOperation.SELL:
                 case ETypeOperation.SWAP:
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                     {
@@ -193,6 +192,23 @@ namespace SyncronizationBot.Application.Handlers
                         Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueDestination,
                         TokenHash = tokenReceived?.Hash,
+                    });
+                case ETypeOperation.SELL:
+                    await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                    {
+                        WalleId = transactions?.IdWallet,
+                        TokenId = transactions?.IdTokenDestination,
+                        Signature = transactions?.Signature,
+                        Quantity = transactions?.AmountValueDestination,
+                        TokenHash = tokenReceived?.Hash,
+                    });
+                    return await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                    {
+                        WalleId = transactions?.IdWallet,
+                        TokenId = transactions?.IdTokenSource,
+                        Signature = transactions?.Signature,
+                        Quantity = transactions?.AmountValueSource,
+                        TokenHash = tokenSended?.Hash,
                     });
                 case ETypeOperation.SEND:
                     await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
@@ -326,7 +342,7 @@ namespace SyncronizationBot.Application.Handlers
         {
             if ((this._mappedTokensConfig?.Value?.Tokens?.Contains(tokenSended?.Hash!) ?? false) && (this._mappedTokensConfig?.Value?.Tokens?.Contains(tokenReceived?.Hash!) ?? false))
                 return;
-            var existsTokenWallet = await this._walletBalanceRepository.FindFirstOrDefault(x => x.TokenHash != tokenReceived!.Hash && x.IdWallet == walletId);
+            var existsTokenWallet = await this._walletBalanceRepository.FindFirstOrDefault(x => x.TokenHash != tokenReceived!.Hash && x.IdWallet == walletId && x.LastUpdate <= AdjustDateTimeToPtBR(transferInfo!.DataOfTransfer));
             await this.SendMessage(existsTokenWallet == null ? buyMessage : rebuyMessage, this.GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
         }
 
