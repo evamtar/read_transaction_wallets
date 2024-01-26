@@ -12,6 +12,7 @@ using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
+using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
@@ -24,12 +25,11 @@ using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortofolio.Configs;
 using SyncronizationBot.Infra.CrossCutting.Dexscreener.Token.Configs;
+using SyncronizationBot.Infra.CrossCutting.Dexscreener.Token.Service;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Service;
-using SyncronizationBot.Infra.CrossCutting.Solanafm.Accounts.Configs;
-using SyncronizationBot.Infra.CrossCutting.Solanafm.Accounts.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
@@ -113,9 +113,14 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region External Services
+
     #region Dexscreener
 
-    services.Configure<DexScreenerTokenConfig>(configuration.GetSection("DexScreenerToken")); 
+    services.Configure<DexScreenerTokenConfig>(configuration.GetSection("DexScreenerToken"));
+    services.AddHttpClient<IDexScreenerTokenService, DexScreenerTokenService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     #endregion
 
     #region Birdeye
@@ -166,12 +171,6 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
-    services.Configure<AccountsConfig>(configuration.GetSection("Accounts"));
-    services.AddHttpClient<IAccountsService, AccountsService>().AddPolicyHandler(HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
-    
     services.Configure<AccountInfoConfig>(configuration.GetSection("AccountInfo"));
     services.AddHttpClient<IAccountInfoService, AccountInfoService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
