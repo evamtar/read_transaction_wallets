@@ -32,6 +32,8 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             query["page"] = request.Page?.ToString();
             var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletPublicKey) + "?" + query.ToString());
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<TransactionsResponse>(responseBody) ?? new TransactionsResponse { };
         }
     }

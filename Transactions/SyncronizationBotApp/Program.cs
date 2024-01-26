@@ -23,6 +23,7 @@ using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Configs;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenSecurity.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortofolio.Configs;
+using SyncronizationBot.Infra.CrossCutting.Dexscreener.Token.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Configs;
 using SyncronizationBot.Infra.CrossCutting.Jupiter.Prices.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Configs;
@@ -75,8 +76,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
     services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
@@ -112,7 +113,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region External Services
-    
+    #region Dexscreener
+
+    services.Configure<DexScreenerTokenConfig>(configuration.GetSection("DexScreenerToken")); 
+    #endregion
+
     #region Birdeye
 
     services.Configure<TokenOverviewConfig>(configuration.GetSection("TokenOverview"));

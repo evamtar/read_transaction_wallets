@@ -23,6 +23,8 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Service
         {
             var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.Signature));
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<TransfersResponse>(responseBody) ?? new TransfersResponse { };
         }
     }
