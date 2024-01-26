@@ -66,6 +66,8 @@ namespace SyncronizationBot.Service.Base
 
         protected async Task SendAlertAppRunning()
         {
+            await this.DetachedRuntimeControllerAsync();
+            this.RunTimeController = null;
             await this._mediator.Send(new SendTelegramMessageCommand
             {
                 Channel = ETelegramChannel.CallSolanaLog,
