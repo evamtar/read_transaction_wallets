@@ -168,6 +168,7 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     WalleId = transactions?.IdWallet,
                     TokenId = solTokenForFee?.TokenId,
+                    Signature = transactions?.Signature,
                     Quantity = transferInfo?.PaymentFee / ((decimal?)solTokenForFee?.Divisor) ?? 1,
                     TokenHash = solTokenForFee?.Hash,
                 });
@@ -181,6 +182,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenSource,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueSource,
                         TokenHash = tokenSended?.Hash,
                     });
@@ -188,6 +190,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenDestination,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueDestination,
                         TokenHash = tokenReceived?.Hash,
                     });
@@ -196,6 +199,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenSource,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueSource,
                         TokenHash = tokenSended?.Hash,
                     });
@@ -205,6 +209,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenDestination,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueDestination,
                         TokenHash = tokenReceived?.Hash,
                     });
@@ -214,6 +219,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenSource,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueSource,
                         TokenHash = tokenSended?.Hash,
                     });
@@ -221,6 +227,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenSourcePool,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueSourcePool,
                         TokenHash = tokenSendedPool?.Hash,
                     });
@@ -230,6 +237,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenDestination,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueDestination,
                         TokenHash = tokenReceived?.Hash,
                     });
@@ -237,6 +245,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         WalleId = transactions?.IdWallet,
                         TokenId = transactions?.IdTokenDestinationPool,
+                        Signature = transactions?.Signature,
                         Quantity = transactions?.AmountValueDestinationPool,
                         TokenHash = tokenReceivedPool?.Hash,
                     });

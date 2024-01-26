@@ -106,6 +106,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
+    services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();

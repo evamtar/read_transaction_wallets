@@ -18,6 +18,7 @@ namespace SyncronizationBot.Application.Handlers
     public class ReadWalletsBalanceCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>
     {
         private readonly IWalletBalanceRepository _walletBalanceRepository;
+        private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
         private readonly IAccountInfoService _accountInfoService;
 
@@ -26,10 +27,12 @@ namespace SyncronizationBot.Application.Handlers
                                                 IWalletRepository walletRepository,
                                                 IOptions<SyncronizationBotConfig> config,
                                                 IWalletBalanceRepository walletBalanceRepository,
+                                                IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                 IWalletPortifolioService walletPortifolioService,
                                                 IAccountInfoService accountInfoService) : base(mediator, walletRepository, config)
         {
             this._walletBalanceRepository = walletBalanceRepository;
+            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._walletPortifolioService = walletPortifolioService;
             this._accountInfoService = accountInfoService;
         }
@@ -52,7 +55,7 @@ namespace SyncronizationBot.Application.Handlers
                         var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
                         if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
                         {
-                            await this._walletBalanceRepository.Add(new WalletBalance
+                            var balance = await this._walletBalanceRepository.Add(new WalletBalance
                             {
                                 IdWallet = wallet.ID,
                                 IdToken = token?.TokenId,
@@ -63,6 +66,22 @@ namespace SyncronizationBot.Application.Handlers
                                 IsActive = accountInfo.Result?.Value?.Lamports > 0,
                                 LastUpdate = DateTime.Now
                             });
+                            await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory 
+                            {
+                                IdWalletBalance = balance.ID,
+                                IdWallet = balance.IdWallet,
+                                IdToken = balance.IdToken,
+                                TokenHash = balance.TokenHash,
+                                OldQuantity = (decimal?)0,
+                                NewQuantity = balance.Quantity,
+                                RequestQuantity = balance.Quantity,
+                                PercentageCalculated = 100,
+                                Price = balance.Price,
+                                TotalValueUSD = balance.TotalValueUSD,
+                                Signature = "CREATE BALANCE",
+                                CreateDate = DateTime.Now,
+                                LastUpdate = balance.LastUpdate
+                            });
                         }
                     }
                     foreach (var item in walletPortifolio!.Data!.Items)
@@ -71,7 +90,7 @@ namespace SyncronizationBot.Application.Handlers
                             continue;
                         else
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
-                        await this._walletBalanceRepository.Add(new WalletBalance
+                        var balance = await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet?.ID,
                             IdToken = token?.TokenId,
@@ -81,6 +100,22 @@ namespace SyncronizationBot.Application.Handlers
                             TotalValueUSD = item.ValueUsd,
                             IsActive = item.UiAmount > 0,
                             LastUpdate = wallet?.DateLoadBalance
+                        });
+                        await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                        {
+                            IdWalletBalance = balance.ID,
+                            IdWallet = balance.IdWallet,
+                            IdToken = balance.IdToken,
+                            TokenHash = balance.TokenHash,
+                            OldQuantity = (decimal?)0,
+                            NewQuantity = balance.Quantity,
+                            RequestQuantity = balance.Quantity,
+                            PercentageCalculated = 100,
+                            Price = balance.Price,
+                            TotalValueUSD = balance.TotalValueUSD,
+                            Signature = "CREATE BALANCE",
+                            CreateDate = DateTime.Now,
+                            LastUpdate = balance.LastUpdate
                         });
                     }
                 }

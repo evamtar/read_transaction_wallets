@@ -300,7 +300,28 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
+
+CREATE TABLE WalletBalanceHistory
+(
+	ID                    UNIQUEIDENTIFIER,
+	IDWalletBalance       UNIQUEIDENTIFIER,
+	IdWallet              UNIQUEIDENTIFIER,
+	IdToken               UNIQUEIDENTIFIER,
+	TokenHash             VARCHAR(100),
+	OldQuantity           VARCHAR(100),
+	NewQuantity           VARCHAR(100),
+	RequestQuantity       VARCHAR(100),
+	PercentageCalculated  VARCHAR(100),
+	Price                 VARCHAR(100),
+	TotalValueUSD         VARCHAR(100),
+	[Signature]           VARCHAR(150),
+	CreateDate            DATETIME2,
+	LastUpdate            DATETIME2,
+	PRIMARY KEY (ID)
+);
 ------------------------------------------------------------
 
 UPDATE RunTimeController
 SET IsRunning = 0
+
+177.170.8.206
