@@ -44,8 +44,8 @@ namespace SyncronizationBot.Application.Handlers
             {
                 var token = (RecoverySaveTokenCommandResponse)null!;
                 var finalTicks = base.GetInitialTicks(base.GetFinalTicks());
+                var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet!.Hash });
                 wallet!.DateLoadBalance = DateTime.Now;
-                var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
                     token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });

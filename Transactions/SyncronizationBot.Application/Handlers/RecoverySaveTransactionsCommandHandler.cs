@@ -13,6 +13,7 @@ using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
+using System.Transactions;
 
 
 namespace SyncronizationBot.Application.Handlers
@@ -24,6 +25,7 @@ namespace SyncronizationBot.Application.Handlers
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
+        private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository; 
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         private readonly IOptions<SyncronizationBotConfig> _readTransactionWalletsConfig;
@@ -33,6 +35,7 @@ namespace SyncronizationBot.Application.Handlers
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       IWalletBalanceRepository walletBalanceRepository,
+                                                      IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig,
                                                       IOptions<SyncronizationBotConfig> readTransactionWalletsConfig)
@@ -42,6 +45,7 @@ namespace SyncronizationBot.Application.Handlers
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._walletBalanceRepository = walletBalanceRepository;
+            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
             this._readTransactionWalletsConfig = readTransactionWalletsConfig;
@@ -64,7 +68,8 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     if (transactionResponse.Result?.Data?.Count > 0)
                     {
-                        foreach (var transaction in transactionResponse.Result!.Data)
+                        var responseDataOrdened = transactionResponse.Result!.Data.OrderBy(x => x.BlockTime).ThenBy(x => x.DateOfTransaction);
+                        foreach (var transaction in responseDataOrdened)
                         {
                             var transactionDetails = await this._transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
                             if (transactionDetails.Result != null && transactionDetails.Result.Data?.Count > 0)
@@ -342,7 +347,7 @@ namespace SyncronizationBot.Application.Handlers
         {
             if ((this._mappedTokensConfig?.Value?.Tokens?.Contains(tokenSended?.Hash!) ?? false) && (this._mappedTokensConfig?.Value?.Tokens?.Contains(tokenReceived?.Hash!) ?? false))
                 return;
-            var existsTokenWallet = await this._walletBalanceRepository.FindFirstOrDefault(x => x.TokenHash != tokenReceived!.Hash && x.IdWallet == walletId && x.LastUpdate <= AdjustDateTimeToPtBR(transferInfo!.DataOfTransfer));
+            var existsTokenWallet = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash != tokenReceived!.Hash && x.IdWallet == walletId && x.Signature != signature);
             await this.SendMessage(existsTokenWallet == null ? buyMessage : rebuyMessage, this.GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
         }
 

@@ -108,6 +108,7 @@ IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
 BEGIN
 	CREATE TABLE TransactionNotMapped(
 		ID                UNIQUEIDENTIFIER,
+		[IdWallet]        UNIQUEIDENTIFIER,
 		[Signature]       VARCHAR(150),
 		[Link]            VARCHAR(500),
 		[Error]           VARCHAR(500),
