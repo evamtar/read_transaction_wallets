@@ -28,7 +28,7 @@ namespace SyncronizationBot.Application.Handlers
             var channel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.Channel.ToString());
             if (channel == null) 
             {
-                var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotRequest { });
+                var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotChatRequest { });
                 var telegramChannel = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == EnumExtension.GetDescription(request.Channel));
                 long? chatId = telegramChannel?.ChatMember?.Chat?.Id;
                 channel = await this._telegramChannelRepository.Add(new TelegramChannel 

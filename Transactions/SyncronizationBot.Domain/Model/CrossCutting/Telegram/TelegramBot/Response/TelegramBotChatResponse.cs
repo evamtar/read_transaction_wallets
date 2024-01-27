@@ -2,23 +2,23 @@
 
 namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response
 {
-    public class TelegramBotResponse
+    public class TelegramBotChatResponse
     {
         public bool? Ok { get; set; }
-        public List<ResultResponse>? Result { get; set; }
+        public List<TelegramBotChatResultResponse>? Result { get; set; }
     }
-    public class ResultResponse
+    public class TelegramBotChatResultResponse
     {
         [JsonProperty("update_id")]
         public long? UpdateId { get; set; }
         [JsonProperty("my_chat_member")]
-        public ChatMemberResponse? ChatMember { get; set; }
+        public TelegramBotChatChatMemberResponse? ChatMember { get; set; }
     }
-    public class ChatMemberResponse
+    public class TelegramBotChatChatMemberResponse
     {
-        public ChatResponse? Chat { get; set; }
+        public TelegramBotChatChatResponse? Chat { get; set; }
     }
-    public class ChatResponse
+    public class TelegramBotChatChatResponse
     {
         public long? Id { get; set; }
         public string? Title { get; set; }
