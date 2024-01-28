@@ -141,6 +141,20 @@ namespace SyncronizationBot.Utils
                     return string.Empty;
             }
         }
+
+        public static Dictionary<string, object> GetParameters(object[]? args) 
+        { 
+            var parameters = new Dictionary<string, object>();
+            if(args != null && args.Any()) 
+            {
+                foreach (var obj in args)
+                {
+                    if (obj != null) 
+                        parameters.Add(obj?.ToString() ?? string.Empty, obj!);
+                }
+            }
+            return parameters;
+        } 
     }
 
     public enum ETypeMessage 

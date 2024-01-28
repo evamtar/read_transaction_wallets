@@ -26,6 +26,8 @@ namespace SyncronizationBot.Application.Handlers
         public async Task<RecoverySaveTelegramChannelResponse> Handle(RecoverySaveTelegramChannel request, CancellationToken cancellationToken)
         {
             var channel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.Channel.ToString());
+            if (request.Channel == ETelegramChannel.None) 
+                channel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
             if (channel == null) 
             {
                 var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotChatRequest { });

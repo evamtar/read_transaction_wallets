@@ -5,6 +5,7 @@ namespace SyncronizationBot.Domain.Model.Enum
 {
     public enum ETelegramChannel
     {
+        None = 0,
         [DescriptionAttribute("CallSolanaLog")]
         CallSolanaLog = 1,
         [DescriptionAttribute("CallSolana")]

@@ -19,7 +19,7 @@ namespace SyncronizationBot.Application.Handlers
 
         public async Task<SendTelegramMessageCommandResponse> Handle(SendTelegramMessageCommand request, CancellationToken cancellationToken)
         {
-            var channel = await this._mediator.Send(new RecoverySaveTelegramChannel { Channel = request.Channel });
+            var channel = await this._mediator.Send(new RecoverySaveTelegramChannel { Channel = request.Channel, TelegramChannelId = request.TelegramChannelId });
             var response = await this._telegramBotService.ExecuteSendMessageAsync(new TelegramBotMessageRequest { ChatId = channel.ChannelId, Message = request.Message });
             return new SendTelegramMessageCommandResponse { };
         }

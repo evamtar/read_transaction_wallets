@@ -6,7 +6,7 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public string? Name { get; set; }
         public Guid? AlertInformationId { get; set; }
-        public Guid? Class { get; set; }
+        public string? Class { get; set; }
         public string? Parameter { get; set; }
         public string? FixValue { get; set; }
         public bool? IsIcon { get; set; }
