@@ -39,14 +39,14 @@ namespace SyncronizationBot.Application.Handlers
                     var isSendAlert = false;
                     switch (alert.TypeAlert!)
                     {
-                        case ETypeAlert.UP:
+                        case ETypeAlertPrice.UP:
                             if (price!.Price >= alert.PriceValue || (price!.Price >= (alert.PriceValue + (alert.PriceBase * alert.PriceBase))))
                             {
                                 await this.SendAlertMessage(alert, token, price, ETypeMessage.PRICE_UP_MESSAGE);
                                 isSendAlert = true;
                             }
                             break;
-                        case ETypeAlert.DOWN:
+                        case ETypeAlertPrice.DOWN:
                             if (price!.Price <= alert.PriceValue || (price!.Price <= (alert.PriceBase + (alert.PriceBase * alert.PricePercent))))
                             {
                                 await this.SendAlertMessage(alert, token, price, ETypeMessage.PRICE_DOWN_MESSAGE);

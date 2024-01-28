@@ -110,6 +110,10 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();
+    services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
+    services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
+    services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
+
 
     #endregion
 
