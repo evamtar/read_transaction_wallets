@@ -1,5 +1,7 @@
 ﻿
 
+using System.Security.Principal;
+
 namespace SyncronizationBot.Domain.Model.Utils.Transfer
 {
     public class TransferManager
