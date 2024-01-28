@@ -29,8 +29,11 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
                         if (transferAccountDestination != null)
                             await MakeTransfer(transferMapper.DestinationAssociation, transferMapper, transferAccountDestination, ETypeOfTransfer.CREDIT);
                     }
-                    else 
+                    else
+                    {
                         await MakeTransfer(DIRECT_TRANSFER, transferMapper, transferAccountSource, ETypeOfTransfer.DEBIT);
+                        await MakeTransfer(transferMapper.DestinationAssociation ?? transferMapper.Destination + DIRECT_TRANSFER, transferMapper, transferAccountDestination, ETypeOfTransfer.CREDIT);
+                    }
                     break;
                 case ETransferType.None:
                 case ETransferType.CreateAccount:
@@ -43,12 +46,23 @@ namespace SyncronizationBot.Domain.Model.Utils.Transfer
 
         private Task ExistsAndRemoveDuplicateDirectTransfer(string? subAccountHash, TransferMapper? transferMapper, TransferAccount? account) 
         {
-            if (account?.SubAccounts?.ContainsKey(subAccountHash!) ?? false) 
+            if (account?.SubAccounts?.ContainsKey(subAccountHash!) ?? false)
             {
                 var subAccount = account?.SubAccounts?[subAccountHash!];
-                if (subAccount?.Balance?.ContainsKey(transferMapper?.Token ?? string.Empty) ?? false) 
+                if (subAccount?.Balance?.ContainsKey(transferMapper?.Token ?? string.Empty) ?? false)
                     if (Math.Abs(subAccount?.Balance?[transferMapper?.Token ?? string.Empty] ?? 0) == Math.Abs(transferMapper?.Amount ?? 0))
+                    {
                         account?.SubAccounts?.Remove(subAccountHash!);
+                        if (account?.SubAccounts?.ContainsKey(transferMapper?.SourceAssociation ?? transferMapper?.Source!) ?? false)
+                        {
+                            var subAccountCredit = account?.SubAccounts?[transferMapper?.SourceAssociation ?? transferMapper?.Source!];
+                            if (subAccountCredit?.Balance?.ContainsKey(transferMapper?.Token ?? string.Empty) ?? false)
+                            {
+                                if (Math.Abs(subAccountCredit?.Balance?[transferMapper?.Token ?? string.Empty] ?? 0) == Math.Abs(transferMapper?.Amount ?? 0))
+                                    account?.SubAccounts?.Remove(transferMapper?.SourceAssociation ?? transferMapper?.Source!);
+                            }
+                        }
+                    }
             }
             return Task.CompletedTask;
         }

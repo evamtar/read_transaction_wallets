@@ -7,6 +7,7 @@ namespace SyncronizationBot.Application.Commands
 {
     public class RecoverySaveTelegramChannel : IRequest<RecoverySaveTelegramChannelResponse>
     {
+        public Guid? TelegramChannelId { get; set; }
         public ETelegramChannel Channel { get; set; }
     }
 }

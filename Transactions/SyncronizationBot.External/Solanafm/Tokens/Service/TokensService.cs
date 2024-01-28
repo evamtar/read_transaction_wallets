@@ -16,13 +16,15 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service
             _httpClient = httpClient;
             _config = config;
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
-            _httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
+            //_httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
         }
 
         public async Task<TokensResponse> ExecuteRecoveryTokensAsync(TokensRequest request)
         {
             var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.TokenHash));
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<TokensResponse>(responseBody) ?? new TokensResponse { };
         }
     }

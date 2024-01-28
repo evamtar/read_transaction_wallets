@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Base;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
@@ -26,7 +26,10 @@ namespace SyncronizationBot.Application.Handlers
             var hasNext = walletTracked != null;
             while (hasNext) 
             {
+                var initialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds);
                 var finalTicks = base.GetFinalTicks();
+                if (initialTicks > finalTicks)
+                    initialTicks -= (initialTicks - finalTicks) * 2;
                 var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.IdClassWallet);
                 await this._mediator.Send(new RecoverySaveTransactionsCommand
                 {
@@ -34,7 +37,7 @@ namespace SyncronizationBot.Application.Handlers
                     WalletHash = walletTracked?.Hash,
                     IdClassification = classWallet?.IdClassification,
                     DateLoadBalance = walletTracked?.DateLoadBalance,
-                    InitialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds),
+                    InitialTicks = initialTicks,
                     FinalTicks = finalTicks
                 });
                 walletTracked!.LastUpdate = DateTime.Now;

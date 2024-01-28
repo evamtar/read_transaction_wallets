@@ -5,7 +5,7 @@ namespace SyncronizationBot.Domain.Service.CrossCutting.Telegram
 {
     public interface ITelegramBotService
     {
-        Task<TelegramBotResponse> ExecuteRecoveryChatAsync(TelegramBotRequest request);
-        Task<TelegramBotResponse> ExecuteSendMessageAsync(TelegramBotRequest request);
+        Task<TelegramBotChatResponse> ExecuteRecoveryChatAsync(TelegramBotChatRequest request);
+        Task<TelegramBotMessageResponse> ExecuteSendMessageAsync(TelegramBotMessageRequest request);
     }
 }

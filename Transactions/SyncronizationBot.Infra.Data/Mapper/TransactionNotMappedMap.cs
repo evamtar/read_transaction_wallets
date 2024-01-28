@@ -10,6 +10,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("TransactionNotMapped");
             builder.Property(t => t.ID);
+            builder.Property(t => t.IdWallet); 
             builder.Property(t => t.Signature);
             builder.Property(t => t.Link);
             builder.Property(t => t.Error);

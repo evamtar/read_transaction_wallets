@@ -7,5 +7,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? ChannelId { get; set; }
         public string? ChannelName { get; set; }
         public virtual List<AlertPrice>? AlertPrices { get; set; }
+        public virtual List<AlertConfiguration>? AlertsConfigurations { get; set; }
     }
 }

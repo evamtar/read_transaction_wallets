@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Base;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
@@ -18,6 +18,7 @@ namespace SyncronizationBot.Application.Handlers
     public class ReadWalletsBalanceCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>
     {
         private readonly IWalletBalanceRepository _walletBalanceRepository;
+        private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
         private readonly IAccountInfoService _accountInfoService;
 
@@ -26,10 +27,12 @@ namespace SyncronizationBot.Application.Handlers
                                                 IWalletRepository walletRepository,
                                                 IOptions<SyncronizationBotConfig> config,
                                                 IWalletBalanceRepository walletBalanceRepository,
+                                                IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                 IWalletPortifolioService walletPortifolioService,
                                                 IAccountInfoService accountInfoService) : base(mediator, walletRepository, config)
         {
             this._walletBalanceRepository = walletBalanceRepository;
+            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._walletPortifolioService = walletPortifolioService;
             this._accountInfoService = accountInfoService;
         }
@@ -40,41 +43,54 @@ namespace SyncronizationBot.Application.Handlers
             while (hasNext) 
             {
                 var token = (RecoverySaveTokenCommandResponse)null!;
-                var finalTicks = base.GetFinalTicks();
+                var finalTicks = base.GetInitialTicks(base.GetFinalTicks());
+                var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet!.Hash });
                 wallet!.DateLoadBalance = DateTime.Now;
-                var walletPortifolio = await this._walletPortifolioService.ExecuteRecoveryWalletPortifolioAsync(new WalletPortifolioRequest { WalletHash = wallet.Hash });
                 if (walletPortifolio?.Data?.Items != null)
                 {
-                    if (walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111111") == null && walletPortifolio?.Data?.Items.FirstOrDefault(x => x.Address == "So11111111111111111111111111111111111111112") == null) 
+                    token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                    var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
+                    if (checkedExists == null)
                     {
-                        token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
-                        var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
-                        if (checkedExists == null)
+                        var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
+                        if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
                         {
-                            var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
-                            if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
+                            var balance = await this._walletBalanceRepository.Add(new WalletBalance
                             {
-                                await this._walletBalanceRepository.Add(new WalletBalance
-                                {
-                                    IdWallet = wallet.ID,
-                                    IdToken = token?.TokenId,
-                                    TokenHash = "So11111111111111111111111111111111111111112",
-                                    Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
-                                    Price = token?.MarketCap / token?.Supply,
-                                    TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
-                                    IsActive = accountInfo.Result?.Value?.Lamports > 0,
-                                    LastUpdate = DateTime.Now
-                                });
-                            }
+                                IdWallet = wallet.ID,
+                                IdToken = token?.TokenId,
+                                TokenHash = "So11111111111111111111111111111111111111112",
+                                Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
+                                Price = token?.MarketCap / token?.Supply,
+                                TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
+                                IsActive = accountInfo.Result?.Value?.Lamports > 0,
+                                LastUpdate = DateTime.Now
+                            });
+                            await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory 
+                            {
+                                IdWalletBalance = balance.ID,
+                                IdWallet = balance.IdWallet,
+                                IdToken = balance.IdToken,
+                                TokenHash = balance.TokenHash,
+                                OldQuantity = (decimal?)0,
+                                NewQuantity = balance.Quantity,
+                                RequestQuantity = balance.Quantity,
+                                PercentageCalculated = 100,
+                                Price = balance.Price,
+                                TotalValueUSD = balance.TotalValueUSD,
+                                Signature = "CREATE BALANCE",
+                                CreateDate = DateTime.Now,
+                                LastUpdate = balance.LastUpdate
+                            });
                         }
                     }
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
                         if (item.Address == "So11111111111111111111111111111111111111111")
-                            token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                            continue;
                         else
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
-                        await this._walletBalanceRepository.Add(new WalletBalance
+                        var balance = await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet?.ID,
                             IdToken = token?.TokenId,
@@ -84,6 +100,22 @@ namespace SyncronizationBot.Application.Handlers
                             TotalValueUSD = item.ValueUsd,
                             IsActive = item.UiAmount > 0,
                             LastUpdate = wallet?.DateLoadBalance
+                        });
+                        await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                        {
+                            IdWalletBalance = balance.ID,
+                            IdWallet = balance.IdWallet,
+                            IdToken = balance.IdToken,
+                            TokenHash = balance.TokenHash,
+                            OldQuantity = (decimal?)0,
+                            NewQuantity = balance.Quantity,
+                            RequestQuantity = balance.Quantity,
+                            PercentageCalculated = 100,
+                            Price = balance.Price,
+                            TotalValueUSD = balance.TotalValueUSD,
+                            Signature = "CREATE BALANCE",
+                            CreateDate = DateTime.Now,
+                            LastUpdate = balance.LastUpdate
                         });
                     }
                 }

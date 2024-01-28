@@ -12,7 +12,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? TokenHash { get; set; }
         public decimal? PriceValue { get; set; }
         public decimal? PricePercent { get; set; }
-        public ETypeAlert TypeAlert { get; set; }
+        public ETypeAlertPrice TypeAlert { get; set; }
         public bool? IsRecurrence { get; set; }
         public Guid? TelegramChannelId { get; set; }
         public virtual TelegramChannel? TelegramChannel { get; set; }

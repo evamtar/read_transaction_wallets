@@ -8,7 +8,7 @@ using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Utils;
 using System.Linq.Expressions;
 
-namespace SyncronizationBot.Application.Base
+namespace SyncronizationBot.Application.Handlers.Base
 {
     public class BaseWalletHandler
     {
@@ -19,35 +19,35 @@ namespace SyncronizationBot.Application.Base
                                  IWalletRepository walletRepository,
                                  IOptions<SyncronizationBotConfig> config)
         {
-            this._mediator = mediator;
-            this._walletRepository = walletRepository;
-            this._config = config;
+            _mediator = mediator;
+            _walletRepository = walletRepository;
+            _config = config;
         }
 
-        protected async Task<IEnumerable<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate) 
+        protected async Task<IEnumerable<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
         {
-            return await this._walletRepository.Get(predicate);
+            return await _walletRepository.Get(predicate);
         }
 
         protected async Task<Wallet?> GetWallet(Expression<Func<Wallet, bool>> predicate, Expression<Func<Wallet, object>> keySelector = null!)
         {
-            return await this._walletRepository.FindFirstOrDefault(predicate, keySelector);
+            return await _walletRepository.FindFirstOrDefault(predicate, keySelector);
         }
 
-        protected long GetInitialTicks(decimal? initialTicks) 
+        protected long GetInitialTicks(decimal? initialTicks)
         {
-            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes((this._config.Value.UTCTransactionMinutesAdjust * -1) ?? -1);
+            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes(_config.Value.UTCTransactionMinutesAdjust ?? -5);
             return DateTimeTicks.Instance.ConvertDateTimeToTicks(dateAjusted);
 
         }
 
         protected long GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.UtcNow);
 
-        protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet) 
+        protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
             wallet.UnixTimeSeconds = finalTicks;
-            await this._walletRepository.Edit(wallet);
-            try { await this._walletRepository.DetachedItem(wallet); } catch { }
+            await _walletRepository.Edit(wallet);
+            try { await _walletRepository.DetachedItem(wallet); } catch { }
         }
     }
 }

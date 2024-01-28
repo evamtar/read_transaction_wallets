@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
@@ -52,20 +53,18 @@ namespace SyncronizationBot.Service.Base
 
         protected async Task SendAlertExecute(PeriodicTimer timer) 
         {
-            await this._mediator.Send(new SendTelegramMessageCommand
+            await this._mediator.Send(new SendAlertMessageCommand { Parameters = TelegramMessageHelper.GetParameters(new object[] { new LogExecute
             {
-                Channel = ETelegramChannel.CallSolanaLog,
-                Message = TelegramMessageHelper.GetFormatedMessage(ETypeMessage.LOG_EXECUTE,
-                                new object[] {
-                                    EnumExtension.GetDescription(this._typeService) ?? string.Empty,
-                                    DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
-                                    timer.Period
-                                })
-            });
+                ServiceName = EnumExtension.GetDescription(this._typeService) ?? string.Empty,
+                DateExecuted = DateTime.Now,
+                Timer = timer.Period
+            }}), TypeAlert = ETypeAlert.LOG_EXECUTE });
         }
 
         protected async Task SendAlertAppRunning()
         {
+            await this.DetachedRuntimeControllerAsync();
+            this.RunTimeController = await this.GetRunTimeControllerAsync();
             await this._mediator.Send(new SendTelegramMessageCommand
             {
                 Channel = ETelegramChannel.CallSolanaLog,

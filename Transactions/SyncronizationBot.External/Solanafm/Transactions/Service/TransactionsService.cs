@@ -20,7 +20,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             _httpClient = httpClient;
             _config = config;
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
-            _httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
+            //_httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
         }
         public async Task<TransactionsResponse> ExecuteRecoveryTransactionsAsync(TransactionsRequest request)
         {
@@ -32,6 +32,8 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             query["page"] = request.Page?.ToString();
             var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletPublicKey) + "?" + query.ToString());
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<TransactionsResponse>(responseBody) ?? new TransactionsResponse { };
         }
     }

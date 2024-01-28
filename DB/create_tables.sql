@@ -7,6 +7,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalanceHistory')
+BEGIN
+	DROP TABLE [WalletBalanceHistory]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Transactions')
 BEGIN
 	DROP TABLE [Transactions]
@@ -48,6 +54,24 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
+BEGIN
+	DROP TABLE [AlertParameter]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
+BEGIN
+	DROP TABLE [AlertInformation]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
+BEGIN
+	DROP TABLE [AlertConfiguration]
+END
+GO
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
 	CREATE TABLE TelegramChannel(
@@ -75,11 +99,11 @@ BEGIN
 		PRIMARY KEY(ID),
 		FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
 	);
+	--DELETE FROM AlertPrice
 	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
 	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '7.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '9', null, 1, 1, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '3.134', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '2.52', null, 2, 0, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '95.60', 'So11111111111111111111111111111111111111112', '88.58', null, 2, 1, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '1.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '22.3', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
 END
 GO
 
@@ -98,10 +122,12 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0);
 END
 GO 
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
 BEGIN
 	CREATE TABLE TransactionNotMapped(
 		ID                UNIQUEIDENTIFIER,
+		[IdWallet]        UNIQUEIDENTIFIER,
 		[Signature]       VARCHAR(150),
 		[Link]            VARCHAR(500),
 		[Error]           VARCHAR(500),
@@ -180,16 +206,30 @@ CREATE TABLE TokenSecurity(
 
 CREATE TABLE Transactions
 (
-	ID                         UNIQUEIDENTIFIER,
-	[Signature]                VARCHAR(150),
-	DateOfTransaction          DATETIME2,
-	AmountValueSource          VARCHAR(150),
-	AmountValueSourcePool      VARCHAR(150),
-	AmountValueDestination     VARCHAR(150),
-	AmountValueDestinationPool VARCHAR(150),
-	IdTokenSource              UNIQUEIDENTIFIER,
-	IdTokenSourcePool          UNIQUEIDENTIFIER,
-	IdTokenDestination         UNIQUEIDENTIFIER,
+	ID                           UNIQUEIDENTIFIER,
+	[Signature]                  VARCHAR(150),
+	DateOfTransaction            DATETIME2,
+	AmountValueSource            VARCHAR(150),
+	AmountValueSourcePool        VARCHAR(150),
+	AmountValueDestination       VARCHAR(150),
+	AmountValueDestinationPool   VARCHAR(150),
+	FeeTransaction               VARCHAR(150),
+	MtkcapTokenSource            VARCHAR(150),
+	MtkcapTokenSourcePool        VARCHAR(150),
+	MtkcapTokenDestination       VARCHAR(150),
+	MtkcapTokenDestinationPool   VARCHAR(150),
+	PriceTokenSourceUSD          VARCHAR(150),
+	PriceTokenSourcePoolUSD      VARCHAR(150),
+	PriceTokenDestinationUSD     VARCHAR(150),
+	PriceTokenDestinationPoolUSD VARCHAR(150),
+	PriceSol				     VARCHAR(150),
+	TotalTokenSource             VARCHAR(150),
+	TotalTokenSourcePool         VARCHAR(150),
+	TotalTokenDestination        VARCHAR(150),
+	TotalTokenDestinationPool    VARCHAR(150),
+	IdTokenSource                UNIQUEIDENTIFIER,
+	IdTokenSourcePool            UNIQUEIDENTIFIER,
+	IdTokenDestination           UNIQUEIDENTIFIER,
 	IdTokenDestinationPool     UNIQUEIDENTIFIER,
 	IdWallet                   UNIQUEIDENTIFIER,
 	TypeOperation              INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
@@ -286,7 +326,105 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 	FOREIGN KEY(IdToken) REFERENCES Token(ID),
 );
+
+CREATE TABLE WalletBalanceHistory
+(
+	ID                    UNIQUEIDENTIFIER,
+	IDWalletBalance       UNIQUEIDENTIFIER,
+	IdWallet              UNIQUEIDENTIFIER,
+	IdToken               UNIQUEIDENTIFIER,
+	TokenHash             VARCHAR(100),
+	OldQuantity           VARCHAR(100),
+	NewQuantity           VARCHAR(100),
+	RequestQuantity       VARCHAR(100),
+	PercentageCalculated  VARCHAR(100),
+	Price                 VARCHAR(100),
+	TotalValueUSD         VARCHAR(100),
+	[Signature]           VARCHAR(150),
+	CreateDate            DATETIME2,
+	LastUpdate            DATETIME2,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE AlertConfiguration(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	TypeAlert             INT, -- 1 BUY, 2 - REBUY, 3 - SELL, 4 - SWAP, 5 - POOL CREATE, 6 - POOL FINISH
+	TelegramChannelId     UNIQUEIDENTIFIER,
+	IsActive              BIT,
+	CreateDate            DATETIME2,
+	LastUpdate            DATETIME2,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
+DECLARE @IdTelegramChannel UNIQUEIDENTIFIER;
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolanaLog';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Execute', -1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolana';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Buy', 1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Rebuy', 2, @IdTelegramChannel,  1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Sell', 3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Swap', 4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Create', 5, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Finish', 6, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+
+CREATE TABLE AlertInformation(
+	ID                    UNIQUEIDENTIFIER,
+	[Message]             VARCHAR(500),
+	AlertConfigurationId  UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),
+	
+);
+
+CREATE TABLE AlertParameter(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	AlertInformationId    UNIQUEIDENTIFIER,
+	[Class]               VARCHAR(255),
+	[Parameter]           VARCHAR(255),
+	[FixValue]            VARCHAR(200),
+	IsIcon				  BIT,
+	IsImage               BIT
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
+);
+
+DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
+DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
+SELECT @IdAlertInformation = NEWID();
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -1;
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, '<b>Execução do serviço {{ServiceName}} de call solana</b>{{NEWLINE}}<b>Data Execução: </b>{{DateTimeNow}}.{{NEWLINE}}<i><b>Proxima execução</b> no período timer de --> {{TimerExecute}}</i>{{NEWLINE}}', @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TimerExecute}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Timer', NULL, 0, 0);
+
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -2;
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {{ServiceName}} está rodando.</b>{{NEWLINE}}<i><b>Não irá efetuar essa execução:</b> {{DateTimeNow}}</i>.{{NEWLINE}}', @IdAlertConfiguration);
+
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 1;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 2;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 3;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 4;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 5;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 6;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
 ------------------------------------------------------------
 
 UPDATE RunTimeController
 SET IsRunning = 0
+
+177.170.8.206

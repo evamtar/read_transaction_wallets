@@ -32,6 +32,8 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.AccountInfo.Service
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("", content);
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<AccountInfoResponse>(responseBody) ?? new AccountInfoResponse { };
         }
     }
