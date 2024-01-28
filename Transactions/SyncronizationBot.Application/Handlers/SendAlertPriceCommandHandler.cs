@@ -11,13 +11,13 @@ using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.Handlers
 {
-    public class SendAlertMessageCommandHandler : IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>
+    public class SendAlertPriceCommandHandler : IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>
     {
         private readonly IMediator _mediator;
         private readonly IAlertPriceRepository _alertPriceRepository;
         private readonly IJupiterPriceService _jupiterPriceService;
 
-        public SendAlertMessageCommandHandler(IMediator mediator,
+        public SendAlertPriceCommandHandler(IMediator mediator,
                                               IAlertPriceRepository alertPriceRepository,
                                               IJupiterPriceService jupiterPriceService)
         {
@@ -26,7 +26,7 @@ namespace SyncronizationBot.Application.Handlers
             this._jupiterPriceService = jupiterPriceService;
         }
 
-        public async Task<SendAlertMessageCommandResponse> Handle(SendAlertMessageCommand request, CancellationToken cancellationToken)
+        public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
             var alerts = await this._alertPriceRepository.Get(x => x.EndDate >= DateTime.Now || x.EndDate == null);
             var prices = await this._jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = this.GetIdsAlerts(alerts.ToList()) });
@@ -68,7 +68,7 @@ namespace SyncronizationBot.Application.Handlers
                     }
                 }
             }
-            return new SendAlertMessageCommandResponse();
+            return new SendAlertPriceCommandResponse();
         }
 
         private async Task SendAlertMessage(AlertPrice alert, RecoverySaveTokenCommandResponse token, TokenData price, ETypeMessage type) 

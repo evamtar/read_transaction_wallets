@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SyncronizationBot.Application.Commands
 {
-    public class SendAlertMessageCommand : IRequest<SendAlertMessageCommandResponse>
+    public class SendAlertPriceCommand : IRequest<SendAlertPriceCommandResponse>
     {
         
     }

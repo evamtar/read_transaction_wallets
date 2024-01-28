@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SyncronizationBot.Application.Response
 {
-    public class SendAlertMessageCommandResponse
+    public class SendAlertPriceCommandResponse
     {
     }
 }

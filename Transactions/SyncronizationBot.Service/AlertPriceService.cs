@@ -28,7 +28,7 @@ namespace SyncronizationBot.Service
                         try
                         {
                             await base.SetRuntimeControllerAsync(true, false);
-                            await this._mediator.Send(new SendAlertMessageCommand { });
+                            await this._mediator.Send(new SendAlertPriceCommand { });
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Alert Price: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(timer);

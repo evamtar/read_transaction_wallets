@@ -90,7 +90,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
-    services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
+    services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
