@@ -39,6 +39,7 @@ namespace SyncronizationBot.Application.Handlers
                     {
                         var parameters = await this._alertParameterRepository.Get(x => x.AlertInformationId == information.ID);
                         var message = this.ReplaceParametersInformation(request.Parameters, information, parameters);
+                        message = message?.Replace("{{NEWLINE}}", Environment.NewLine);
                         await this._mediator.Send(new SendTelegramMessageCommand
                         {
                             TelegramChannelId = configuration.TelegramChannelId,

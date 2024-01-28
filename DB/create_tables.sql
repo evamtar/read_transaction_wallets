@@ -54,6 +54,24 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
+BEGIN
+	DROP TABLE [AlertParameter]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
+BEGIN
+	DROP TABLE [AlertInformation]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
+BEGIN
+	DROP TABLE [AlertConfiguration]
+END
+GO
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
 	CREATE TABLE TelegramChannel(
@@ -104,6 +122,7 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0);
 END
 GO 
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
 BEGIN
 	CREATE TABLE TransactionNotMapped(
@@ -326,6 +345,83 @@ CREATE TABLE WalletBalanceHistory
 	LastUpdate            DATETIME2,
 	PRIMARY KEY (ID)
 );
+
+CREATE TABLE AlertConfiguration(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	TypeAlert             INT, -- 1 BUY, 2 - REBUY, 3 - SELL, 4 - SWAP, 5 - POOL CREATE, 6 - POOL FINISH
+	TelegramChannelId     UNIQUEIDENTIFIER,
+	IsActive              BIT,
+	CreateDate            DATETIME2,
+	LastUpdate            DATETIME2,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
+DECLARE @IdTelegramChannel UNIQUEIDENTIFIER;
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolanaLog';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Execute', -1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolana';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Buy', 1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Rebuy', 2, @IdTelegramChannel,  1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Sell', 3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Swap', 4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Create', 5, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Finish', 6, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+
+CREATE TABLE AlertInformation(
+	ID                    UNIQUEIDENTIFIER,
+	[Message]             VARCHAR(500),
+	AlertConfigurationId  UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),
+	
+);
+
+CREATE TABLE AlertParameter(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	AlertInformationId    UNIQUEIDENTIFIER,
+	[Class]               VARCHAR(255),
+	[Parameter]           VARCHAR(255),
+	[FixValue]            VARCHAR(200),
+	IsIcon				  BIT,
+	IsImage               BIT
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
+);
+
+DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
+DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
+SELECT @IdAlertInformation = NEWID();
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -1;
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, '<b>Execução do serviço {{ServiceName}} de call solana</b>{{NEWLINE}}<b>Data Execução: </b>{{DateTimeNow}}.{{NEWLINE}}<i><b>Proxima execução</b> no período timer de --> {{TimerExecute}}</i>{{NEWLINE}}', @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TimerExecute}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Timer', NULL, 0, 0);
+
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -2;
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {{ServiceName}} está rodando.</b>{{NEWLINE}}<i><b>Não irá efetuar essa execução:</b> {{DateTimeNow}}</i>.{{NEWLINE}}', @IdAlertConfiguration);
+
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 1;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 2;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 3;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 4;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 5;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
+--SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 6;
+--INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
 ------------------------------------------------------------
 
 UPDATE RunTimeController
