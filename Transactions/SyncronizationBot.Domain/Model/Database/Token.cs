@@ -22,6 +22,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public virtual List<Transactions>? TransactionsDestination { get; set; }
         public virtual List<Transactions>? TransactionsDestinationPool { get; set; }
         public virtual List<WalletBalance>? Balances { get; set; }
+        public virtual List<WalletBalanceSFMCompare>? BalancesSFMCompare { get; set; }
         public virtual List<TokenSecurity>? TokenSecurities { get; set; }
     }
 }

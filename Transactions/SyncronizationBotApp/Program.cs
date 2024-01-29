@@ -107,6 +107,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
+    services.AddTransient<WalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
@@ -173,6 +174,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.Configure<TokensConfig>(configuration.GetSection("Tokens"));
     services.AddHttpClient<ITokensService, TokensService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    
+    services.Configure<TokensAccountsByOwnerConfig>(configuration.GetSection("TokensAccountByOwner"));
+    services.AddHttpClient<ITokensAccountsByOwnerService, TokensAccountsByOwnerService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
