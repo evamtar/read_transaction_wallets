@@ -21,9 +21,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(wbh => wbh.Price).HasConversion<string?>();
             builder.Property(wbh => wbh.TotalValueUSD).HasConversion<string?>();
             builder.Property(wbh => wbh.Signature);
+            builder.Property(wbh => wbh.FontType); 
             builder.Property(wbh => wbh.CreateDate);
             builder.Property(wbh => wbh.LastUpdate);
-            builder.HasKey(cw => cw.ID);
+            builder.HasKey(wbh => wbh.ID);
         }
     }
 }

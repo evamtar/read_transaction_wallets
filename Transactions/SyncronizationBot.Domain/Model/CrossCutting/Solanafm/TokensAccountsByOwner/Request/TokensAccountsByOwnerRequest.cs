@@ -5,6 +5,6 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Solanafm.TokensAccountsByO
     public class TokensAccountsByOwnerRequest
     {
         public string? WalletPublicKeyHash { get;set; }
-        public Guid? Id { get; set; } = Guid.NewGuid();
+        public Guid? ID { get; set; } = Guid.NewGuid();
     }
 }

@@ -6,5 +6,6 @@ namespace SyncronizationBot.Domain.Model.Configs
     {
         public double? GTMHoursAdjust { get; set; }
         public double? UTCTransactionMinutesAdjust { get; set;}
+        public bool? IsContingecyTransactions { get; set; }
     }
 }

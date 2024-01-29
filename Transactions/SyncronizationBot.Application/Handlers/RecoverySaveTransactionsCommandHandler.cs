@@ -53,6 +53,10 @@ namespace SyncronizationBot.Application.Handlers
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
         {
+            if (request.IsContingecyTransactions ?? false) 
+            {
+                //TODO
+            }
             var page = 1;
             var hasNextPage = true;
             while (hasNextPage)

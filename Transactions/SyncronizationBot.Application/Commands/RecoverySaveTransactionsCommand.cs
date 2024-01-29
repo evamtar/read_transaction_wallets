@@ -9,5 +9,6 @@ namespace SyncronizationBot.Application.Commands
         public Guid? WalletId { get;set; }
         public string? WalletHash { get; set; }
         public int? IdClassification { get; set; }
+        public bool? IsContingecyTransactions { get; set; }
     }
 }

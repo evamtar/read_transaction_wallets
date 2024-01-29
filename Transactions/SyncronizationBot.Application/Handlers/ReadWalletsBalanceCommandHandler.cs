@@ -7,6 +7,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
@@ -50,6 +51,7 @@ namespace SyncronizationBot.Application.Handlers
                 {
                     token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                     var checkedExists = await this._walletBalanceRepository.FindFirstOrDefault(x => x.IdWallet == wallet!.ID && x.IdToken == token.TokenId);
+                    var idWalletBalanceSol = (Guid?)null!;
                     if (checkedExists == null)
                     {
                         var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = wallet!.Hash });
@@ -66,6 +68,7 @@ namespace SyncronizationBot.Application.Handlers
                                 IsActive = accountInfo.Result?.Value?.Lamports > 0,
                                 LastUpdate = DateTime.Now
                             });
+                            idWalletBalanceSol = balance.ID;
                             await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory 
                             {
                                 IdWalletBalance = balance.ID,
@@ -79,6 +82,7 @@ namespace SyncronizationBot.Application.Handlers
                                 Price = balance.Price,
                                 TotalValueUSD = balance.TotalValueUSD,
                                 Signature = "CREATE BALANCE",
+                                FontType = EFontType.SOLANA_FM,
                                 CreateDate = DateTime.Now,
                                 LastUpdate = balance.LastUpdate
                             });
@@ -86,15 +90,34 @@ namespace SyncronizationBot.Application.Handlers
                     }
                     foreach (var item in walletPortifolio!.Data!.Items)
                     {
-                        if (item.Address == "So11111111111111111111111111111111111111111")
-                            continue;
+                        if (item.Address == "So11111111111111111111111111111111111111111" || item.Address == "So11111111111111111111111111111111111111112")
+                        {
+                            token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+                            await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                            {
+                                IdWalletBalance = idWalletBalanceSol,
+                                IdWallet = wallet?.ID,
+                                IdToken = token?.TokenId,
+                                TokenHash = item.Address,
+                                OldQuantity = (decimal?)0,
+                                NewQuantity = item.UiAmount,
+                                RequestQuantity = null,
+                                PercentageCalculated = 100,
+                                Price = item.PriceUsd,
+                                TotalValueUSD = item.ValueUsd,
+                                Signature = "CREATE BALANCE",
+                                FontType = EFontType.BIRDEYE,
+                                CreateDate = DateTime.Now,
+                                LastUpdate = wallet?.DateLoadBalance
+                            });
+                        }
                         else
                             token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
                         var balance = await this._walletBalanceRepository.Add(new WalletBalance
                         {
                             IdWallet = wallet?.ID,
                             IdToken = token?.TokenId,
-                            TokenHash = item.Address == "So11111111111111111111111111111111111111111" ? "So11111111111111111111111111111111111111112" : item.Address,
+                            TokenHash = item.Address,
                             Quantity = item.UiAmount,
                             Price = item.PriceUsd,
                             TotalValueUSD = item.ValueUsd,
@@ -114,11 +137,13 @@ namespace SyncronizationBot.Application.Handlers
                             Price = balance.Price,
                             TotalValueUSD = balance.TotalValueUSD,
                             Signature = "CREATE BALANCE",
+                            FontType = EFontType.BIRDEYE,
                             CreateDate = DateTime.Now,
                             LastUpdate = balance.LastUpdate
                         });
                     }
                 }
+                wallet!.OldTransactionStared = wallet!.DateLoadBalance;
                 wallet!.IsLoadBalance = true;
                 await base.UpdateUnixTimeSeconds(finalTicks, wallet);
                 wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);

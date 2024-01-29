@@ -1,9 +1,13 @@
 ﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.TokensAccountsByOwner.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.TokensAccountsByOwner.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Configs;
 using System.Net.Http;
+using System.Text;
 
 namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service
 {
@@ -21,9 +25,29 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service
                 this._httpClient.DefaultRequestHeaders.Add(header.Key!, header.Value!);
             }
         }
-        public Task<TokensResponse> ExecuteRecoveryTokensAccountsByOwnerAsync(TokensAccountsByOwnerRequest request)
+        public async Task<List<TokensAccountsByOwnerResponse>> ExecuteRecoveryTokensAccountsByOwnerAsync(TokensAccountsByOwnerRequest request)
         {
-            throw new NotImplementedException();
+            var listReturn = new List<TokensAccountsByOwnerResponse>();
+            if (this._config.Value.TokenProgramIds != null) 
+            {
+                foreach (var tokenProgramId in this._config.Value.TokenProgramIds)
+                {
+                    var data = this._config.Value.Data ?? string.Empty;
+                    data = data.Replace("{{WalletPublicKeyHash}}", request.WalletPublicKeyHash);
+                    data = data.Replace("{{TokenProgramId}}", request.WalletPublicKeyHash);
+                    data = data.Replace("{{Id}}", request.ID?.ToString());
+                    var content = new StringContent(data, Encoding.UTF8, "application/json");
+                    var response = await _httpClient.PostAsync("", content);
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode)
+                        throw new Exception(responseBody);
+                    var responseJson = JsonConvert.DeserializeObject<TokensAccountsByOwnerResponse>(responseBody);
+                    if (responseJson?.Result?.Value?.Count > 0)
+                        listReturn.Add(responseJson!);
+                }
+            }
+            return listReturn;
+
         }
     }
 }
