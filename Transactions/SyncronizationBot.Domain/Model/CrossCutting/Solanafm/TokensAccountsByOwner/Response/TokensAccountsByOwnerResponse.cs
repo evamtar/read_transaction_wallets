@@ -62,7 +62,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Solanafm.TokensAccountsByO
     {
         public decimal? Amount { get; set; }
         public int Decimals { get; set; }
-        public int UiAmount { get; set; }
+        public decimal UiAmount { get; set; }
         public string? UiAmountString { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                                                         IWalletBalanceRepository walletBalanceRepository,
                                                         IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                         IAccountInfoService accountInfoService,
-                                                        ITokensAccountsByOwnerService tokensAccountsByOwnerService) : base(mediator, walletRepository, EFontType.BIRDEYE, config)
+                                                        ITokensAccountsByOwnerService tokensAccountsByOwnerService) : base(mediator, walletRepository, EFontType.SOLANA_FM, config)
         {
             this._walletBalanceRepository = walletBalanceRepository;
             this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;

@@ -31,7 +31,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Tokens.Service
                 {
                     var data = this._config.Value.Data ?? string.Empty;
                     data = data.Replace("{{WalletPublicKeyHash}}", request.WalletPublicKeyHash);
-                    data = data.Replace("{{TokenProgramId}}", request.WalletPublicKeyHash);
+                    data = data.Replace("{{TokenProgramId}}", tokenProgramId);
                     data = data.Replace("{{Id}}", request.ID?.ToString());
                     var content = new StringContent(data, Encoding.UTF8, "application/json");
                     var response = await _httpClient.PostAsync("", content);

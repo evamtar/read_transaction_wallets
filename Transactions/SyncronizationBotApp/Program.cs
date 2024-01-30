@@ -187,6 +187,16 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region SolanaFM
 
+    #region Contingency
+
+    services.Configure<TransactionsSignatureForAddressConfig>(configuration.GetSection("TransactionsSignatureForAddress"));
+    services.AddHttpClient<ITransactionsSignatureForAddressService, TransactionsSignatureForAddressService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
     services.Configure<TransactionsConfig>(configuration.GetSection("Transactions"));
     services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()

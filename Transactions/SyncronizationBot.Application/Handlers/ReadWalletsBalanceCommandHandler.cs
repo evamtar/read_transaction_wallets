@@ -28,6 +28,7 @@ namespace SyncronizationBot.Application.Handlers
         {
             
         }
+
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
             var wallet = await base.GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
@@ -35,9 +36,10 @@ namespace SyncronizationBot.Application.Handlers
             while (hasNext) 
             {
                 var finalTicks = base.GetInitialTicks(base.GetFinalTicks());
-                var balanceSFM = await this._mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
-                var balanceByrdeye = await this._mediator.Send(new RecoverySaveBalanceBirdeyeCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
-                wallet!.DateLoadBalance = balanceByrdeye.DateLoadBalance ?? balanceSFM.DateLoadBalance;
+                var taskSFM = this._mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
+                var taskByrdeye = this._mediator.Send(new RecoverySaveBalanceBirdeyeCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
+                await Task.WhenAll(taskSFM, taskByrdeye);
+                wallet!.DateLoadBalance = taskByrdeye.Result.DateLoadBalance ?? taskSFM.Result.DateLoadBalance;
                 wallet!.OldTransactionStared = wallet!.DateLoadBalance;
                 wallet!.IsLoadBalance = true;
                 await base.UpdateUnixTimeSeconds(finalTicks, wallet);
