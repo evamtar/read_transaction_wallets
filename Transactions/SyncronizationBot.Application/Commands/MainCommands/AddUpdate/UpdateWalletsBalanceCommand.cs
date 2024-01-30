@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 
 namespace SyncronizationBot.Application.Commands.MainCommands.AddUpdate
 {

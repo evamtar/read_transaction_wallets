@@ -1,5 +1,4 @@
-﻿
-namespace SyncronizationBot.Application.Response
+﻿namespace SyncronizationBot.Application.Response.MainCommands.RecoverySave
 {
     public class RecoverySaveTelegramChannelResponse
     {

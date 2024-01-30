@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenOverview.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Request;
@@ -12,7 +12,7 @@ using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 
 
 
-namespace SyncronizationBot.Application.Handlers
+namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 {
     public class RecoverySaveTokenCommandHandler : IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>
     {
@@ -29,27 +29,27 @@ namespace SyncronizationBot.Application.Handlers
                                                ITokenSecurityRepository tokenSecurityRepository,
                                                IDexScreenerTokenService dexScreenerTokenService)
         {
-            this._mediator = mediator;
-            this._tokensOverviewService = tokensOverviewService;
-            this._tokenSecurityService = tokenSecurityService;
-            this._tokenRepository = tokenRepository;
-            this._tokenSecurityRepository = tokenSecurityRepository;
-            this._dexScreenerTokenService = dexScreenerTokenService;
+            _mediator = mediator;
+            _tokensOverviewService = tokensOverviewService;
+            _tokenSecurityService = tokenSecurityService;
+            _tokenRepository = tokenRepository;
+            _tokenSecurityRepository = tokenSecurityRepository;
+            _dexScreenerTokenService = dexScreenerTokenService;
         }
         public async Task<RecoverySaveTokenCommandResponse> Handle(RecoverySaveTokenCommand request, CancellationToken cancellationToken)
         {
-            var token = await this._tokenRepository.FindFirstOrDefault(x => x.Hash == request.TokenHash);
-            var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
-            if (token == null || (token.LastUpdate != null && token.LastUpdate.Value.AddDays(7) <= DateTime.Now))
+            var token = await _tokenRepository.FindFirstOrDefault(x => x.Hash == request.TokenHash);
+            var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
+            if (token == null || token.LastUpdate != null && token.LastUpdate.Value.AddDays(7) <= DateTime.Now)
             {
-                var tokenResponse = await this._tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
+                var tokenResponse = await _tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
                 if (tokenResponse.Data == null || tokenResponse.Data.Decimals == null)
                 {
-                    var tokenSymbol = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
+                    var tokenSymbol = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
                     if (!tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
                         return null!;
-                    var tokenResult = await this._dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
-                    var tokenAdded = await this._tokenRepository.Add(new Token
+                    var tokenResult = await _dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
+                    var tokenAdded = await _tokenRepository.Add(new Token
                     {
                         Hash = request.TokenHash,
                         Symbol = tokenSymbol?.Data?[request!.TokenHash!]?.VsTokenSymbol ?? tokenResult?.Pairs?.FirstOrDefault()?.BaseToken?.Symbol,
@@ -64,8 +64,8 @@ namespace SyncronizationBot.Application.Handlers
                         CreateDate = DateTime.Now,
                         LastUpdate = DateTime.Now
                     });
-                    var tokenSecurity = await this._tokenSecurityRepository.Add(new TokenSecurity 
-                    { 
+                    var tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
+                    {
                         IdToken = tokenAdded.ID,
                         CreatorAddress = null,
                         CreationTime = null,
@@ -91,7 +91,7 @@ namespace SyncronizationBot.Application.Handlers
                         Name = tokenAdded.Name,
                         Supply = tokenAdded.Supply,
                         MarketCap = tokenAdded.MarketCap,
-                        Price = this.GetPrice(request.TokenHash, price.Data),
+                        Price = GetPrice(request.TokenHash, price.Data),
                         Liquidity = tokenAdded.Liquidity,
                         UniqueWallet24h = tokenAdded.UniqueWallet24h,
                         UniqueWalletHistory24h = tokenAdded.UniqueWalletHistory24h,
@@ -103,9 +103,9 @@ namespace SyncronizationBot.Application.Handlers
                         IsMutable = null,
                     };
                 }
-                else 
+                else
                 {
-                    var tokenAdded = await this._tokenRepository.Add(new Token
+                    var tokenAdded = await _tokenRepository.Add(new Token
                     {
                         Hash = tokenResponse?.Data?.Address,
                         Symbol = tokenResponse?.Data?.Symbol,
@@ -113,15 +113,15 @@ namespace SyncronizationBot.Application.Handlers
                         Supply = tokenResponse?.Data?.Supply,
                         MarketCap = tokenResponse?.Data?.Mc,
                         Liquidity = tokenResponse?.Data?.Liquidity,
-                        UniqueWallet24h = ((int?)tokenResponse?.Data?.UniqueWallet24H),
-                        UniqueWalletHistory24h = ((int?)tokenResponse?.Data?.UniqueWalletHistory24H),
+                        UniqueWallet24h = (int?)tokenResponse?.Data?.UniqueWallet24H,
+                        UniqueWalletHistory24h = (int?)tokenResponse?.Data?.UniqueWalletHistory24H,
                         Decimals = (int?)tokenResponse?.Data?.Decimals,
                         NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets,
                         CreateDate = DateTime.Now,
                         LastUpdate = DateTime.Now
                     });
-                    var tokenSecurityResponse = await this._tokenSecurityService.ExecuteRecoveryTokenCreationAsync(new TokenSecurityRequest { TokenHash = request.TokenHash! });
-                    var tokenSecurity = await this._tokenSecurityRepository.Add(new TokenSecurity
+                    var tokenSecurityResponse = await _tokenSecurityService.ExecuteRecoveryTokenCreationAsync(new TokenSecurityRequest { TokenHash = request.TokenHash! });
+                    var tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
                     {
                         IdToken = tokenAdded.ID,
                         CreatorAddress = tokenSecurityResponse?.TokenData?.CreatorAddress,
@@ -136,9 +136,9 @@ namespace SyncronizationBot.Application.Handlers
                         FreezeAuthority = (string?)tokenSecurityResponse?.TokenData?.FreezeAuthority,
                         TransferFeeEnable = (string?)tokenSecurityResponse?.TokenData?.TransferFeeEnable,
                         TransferFeeData = (string?)tokenSecurityResponse?.TokenData?.TransferFeeData,
-                        IsToken2022 = (bool?)tokenSecurityResponse?.TokenData?.IsToken2022,
+                        IsToken2022 = tokenSecurityResponse?.TokenData?.IsToken2022,
                         NonTransferable = (string?)tokenSecurityResponse?.TokenData?.NonTransferable,
-                        MintAuthority = (string?)tokenSecurityResponse?.TokenData?.MintTx,
+                        MintAuthority = tokenSecurityResponse?.TokenData?.MintTx,
                         IsMutable = tokenSecurityResponse?.TokenData?.MutableMetadata
                     });
                     return new RecoverySaveTokenCommandResponse
@@ -149,7 +149,7 @@ namespace SyncronizationBot.Application.Handlers
                         Name = tokenAdded?.Name,
                         Supply = tokenAdded?.Supply,
                         MarketCap = tokenAdded?.MarketCap,
-                        Price = this.GetPrice(request.TokenHash, price.Data),
+                        Price = GetPrice(request.TokenHash, price.Data),
                         Liquidity = tokenAdded?.Liquidity,
                         UniqueWallet24h = tokenAdded?.UniqueWallet24h,
                         UniqueWalletHistory24h = tokenAdded?.UniqueWalletHistory24h,
@@ -162,10 +162,10 @@ namespace SyncronizationBot.Application.Handlers
                     };
                 }
             }
-            else 
+            else
             {
-                var tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.IdToken == token.ID);
-                return new RecoverySaveTokenCommandResponse 
+                var tokenSecurity = await _tokenSecurityRepository.FindFirstOrDefault(x => x.IdToken == token.ID);
+                return new RecoverySaveTokenCommandResponse
                 {
                     TokenId = token?.ID,
                     Hash = token?.Hash,
@@ -173,7 +173,7 @@ namespace SyncronizationBot.Application.Handlers
                     Name = token?.Name,
                     Supply = token?.Supply,
                     MarketCap = token?.MarketCap,
-                    Price = this.GetPrice(request.TokenHash, price.Data),
+                    Price = GetPrice(request.TokenHash, price.Data),
                     Liquidity = token?.Liquidity,
                     UniqueWallet24h = token?.UniqueWallet24h,
                     UniqueWalletHistory24h = token?.UniqueWalletHistory24h,
@@ -187,9 +187,9 @@ namespace SyncronizationBot.Application.Handlers
             }
         }
 
-        private decimal? GetPrice(string? tokenHash, Dictionary<string, TokenData>? tokenDatadictionary) 
+        private decimal? GetPrice(string? tokenHash, Dictionary<string, TokenData>? tokenDatadictionary)
         {
-            if (tokenHash != null) 
+            if (tokenHash != null)
             {
                 if (tokenDatadictionary?.ContainsKey(tokenHash) ?? false)
                 {

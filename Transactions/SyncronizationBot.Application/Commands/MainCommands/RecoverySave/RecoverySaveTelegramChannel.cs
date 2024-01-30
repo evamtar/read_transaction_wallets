@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.Enum;
 
 

@@ -2,27 +2,27 @@
 using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
-namespace SyncronizationBot.Application.Handlers
+namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 {
     public class SendTelegramMessageCommandHandler : IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>
     {
         private readonly IMediator _mediator;
         private readonly ITelegramBotService _telegramBotService;
-        public SendTelegramMessageCommandHandler(IMediator mediator, 
+        public SendTelegramMessageCommandHandler(IMediator mediator,
                                                  ITelegramBotService telegramBotService)
         {
-            this._mediator = mediator;
-            this._telegramBotService = telegramBotService;
+            _mediator = mediator;
+            _telegramBotService = telegramBotService;
         }
 
         public async Task<SendTelegramMessageCommandResponse> Handle(SendTelegramMessageCommand request, CancellationToken cancellationToken)
         {
-            var channel = await this._mediator.Send(new RecoverySaveTelegramChannel { Channel = request.Channel, TelegramChannelId = request.TelegramChannelId });
-            var response = await this._telegramBotService.ExecuteSendMessageAsync(new TelegramBotMessageRequest { ChatId = channel.ChannelId, Message = request.Message });
+            var channel = await _mediator.Send(new RecoverySaveTelegramChannel { Channel = request.Channel, TelegramChannelId = request.TelegramChannelId });
+            var response = await _telegramBotService.ExecuteSendMessageAsync(new TelegramBotMessageRequest { ChatId = channel.ChannelId, Message = request.Message });
             return new SendTelegramMessageCommandResponse { };
         }
     }

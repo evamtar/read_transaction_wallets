@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SyncronizationBot.Application.Response
+namespace SyncronizationBot.Application.Response.MainCommands.Send
 {
     public class SendAlertPriceCommandResponse
     {

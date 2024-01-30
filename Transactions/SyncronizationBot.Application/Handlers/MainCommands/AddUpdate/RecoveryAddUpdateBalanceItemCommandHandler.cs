@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using System.Diagnostics;
 
-namespace SyncronizationBot.Application.Handlers
+namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 {
     public class RecoveryAddUpdateBalanceItemCommandHandler : IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>
     {
@@ -17,20 +17,20 @@ namespace SyncronizationBot.Application.Handlers
                                                           IWalletBalanceRepository walletBalanceRepository,
                                                           IWalletBalanceHistoryRepository walletBalanceHistoryRepository)
         {
-            this._mediator = mediator;
-            this._walletBalanceRepository = walletBalanceRepository;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            _mediator = mediator;
+            _walletBalanceRepository = walletBalanceRepository;
+            _walletBalanceHistoryRepository = walletBalanceHistoryRepository;
         }
 
         public async Task<RecoveryAddUpdateBalanceItemCommandResponse> Handle(RecoveryAddUpdateBalanceItemCommand request, CancellationToken cancellationToken)
         {
-            var balance = await this._walletBalanceRepository.FindFirstOrDefault( x => x.IdToken == request.TokenId && x.IdWallet == request.WalleId );
+            var balance = await _walletBalanceRepository.FindFirstOrDefault(x => x.IdToken == request.TokenId && x.IdWallet == request.WalleId);
             var percentage = (decimal?)100;
             var oldQuantity = (decimal?)0;
             if (balance == null)
             {
-                var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
-                balance = await this._walletBalanceRepository.Add(new WalletBalance
+                var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
+                balance = await _walletBalanceRepository.Add(new WalletBalance
                 {
                     IdWallet = request.WalleId,
                     IdToken = request.TokenId,
@@ -42,25 +42,25 @@ namespace SyncronizationBot.Application.Handlers
                     LastUpdate = DateTime.Now
                 });
             }
-            else 
+            else
             {
                 oldQuantity = balance.Quantity;
-                percentage = this.CalculatePercentege(request.Quantity, balance.Quantity);
+                percentage = CalculatePercentege(request.Quantity, balance.Quantity);
                 balance.Quantity += request.Quantity;
                 balance.IsActive = balance.Quantity > 0;
-                if (balance.IsActive ?? false) 
+                if (balance.IsActive ?? false)
                 {
-                    var price = await this._mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
+                    var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request.TokenHash! } });
                     balance.Price = price?.Data?[request.TokenHash!].Price ?? 0;
                     balance.TotalValueUSD = balance.Quantity * price?.Data?[request.TokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
-                balance = await this._walletBalanceRepository.Edit(balance);
-                try { await this._walletBalanceRepository.DetachedItem(balance); } catch { }
+                balance = await _walletBalanceRepository.Edit(balance);
+                try { await _walletBalanceRepository.DetachedItem(balance); } catch { }
             }
-            
-            await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory 
-            { 
+
+            await _walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+            {
                 IdWalletBalance = balance.ID,
                 IdWallet = balance.IdWallet,
                 IdToken = balance.IdToken,
@@ -75,7 +75,7 @@ namespace SyncronizationBot.Application.Handlers
                 CreateDate = DateTime.Now,
                 LastUpdate = balance.LastUpdate
             });
-            return new RecoveryAddUpdateBalanceItemCommandResponse 
+            return new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = balance.Quantity,
                 Price = balance.Price,
@@ -90,7 +90,7 @@ namespace SyncronizationBot.Application.Handlers
                 return -100;
             else
             {
-                var percentage = (quantityEnter / quantity) * 100;
+                var percentage = quantityEnter / quantity * 100;
                 if (percentage != null)
                     return Math.Round(percentage.Value, 5);
                 return percentage;

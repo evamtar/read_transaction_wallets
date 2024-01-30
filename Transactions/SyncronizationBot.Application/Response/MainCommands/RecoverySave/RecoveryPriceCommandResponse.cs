@@ -1,6 +1,6 @@
 ﻿using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 
-namespace SyncronizationBot.Application.Response
+namespace SyncronizationBot.Application.Response.MainCommands.RecoverySave
 {
     public class RecoveryPriceCommandResponse
     {

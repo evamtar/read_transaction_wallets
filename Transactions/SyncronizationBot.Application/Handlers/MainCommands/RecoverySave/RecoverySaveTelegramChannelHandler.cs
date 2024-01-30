@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
-namespace SyncronizationBot.Application.Handlers
+namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 {
     public class RecoverySaveTelegramChannelHandler : IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>
     {
@@ -18,23 +18,23 @@ namespace SyncronizationBot.Application.Handlers
                                                   ITelegramBotService telegramBotService,
                                                   ITelegramChannelRepository telegramChannelRepository)
         {
-            this._mediator = mediator;
-            this._telegramBotService = telegramBotService;
-            this._telegramChannelRepository = telegramChannelRepository;
+            _mediator = mediator;
+            _telegramBotService = telegramBotService;
+            _telegramChannelRepository = telegramChannelRepository;
         }
 
         public async Task<RecoverySaveTelegramChannelResponse> Handle(RecoverySaveTelegramChannel request, CancellationToken cancellationToken)
         {
-            var channel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.Channel.ToString());
-            if (request.Channel == ETelegramChannel.None) 
-                channel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
-            if (channel == null) 
+            var channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.Channel.ToString());
+            if (request.Channel == ETelegramChannel.None)
+                channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
+            if (channel == null)
             {
-                var channels = await this._telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotChatRequest { });
-                var telegramChannel = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == EnumExtension.GetDescription(request.Channel));
+                var channels = await _telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotChatRequest { });
+                var telegramChannel = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == request.Channel.GetDescription());
                 long? chatId = telegramChannel?.ChatMember?.Chat?.Id;
-                channel = await this._telegramChannelRepository.Add(new TelegramChannel 
-                { 
+                channel = await _telegramChannelRepository.Add(new TelegramChannel
+                {
                     ChannelName = request.Channel.ToString(),
                     ChannelId = chatId,
                 });

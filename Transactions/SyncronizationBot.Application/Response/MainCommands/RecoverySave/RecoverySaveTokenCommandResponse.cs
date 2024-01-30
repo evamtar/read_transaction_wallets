@@ -1,4 +1,4 @@
-﻿namespace SyncronizationBot.Application.Response
+﻿namespace SyncronizationBot.Application.Response.MainCommands.RecoverySave
 {
     public class RecoverySaveTokenCommandResponse
     {
@@ -23,7 +23,7 @@
             get
             {
                 string number = "1";
-                for (int i = 0; i < this.Decimals; i++)
+                for (int i = 0; i < Decimals; i++)
                     number += "0";
                 return int.Parse(number);
             }

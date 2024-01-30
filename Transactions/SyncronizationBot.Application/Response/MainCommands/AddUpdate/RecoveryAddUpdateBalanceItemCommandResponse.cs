@@ -1,6 +1,4 @@
-﻿
-
-namespace SyncronizationBot.Application.Response
+﻿namespace SyncronizationBot.Application.Response.MainCommands.AddUpdate
 {
     public class RecoveryAddUpdateBalanceItemCommandResponse
     {
