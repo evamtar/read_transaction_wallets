@@ -124,15 +124,19 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Globais
 
+    services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
+    services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
+
     services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
+
     services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
-    services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
-    services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
+
     services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
-    
+    services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
+    services.AddTransient<IRequestHandler<SendTransactionAlertsCommand, SendTransactionAlertsCommandResponse>, SendTransactionAlertsCommandHandler>();
+
     #endregion
 
     #endregion

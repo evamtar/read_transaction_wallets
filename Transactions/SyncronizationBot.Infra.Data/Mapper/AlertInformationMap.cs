@@ -12,6 +12,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.ToTable("AlertInformation");
             builder.Property(ai => ai.ID);
             builder.Property(ai => ai.Message);
+            builder.Property(ai => ai.IdClassification);
             builder.Property(ai => ai.AlertConfigurationId);
             builder.HasOne(ai => ai.AlertConfiguration).WithMany(ac => ac.AlertsInformations).HasForeignKey(ai => ai.AlertConfigurationId);
             builder.HasKey(ai => ai.ID);

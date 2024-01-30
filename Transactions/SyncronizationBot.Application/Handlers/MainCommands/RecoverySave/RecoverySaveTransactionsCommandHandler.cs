@@ -28,25 +28,22 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly IMediator _mediator;
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
-        private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
-                                                      IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig,
                                                       IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
-            _mediator = mediator;
-            _transfersService = transfersService;
-            _transactionsRepository = transactionsRepository;
-            _walletBalanceHistoryRepository = walletBalanceHistoryRepository;
-            _transactionNotMappedRepository = transactionNotMappedRepository;
-            _mappedTokensConfig = mappedTokensConfig;
-            _syncronizationBotConfig = syncronizationBotConfig;
+            this._mediator = mediator;
+            this._transfersService = transfersService;
+            this._transactionsRepository = transactionsRepository;
+            this._transactionNotMappedRepository = transactionNotMappedRepository;
+            this._mappedTokensConfig = mappedTokensConfig;
+            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
@@ -135,7 +132,28 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
                                 var balancePosition = await UpdateBalance(transactionDB, transferInfo, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool);
-                                await SendAlertTransacionForTelegram(request, transaction?.Signature, transactionDB, transferInfo, balancePosition, request.WalletId, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool);
+                                await this._mediator.Send(new SendTransactionAlertsCommand 
+                                {
+                                    IdClassification = request.IdClassification,
+                                    WalletId = request.WalletId,
+                                    WalletHash = request.WalletHash,
+                                    Transactions = transactionDB,
+                                    DateOfTransfer = AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
+                                    TokenSendedSymbol = tokenSended?.Symbol,
+                                    TokenSendedHash = tokenSended?.Hash,
+                                    TokenSendedPoolSymbol = tokenSendedPool?.Symbol,
+                                    TokenSendedPoolHash = tokenSendedPool?.Hash,
+                                    TokenReceivedSymbol = tokenReceived?.Symbol,
+                                    TokenReceivedHash = tokenReceived?.Hash,
+                                    TokenReceivedName = tokenReceived?.Name,
+                                    TokenReceivedMintAuthority = tokenReceived?.MintAuthority,
+                                    TokenReceivedFreezeAuthority = tokenReceived?.FreezeAuthority,
+                                    TokenReceivedIsMutable = tokenReceived?.IsMutable,
+                                    TokenReceivedPoolSymbol = tokenReceivedPool?.Symbol,
+                                    TokenReceivedPoolHash = tokenReceivedPool?.Hash,
+                                    PercentModify = balancePosition.PercentModify,
+                                    TokensMapped = this._mappedTokensConfig.Value.Tokens
+                                });
                             }
                             else
                             {
@@ -283,166 +301,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             return null!;
         }
 
-        private async Task SendAlertTransacionForTelegram(RecoverySaveTransactionsCommand request, string? signature, Transactions? transaction, TransferInfo? transferInfo, RecoveryAddUpdateBalanceItemCommandResponse balancePosition, Guid? walletId, RecoverySaveTokenCommandResponse? tokenSended, RecoverySaveTokenCommandResponse? tokenSendedPool, RecoverySaveTokenCommandResponse? tokenReceived, RecoverySaveTokenCommandResponse? tokenReceivedPool)
-        {
-            switch ((EClassWalletAlert)request.IdClassification!)
-            {
-                case EClassWalletAlert.None:
-                    break;
-                case EClassWalletAlert.Whale:
-                case EClassWalletAlert.Asians:
-                case EClassWalletAlert.Arbitrator:
-                    if (transferInfo?.TransactionType == ETransactionType.BUY)
-                        await SendAlertBuyOrRebuy(request, signature, transferInfo, balancePosition, walletId, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.BUY_MESSAGE, ETypeMessage.REBUY_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.SELL)
-                        await SendAlertAnotherTransaction(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.SELL_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.SWAP)
-                        await SendAlertAnotherTransaction(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.SWAP_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.POOLCREATE)
-                        await SendMessage(ETypeMessage.POOL_CREATED_MESSAGE, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-                    else if (transferInfo?.TransactionType == ETransactionType.POOLFINALIZED)
-                        await SendMessage(ETypeMessage.POOL_FINALIZED_MESSAGE, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-                    break;
-                case EClassWalletAlert.MM:
-                case EClassWalletAlert.BIG_BIG_WHALE:
-                    if (transferInfo?.TransactionType == ETransactionType.BUY)
-                        await SendAlertBuyOrRebuy(request, signature, transferInfo, balancePosition, walletId, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.MM_NEW_BUY_MESSAGE, ETypeMessage.MM_REBUY_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.SELL)
-                        await SendAlertAnotherTransaction(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.MM_SELL_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.SWAP)
-                        await SendAlertAnotherTransaction(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, ETypeMessage.MM_SWAP_MESSAGE);
-                    else if (transferInfo?.TransactionType == ETransactionType.POOLCREATE)
-                        await SendMessage(ETypeMessage.POOL_CREATED_MESSAGE, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-                    else if (transferInfo?.TransactionType == ETransactionType.POOLFINALIZED)
-                        await SendMessage(ETypeMessage.POOL_FINALIZED_MESSAGE, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private async Task SendAlertAnotherTransaction(RecoverySaveTransactionsCommand request,
-                                         string? signature,
-                                         TransferInfo? transferInfo,
-                                         RecoveryAddUpdateBalanceItemCommandResponse balancePosition,
-                                         RecoverySaveTokenCommandResponse? tokenSended,
-                                         RecoverySaveTokenCommandResponse? tokenSendedPool,
-                                         RecoverySaveTokenCommandResponse? tokenReceived,
-                                         RecoverySaveTokenCommandResponse? tokenReceivedPool,
-                                         ETypeMessage typeMessage)
-        {
-            if ((_mappedTokensConfig?.Value?.Tokens?.Contains(tokenSended?.Hash!) ?? false) && (_mappedTokensConfig?.Value?.Tokens?.Contains(tokenReceived?.Hash!) ?? false))
-                return;
-            await SendMessage(typeMessage, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-        }
-
-        private async Task SendAlertBuyOrRebuy(RecoverySaveTransactionsCommand request,
-                                               string? signature,
-                                               TransferInfo? transferInfo,
-                                               RecoveryAddUpdateBalanceItemCommandResponse balancePosition,
-                                               Guid? walletId,
-                                               RecoverySaveTokenCommandResponse? tokenSended,
-                                               RecoverySaveTokenCommandResponse? tokenSendedPool,
-                                               RecoverySaveTokenCommandResponse? tokenReceived,
-                                               RecoverySaveTokenCommandResponse? tokenReceivedPool,
-                                               ETypeMessage buyMessage,
-                                               ETypeMessage rebuyMessage)
-        {
-            if ((_mappedTokensConfig?.Value?.Tokens?.Contains(tokenSended?.Hash!) ?? false) && (_mappedTokensConfig?.Value?.Tokens?.Contains(tokenReceived?.Hash!) ?? false))
-                return;
-            var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash != tokenReceived!.Hash && x.IdWallet == walletId && x.Signature != signature);
-            await SendMessage(existsTokenWallet == null ? buyMessage : rebuyMessage, GetParametersArgsMessage(request, signature, transferInfo, balancePosition, tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool, transferInfo!.TransactionType));
-        }
-
-        private object[] GetParametersArgsMessage(RecoverySaveTransactionsCommand request, string? signature, TransferInfo? transferInfo, RecoveryAddUpdateBalanceItemCommandResponse balancePosition, RecoverySaveTokenCommandResponse? tokenSended, RecoverySaveTokenCommandResponse? tokenSendedPool, RecoverySaveTokenCommandResponse? tokenReceived, RecoverySaveTokenCommandResponse? tokenReceivedPool, ETransactionType transactionType)
-        {
-            switch (transactionType)
-            {
-                case ETransactionType.BUY:
-                    return new object[]
-                    {
-                        signature ?? string.Empty,
-                        request.WalletHash ?? string.Empty,
-                        ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        tokenReceived?.Name ?? string.Empty,
-                        tokenReceived?.Hash ?? string.Empty,
-                        tokenReceived?.MintAuthority ?? "NO",
-                        tokenReceived?.FreezeAuthority ?? "NO",
-                        tokenReceived?.IsMutable ?? false ? "YES" : "NO",
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
-                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        (balancePosition.PercentModify ?? 0).ToString() + "%",
-                        tokenReceived?.Hash ?? string.Empty
-                };
-                case ETransactionType.SELL:
-                    return new object[]
-                    {
-                        signature ?? string.Empty,
-                        request.WalletHash ?? string.Empty,
-                        ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        tokenSended?.Hash ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
-                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        (balancePosition.PercentModify ?? 0).ToString() + "%",
-                        tokenSended?.Hash ?? string.Empty
-                    };
-                case ETransactionType.SWAP:
-                    return new object[]
-                    {
-                        signature ?? string.Empty,
-                        request.WalletHash ?? string.Empty,
-                        ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
-                        tokenReceived?.Name ?? string.Empty,
-                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        (balancePosition.PercentModify ?? 0).ToString() + "%",
-                        tokenReceived?.Hash ?? string.Empty,
-                        tokenSended?.Hash ?? string.Empty
-                    };
-                case ETransactionType.POOLCREATE:
-                    return new object[]
-                    {
-                        signature ?? string.Empty,
-                        request.WalletHash ?? string.Empty,
-                        ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor).ToString() + " " + tokenSended?.Symbol ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor).ToString() + " " + tokenSendedPool?.Symbol ?? string.Empty,
-                        tokenSended?.Hash ?? string.Empty,
-                        tokenSendedPool?.Hash ?? string.Empty,
-                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenSended?.Hash ?? string.Empty,
-                        tokenSendedPool?.Hash ?? string.Empty
-                     };
-                case ETransactionType.POOLFINALIZED:
-                    return new object[]
-                    {
-                        signature ?? string.Empty,
-                        request.WalletHash ?? string.Empty,
-                        ((EClassWalletAlert)request.IdClassification!).ToString(),
-                        CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor).ToString() + " " + tokenReceived?.Symbol ?? string.Empty,
-                        CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor).ToString() + " " + tokenReceivedPool?.Symbol ?? string.Empty,
-                        tokenReceived?.Hash ?? string.Empty,
-                        tokenReceivedPool?.Hash?? string.Empty,
-                        AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                        tokenReceived?.Hash ?? string.Empty,
-                        tokenReceivedPool?.Hash ?? string.Empty
-                    };
-                default:
-                    return null!;
-            }
-        }
-
-        private async Task SendMessage(ETypeMessage typeMessage, object[] args)
-        {
-            await _mediator.Send(new SendTelegramMessageCommand
-            {
-                Channel = ETelegramChannel.CallSolana,
-                Message = TelegramMessageHelper.GetFormatedMessage(typeMessage, args)
-            });
-        }
         private decimal? CalculatedAmoutValue(decimal? value, int? divisor)
         {
             if (value == null || divisor == null) return null;
@@ -469,7 +327,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-
 
     }
 }

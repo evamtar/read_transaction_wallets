@@ -39,6 +39,7 @@ namespace SyncronizationBot.Service
                         }
                         catch (Exception ex)
                         {
+                            await base.SendAlertServiceError(ex, timer);
                             await this.DetachedRuntimeControllerAsync();
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
@@ -48,7 +49,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning();
+                        await base.SendAlertServiceRunning();
                         base.LogMessage($"Atualização de saldo Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 

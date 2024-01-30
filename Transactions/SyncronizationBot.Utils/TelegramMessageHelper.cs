@@ -3,18 +3,6 @@ namespace SyncronizationBot.Utils
 {
     public static class TelegramMessageHelper
     {
-        private const string MESSAGE_LOG_EXECUTE = "<b>Execução do serviço {0} de call solana</b>\r\n" +
-                                                   "<b>Data Execução: </b>{1}.\r\n" +
-                                                   "<i><b>Proxima execução</b> no período timer de --> {2}</i>";
-        private const string MESSAGE_LOG_APP_RUNNING = "<b>O serviço {0} está rodando.</b>\r\n" +
-                                                       "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
-        private const string MESSAGE_LOG_APP_TIME_NULL = "<b>Timer do serviço {0} está nulo ou não configurado.</b>\r\n" +
-                                                         "<i><b>Não irá efetuar essa execução:</b> {1}</i>.\r\n";
-        private const string MESSAGE_LOG_EXECUTE_ERROR = "<b>O serviço {0} suspendeu a execução.</b>\r\n" +
-                                                         "<i><b>Mensagem de erro:</b> {1}</i>.\r\n" +
-                                                         "StackTrace: {2}\r\n" +
-                                                         "<i><b>Proxima execução</b> no período timer de --> {3}. \r\n" +
-                                                         "<b>Dev's Favor verificar</b> Cc:@evandrotartari , @euRodrigo</i>";
         private const string MESSAGE_BUY_MESSAGE_HEADER = "<b>*** NEW BUY ALERT ***</b>\r\n";
         private const string MESSAGE_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
         private const string MESSAGE_BUY_MESSAGE_BODY   = "<s>Signature:</s> {0}\r\n" +
@@ -104,14 +92,6 @@ namespace SyncronizationBot.Utils
         {
             switch (eTypeMessage)
             {
-                case ETypeMessage.LOG_EXECUTE:
-                    return string.Format(MESSAGE_LOG_EXECUTE, args);
-                case ETypeMessage.LOG_APP_RUNNING:
-                    return string.Format(MESSAGE_LOG_APP_RUNNING, args);
-                case ETypeMessage.LOG_APP_TIME_NULL:
-                    return string.Format(MESSAGE_LOG_APP_TIME_NULL, args);
-                case ETypeMessage.LOG_EXECUTE_ERROR:
-                    return string.Format(MESSAGE_LOG_EXECUTE_ERROR, args);
                 case ETypeMessage.BUY_MESSAGE:
                     return string.Format(MESSAGE_BUY_MESSAGE_HEADER + MESSAGE_BUY_MESSAGE_ICONS + MESSAGE_BUY_MESSAGE_BODY + MESSAGE_BUY_CHART, args);
                 case ETypeMessage.REBUY_MESSAGE:
@@ -159,11 +139,7 @@ namespace SyncronizationBot.Utils
 
     public enum ETypeMessage 
     { 
-        LOG_EXECUTE = 1,
-        LOG_APP_RUNNING,
-        LOG_APP_TIME_NULL,
-        LOG_EXECUTE_ERROR,
-        BUY_MESSAGE,
+        BUY_MESSAGE = 5,
         REBUY_MESSAGE,
         SELL_MESSAGE,
         SWAP_MESSAGE,
