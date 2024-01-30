@@ -136,16 +136,16 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenRepository, TokenRepository>();
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
+    services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
+    services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddTransient<WalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
-    services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();
     services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
     services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
     services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
-
 
     #endregion
 

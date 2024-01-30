@@ -5,6 +5,7 @@ using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
+using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
@@ -15,16 +16,19 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private readonly IMediator _mediator;
         private readonly ITransactionsService _transactionsService;
         private readonly ITransactionsRepository _transactionsRepository;
+        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
 
         public RecoveryTransactionsCommandHandler(IMediator mediator, 
                                                   ITransactionsService transactionsService,
                                                   ITransactionsRepository transactionsRepository,
+                                                  ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;
             this._transactionsRepository = transactionsRepository;
+            this._transactionsOldForMappingRepository = transactionsOldForMappingRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
@@ -52,7 +56,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                             var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
                             if (exists == null)
                             {
-                                if (request.DateLoadBalance < AdjustDateTimeToPtBR(transaction?.DateOfTransaction)) 
+                                if (request.DateLoadBalance < AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
                                 {
                                     listTransactions.Add(new TransactionsResponse
                                     {
@@ -60,7 +64,12 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                                         BlockTime = transaction?.BlockTime
                                     });
                                 }
+                                else
+                                    await this.SaveTransactionsOldForMapping(transaction);
+                                
                             }
+                            else
+                                await this.SaveTransactionsOldForMapping(transaction);
                         }
                     }
                 }
@@ -68,6 +77,22 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 hasNextPage = transactionResponse.Result?.Pagination?.TotalPages > page;
             }
             return new RecoveryTransactionsCommandResponse { Result = listTransactions };
+        }
+
+        private async Task SaveTransactionsOldForMapping(Domain.Model.CrossCutting.Solanafm.Transactions.Response.TransactionResponse? transactions) 
+        {
+            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == "");
+            if (exists == null)
+            {
+                await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping 
+                { 
+                    Signature = transactions?.Signature,
+                    DateOfTransaction = transactions?.DateOfTransaction,
+                    CreateDate = DateTime.Now,
+                    IdWallet = Guid.NewGuid(),
+                    IsIntegrated = false,
+                });
+            }
         }
 
         private DateTime AdjustDateTimeToPtBR(DateTime? dateTime)

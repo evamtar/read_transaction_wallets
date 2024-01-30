@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Infra.Data.Mapper;
 
 
@@ -19,13 +20,14 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<ClassWallet> ClassWallets { get; set; }
         public DbSet<RunTimeController> RunTimeControllers { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<TransactionNotMapped> TransactionsNotMapped { get; set; }
+        public DbSet<TransactionsOldForMapping> TransactionsOldForMappings { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
         public DbSet<WalletBalance> WalletBalances { get; set; }
         public DbSet<WalletBalanceSFMCompare> WalletBalancesSFMCompare { get; set; }
         public DbSet<WalletBalanceHistory> WalletBalanceHistories { get; set; }
         public DbSet<TelegramChannel> TelegramChannels { get; set; }
-        public DbSet<TransactionNotMapped> TransactionsNotMapped { get; set; }
         public DbSet<AlertPrice> AlertsPrices { get; set; }
         public DbSet<AlertConfiguration> AlertsConfigurations { get; set; }
         public DbSet<AlertInformation> AlertsInformations { get; set; }
@@ -43,12 +45,13 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new TokenMap());
             modelBuilder.ApplyConfiguration(new TokenSecurityMap()); 
             modelBuilder.ApplyConfiguration(new TransactionsMap());
+            modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());
+            modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceSFMCompareMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
             modelBuilder.ApplyConfiguration(new TelegramChannelMap());
-            modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
             modelBuilder.ApplyConfiguration(new AlertPriceMap());
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
