@@ -4,6 +4,7 @@ using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Configs;
+using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 
 namespace SyncronizationBot.Application.Handlers
@@ -15,7 +16,7 @@ namespace SyncronizationBot.Application.Handlers
         public ReadWalletsCommandHandler(IMediator mediator,
                                          IWalletRepository walletRepository,
                                          IClassWalletRepository classWalletRepository,
-                                         IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, config)
+                                         IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
         {
             this._classWalletRepository = classWalletRepository;
         }

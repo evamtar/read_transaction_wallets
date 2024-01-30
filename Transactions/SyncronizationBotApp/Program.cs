@@ -7,8 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Polly;
 using Polly.Extensions.Http;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.Birdeye;
+using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers;
+using SyncronizationBot.Application.Handlers.Birdeye;
+using SyncronizationBot.Application.Handlers.SolanaFM;
 using SyncronizationBot.Application.Response;
+using SyncronizationBot.Application.Response.Birdeye;
+using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
@@ -84,17 +90,38 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Handlers
 
-    services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
+    #region Birdeye
+
+    services.AddTransient<IRequestHandler<RecoverySaveBalanceBirdeyeCommand, RecoverySaveBalanceBirdeyeCommandResponse>, RecoverySaveBalanceBirdeyeCommandHandler>();
+
+    #endregion
+
+    #region SolanaFM
+
+    services.AddTransient<IRequestHandler<RecoverySaveBalanceSFMCommand, RecoverySaveBalanceSFMCommandResponse>, RecoverySaveBalanceSFMCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
+
+    #endregion
+
+    #region Telegram
+
     services.AddTransient<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
-    services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
+
+    #endregion
+
+    #region Globais
+
+    services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
+    
+    #endregion
 
     #endregion
 
