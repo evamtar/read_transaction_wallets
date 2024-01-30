@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenOverview.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Request;

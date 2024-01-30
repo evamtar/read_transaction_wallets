@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;

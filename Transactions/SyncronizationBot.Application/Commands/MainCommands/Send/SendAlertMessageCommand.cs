@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Domain.Model.Enum;
 
-namespace SyncronizationBot.Application.Commands
+namespace SyncronizationBot.Application.Commands.MainCommands.Send
 {
     public class SendAlertMessageCommand : IRequest<SendAlertMessageCommandResponse>
     {

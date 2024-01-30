@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
+using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
@@ -438,13 +441,11 @@ namespace SyncronizationBot.Application.Handlers
                 Message = TelegramMessageHelper.GetFormatedMessage(typeMessage, args)
             });
         }
-
         private decimal? CalculatedAmoutValue(decimal? value, int? divisor) 
         {
             if (value == null || divisor == null) return null;
             return (value / (divisor ?? 1)) ?? 0;
         }
-
         private decimal? CalculatedMarketcap(decimal? marketCap, decimal? supply, decimal? price)
         {
             if (marketCap != null)
@@ -452,12 +453,10 @@ namespace SyncronizationBot.Application.Handlers
             else 
                 return (supply * price);
         }
-
         private DateTime AdjustDateTimeToPtBR(DateTime? dateTime) 
         {
             return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust?? 0) ?? DateTime.MinValue; 
         }
-
         private decimal? CalculatedTotalUSD(long? amount, decimal? price, int? divisor)
         {
             var ajustedAmount = ((decimal?)amount ?? 0) / ((decimal?)divisor ?? 1);

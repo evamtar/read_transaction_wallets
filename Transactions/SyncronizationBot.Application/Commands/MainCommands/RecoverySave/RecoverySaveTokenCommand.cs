@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Response;
 
-namespace SyncronizationBot.Application.Commands
+namespace SyncronizationBot.Application.Commands.MainCommands.RecoverySave
 {
     public class RecoverySaveTokenCommand : IRequest<RecoverySaveTokenCommandResponse>
     {

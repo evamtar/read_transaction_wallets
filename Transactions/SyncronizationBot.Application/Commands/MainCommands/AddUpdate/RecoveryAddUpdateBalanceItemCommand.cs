@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Response;
 
-namespace SyncronizationBot.Application.Commands
+namespace SyncronizationBot.Application.Commands.MainCommands.AddUpdate
 {
     public class RecoveryAddUpdateBalanceItemCommand : IRequest<RecoveryAddUpdateBalanceItemCommandResponse>
     {
@@ -11,5 +11,5 @@ namespace SyncronizationBot.Application.Commands
         public string? TokenHash { get; set; }
         public decimal? Quantity { get; set; }
     }
-    
+
 }

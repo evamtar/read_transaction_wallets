@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;

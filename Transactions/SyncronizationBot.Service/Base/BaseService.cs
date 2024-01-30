@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands;
+using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;

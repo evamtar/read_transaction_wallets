@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.Birdeye;
+using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response;
