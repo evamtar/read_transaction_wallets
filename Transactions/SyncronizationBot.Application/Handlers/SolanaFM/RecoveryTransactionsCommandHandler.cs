@@ -81,7 +81,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
 
         private async Task SaveTransactionsOldForMapping(Domain.Model.CrossCutting.Solanafm.Transactions.Response.TransactionResponse? transactions) 
         {
-            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == "");
+            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
                 await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping 
