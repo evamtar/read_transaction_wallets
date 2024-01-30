@@ -50,13 +50,14 @@ namespace SyncronizationBot.Application.Handlers
             var listTransactions = (List<TransactionsResponse>?)null!;
             if (request.IsContingecyTransactions ?? false) 
             {
-                var response = await this._mediator.Send(new RecoveryTransactionsCommand { });
+                var response = await this._mediator.Send(new RecoveryTransactionsSignatureForAddressCommand { });
                 if (response != null)
                     listTransactions = response.Result;
+                
             }
             else
             {
-                var response = await this._mediator.Send(new RecoveryTransactionsSignatureForAddressCommand { });
+                var response = await this._mediator.Send(new RecoveryTransactionsCommand { });
                 if (response != null)
                     listTransactions = response.Result;
             }

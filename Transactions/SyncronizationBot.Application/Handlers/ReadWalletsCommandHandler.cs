@@ -38,6 +38,7 @@ namespace SyncronizationBot.Application.Handlers
                     WalletHash = walletTracked?.Hash,
                     IdClassification = classWallet?.IdClassification,
                     DateLoadBalance = walletTracked?.DateLoadBalance,
+                    IsContingecyTransactions = base.IsContingencyTransactions,
                     InitialTicks = initialTicks,
                     FinalTicks = finalTicks
                 });

@@ -82,7 +82,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<AlertPriceService>();
     services.AddHostedService<LoadBalanceWalletsService>();
 
@@ -99,8 +99,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region SolanaFM
 
     services.AddTransient<IRequestHandler<RecoverySaveBalanceSFMCommand, RecoverySaveBalanceSFMCommandResponse>, RecoverySaveBalanceSFMCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
 
+    services.AddTransient<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>, RecoveryTransactionsCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoveryTransactionsSignatureForAddressCommand, RecoveryTransactionsSignatureForAddressCommandResponse>, RecoveryTransactionsSignatureForAddressCommandHandler>();
+    
     #endregion
 
     #region Telegram

@@ -13,6 +13,14 @@ namespace SyncronizationBot.Application.Handlers.Base
 {
     public class BaseWalletHandler
     {
+        protected bool? IsContingencyTransactions
+        {
+            get 
+            {
+                return this._config.Value.IsContingecyTransactions;
+            }
+        }
+
         protected readonly IMediator _mediator;
         protected readonly IWalletRepository _walletRepository;
         protected readonly EFontType _fontType;
@@ -60,6 +68,7 @@ namespace SyncronizationBot.Application.Handlers.Base
                 number += "0";
             return decimal.Parse(number);
         }
+
         protected bool? IsSaveBalance() 
         {
             switch (this._fontType)
