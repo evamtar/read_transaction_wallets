@@ -3,78 +3,6 @@ namespace SyncronizationBot.Utils
 {
     public static class TelegramMessageHelper
     {
-        private const string MESSAGE_BUY_MESSAGE_HEADER = "<b>*** NEW BUY ALERT ***</b>\r\n";
-        private const string MESSAGE_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
-        private const string MESSAGE_BUY_MESSAGE_BODY   = "<s>Signature:</s> {0}\r\n" +
-                                                          "<s>WalletHash:</s> {1}\r\n" +
-                                                          "<s>ClassWallet:</s> {2} \r\n" +
-                                                          "<s>Token:</s> {3}\r\n" +
-                                                          "<s>Ca:</s> {4}\r\n" +
-                                                          "<s>Minth Authority:</s> {5}\r\n" +
-                                                          "<s>Freeze Authority:</s> {6}\r\n" +
-                                                          "<s>Is Mutable:</s> {7}\r\n" +
-                                                          "<s>Quantity:</s> {8}\r\n" +
-                                                          "<S>Value Spent:</s> {9}\r\n" +
-                                                          "<s>Date:</s> {10}\r\n" + 
-                                                          "<s>Position Increase</s> {11}\r\n";
-        private const string MESSAGE_BUY_CHART = "<a href='https://birdeye.so/token/{12}?chain=solana'>Chart</a>";
-        private const string MESSAGE_REBUY_MESSAGE_HEADER = "<b>*** NEW REBUY ALERT ***</b>\r\n";
-        private const string MESSAGE_REBUY_MESSAGE_ICONS = "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n";
-        private const string MESSAGE_SELL_MESSAGE_HEADER = "<b>*** NEW SELL ALERT ***</b>\r\n";
-        private const string MESSAGE_SELL_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴</tg-emoji>\r\n";
-        private const string MESSAGE_SELL_MESSAGE_BODY   = "<s>Signature:</s> {0}\r\n" +
-                                                           "<s>WalletHash:</s> {1}\r\n" +
-                                                           "<s>ClassWallet:</s> {2} \r\n" +
-                                                           "<s>Token:</s> {3}\r\n" +
-                                                           "<s>Quantity:</s> {4}\r\n" +
-                                                           "<s>Value Received:</s> {5}\r\n" +
-                                                           "<s>Date:</s> {6}\r\n" +
-                                                           "<s>Position Sell:</s> {7}\r\n";
-        private const string MESSAGE_SELL_CHART = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart</a>";
-        private const string MESSAGE_SWAP_MESSAGE_HEADER = "<b>*** SWAP ALERT ***</b>\r\n";
-        private const string MESSAGE_SWAP_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>\r\n";
-        private const string MESSAGE_SWAP_MESSAGE_BODY = "<s>Signature:</s> {0}\r\n" +
-                                                         "<s>WalletHash:</s> {1}\r\n" +
-                                                         "<s>ClassWallet:</s> {2} \r\n" +
-                                                         "<s>Token Change:</s> {3}\r\n" +
-                                                         "<s>Token Received:</s> {4}\r\n" +
-                                                         "<s>Ca:</s> {5}\r\n" +
-                                                         "<s>Date:</s> {6}\r\n" +
-                                                         "<s>Position Swap:</s> {7}\r\n";
-        private const string MESSAGE_SWAP_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart1</a>\r\n";
-        private const string MESSAGE_SWAP_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'>Chart2</a>";
-        private const string MESSAGE_MM_NEW_BUY_MESSAGE_HEADER = "<b>*** NEW MM BUY ALERT ***</b>\r\n";
-        private const string MESSAGE_MM_NEW_BUY_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>\r\n";
-        private const string MESSAGE_MM_FOOTER                 = "Cc:@evandrotartari , @euRodrigo, @xton_eth";
-        private const string MESSAGE_MM_REBUY_MESSAGE_HEADER   = "<b>*** NEW MM REBUY ALERT ***</b>\r\n";
-        private const string MESSAGE_MM_REBUY_MESSAGE_ICONS    = "<tg-emoji emoji-id='5368324170671202286'>🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵</tg-emoji>\r\n";
-        private const string MESSAGE_MM_SELL_MESSAGE_HEADER = "<b>*** NEW MM SELL ALERT ***</b>\r\n";
-        private const string MESSAGE_MM_SELL_MESSAGE_ICONS  = "<tg-emoji emoji-id='5368324170671202286'>🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴</tg-emoji>\r\n";
-        private const string MESSAGE_MM_SWAP_MESSAGE_HEADER = "<b>*** SWAP MM ALERT ***</b>\r\n";
-        private const string MESSAGE_POOL_CREATED_MESSAGE = "<b>*** POOL CREATED ***</b>\r\n" +
-                                                            "<tg-emoji emoji-id='5368324170671202286'>🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊</tg-emoji>\r\n" +
-                                                            "<s>Signature:</s> {0}\r\n" +
-                                                            "<s>WalletHash:</s> {1}\r\n" +
-                                                            "<s>ClassWallet:</s> {2} \r\n" +
-                                                            "<s>Amount Pool:</s> {3}\r\n" +
-                                                            "<s>Amount Pool:</s> {4}\r\n" +
-                                                            "<s>Ca Token Pool:</s> {5}\r\n" +
-                                                            "<s>Ca Token Pool:</s> {6}\r\n" +
-                                                            "<s>Date:</s> {7}\r\n";
-        private const string MESSAGE_POOL_CREATED_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'> Chart1</a>}\r\n";
-        private const string MESSAGE_POOL_CREATED_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'> Chart2</a>";
-        private const string MESSAGE_POOL_FINALIZED_MESSAGE = "<b>*** POOL FINALIZED ***</b>\r\n" +
-                                                              "<tg-emoji emoji-id='5368324170671202286'>❌❌❌❌❌❌❌❌❌❌❌</tg-emoji>\r\n" +
-                                                              "<s>Signature:</s> {0}\r\n" +
-                                                              "<s>WalletHash:</s> {1}\r\n" +
-                                                              "<s>ClassWallet:</s> {2} \r\n" +
-                                                              "<s>Amount Pool:</s> {3}\r\n" +
-                                                              "<s>Amount Pool:</s> {4}\r\n" +
-                                                              "<s>Ca Token Pool:</s> {5}\r\n" +
-                                                              "<s>Ca Token Pool:</s> {6}\r\n" +
-                                                              "<s>Date:</s> {7}\r\n";
-        private const string MESSAGE_POOL_FINALIZED_CHART_1 = "<a href='https://birdeye.so/token/{8}?chain=solana'>Chart1</a>\r\n";
-        private const string MESSAGE_POOL_FINALIZED_CHART_2 = "<a href='https://birdeye.so/token/{9}?chain=solana'>Chart2</a>";
         private const string MESSAGE_ALERT_PRICE_UP = "<b>*** PRICE UP ***</b>\r\n" +
                                                       "<tg-emoji emoji-id='5368324170671202286'>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</tg-emoji>\r\n" +
                                                       "<s>Token Id:</s> {0}\r\n" +
@@ -92,26 +20,6 @@ namespace SyncronizationBot.Utils
         {
             switch (eTypeMessage)
             {
-                case ETypeMessage.BUY_MESSAGE:
-                    return string.Format(MESSAGE_BUY_MESSAGE_HEADER + MESSAGE_BUY_MESSAGE_ICONS + MESSAGE_BUY_MESSAGE_BODY + MESSAGE_BUY_CHART, args);
-                case ETypeMessage.REBUY_MESSAGE:
-                    return string.Format(MESSAGE_REBUY_MESSAGE_HEADER + MESSAGE_REBUY_MESSAGE_ICONS + MESSAGE_BUY_MESSAGE_BODY + MESSAGE_BUY_CHART, args);
-                case ETypeMessage.SELL_MESSAGE:
-                    return string.Format(MESSAGE_SELL_MESSAGE_HEADER + MESSAGE_SELL_MESSAGE_ICONS + MESSAGE_SELL_MESSAGE_BODY + MESSAGE_SELL_CHART, args);
-                case ETypeMessage.SWAP_MESSAGE:
-                    return string.Format(MESSAGE_SWAP_MESSAGE_HEADER + MESSAGE_SWAP_MESSAGE_ICONS + MESSAGE_SWAP_MESSAGE_BODY + MESSAGE_SWAP_CHART_1 + MESSAGE_SWAP_CHART_2, args); 
-                case ETypeMessage.MM_NEW_BUY_MESSAGE:
-                    return string.Format(MESSAGE_MM_NEW_BUY_MESSAGE_HEADER + MESSAGE_MM_NEW_BUY_MESSAGE_ICONS + MESSAGE_BUY_MESSAGE_BODY + MESSAGE_BUY_CHART + MESSAGE_MM_FOOTER, args);
-                case ETypeMessage.MM_REBUY_MESSAGE:
-                    return string.Format(MESSAGE_MM_REBUY_MESSAGE_HEADER + MESSAGE_MM_REBUY_MESSAGE_ICONS + MESSAGE_BUY_MESSAGE_BODY + MESSAGE_BUY_CHART, args);
-                case ETypeMessage.MM_SELL_MESSAGE:
-                    return string.Format(MESSAGE_MM_SELL_MESSAGE_HEADER + MESSAGE_MM_SELL_MESSAGE_ICONS + MESSAGE_SELL_MESSAGE_BODY + MESSAGE_SELL_CHART + MESSAGE_MM_FOOTER, args);
-                case ETypeMessage.MM_SWAP_MESSAGE:
-                    return string.Format(MESSAGE_MM_SWAP_MESSAGE_HEADER + MESSAGE_SWAP_MESSAGE_ICONS + MESSAGE_SWAP_MESSAGE_BODY + MESSAGE_SWAP_CHART_1 + MESSAGE_SWAP_CHART_2 + MESSAGE_MM_FOOTER, args);
-                case ETypeMessage.POOL_CREATED_MESSAGE:
-                    return string.Format(MESSAGE_POOL_CREATED_MESSAGE + MESSAGE_POOL_CREATED_CHART_1 + MESSAGE_POOL_CREATED_CHART_2, args);
-                case ETypeMessage.POOL_FINALIZED_MESSAGE:
-                    return string.Format(MESSAGE_POOL_FINALIZED_MESSAGE + MESSAGE_POOL_FINALIZED_CHART_1 + MESSAGE_POOL_FINALIZED_CHART_2, args);
                 case ETypeMessage.PRICE_UP_MESSAGE:
                 case ETypeMessage.PRICE_INFO_MESSAGE:
                     return string.Format(MESSAGE_ALERT_PRICE_UP, args);
@@ -139,17 +47,7 @@ namespace SyncronizationBot.Utils
 
     public enum ETypeMessage 
     { 
-        BUY_MESSAGE = 5,
-        REBUY_MESSAGE,
-        SELL_MESSAGE,
-        SWAP_MESSAGE,
-        MM_NEW_BUY_MESSAGE,
-        MM_REBUY_MESSAGE,
-        MM_SELL_MESSAGE,
-        MM_SWAP_MESSAGE,
-        POOL_CREATED_MESSAGE,
-        POOL_FINALIZED_MESSAGE,
-        PRICE_UP_MESSAGE,
+        PRICE_UP_MESSAGE = 1,
         PRICE_DOWN_MESSAGE,
         PRICE_INFO_MESSAGE
     }

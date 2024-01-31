@@ -38,7 +38,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             var configuration = await _alertConfigurationRepository.FindFirstOrDefault(x => x.TypeAlert == request.TypeAlert);
             if (configuration != null)
             {
-                var informations = await _alertInformationRepository.Get(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == request.IdClassification));
+                var informations = await _alertInformationRepository.Get(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == null || x.IdClassification == request.IdClassification));
                 if (informations != null && informations.Any())
                 {
                     foreach (var information in informations)
@@ -108,14 +108,22 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         }
 
                     }
-                    return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded)) : propertyFinded?.GetValue(objectFinded)?.ToString();
+                    return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded)) :
+                           propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?)? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
+                           propertyFinded?.GetValue(objectFinded)?.ToString();
                 }
             }
             return string.Empty;
         }
+
         private string? AdjustDateTimeToPtBR(DateTime? dateTime)
         {
             return (dateTime?.AddHours(_syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss");
+        }
+
+        private string? RecoveryDefaultAswers(bool? boolValue) 
+        {
+            return boolValue == true ? "YES" : "NO";
         }
     }
 }

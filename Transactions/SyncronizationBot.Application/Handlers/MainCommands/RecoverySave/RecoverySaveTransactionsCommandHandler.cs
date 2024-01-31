@@ -154,9 +154,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                                                                         new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
                                                                                         balancePosition
                                                                                     }),
-                                    IdClassification = request.IdClassification,
-                                    WalletId = request.WalletId,
-                                    WalletHash = request.WalletHash,
+                                    IdClassification = request?.IdClassification,
+                                    WalletId = request?.WalletId,
+                                    WalletHash = request?.WalletHash,
                                     Transactions = transactionDB,
                                     DateOfTransfer = AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
                                     TokenSendedSymbol = tokenSended?.Symbol,
