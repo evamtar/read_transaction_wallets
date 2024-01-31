@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SyncronizationBot.Test")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+694a5f59a4c9ade1eab533de66edc63b6b59cefc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c687227354f64852abe68a7616cdf2638fa315c")]
 [assembly: System.Reflection.AssemblyProductAttribute("SyncronizationBot.Test")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyncronizationBot.Test")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
