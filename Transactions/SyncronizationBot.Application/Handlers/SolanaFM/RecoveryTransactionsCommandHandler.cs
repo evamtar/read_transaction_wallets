@@ -11,25 +11,21 @@ using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
 {
-    public class RecoveryTransactionsCommandHandler : IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>
+    public class RecoveryTransactionsCommandHandler : BaseTransactionsHandler, IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>
     {
         private readonly IMediator _mediator;
         private readonly ITransactionsService _transactionsService;
         private readonly ITransactionsRepository _transactionsRepository;
-        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
-        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
-
+        
         public RecoveryTransactionsCommandHandler(IMediator mediator, 
                                                   ITransactionsService transactionsService,
                                                   ITransactionsRepository transactionsRepository,
                                                   ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
-                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;
             this._transactionsRepository = transactionsRepository;
-            this._transactionsOldForMappingRepository = transactionsOldForMappingRepository;
-            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoveryTransactionsCommandResponse> Handle(RecoveryTransactionsCommand request, CancellationToken cancellationToken)
@@ -77,27 +73,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 hasNextPage = transactionResponse.Result?.Pagination?.TotalPages > page;
             }
             return new RecoveryTransactionsCommandResponse { Result = listTransactions };
-        }
-
-        private async Task SaveTransactionsOldForMapping(Domain.Model.CrossCutting.Solanafm.Transactions.Response.TransactionResponse? transactions) 
-        {
-            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
-            if (exists == null)
-            {
-                await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping 
-                { 
-                    Signature = transactions?.Signature,
-                    DateOfTransaction = transactions?.DateOfTransaction,
-                    CreateDate = DateTime.Now,
-                    IdWallet = Guid.NewGuid(),
-                    IsIntegrated = false,
-                });
-            }
-        }
-
-        private DateTime AdjustDateTimeToPtBR(DateTime? dateTime)
-        {
-            return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue;
         }
     }
 }

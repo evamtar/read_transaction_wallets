@@ -11,25 +11,22 @@ using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
 {
-    public class RecoveryTransactionsSignatureForAddressCommandHandler : IRequestHandler<RecoveryTransactionsSignatureForAddressCommand, RecoveryTransactionsSignatureForAddressCommandResponse>
+    public class RecoveryTransactionsSignatureForAddressCommandHandler : BaseTransactionsHandler, IRequestHandler<RecoveryTransactionsSignatureForAddressCommand, RecoveryTransactionsSignatureForAddressCommandResponse>
     {
         private readonly IMediator _mediator;
         private readonly ITransactionsSignatureForAddressService _transactionsSignatureForAddressService;
         private readonly ITransactionsRepository _transactionsRepository;
-        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
-        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
+        
 
         public RecoveryTransactionsSignatureForAddressCommandHandler(IMediator mediator,
                                                                      ITransactionsSignatureForAddressService transactionsSignatureForAddressService,
                                                                      ITransactionsRepository transactionsRepository,
                                                                      ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
-                                                                     IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                                     IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsSignatureForAddressService = transactionsSignatureForAddressService;
             this._transactionsRepository = transactionsRepository;
-            this._transactionsOldForMappingRepository = transactionsOldForMappingRepository;
-            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoveryTransactionsSignatureForAddressCommandResponse> Handle(RecoveryTransactionsSignatureForAddressCommand request, CancellationToken cancellationToken)
@@ -44,7 +41,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
                     if (exists == null)
                     {
-                        if (request?.DateLoadBalance < AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
+                        if (request?.DateLoadBalance < base.AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
                         {
                             listTransactions.Add(new TransactionsResponse
                             {
@@ -62,25 +59,5 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             return new RecoveryTransactionsSignatureForAddressCommandResponse { Result = listTransactions };
         }
 
-        private DateTime AdjustDateTimeToPtBR(DateTime? dateTime)
-        {
-            return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue;
-        }
-
-        private async Task SaveTransactionsOldForMapping(Domain.Model.CrossCutting.Solanafm.Transactions.Response.TransactionInfoResponse? transactions) 
-        {
-            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
-            if (exists == null)
-            {
-                await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping
-                {
-                    Signature = transactions?.Signature,
-                    DateOfTransaction = transactions?.DateOfTransaction,
-                    CreateDate = DateTime.Now,
-                    IdWallet = Guid.NewGuid(),
-                    IsIntegrated = false,
-                });
-            }
-        }
     }
 }
