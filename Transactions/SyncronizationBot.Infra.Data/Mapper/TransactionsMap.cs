@@ -37,6 +37,8 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.IdTokenDestinationPool);
             builder.Property(t => t.IdWallet);
             builder.Property(t => t.TypeOperation);
+            builder.Ignore(t => t.WalletHash);
+            builder.Ignore(t => t.ClassWallet);
             builder.HasOne(t => t.Wallet).WithMany(w => w.Transactions).HasForeignKey(t => t.IdWallet);
             builder.HasOne(t => t.TokenSource).WithMany(tk => tk.TransactionsSource).HasForeignKey(t => t.IdTokenSource);
             builder.HasOne(t => t.TokenSourcePool).WithMany(tk => tk.TransactionsSourcePool).HasForeignKey(t => t.IdTokenSourcePool);

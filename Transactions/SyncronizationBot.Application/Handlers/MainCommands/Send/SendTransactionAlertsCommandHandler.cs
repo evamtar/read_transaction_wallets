@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
+using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Utils;
 
@@ -11,23 +13,46 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
     {
         private readonly IMediator _mediator;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
-        private readonly IClassWalletRepository _classWalletRepository;
+        
         public SendTransactionAlertsCommandHandler(IMediator mediator,
-                                                   IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
-                                                   IClassWalletRepository classWalletRepository)
+                                                   IWalletBalanceHistoryRepository walletBalanceHistoryRepository)
         {
             this._mediator = mediator;
             this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
-            this._classWalletRepository = classWalletRepository;
         }
 
         public async Task<SendTransactionAlertsCommandResponse> Handle(SendTransactionAlertsCommand request, CancellationToken cancellationToken)
         {
-            /*
-             * SUBSTITUIR
-             */
-            await this.SendAlertTransacionForTelegram(request);
+            if (request.Transactions?.TypeOperation == ETypeOperation.BUY && request.IdClassification == 1)
+            {
+                await this._mediator.Send(new SendAlertMessageCommand
+                {
+                    Parameters = request?.Parameters,
+                    TypeAlert = await this.TransalateTypeOperationInTypeAlert(request)
+                });
+            }
+            else
+                await this.SendAlertTransacionForTelegram(request);
             return new SendTransactionAlertsCommandResponse { };
+        }
+
+        private async Task<ETypeAlert> TransalateTypeOperationInTypeAlert(SendTransactionAlertsCommand? request)
+        {
+            switch (request!.Transactions!.TypeOperation)
+            {
+                case ETypeOperation.BUY:
+                    if ((request?.TokensMapped?.Contains(request?.TokenSendedHash!) ?? false) && (request?.TokensMapped?.Contains(request?.TokenReceivedHash!) ?? false))
+                        return ETypeAlert.NONE;
+                    var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash != request!.TokenReceivedHash && x.IdWallet == request!.WalletId && x.Signature != request!.Transactions!.Signature);
+                    return existsTokenWallet == null ? ETypeAlert.BUY : ETypeAlert.REBUY;
+                case ETypeOperation.SELL:
+                case ETypeOperation.SWAP:
+                case ETypeOperation.POOLCREATE:
+                case ETypeOperation.POOLFINALIZED:
+                    return ((ETypeAlert)((int)request!.Transactions!.TypeOperation) + 1);
+                default:
+                    return ETypeAlert.NONE;
+            }
         }
 
         private async Task SendAlertTransacionForTelegram(SendTransactionAlertsCommand request)
@@ -95,7 +120,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         request?.Transactions.Signature ?? string.Empty,
                         request?.WalletHash ?? string.Empty,
-                        this.GetClassificationDescription(request?.IdClassification),
+                        request ?.Transactions.ClassWallet ?? string.Empty,
                         request?.TokenReceivedName ?? string.Empty,
                         request?.TokenReceivedHash ?? string.Empty,
                         request?.TokenReceivedMintAuthority ?? "NO",
@@ -112,7 +137,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         request?.Transactions.Signature ?? string.Empty,
                         request?.WalletHash ?? string.Empty,
-                        this.GetClassificationDescription(request?.IdClassification),
+                        request ?.Transactions.ClassWallet ?? string.Empty,
                         request?.TokenSendedHash ?? string.Empty,
                         request?.Transactions?.AmountValueSource.ToString() + " " + request?.TokenSendedSymbol ?? string.Empty,
                         request?.Transactions?.AmountValueDestination.ToString() + " " + request?.TokenReceivedSymbol ?? string.Empty,
@@ -125,7 +150,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         request?.Transactions.Signature ?? string.Empty,
                         request?.WalletHash ?? string.Empty,
-                        this.GetClassificationDescription(request?.IdClassification),
+                        request ?.Transactions.ClassWallet ?? string.Empty,
                         request?.Transactions?.AmountValueSource.ToString() + " " + request?.TokenSendedSymbol ?? string.Empty,
                         request?.Transactions?.AmountValueDestination.ToString() + " " + request?.TokenReceivedSymbol ?? string.Empty,
                         request?.TokenReceivedName ?? string.Empty,
@@ -139,7 +164,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         request?.Transactions.Signature ?? string.Empty,
                         request?.WalletHash ?? string.Empty,
-                        this.GetClassificationDescription(request?.IdClassification),
+                        request?.Transactions.ClassWallet ?? string.Empty,
                         request?.Transactions?.AmountValueSource.ToString() + " " + request?.TokenSendedSymbol ?? string.Empty,
                         request?.Transactions?.AmountValueSourcePool.ToString() + " " + request?.TokenSendedPoolSymbol ?? string.Empty,
                         request?.TokenSendedHash ?? string.Empty,
@@ -153,7 +178,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         request?.Transactions.Signature ?? string.Empty,
                         request?.WalletHash ?? string.Empty,
-                        this.GetClassificationDescription(request?.IdClassification),
+                        request?.Transactions.ClassWallet ?? string.Empty,
                         request?.Transactions?.AmountValueDestination.ToString() + " " + request?.TokenReceivedSymbol ?? string.Empty,
                         request?.Transactions?.AmountValueDestinationPool.ToString() + " " + request?.TokenReceivedPoolSymbol ?? string.Empty,
                         request?.TokenReceivedHash ?? string.Empty,
@@ -174,14 +199,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 Channel = ETelegramChannel.CallSolana,
                 Message = TelegramMessageHelper.GetFormatedMessage(typeMessage, args)
             });
-        }
-
-        private async Task<string?> GetClassificationDescription(int? idClassification) 
-        { 
-            var classification = await this._classWalletRepository.FindFirstOrDefault(x => x.IdClassification == idClassification);
-            if(classification != null) 
-                return classification.Description ?? string.Empty;
-            return string.Empty;
         }
 
     }

@@ -13,6 +13,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionsOldForMapping')
+BEGIN
+	DROP TABLE [TransactionsOldForMapping]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalanceHistory')
 BEGIN
 	DROP TABLE [WalletBalanceHistory]
@@ -151,11 +157,12 @@ CREATE TABLE ClassWallet(
 	PRIMARY KEY (ID)
 );
 GO
-INSERT INTO ClassWallet VALUES(NEWID(), 1, 'Whales');
-INSERT INTO ClassWallet VALUES(NEWID(), 2, 'MM');
-INSERT INTO ClassWallet VALUES(NEWID(), 3, 'Whales Top Gainers');
-INSERT INTO ClassWallet VALUES(NEWID(), 4, 'Arbitradores');
-INSERT INTO ClassWallet VALUES(NEWID(), 5, 'BIG BIG Whale');
+INSERT INTO ClassWallet VALUES(NEWID(), 1, 'Premier');
+INSERT INTO ClassWallet VALUES(NEWID(), 2, 'Whales');
+INSERT INTO ClassWallet VALUES(NEWID(), 3, 'MM');
+INSERT INTO ClassWallet VALUES(NEWID(), 4, 'Whales Top Gainers');
+INSERT INTO ClassWallet VALUES(NEWID(), 5, 'Arbitradores');
+INSERT INTO ClassWallet VALUES(NEWID(), 6, 'BIG BIG Whale');
 GO
 CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
@@ -238,9 +245,9 @@ CREATE TABLE Transactions
 	IdTokenSource                UNIQUEIDENTIFIER,
 	IdTokenSourcePool            UNIQUEIDENTIFIER,
 	IdTokenDestination           UNIQUEIDENTIFIER,
-	IdTokenDestinationPool     UNIQUEIDENTIFIER,
-	IdWallet                   UNIQUEIDENTIFIER,
-	TypeOperation              INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
+	IdTokenDestinationPool       UNIQUEIDENTIFIER,
+	IdWallet                     UNIQUEIDENTIFIER,
+	TypeOperation                INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
 	PRIMARY KEY (ID),
 	FOREIGN KEY (IdTokenSource) REFERENCES Token(ID),
 	FOREIGN KEY (IdTokenSourcePool) REFERENCES Token(ID),
@@ -249,76 +256,90 @@ CREATE TABLE Transactions
 	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
 );
 GO
+
+CREATE TABLE TransactionsOldForMapping
+(
+	ID                           UNIQUEIDENTIFIER,
+	[Signature]                  VARCHAR(150),
+	DateOfTransaction            DATETIME2,
+	IdWallet                     UNIQUEIDENTIFIER,
+	CreateDate				     DATETIME2,
+	IsIntegrated				 BIT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
+);
+GO
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 1
-
-INSERT INTO Wallet VALUES (NEWID(), 'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(), 'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYNn', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(), 'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(), 'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, null, 0, null, null, 1, 1, null);
-
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
-INSERT INTO Wallet VALUES (NEWID(), 'GhuBeitd7eh8KwCurXy1tFCRxGphpVxa8X4rUX8dQxHc', @IdClassWallet, null, 0, null, null, 1, 1, null);
-
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 3
-INSERT INTO Wallet VALUES (NEWID(),'HzoNzi7mLVCxsa9EkdBmoob75rkXCjWLHy131ch1oEbX', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'43QLsYdyomxCyoZiz1W18LaZaY3tevxLM4KyJWnVeFaB', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'8usu4t61wPgUjwU1qohajaYGDjqz43Jp8oGMJ4Sa82A7', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'CGLBeFjXSAeKGKGPKjT8E8sHcDD72SCAWEV4jgXpY4aK', @IdClassWallet, null, 0, null, null, 1, 1, null);
+INSERT INTO Wallet VALUES (NEWID(),'3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskzS', @IdClassWallet, null, 0, null, null, 1, 1, null); 
 INSERT INTO Wallet VALUES (NEWID(),'FZNrSiYifncDHTRNB6L8AyGX3sQu4T5Jb9k56S1zgTsz', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'2bAVD7hHAoLJV939Goo5id6uguHXHaQDbqqsFijwcPEC', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'CLee88KHw1tBdpY1hkxDgendy7UjCD3PMGDY4xbLTbys', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'2cSsWeb3v7uD4dGgcqoCNWBwBcos9iK7jEEfyVTH2LSZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'D7Lwt6j2hzDhy14oC5YdfXh4pPeoAGbaNWQZX2UCPUKZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'Erja5wNDfvvWWvYe9sHYgjxBKpqxaK2Uk33mEV3Ts5du', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'6hqR9urgXPXnPFYybvwYdhLZ7TRKS4NcLcNivJhRr7Jf', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'BsgFVpmEBB3Ps39aNQJPXt5mndbEQ7aP3fLXNRL8BTxW', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskzS', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'DqFEdkAjcqqPV7C1kmjhyCayxCaJsdjb7JWHUKZk7hYX', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'CxaA6Dmhq8xf9dfo3SuvupHB2mCPQLc1K6wkv8i6us6d', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'HzMZ89kGbgfut7KgyFk1GXdWibUK4owwXZsoKDnuqNQL', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'9UG3uahH8ejWKM7VwMTQtTHm6YERyPPuWtJNUHfCyabV', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'Asyuz72ArUZ1yMW2WQtdwjCaN7uJN4iD41jKm6SY8e65', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'HSAxeaos35XJAAeua67Bdw3rnSCecPziCokXSGWR4fQD', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'DEPErBeK3Ej3C5VRncMQJkmCcn7bCxKLHqEDSMxui3Lh', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'4bce4DGEBmgL5cuQUSs5CEp9PBMFQPWCZNkpfKmWytHo', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'9Ltbz7RQr7Bd3dCD3qmhkWNwR2fAfKAn6NXEjPrd9UUE', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'6C8qysda5dg8WpPJoj6iMLELhtLzQe2A7nnSA1A7ttpF', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'7B7XQbX4ZigQgP28sEHQwicAmfjgRD47pPkKcfPhMeA5', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'CMup3m7gDxMTCbMu1xQVtjRmNRH2kTJESPPhkD3j7XUk', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'A5f6HGc2yjEDV9C4kMj3XLLsHvkVqduiV1CFvnafer7j', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'GoKi3UyMz7nELSGnqPa68KgDbV4cW4eJTPKMkrPugQpL', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'22PwbCzNaxKAbMBB3BYAN8rUXu4TARsRbEyemFqpSejz', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'BgwNWZAnejxMcCBBcSfwgTZLt1XzHd7pL3f7EHQxURNy', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'BuxtrMH8FVGENMYKn6LFzHw5tyCq5CrTQzJyC3HRCSBy', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'ufQ6EY7bzKdWNpC8hZH86WEzX6zkgqYd2eGaKbDyTU3',  @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'3gtDsHFSAN3JrBhW9gMiksZVHHZNUsz4AnoQcLqkTGnm', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'6iK4DpQd48qW65Kav1zrs3uYAtpcZFDZLE9jafYTf35C', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'6ZzWpyjbieCqzCDyaeYZKZmT9C3tcprDNfQR6xpzB1yr', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'8XqHwUHZWA7iwFw3Jydd4duiEF2bGdtSmnbPMjpYDS2n', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'2FMPgFspCouJTcifuYwF1AdDKa2poH7Tqm6HSDSiGrGo', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'97kcP9Ss2YnkwEA2ovT1C4UdAJ3mQ1hJgVPZxAwvDrKj', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'ECL1PSED78CqHB7DqVk73bEC3PyDSmKNvq85Y8Xsehwd', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'FkYptuxkuz7CSrjNMesdD3SqPHjGrVJB1YUxhKA3HGxA', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'3UUdqsU7gajKwL58mwRBPFsXoxRakLPY63HcEGj2W2MD', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'HYrAcw6FwNVgu7CJ6SecS1rxJdDnRuZhEtUCTQKcVVuT', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'AnqkPLfaRX4H69mT4dmoH2V4T4VzcHzoTkPqPib15Hwx', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'GqLsGpJyvPJBKPpm87zXHUKh4ywQC7cUghbkXwdGbvdT', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'CnHCkUwcdZ3mgf7vXoiKMejaKFUF8tnA9VXL2CuxMaXt', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'9z3yhh9nTToHTuRJrk9485ozXb5EPbSALrKd9pRNCF5q', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'BpjaWFG3Q7ia19jmZbPsWB47YGHQWGwDBYHoCGnLD3WT', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'DdymDLAwbsn5R3cN26d2NdmhiKv9sAGDFnPBbsPT9ut1', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'FTQWvJFb5tBhEQTtyTxzJdV3QvTsJh14ofRC9S6DE5Lq', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'fstYfhMw3Petz3df1j9yY8E5nHbkkpexqCnpFahzUSg',  @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'31HWL9p9k4E8D3KgW34YWzu8rw6aLjevpd449zUTG6cc', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'636ZbmWmrg2Dgpi29qncZNARUFNXvVHwoqwmRZtrfMXS', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'3xWhH42D1skKHhpanvBdn6zvoPiXoThRcuaMEjqjzmmA', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'AR1Eb6GjQScNWc8HBvzE19TMksu4ambaP87wppQ4g7vz', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'8ZPqRatB9U43DYoaVk9YZKZTnjNQR9uK1HaGaPKgvKzZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
-INSERT INTO Wallet VALUES (NEWID(),'7s3MckqAqdci8b1y8QZ4oYL1PDz1yPBmb1PeZfBTVnac', @IdClassWallet, null, 0, null, null, 1, 1, null);
+SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
+INSERT INTO Wallet VALUES (NEWID(),'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, null, 0, null, null, 1, 1, null);
+INSERT INTO Wallet VALUES (NEWID(),'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYNn', @IdClassWallet, null, 0, null, null, 1, 1, null);
+INSERT INTO Wallet VALUES (NEWID(),'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, null, 0, null, null, 1, 1, null);
+INSERT INTO Wallet VALUES (NEWID(),'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, null, 0, null, null, 1, 1, null);
 
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 5
-INSERT INTO Wallet VALUES (NEWID(),'F3SexpfyD785mndnj38EGoxZdAAQEMxBmJCvNe15rz5B', @IdClassWallet, null, 0, null, null, 1, 1, null);
+
+--SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
+--INSERT INTO Wallet VALUES (NEWID(), 'GhuBeitd7eh8KwCurXy1tFCRxGphpVxa8X4rUX8dQxHc', @IdClassWallet, null, 0, null, null, 1, 1, null);
+
+--SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 3
+--INSERT INTO Wallet VALUES (NEWID(),'HzoNzi7mLVCxsa9EkdBmoob75rkXCjWLHy131ch1oEbX', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'43QLsYdyomxCyoZiz1W18LaZaY3tevxLM4KyJWnVeFaB', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'8usu4t61wPgUjwU1qohajaYGDjqz43Jp8oGMJ4Sa82A7', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'CGLBeFjXSAeKGKGPKjT8E8sHcDD72SCAWEV4jgXpY4aK', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'2bAVD7hHAoLJV939Goo5id6uguHXHaQDbqqsFijwcPEC', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'CLee88KHw1tBdpY1hkxDgendy7UjCD3PMGDY4xbLTbys', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'2cSsWeb3v7uD4dGgcqoCNWBwBcos9iK7jEEfyVTH2LSZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'D7Lwt6j2hzDhy14oC5YdfXh4pPeoAGbaNWQZX2UCPUKZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'Erja5wNDfvvWWvYe9sHYgjxBKpqxaK2Uk33mEV3Ts5du', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'6hqR9urgXPXnPFYybvwYdhLZ7TRKS4NcLcNivJhRr7Jf', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'BsgFVpmEBB3Ps39aNQJPXt5mndbEQ7aP3fLXNRL8BTxW', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'DqFEdkAjcqqPV7C1kmjhyCayxCaJsdjb7JWHUKZk7hYX', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'CxaA6Dmhq8xf9dfo3SuvupHB2mCPQLc1K6wkv8i6us6d', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'HzMZ89kGbgfut7KgyFk1GXdWibUK4owwXZsoKDnuqNQL', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'9UG3uahH8ejWKM7VwMTQtTHm6YERyPPuWtJNUHfCyabV', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'Asyuz72ArUZ1yMW2WQtdwjCaN7uJN4iD41jKm6SY8e65', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'HSAxeaos35XJAAeua67Bdw3rnSCecPziCokXSGWR4fQD', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'DEPErBeK3Ej3C5VRncMQJkmCcn7bCxKLHqEDSMxui3Lh', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'4bce4DGEBmgL5cuQUSs5CEp9PBMFQPWCZNkpfKmWytHo', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'9Ltbz7RQr7Bd3dCD3qmhkWNwR2fAfKAn6NXEjPrd9UUE', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'6C8qysda5dg8WpPJoj6iMLELhtLzQe2A7nnSA1A7ttpF', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'7B7XQbX4ZigQgP28sEHQwicAmfjgRD47pPkKcfPhMeA5', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'CMup3m7gDxMTCbMu1xQVtjRmNRH2kTJESPPhkD3j7XUk', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'A5f6HGc2yjEDV9C4kMj3XLLsHvkVqduiV1CFvnafer7j', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'GoKi3UyMz7nELSGnqPa68KgDbV4cW4eJTPKMkrPugQpL', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'22PwbCzNaxKAbMBB3BYAN8rUXu4TARsRbEyemFqpSejz', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'BgwNWZAnejxMcCBBcSfwgTZLt1XzHd7pL3f7EHQxURNy', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'BuxtrMH8FVGENMYKn6LFzHw5tyCq5CrTQzJyC3HRCSBy', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'ufQ6EY7bzKdWNpC8hZH86WEzX6zkgqYd2eGaKbDyTU3',  @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'3gtDsHFSAN3JrBhW9gMiksZVHHZNUsz4AnoQcLqkTGnm', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'6iK4DpQd48qW65Kav1zrs3uYAtpcZFDZLE9jafYTf35C', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'6ZzWpyjbieCqzCDyaeYZKZmT9C3tcprDNfQR6xpzB1yr', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'8XqHwUHZWA7iwFw3Jydd4duiEF2bGdtSmnbPMjpYDS2n', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'2FMPgFspCouJTcifuYwF1AdDKa2poH7Tqm6HSDSiGrGo', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'97kcP9Ss2YnkwEA2ovT1C4UdAJ3mQ1hJgVPZxAwvDrKj', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'ECL1PSED78CqHB7DqVk73bEC3PyDSmKNvq85Y8Xsehwd', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'FkYptuxkuz7CSrjNMesdD3SqPHjGrVJB1YUxhKA3HGxA', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'3UUdqsU7gajKwL58mwRBPFsXoxRakLPY63HcEGj2W2MD', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'HYrAcw6FwNVgu7CJ6SecS1rxJdDnRuZhEtUCTQKcVVuT', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'AnqkPLfaRX4H69mT4dmoH2V4T4VzcHzoTkPqPib15Hwx', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'GqLsGpJyvPJBKPpm87zXHUKh4ywQC7cUghbkXwdGbvdT', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'CnHCkUwcdZ3mgf7vXoiKMejaKFUF8tnA9VXL2CuxMaXt', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'9z3yhh9nTToHTuRJrk9485ozXb5EPbSALrKd9pRNCF5q', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'BpjaWFG3Q7ia19jmZbPsWB47YGHQWGwDBYHoCGnLD3WT', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'DdymDLAwbsn5R3cN26d2NdmhiKv9sAGDFnPBbsPT9ut1', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'FTQWvJFb5tBhEQTtyTxzJdV3QvTsJh14ofRC9S6DE5Lq', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'fstYfhMw3Petz3df1j9yY8E5nHbkkpexqCnpFahzUSg',  @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'31HWL9p9k4E8D3KgW34YWzu8rw6aLjevpd449zUTG6cc', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'636ZbmWmrg2Dgpi29qncZNARUFNXvVHwoqwmRZtrfMXS', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'3xWhH42D1skKHhpanvBdn6zvoPiXoThRcuaMEjqjzmmA', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'AR1Eb6GjQScNWc8HBvzE19TMksu4ambaP87wppQ4g7vz', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'8ZPqRatB9U43DYoaVk9YZKZTnjNQR9uK1HaGaPKgvKzZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
+--INSERT INTO Wallet VALUES (NEWID(),'7s3MckqAqdci8b1y8QZ4oYL1PDz1yPBmb1PeZfBTVnac', @IdClassWallet, null, 0, null, null, 1, 1, null);
+
+--SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 5
+--INSERT INTO Wallet VALUES (NEWID(),'F3SexpfyD785mndnj38EGoxZdAAQEMxBmJCvNe15rz5B', @IdClassWallet, null, 0, null, null, 1, 1, null);
 CREATE TABLE WalletBalance
 (
 	ID            UNIQUEIDENTIFIER,
@@ -384,7 +405,9 @@ CREATE TABLE AlertConfiguration(
 DECLARE @IdTelegramChannel UNIQUEIDENTIFIER;
 SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolanaLog';
 INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Execute', -1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Running', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Lost Configuration', -4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
 SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolana';
 INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Buy', 1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
 INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Rebuy', 2, @IdTelegramChannel,  1, GETDATE(), GETDATE());
@@ -395,7 +418,8 @@ INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Finish', 6, @IdTe
 
 CREATE TABLE AlertInformation(
 	ID                    UNIQUEIDENTIFIER,
-	[Message]             VARCHAR(500),
+	[Message]             VARCHAR(4000),
+	IdClassification      INT,
 	AlertConfigurationId  UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),
@@ -418,18 +442,47 @@ CREATE TABLE AlertParameter(
 DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
 DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
 SELECT @IdAlertInformation = NEWID();
+-- LOG SUCESSO
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -1;
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, '<b>Execução do serviço {{ServiceName}} de call solana</b>{{NEWLINE}}<b>Data Execução: </b>{{DateTimeNow}}.{{NEWLINE}}<i><b>Proxima execução</b> no período timer de --> {{TimerExecute}}</i>{{NEWLINE}}', @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, '<b>Execução do serviço {{ServiceName}} de call solana</b>{{NEWLINE}}<b>Data Execução: </b>{{DateTimeNow}}.{{NEWLINE}}<i><b>Proxima execução</b> no período timer de --> {{TimerExecute}}</i>{{NEWLINE}}', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TimerExecute}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Timer', NULL, 0, 0);
-
+-- LOG RUNNING
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = -2;
-INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {{ServiceName}} está rodando.</b>{{NEWLINE}}<i><b>Não irá efetuar essa execução:</b> {{DateTimeNow}}</i>.{{NEWLINE}}', @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {{ServiceName}} está rodando.</b>{{NEWLINE}}<i><b>Não irá efetuar essa execução:</b> {{DateTimeNow}}</i>.{{NEWLINE}}', null, @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
+-- LOG ERROR
+SELECT @IdAlertConfiguration= ID FROM AlertConfiguration WHERE TypeAlert = -3;
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {0} suspendeu a execução.</b>{{NEWLINE}}<i><b>Mensagem de erro:</b> {{ErrorMessage}}</i>.{{NEWLINE}}StackTrace: {{StackTrace}}{{NEWLINE}}<i><b>Proxima execução</b> no período timer de --> {{TimerExecute}}.{{NEWLINE}}<b>Dev''s Favor verificar</b> Cc:@evandrotartari , @euRodrigo</i>{{NEWLINE}}', null, @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ErrorMessage}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Exception.Message', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{StackTrace}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Exception.StackTrace', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TimerExecute}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'Timer', NULL, 0, 0);
+-- LOG LOST CONFIGURATION
+SELECT @IdAlertConfiguration= ID FROM AlertConfiguration WHERE TypeAlert = -4;
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>Timer do serviço {{ServiceName}} está nulo ou não configurado.</b>{{NEWLINE}}<i><b>Não irá efetuar essa execução:</b> {{DateTimeNow}}</i>.{{NEWLINE}}', null, @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ServiceName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'ServiceName', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Alerts.LogExecute', 'DateExecuted', NULL, 0, 0);
 
-
---SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 1;
---INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 1;
+INSERT INTO AlertInformation VALUES(NEWID(), '<b>*** NEW BUY ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>{{NEWLINE}}<s>Signature:</s> {{Signature}}{{NEWLINE}}<s>WalletHash:</s> {{WalletHash}{{NEWLINE}}<s>ClassWallet:</s> {{ClassWallet}} {{NEWLINE}}<s>Token:</s> {{Token}}{{NEWLINE}}<s>Ca:</s> {{Ca}}<pre>{{NEWLINE}}</pre><s>Minth Authority:</s>{{MinthAuthority}}{{NEWLINE}}<s>Freeze Authority:</s> {{FreezeAuthority}}{{NEWLINE}}<s>Is Mutable:</s>{{IsMutable}}<s>Quantity:</s> {{Quantity}} {{QuantitySymbol}} {{NEWLINE}}<s>Value Spent:</s> {{ValueSpent}} {{ValueSpentSymbol}}{{NEWLINE}}<s>Date:</s> {{Date}}{{NEWLINE}}<s>Position Increase</s> {{PositionIncrease}}{{NEWLINE}}<a href=''https://birdeye.so/token/{{Ca}}?chain=solana''>Chart</a>', 1,@IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Token}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Name', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Ca}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Hash', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{MinthAuthority}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].MintAuthority', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{FreezeAuthority}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].FreezeAuthority', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{IsMutable}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].IsMutable', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Quantity}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'AmountValueDestination', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantitySymbol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Symbol', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpent}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', 'AmountValueSource', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpentSymbol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[0].Symbol', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Utils.Transfer.TransferInfo', 'DataOfTransfer', NULL, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{PositionIncrease}}', @IdAlertInformation, 'SyncronizationBot.Application.Response.MainCommands.AddUpdate.RecoveryAddUpdateBalanceItemCommandResponse', 'PercentModify', NULL, 0, 0);
 
 --SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 2;
 --INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
@@ -445,6 +498,7 @@ INSERT INTO AlertInformation VALUES(NEWID(), '<b>O serviço {{ServiceName}} est�
 
 --SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 6;
 --INSERT INTO AlertInformation VALUES(NEWID(), @IdTElegramChannel, '', @IdAlertConfiguration);
+
 
 ------------------------------------------------------------
 

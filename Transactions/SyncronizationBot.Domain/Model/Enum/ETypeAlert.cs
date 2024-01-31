@@ -8,6 +8,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         LOG_APP_RUNNING = -2,
         LOG_ERROR = -3,
         LOG_LOST_CONFIGURATION = -4,
+        NONE = 0,
         BUY = 1,
         REBUY = 2,
         SELL = 3,

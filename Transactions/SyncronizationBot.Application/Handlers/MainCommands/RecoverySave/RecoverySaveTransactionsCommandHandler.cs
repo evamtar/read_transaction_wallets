@@ -8,6 +8,7 @@ using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
+using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
@@ -29,12 +30,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
+        private readonly IClassWalletRepository _classWalletRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
+                                                      IClassWalletRepository classWalletRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig,
                                                       IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
@@ -42,6 +45,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
+            this._classWalletRepository = classWalletRepository;
             this._mappedTokensConfig = mappedTokensConfig;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
@@ -129,18 +133,27 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     IdTokenDestination = tokenReceived?.TokenId,
                                     IdTokenDestinationPool = tokenReceivedPool?.TokenId,
                                     IdWallet = request.WalletId,
+                                    WalletHash = request?.WalletHash,
+                                    ClassWallet = await this.GetClassificationDescription(request?.IdClassification),
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
-                                var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand 
-                                { 
+                                var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
+                                {
                                     Transactions = transactionDB,
                                     TokenSendedHash = tokenSended?.Hash,
                                     TokenSendedPoolHash = tokenSendedPool?.Hash,
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokenReceivedPoolHash = tokenReceivedPool?.Hash
                                 });
-                                await this._mediator.Send(new SendTransactionAlertsCommand 
+                                await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
+                                    Parameters = TelegramMessageHelper.GetParameters(new object[]
+                                                                                    {
+                                                                                        transactionDB,
+                                                                                        transferInfo!,
+                                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
+                                                                                        balancePosition
+                                                                                    }),
                                     IdClassification = request.IdClassification,
                                     WalletId = request.WalletId,
                                     WalletHash = request.WalletHash,
@@ -217,6 +230,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         {
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
+        }
+
+        private async Task<string?> GetClassificationDescription(int? idClassification)
+        {
+            var classification = await this._classWalletRepository.FindFirstOrDefault(x => x.IdClassification == idClassification);
+            if (classification != null)
+                return classification.Description ?? string.Empty;
+            return string.Empty;
         }
 
     }

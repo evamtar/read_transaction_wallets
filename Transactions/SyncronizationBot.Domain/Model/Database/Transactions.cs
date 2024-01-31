@@ -30,6 +30,8 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? IdTokenDestination { get; set; }
         public Guid? IdTokenDestinationPool { get; set; }
         public Guid? IdWallet { get; set; }
+        public string? WalletHash { get; set; }
+        public string? ClassWallet { get; set; }
         public ETypeOperation TypeOperation { get; set; }
         public virtual Token? TokenSource { get; set; }
         public virtual Token? TokenSourcePool { get; set; }

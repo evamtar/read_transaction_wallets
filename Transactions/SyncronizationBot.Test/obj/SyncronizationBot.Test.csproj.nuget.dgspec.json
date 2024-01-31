@@ -1,0 +1,514 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Test\\SyncronizationBot.Test.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj",
+        "projectName": "SyncronizationBot.Application",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.2.0, )"
+            },
+            "Microsoft.Extensions.Options": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj",
+        "projectName": "SyncronizationBot.Domain",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\SyncronizationBot.Infra.CrossCutting.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\SyncronizationBot.Infra.CrossCutting.csproj",
+        "projectName": "SyncronizationBot.Infra.CrossCutting",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\SyncronizationBot.Infra.CrossCutting.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Options": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\SyncronizationBot.Infra.Data.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\SyncronizationBot.Infra.Data.csproj",
+        "projectName": "SyncronizationBot.Infra.Data",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\SyncronizationBot.Infra.Data.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\SyncronizationBot.Service.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\SyncronizationBot.Service.csproj",
+        "projectName": "SyncronizationBot.Service",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\SyncronizationBot.Service.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Options": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Test\\SyncronizationBot.Test.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Test\\SyncronizationBot.Test.csproj",
+        "projectName": "SyncronizationBot.Test",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Test\\SyncronizationBot.Test.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Test\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Application\\SyncronizationBot.Application.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Domain\\SyncronizationBot.Domain.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\SyncronizationBot.Infra.CrossCutting.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.External\\SyncronizationBot.Infra.CrossCutting.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\SyncronizationBot.Infra.Data.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Infra.Data\\SyncronizationBot.Infra.Data.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\SyncronizationBot.Service.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Service\\SyncronizationBot.Service.csproj"
+              },
+              "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj": {
+                "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MSTest.TestAdapter": {
+              "target": "Package",
+              "version": "[3.0.4, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[3.0.4, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.6.0, )"
+            },
+            "Microsoft.Playwright.MSTest": {
+              "target": "Package",
+              "version": "[1.27.1, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.70, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj",
+        "projectName": "SyncronizationBot.Utils",
+        "projectPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\SyncronizationBot.Utils.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\source\\repos\\evamtar\\read_transaction_wallets\\Transactions\\SyncronizationBot.Utils\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
