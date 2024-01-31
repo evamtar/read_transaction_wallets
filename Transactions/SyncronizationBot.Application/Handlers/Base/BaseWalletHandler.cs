@@ -13,14 +13,6 @@ namespace SyncronizationBot.Application.Handlers.Base
 {
     public class BaseWalletHandler
     {
-        protected bool? IsContingencyTransactions
-        {
-            get 
-            {
-                return this._config.Value.IsContingecyTransactions;
-            }
-        }
-
         protected readonly IMediator _mediator;
         protected readonly IWalletRepository _walletRepository;
         protected readonly EFontType _fontType;
@@ -35,6 +27,8 @@ namespace SyncronizationBot.Application.Handlers.Base
             this._fontType = fontType;
             this._config = config;
         }
+
+        protected int TotalValidTransactions { get; set; } = 0;
 
         protected async Task<IEnumerable<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
         {
@@ -84,5 +78,6 @@ namespace SyncronizationBot.Application.Handlers.Base
                     return false;
             }
         }
+
     }
 }

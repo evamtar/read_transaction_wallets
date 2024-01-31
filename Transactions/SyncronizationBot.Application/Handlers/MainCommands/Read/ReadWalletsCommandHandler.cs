@@ -34,22 +34,23 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 if (initialTicks > finalTicks)
                     initialTicks -= (initialTicks - finalTicks) * 2;
                 var classWallet = await _classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.IdClassWallet);
-                await _mediator.Send(new RecoverySaveTransactionsCommand
+                var response = await _mediator.Send(new RecoverySaveTransactionsCommand
                 {
                     WalletId = walletTracked?.ID,
                     WalletHash = walletTracked?.Hash,
-                    IdClassification = classWallet?.IdClassification,
+                    ClassWallet = classWallet,
                     DateLoadBalance = walletTracked?.DateLoadBalance,
-                    IsContingecyTransactions = IsContingencyTransactions,
+                    IsContingecyTransactions = request?.IsContingecyTransactions,
                     InitialTicks = initialTicks,
                     FinalTicks = finalTicks
                 });
+                this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
                 walletTracked!.LastUpdate = DateTime.Now;
                 await UpdateUnixTimeSeconds(finalTicks, walletTracked);
                 walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
                 hasNext = walletTracked != null;
             }
-            return new ReadWalletsCommandResponse { };
+            return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions };
         }
     }
 }

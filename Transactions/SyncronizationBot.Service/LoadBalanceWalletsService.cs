@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
+using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
-using SyncronizationBot.Utils;
 
 
 namespace SyncronizationBot.Service
@@ -13,7 +13,8 @@ namespace SyncronizationBot.Service
     public class LoadBalanceWalletsService : BaseService
     {
         public LoadBalanceWalletsService(IMediator mediator,
-                                         IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository, ETypeService.Balance)
+                                         IRunTimeControllerRepository runTimeControllerRepository, 
+                                         IOptions<SyncronizationBotConfig> syncronizationBotConfig) :base(mediator, runTimeControllerRepository, ETypeService.Balance, syncronizationBotConfig)
         {
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 

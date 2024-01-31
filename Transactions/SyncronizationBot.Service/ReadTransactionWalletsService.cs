@@ -1,10 +1,7 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
@@ -15,7 +12,8 @@ namespace SyncronizationBot.Service
     public class ReadTransactionWalletsService: BaseService
     {
         public ReadTransactionWalletsService(IMediator mediator,
-                                             IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository, ETypeService.Transaction)
+                                             IRunTimeControllerRepository runTimeControllerRepository, 
+                                             IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.Transaction, syncronizationBotConfig)
         {
 
         }
@@ -34,7 +32,8 @@ namespace SyncronizationBot.Service
                         try
                         {
                             await base.SetRuntimeControllerAsync(true, false);
-                            await this._mediator.Send(new ReadWalletsCommand { });
+                            var response = await this._mediator.Send(new ReadWalletsCommand { IsContingecyTransactions = base.IsContingecyTransactions });
+                            base.EndTransactionsContingencySum(response.TotalValidTransactions);
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(timer);
@@ -43,7 +42,6 @@ namespace SyncronizationBot.Service
                         catch (Exception ex)
                         {
                             await base.SendAlertServiceError(ex, timer);
-                            await this.DetachedRuntimeControllerAsync();
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
                             base.LogMessage($"StackTrace: {ex.StackTrace}");

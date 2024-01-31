@@ -2,5 +2,6 @@
 {
     public class ReadWalletsCommandResponse
     {
+        public int? TotalValidTransactions { get; set; }
     }
 }

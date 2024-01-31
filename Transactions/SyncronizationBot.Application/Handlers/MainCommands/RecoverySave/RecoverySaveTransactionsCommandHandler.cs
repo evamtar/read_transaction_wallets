@@ -1,16 +1,12 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.SolanaFM;
-using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
-using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
@@ -19,7 +15,6 @@ using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
-using System.Transactions;
 
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -30,14 +25,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly ITransfersService _transfersService;
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
-        private readonly IClassWalletRepository _classWalletRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
-                                                      IClassWalletRepository classWalletRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig,
                                                       IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
@@ -45,13 +38,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
-            this._classWalletRepository = classWalletRepository;
             this._mappedTokensConfig = mappedTokensConfig;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
         {
+            var totalValidTransactions = 0;
             var listTransactions = (List<TransactionsResponse>?)null!;
             if (request.IsContingecyTransactions ?? false)
             {
@@ -80,6 +73,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             }
             if (listTransactions != null)
             {
+                totalValidTransactions = listTransactions.Count;
                 foreach (var transaction in listTransactions)
                 {
                     var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
@@ -88,7 +82,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         try
                         {
                             var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails?.Result?.Data);
-                            var transferAccount = TransferManagerHelper.GetTransferAccount(request.WalletHash, transactionDetails?.Result.Data[0].Source, transferManager);
+                            var transferAccount = TransferManagerHelper.GetTransferAccount(request?.WalletHash, transactionDetails?.Result.Data[0].Source, transferManager);
                             var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, _mappedTokensConfig.Value);
                             if (transferInfo.TransactionType != ETransactionType.INDEFINED)
                             {
@@ -132,9 +126,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     IdTokenSourcePool = tokenSendedPool?.TokenId,
                                     IdTokenDestination = tokenReceived?.TokenId,
                                     IdTokenDestinationPool = tokenReceivedPool?.TokenId,
-                                    IdWallet = request.WalletId,
+                                    IdWallet = request?.WalletId,
                                     WalletHash = request?.WalletHash,
-                                    ClassWallet = await this.GetClassificationDescription(request?.IdClassification),
+                                    ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
@@ -154,7 +148,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                                                                         new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
                                                                                         balancePosition
                                                                                     }),
-                                    IdClassification = request?.IdClassification,
+                                    IdClassification = request?.ClassWallet?.IdClassification,
                                     WalletId = request?.WalletId,
                                     WalletHash = request?.WalletHash,
                                     Transactions = transactionDB,
@@ -180,7 +174,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 await _transactionNotMappedRepository.Add(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
-                                    IdWallet = request.WalletId,
+                                    IdWallet = request?.WalletId,
                                     Link = "https://solscan.io/tx/" + transaction.Signature,
                                     Error = ETransactionType.INDEFINED.ToString(),
                                     StackTrace = null,
@@ -202,7 +196,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     }
                 }
             }
-            return new RecoverySaveTransactionsCommandResponse { };
+            return new RecoverySaveTransactionsCommandResponse { TotalValidTransactions = totalValidTransactions };
         }
 
         private decimal? CalculatedAmoutValue(decimal? value, int? divisor)
@@ -231,14 +225,5 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-
-        private async Task<string?> GetClassificationDescription(int? idClassification)
-        {
-            var classification = await this._classWalletRepository.FindFirstOrDefault(x => x.IdClassification == idClassification);
-            if (classification != null)
-                return classification.Description ?? string.Empty;
-            return string.Empty;
-        }
-
     }
 }

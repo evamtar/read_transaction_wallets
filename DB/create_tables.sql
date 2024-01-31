@@ -123,15 +123,17 @@ IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'RunTimeController')
 BEGIN
 	CREATE TABLE RunTimeController
 	(	
-		IdRuntime INT,
-		ConfigurationTimer INT,
-		TypeService INT,
-		IsRunning BIT,
+		IdRuntime				 INT,
+		ConfigurationTimer		 INT,
+		TypeService				 INT,
+		IsRunning				 BIT,
+		IsContingecyTransactions BIT,
+		TimesWithoutTransactions INT,
 		PRIMARY KEY(IdRuntime)
 	);
-	INSERT INTO RunTimeController VALUES(1, 1, 1, 0);
-	INSERT INTO RunTimeController VALUES(2, 1, 2, 0);
-	INSERT INTO RunTimeController VALUES(3, 1, 3, 0);
+	INSERT INTO RunTimeController VALUES(1, 1, 1, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
 END
 GO 
 
@@ -554,6 +556,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantityReceivedPoolSymbol}}', @I
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CaReceived}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Hash', NULL, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CaReceivedPool}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[3].Hash', NULL, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Utils.Transfer.TransferInfo', 'DataOfTransfer', NULL, 0, 0);
+
 
 ------------------------------------------------------------
 

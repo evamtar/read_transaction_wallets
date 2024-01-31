@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
@@ -18,21 +17,35 @@ namespace SyncronizationBot.Service.Base
         protected readonly IMediator _mediator;
         protected readonly IRunTimeControllerRepository _runTimeControllerRepository;
         protected readonly ETypeService _typeService;
-        public RunTimeController? RunTimeController { get; private set; }
+        protected readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
+        protected RunTimeController? RunTimeController { get; set; }
+        private int? TimesWithoutTransactions { get; set; }
+        public bool? IsContingecyTransactions
+        {
+            get
+            {
+                return this.RunTimeController?.IsContingecyTransactions;
+            }
+        }
+
         public BaseService(IMediator mediator,
                            IRunTimeControllerRepository runTimeControllerRepository,
-                           ETypeService typeService)
+                           ETypeService typeService,
+                           IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._runTimeControllerRepository = runTimeControllerRepository;
             this._typeService = typeService;
+            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
+        
         protected async Task<PeriodicTimer?> GetPeriodicTimer() 
         { 
             if(this.RunTimeController == null) 
             { 
                 this.RunTimeController = await this.GetRunTimeControllerAsync();
+                this.InitiParameterContingency();
             }
             return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 1));
         }
@@ -128,11 +141,24 @@ namespace SyncronizationBot.Service.Base
             Console.WriteLine(message);
         }
 
+        protected void EndTransactionsContingencySum(int? totalValidTransactions)
+        {
+            if (totalValidTransactions == 0)
+                this.TimesWithoutTransactions = 0;
+            else
+                this.TimesWithoutTransactions += 1;
+            if(this.TimesWithoutTransactions > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions)
+                this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
+        }
+
         private async Task<RunTimeController?> GetRunTimeControllerAsync()
         {
             return await this._runTimeControllerRepository.FindFirstOrDefault(x => x.IsRunning == false && x.TypeService == this._typeService);
         }
 
-        
+        private void InitiParameterContingency()
+        {
+            this.TimesWithoutTransactions = this.RunTimeController?.TimesWithoutTransactions ?? 0;
+        }
     }
 }
