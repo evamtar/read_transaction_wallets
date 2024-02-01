@@ -34,7 +34,7 @@ namespace SyncronizationBot.Test
             alertParameters.Setup(x => x.Get(It.IsAny<Expression<Func<AlertParameter, bool>>>())).ReturnsAsync(new List<AlertParameter> { new AlertParameter { ID = Guid.NewGuid(), Class= "System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]", Parameter="[0].Name" } });
             SendAlertMessageCommand command = new SendAlertMessageCommand
             {
-                Parameters = TelegramMessageHelper.GetParameters(new object[]
+                Parameters = SendAlertMessageCommand.GetParameters(new object[]
                                                                 {
                                                          new Transactions{ Signature = "1", TypeOperation = ETypeOperation.BUY },
                                                          new TransferInfo(new MappedTokensConfig{ }){ },

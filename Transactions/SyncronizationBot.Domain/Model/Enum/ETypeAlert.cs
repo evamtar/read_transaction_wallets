@@ -14,7 +14,8 @@ namespace SyncronizationBot.Domain.Model.Enum
         SELL = 3,
         SWAP = 4,
         POOL_CREATE = 5,
-        POOL_FINISH = 6
+        POOL_FINISH = 6,
+        ALERT_PRICE = 7
 
     }
 }

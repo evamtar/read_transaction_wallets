@@ -9,5 +9,23 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
         public ETypeAlert TypeAlert { get; set; }
         public int? IdClassification { get; set; }
         public Dictionary<string, object>? Parameters { get; set; }
+
+        #region Helpers
+
+        public static Dictionary<string, object> GetParameters(object[]? args)
+        {
+            var parameters = new Dictionary<string, object>();
+            if (args != null && args.Any())
+            {
+                foreach (var obj in args)
+                {
+                    if (obj != null)
+                        parameters.Add(obj?.ToString() ?? string.Empty, obj!);
+                }
+            }
+            return parameters;
+        }
+
+        #endregion
     }
 }

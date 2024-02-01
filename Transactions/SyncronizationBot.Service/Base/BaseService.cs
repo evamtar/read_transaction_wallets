@@ -69,7 +69,7 @@ namespace SyncronizationBot.Service.Base
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
-                Parameters = TelegramMessageHelper.GetParameters(new object[] { new LogExecute
+                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                     DateExecuted = DateTime.Now,
@@ -85,7 +85,7 @@ namespace SyncronizationBot.Service.Base
             this.RunTimeController = await this.GetRunTimeControllerAsync();
             await this._mediator.Send(new SendAlertMessageCommand
             {
-                Parameters = TelegramMessageHelper.GetParameters(new object[] { new LogExecute
+                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                     DateExecuted = DateTime.Now
@@ -98,7 +98,7 @@ namespace SyncronizationBot.Service.Base
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
-                Parameters = TelegramMessageHelper.GetParameters(new object[] { new LogExecute
+                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                     DateExecuted = DateTime.Now
@@ -111,7 +111,7 @@ namespace SyncronizationBot.Service.Base
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
-                Parameters = TelegramMessageHelper.GetParameters(new object[] { new LogExecute
+                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = EnumExtension.GetDescription(this._typeService) ?? string.Empty,
                     DateExecuted = DateTime.Now,

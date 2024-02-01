@@ -45,14 +45,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         case ETypeAlertPrice.UP:
                             if (price!.Price >= alert.PriceValue || price!.Price >= alert.PriceValue + alert.PriceBase * alert.PriceBase)
                             {
-                                await SendAlertMessage(alert, token, price, ETypeMessage.PRICE_UP_MESSAGE);
+                                await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_UP);
                                 isSendAlert = true;
                             }
                             break;
                         case ETypeAlertPrice.DOWN:
                             if (price!.Price <= alert.PriceValue || price!.Price <= alert.PriceBase + alert.PriceBase * alert.PricePercent)
                             {
-                                await SendAlertMessage(alert, token, price, ETypeMessage.PRICE_DOWN_MESSAGE);
+                                await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_DOWN);
                                 isSendAlert = true;
                             }
                             break;
@@ -74,18 +74,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return new SendAlertPriceCommandResponse();
         }
 
-        private async Task SendAlertMessage(AlertPrice alert, RecoverySaveTokenCommandResponse token, TokenData price, ETypeMessage type)
+        private async Task SendAlertMessage(AlertPrice alert, RecoverySaveTokenCommandResponse token, TokenData price, EClassifictionMessage type)
         {
-            await _mediator.Send(new SendTelegramMessageCommand
+            await this._mediator.Send(new SendAlertMessageCommand
             {
-                Channel = ETelegramChannel.AlertPriceChange,
-                Message = TelegramMessageHelper.GetFormatedMessage(type,
-                                    new object[] {
-                                        alert.TokenHash ?? string.Empty,
-                                        token.Name ?? string.Empty,
-                                        price.Price ?? 0,
-                                        alert.IsRecurrence ?? false ? "YES" : "NO",
-                                    })
+                Parameters = SendAlertMessageCommand.GetParameters(new object[] { alert, token, price }),
+                TypeAlert = ETypeAlert.ALERT_PRICE,
+                IdClassification = (int?)type
             });
         }
 
@@ -102,5 +97,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             }
             return listIdsTokens;
         }
+    }
+
+    public enum EClassifictionMessage 
+    { 
+        PRICE_UP = 1,
+        PRICE_DOWN = 2
     }
 }

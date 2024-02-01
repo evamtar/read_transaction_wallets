@@ -125,5 +125,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         {
             return boolValue == true ? "YES" : "NO";
         }
+
     }
 }

@@ -141,7 +141,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 });
                                 await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
-                                    Parameters = TelegramMessageHelper.GetParameters(new object[]
+                                    Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
                                                                                     {
                                                                                         transactionDB,
                                                                                         transferInfo!,
@@ -150,22 +150,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                                                                     }),
                                     IdClassification = request?.ClassWallet?.IdClassification,
                                     WalletId = request?.WalletId,
-                                    WalletHash = request?.WalletHash,
                                     Transactions = transactionDB,
-                                    DateOfTransfer = AdjustDateTimeToPtBR(transferInfo?.DataOfTransfer),
-                                    TokenSendedSymbol = tokenSended?.Symbol,
                                     TokenSendedHash = tokenSended?.Hash,
-                                    TokenSendedPoolSymbol = tokenSendedPool?.Symbol,
-                                    TokenSendedPoolHash = tokenSendedPool?.Hash,
-                                    TokenReceivedSymbol = tokenReceived?.Symbol,
                                     TokenReceivedHash = tokenReceived?.Hash,
-                                    TokenReceivedName = tokenReceived?.Name,
-                                    TokenReceivedMintAuthority = tokenReceived?.MintAuthority,
-                                    TokenReceivedFreezeAuthority = tokenReceived?.FreezeAuthority,
-                                    TokenReceivedIsMutable = tokenReceived?.IsMutable,
-                                    TokenReceivedPoolSymbol = tokenReceivedPool?.Symbol,
-                                    TokenReceivedPoolHash = tokenReceivedPool?.Hash,
-                                    PercentModify = balancePosition.PercentModify,
                                     TokensMapped = this._mappedTokensConfig.Value.Tokens
                                 });
                             }
