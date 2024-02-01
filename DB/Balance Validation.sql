@@ -22,3 +22,9 @@ SELECT WB.ID,
 		FROM WalletBalanceHistory WB
   INNER JOIN Wallet w
           ON w.ID = WB.IdWallet
+
+SELECT DISTINCT
+			   w.Hash AS PublicKey
+		FROM WalletBalanceHistory WB
+  INNER JOIN Wallet w
+          ON w.ID = WB.IdWallet

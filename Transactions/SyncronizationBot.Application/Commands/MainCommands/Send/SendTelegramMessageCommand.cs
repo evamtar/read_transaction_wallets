@@ -8,7 +8,6 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
     {
         public Guid? TelegramChannelId { get; set; }
         public string? Message { get; set; }
-        public ETelegramChannel Channel { get; set; }
 
     }
 

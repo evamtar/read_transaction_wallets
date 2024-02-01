@@ -25,17 +25,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         public async Task<RecoverySaveTelegramChannelResponse> Handle(RecoverySaveTelegramChannel request, CancellationToken cancellationToken)
         {
-            var channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.Channel.ToString());
-            if (request.Channel == ETelegramChannel.None)
-                channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
+            var channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
             if (channel == null)
             {
                 var channels = await _telegramBotService.ExecuteRecoveryChatAsync(new TelegramBotChatRequest { });
-                var telegramChannel = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == request.Channel.GetDescription());
+                var telegramChannel = channels.Result?.FirstOrDefault(x => x.ChatMember?.Chat?.Title == request.ChannelName);
                 long? chatId = telegramChannel?.ChatMember?.Chat?.Id;
                 channel = await _telegramChannelRepository.Add(new TelegramChannel
                 {
-                    ChannelName = request.Channel.ToString(),
+                    ChannelName = request?.ChannelName,
                     ChannelId = chatId,
                 });
             }

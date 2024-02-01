@@ -95,6 +95,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHostedService<AlertPriceService>();
     services.AddHostedService<LoadBalanceWalletsService>();
 
+    #region Only For Test
+
+    //services.AddHostedService<AlertTesteService>();
+
+    #endregion
+
     #endregion
 
     #region Handlers

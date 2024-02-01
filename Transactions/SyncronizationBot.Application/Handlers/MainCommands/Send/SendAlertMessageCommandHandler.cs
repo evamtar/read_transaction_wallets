@@ -6,10 +6,8 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Utils;
 using System.Collections;
 using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 {
@@ -49,7 +47,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         await _mediator.Send(new SendTelegramMessageCommand
                         {
                             TelegramChannelId = configuration.TelegramChannelId,
-                            Channel = ETelegramChannel.None,
                             Message = message
                         });
                     }
@@ -68,7 +65,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     if (parametersObjects != null)
                     {
                         var objParameter = parametersObjects[parameter.Class!];
-                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue);
+                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue, parameter.HasAdjustment);
                         message = message!.Replace(parameter.Name ?? string.Empty, parameterValue);
                     }
                 }
@@ -76,7 +73,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return message;
         }
 
-        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue)
+        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue, bool? hasAdjustment)
         {
             if (fixValue != null) return fixValue;
             if (parameter != null)
@@ -94,7 +91,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if ((type?.IsGenericType ?? false) && type?.GetGenericTypeDefinition() == typeof(List<>))
                             {
                                 var genericList = ((IList?)objParameter);
-                                int.TryParse(splitValue, out var index);
+                                int.TryParse(splitValue.Replace("[", string.Empty).Replace("]", string.Empty), out var index);
                                 objectFinded = genericList?[index];
                             }
                             else
@@ -108,17 +105,19 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         }
 
                     }
-                    return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded)) :
-                           propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?)? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
+                    return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded), hasAdjustment) :
+                           propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool) ? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
                            !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? propertyFinded?.GetValue(objectFinded)?.ToString() : defaultValue;
                 }
             }
             return defaultValue;
         }
 
-        private string? AdjustDateTimeToPtBR(DateTime? dateTime)
+        private string? AdjustDateTimeToPtBR(DateTime? dateTime, bool? hasAdjustment)
         {
-            return (dateTime?.AddHours(_syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss");
+            if (hasAdjustment ?? false)
+                return (dateTime?.AddHours(_syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss");
+            return dateTime?.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
         private string? RecoveryDefaultAswers(bool? boolValue) 
