@@ -33,7 +33,8 @@ namespace SyncronizationBot.Service
                         {
                             await base.SetRuntimeControllerAsync(true, false);
                             var response = await this._mediator.Send(new ReadWalletsCommand { IsContingecyTransactions = base.IsContingecyTransactions });
-                            base.EndTransactionsContingencySum(response.TotalValidTransactions);
+                            if(response.HasWalletsWithBalanceLoad)
+                                base.EndTransactionsContingencySum(response.TotalValidTransactions);
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(timer);

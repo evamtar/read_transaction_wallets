@@ -23,3 +23,15 @@ SELECT * FROM Wallet
 DELETE FROM TransactionNotMapped
 https://solscan.io/tx/tMKPmZYjQUZifJJMDPAU9Pe39Qb5Nwqcz2jKXczirSW1jxSgMdisFaanXamUureScTQeDCviyE5UHuUmeLkKTD9
 https://solscan.io/tx/tMKPmZYjQUZifJJMDPAU9Pe39Qb5Nwqcz2jKXczirSW1jxSgMdisFaanXamUureScTQeDCviyE5UHuUmeLkKTD9
+
+SELECT COUNT(*) , StatusLoad FROM (
+SELECT CASE WHEN IsLoadBalance = 1 THEN
+            'Carregada'
+	   ELSE
+			'Não Carregada'
+	   END StatusLoad
+	   FROM Wallet)
+AS T1
+GROUP BY T1.StatusLoad
+
+SELECT * FROM Wallet W 

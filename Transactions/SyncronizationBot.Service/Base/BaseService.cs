@@ -144,11 +144,15 @@ namespace SyncronizationBot.Service.Base
         protected void EndTransactionsContingencySum(int? totalValidTransactions)
         {
             if (totalValidTransactions == 0)
-                this.TimesWithoutTransactions = 0;
-            else
                 this.TimesWithoutTransactions += 1;
-            if(this.TimesWithoutTransactions > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions)
-                this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
+            else
+                this.TimesWithoutTransactions = 0;
+            this.RunTimeController!.TimesWithoutTransactions = this.TimesWithoutTransactions;
+            if (this.TimesWithoutTransactions > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions) 
+            {
+                //this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
+                this.RunTimeController!.TimesWithoutTransactions = 0;
+            }
         }
 
         private async Task<RunTimeController?> GetRunTimeControllerAsync()

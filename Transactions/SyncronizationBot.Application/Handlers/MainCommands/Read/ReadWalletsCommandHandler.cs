@@ -25,10 +25,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         public async Task<ReadWalletsCommandResponse> Handle(ReadWalletsCommand request, CancellationToken cancellationToken)
         {
             var datetimeLimit = DateTime.Now;
+            var hasWalletsWithBalanceLoad = false;
             var walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit), x => x.UnixTimeSeconds!);
             var hasNext = walletTracked != null;
             while (hasNext)
             {
+                hasWalletsWithBalanceLoad = true;
                 var initialTicks = GetInitialTicks(walletTracked?.UnixTimeSeconds);
                 var finalTicks = GetFinalTicks();
                 if (initialTicks > finalTicks)
@@ -50,7 +52,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
                 hasNext = walletTracked != null;
             }
-            return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions };
+            return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
         }
     }
 }
