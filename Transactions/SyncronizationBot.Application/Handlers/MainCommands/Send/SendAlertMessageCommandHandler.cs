@@ -76,7 +76,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return message;
         }
 
-        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue)
+        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue)
         {
             if (fixValue != null) return fixValue;
             if (parameter != null)
@@ -110,10 +110,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     }
                     return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded)) :
                            propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?)? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
-                           propertyFinded?.GetValue(objectFinded)?.ToString();
+                           !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? propertyFinded?.GetValue(objectFinded)?.ToString() : defaultValue;
                 }
             }
-            return string.Empty;
+            return defaultValue;
         }
 
         private string? AdjustDateTimeToPtBR(DateTime? dateTime)
