@@ -68,7 +68,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     if (parametersObjects != null)
                     {
                         var objParameter = parametersObjects[parameter.Class!];
-                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue);
+                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue);
                         message = message!.Replace(parameter.Name ?? string.Empty, parameterValue);
                     }
                 }
