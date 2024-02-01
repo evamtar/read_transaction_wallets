@@ -150,7 +150,8 @@ namespace SyncronizationBot.Service.Base
             this.RunTimeController!.TimesWithoutTransactions = this.TimesWithoutTransactions;
             if (this.TimesWithoutTransactions > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions) 
             {
-                //this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
+                if(!this._syncronizationBotConfig.Value.InValidation)
+                  this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
                 this.RunTimeController!.TimesWithoutTransactions = 0;
             }
         }

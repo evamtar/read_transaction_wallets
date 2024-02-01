@@ -10,5 +10,6 @@ namespace SyncronizationBot.Domain.Model.Configs
         public double? UTCTransactionMinutesAdjust { get; set;}
         public int? MaxTimesWithoutTransactions { get; set; }
         public ESaveBalance SaveBalance { get; set; }
+        public bool InValidation { get; set; }
     }
 }

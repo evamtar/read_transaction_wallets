@@ -92,7 +92,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Hosted Service
 
     services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
+    services.AddHostedService<AlertPriceService>();
     services.AddHostedService<LoadBalanceWalletsService>();
 
     #endregion
