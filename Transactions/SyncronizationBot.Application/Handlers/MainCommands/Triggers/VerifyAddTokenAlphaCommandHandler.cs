@@ -63,8 +63,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             }
             else 
             {
-                var buysBeforeThis = await this._walletBalanceHistoryRepository.Get(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
-                if (buysBeforeThis == null || buysBeforeThis.Count() == 0) 
+                var buysBeforeThis = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
+                if (buysBeforeThis == null) 
                 {
                     Console.WriteLine($"*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* Init Alpha Verify *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
                     Console.WriteLine($" request.MarketCap = {request.MarketCap}");
