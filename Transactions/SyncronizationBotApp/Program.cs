@@ -174,7 +174,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
-    services.AddTransient<WalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
+    services.AddTransient<IWalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
     services.AddTransient<ITelegramMessageRepository, TelegramMessageRepository>();

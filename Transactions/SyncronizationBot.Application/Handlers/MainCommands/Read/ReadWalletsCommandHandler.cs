@@ -48,6 +48,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 });
                 this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
                 walletTracked!.LastUpdate = DateTime.Now;
+                await _classWalletRepository.DetachedItem(classWallet!);
                 await UpdateUnixTimeSeconds(finalTicks, walletTracked);
                 walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
                 hasNext = walletTracked != null;

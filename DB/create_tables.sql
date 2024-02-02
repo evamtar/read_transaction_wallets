@@ -705,8 +705,8 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformat
 
 ------------------------------------------------------------
 UPDATE TokenAlpha SET IsCalledInChannel = 0
-SELECT * FROM TelegramMessage Order By MessageId
-UPDATE RunTimeController SET IsRunning = 0 WHERE TypeService = 4
+SELECT * FROM RunTimeController Order By MessageId
+UPDATE RunTimeController SET ConfigurationTimer = 5 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (
 SELECT CASE WHEN IsLoadBalance = 1 THEN

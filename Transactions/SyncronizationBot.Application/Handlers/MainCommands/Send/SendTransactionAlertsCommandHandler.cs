@@ -38,7 +38,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 case ETypeOperation.BUY:
                     if ((request?.TokensMapped?.Contains(request?.TokenSendedHash!) ?? false) && (request?.TokensMapped?.Contains(request?.TokenReceivedHash!) ?? false))
                         return ETypeAlert.NONE;
-                    var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash != request!.TokenReceivedHash && x.WalletId == request!.WalletId && x.Signature != request!.Transactions!.Signature);
+                    var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash == request!.TokenReceivedHash && x.WalletId == request!.WalletId && x.Signature != request!.Transactions!.Signature);
                     return existsTokenWallet == null ? ETypeAlert.BUY : ETypeAlert.REBUY;
                 case ETypeOperation.SELL:
                 case ETypeOperation.SWAP:
