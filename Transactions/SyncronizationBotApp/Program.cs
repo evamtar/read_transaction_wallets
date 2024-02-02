@@ -12,6 +12,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
+using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Birdeye;
 using SyncronizationBot.Application.Handlers.MainCommands.AddUpdate;
@@ -19,6 +20,7 @@ using SyncronizationBot.Application.Handlers.MainCommands.Delete;
 using SyncronizationBot.Application.Handlers.MainCommands.Read;
 using SyncronizationBot.Application.Handlers.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Handlers.MainCommands.Send;
+using SyncronizationBot.Application.Handlers.MainCommands.Triggers;
 using SyncronizationBot.Application.Handlers.SolanaFM;
 using SyncronizationBot.Application.Response.Birdeye;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
@@ -26,6 +28,7 @@ using SyncronizationBot.Application.Response.MainCommands.Delete;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.MainCommands.Send;
+using SyncronizationBot.Application.Response.MainCommands.Triggers;
 using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Repository;
@@ -134,6 +137,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region Globais
+
+    services.AddTransient<IRequestHandler<VerifyAddTokenAlphaCommand, VerifyAddTokenAlphaCommandResponse>, VerifyAddTokenAlphaCommandHandler>();
 
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();

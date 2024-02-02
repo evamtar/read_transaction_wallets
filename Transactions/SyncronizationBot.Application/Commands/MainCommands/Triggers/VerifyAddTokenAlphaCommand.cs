@@ -12,6 +12,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Triggers
         public decimal ValueBuyUSDT { get; set; }
         public string? Signature { get; set; }
         public decimal? MarketCap { get; set; }
-        public decimal? LaunchDate { get; set; }
+        public decimal? Price { get; set; }
+        public DateTime? LaunchDate { get; set; }
     }
 }

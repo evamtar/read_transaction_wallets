@@ -29,30 +29,30 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
             if (request?.Transactions?.FeeTransaction.HasValue ?? false)
             {
                 var solTokenForFee = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
-                await this.UpdateBalance(request?.Transactions?.IdWallet, solTokenForFee?.TokenId, request?.Transactions.Signature, solTokenForFee?.Hash, request?.Transactions?.FeeTransaction);
+                await this.UpdateBalance(request?.Transactions?.WalletId, solTokenForFee?.TokenId, request?.Transactions.Signature, solTokenForFee?.Hash, request?.Transactions?.FeeTransaction);
             }
             switch (request?.Transactions?.TypeOperation)
             {
                 case ETypeOperation.BUY:
                 case ETypeOperation.SWAP:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenSource, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                    return await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenDestination, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+                    return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
                 case ETypeOperation.SELL:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenDestination, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                    return await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenSource, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+                    return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
                 case ETypeOperation.SEND:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenSource, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
                     break;
                 case ETypeOperation.RECEIVED:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenDestination, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
                     break;
                 case ETypeOperation.POOLCREATE:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenSource, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenSourcePool, request?.Transactions?.Signature, request?.TokenSendedPoolHash, request?.Transactions?.AmountValueSourcePool);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourcePoolId, request?.Transactions?.Signature, request?.TokenSendedPoolHash, request?.Transactions?.AmountValueSourcePool);
                     break;
                 case ETypeOperation.POOLFINALIZED:
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenDestination, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                    await this.UpdateBalance(request?.Transactions?.IdWallet, request?.Transactions?.IdTokenDestinationPool, request?.Transactions?.Signature, request?.TokenReceivedPoolHash, request?.Transactions?.AmountValueDestinationPool);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationPoolId, request?.Transactions?.Signature, request?.TokenReceivedPoolHash, request?.Transactions?.AmountValueDestinationPool);
                     break;
                 case ETypeOperation.NONE:
                 case ETypeOperation.BURN:
@@ -65,7 +65,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 
         private async Task<RecoveryAddUpdateBalanceItemCommandResponse> UpdateBalance(Guid? walleId, Guid? tokenId, string? signature, string? tokenHash, decimal? quantity) 
         {
-            var balance = await _walletBalanceRepository.FindFirstOrDefault(x => x.IdToken == tokenId && x.IdWallet == walleId);
+            var balance = await _walletBalanceRepository.FindFirstOrDefault(x => x.TokenId == tokenId && x.WalletId == walleId);
             var percentage = (decimal?)100;
             var oldQuantity = (decimal?)0;
             if (balance == null)
@@ -73,8 +73,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { tokenHash! } });
                 balance = await _walletBalanceRepository.Add(new WalletBalance
                 {
-                    IdWallet = walleId,
-                    IdToken = tokenId,
+                    WalletId = walleId,
+                    TokenId = tokenId,
                     TokenHash = tokenHash,
                     Quantity = quantity,
                     Price = price?.Data?[tokenHash!].Price ?? 0,
@@ -102,9 +102,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 
             await _walletBalanceHistoryRepository.Add(new WalletBalanceHistory
             {
-                IdWalletBalance = balance.ID,
-                IdWallet = balance.IdWallet,
-                IdToken = balance.IdToken,
+                WalletBalanceId = balance.ID,
+                WalletId = balance.WalletId,
+                TokenId = balance.TokenId,
                 TokenHash = balance.TokenHash,
                 OldQuantity = oldQuantity,
                 NewQuantity = balance.Quantity,

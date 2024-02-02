@@ -31,19 +31,19 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(t => t.TotalTokenSourcePool).HasConversion<string?>();
             builder.Property(t => t.TotalTokenDestination).HasConversion<string?>();
             builder.Property(t => t.TotalTokenDestinationPool).HasConversion<string?>();
-            builder.Property(t => t.IdTokenSource);
-            builder.Property(t => t.IdTokenSourcePool);
-            builder.Property(t => t.IdTokenDestination);
-            builder.Property(t => t.IdTokenDestinationPool);
-            builder.Property(t => t.IdWallet);
+            builder.Property(t => t.TokenSourceId);
+            builder.Property(t => t.TokenSourcePoolId);
+            builder.Property(t => t.TokenDestinationId);
+            builder.Property(t => t.TokenDestinationPoolId);
+            builder.Property(t => t.WalletId);
             builder.Property(t => t.TypeOperation);
             builder.Ignore(t => t.WalletHash);
             builder.Ignore(t => t.ClassWallet);
-            builder.HasOne(t => t.Wallet).WithMany(w => w.Transactions).HasForeignKey(t => t.IdWallet);
-            builder.HasOne(t => t.TokenSource).WithMany(tk => tk.TransactionsSource).HasForeignKey(t => t.IdTokenSource);
-            builder.HasOne(t => t.TokenSourcePool).WithMany(tk => tk.TransactionsSourcePool).HasForeignKey(t => t.IdTokenSourcePool);
-            builder.HasOne(t => t.TokenDestination).WithMany(tk => tk.TransactionsDestination).HasForeignKey(t => t.IdTokenDestination);
-            builder.HasOne(t => t.TokenDestinationPool).WithMany(tk => tk.TransactionsDestinationPool).HasForeignKey(t => t.IdTokenDestinationPool);
+            builder.HasOne(t => t.Wallet).WithMany(w => w.Transactions).HasForeignKey(t => t.WalletId);
+            builder.HasOne(t => t.TokenSource).WithMany(tk => tk.TransactionsSource).HasForeignKey(t => t.TokenSourceId);
+            builder.HasOne(t => t.TokenSourcePool).WithMany(tk => tk.TransactionsSourcePool).HasForeignKey(t => t.TokenSourcePoolId);
+            builder.HasOne(t => t.TokenDestination).WithMany(tk => tk.TransactionsDestination).HasForeignKey(t => t.TokenDestinationId);
+            builder.HasOne(t => t.TokenDestinationPool).WithMany(tk => tk.TransactionsDestinationPool).HasForeignKey(t => t.TokenDestinationPoolId);
             builder.HasKey(t => t.ID);
         }
     }

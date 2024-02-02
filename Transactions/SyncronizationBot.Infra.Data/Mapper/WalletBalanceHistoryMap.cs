@@ -10,9 +10,9 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("WalletBalanceHistory");
             builder.Property(wbh => wbh.ID);
-            builder.Property(wbh => wbh.IdWalletBalance);
-            builder.Property(wbh => wbh.IdWallet);
-            builder.Property(wbh => wbh.IdToken);
+            builder.Property(wbh => wbh.WalletBalanceId);
+            builder.Property(wbh => wbh.WalletId);
+            builder.Property(wbh => wbh.TokenId);
             builder.Property(wbh => wbh.TokenHash); 
             builder.Property(wbh => wbh.OldQuantity).HasConversion<string?>();
             builder.Property(wbh => wbh.NewQuantity).HasConversion<string?>();

@@ -4,8 +4,8 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class WalletBalanceSFMCompare : Entity
     {
-        public Guid? IdWallet { get; set; }
-        public Guid? IdToken { get; set; }
+        public Guid? WalletId { get; set; }
+        public Guid? TokenId { get; set; }
         public string? TokenHash { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Price { get; set; }

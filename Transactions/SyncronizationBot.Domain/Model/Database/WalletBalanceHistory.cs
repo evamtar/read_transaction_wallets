@@ -5,9 +5,9 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class WalletBalanceHistory : Entity
     {
-        public Guid? IdWalletBalance { get; set; }
-        public Guid? IdWallet { get; set; }
-        public Guid? IdToken { get; set; }
+        public Guid? WalletBalanceId { get; set; }
+        public Guid? WalletId { get; set; }
+        public Guid? TokenId { get; set; }
         public string? TokenHash { get; set; }
         public decimal? OldQuantity { get; set; }
         public decimal? NewQuantity { get; set; }

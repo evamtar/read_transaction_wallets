@@ -168,7 +168,7 @@ IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
 BEGIN
 	CREATE TABLE TransactionNotMapped(
 		ID                UNIQUEIDENTIFIER,
-		[IdWallet]        UNIQUEIDENTIFIER,
+		[WalletId]        UNIQUEIDENTIFIER,
 		[Signature]       VARCHAR(150),
 		[Link]            VARCHAR(500),
 		[Error]           VARCHAR(500),
@@ -196,7 +196,7 @@ GO
 CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
 	[Hash]               VARCHAR(50),
-	IdClassWallet        UNIQUEIDENTIFIER,
+	ClassWalletId        UNIQUEIDENTIFIER,
 	UnixTimeSeconds      DECIMAL(20,0),
 	IsLoadBalance        BIT,
 	DateLoadBalance      DATETIME2,
@@ -205,7 +205,7 @@ CREATE TABLE Wallet(
 	IsActive         BIT,
 	LastUpdate       DATETIME2, 
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdClassWallet) REFERENCES ClassWallet(ID)
+	FOREIGN KEY (ClassWalletId) REFERENCES ClassWallet(ID)
 );
 
 CREATE TABLE Token(
@@ -227,7 +227,7 @@ CREATE TABLE Token(
 
 CREATE TABLE TokenSecurity(
     ID                 UNIQUEIDENTIFIER,
-	IdToken            UNIQUEIDENTIFIER,
+	TokenId            UNIQUEIDENTIFIER,
 	CreatorAddress     VARCHAR(100),
 	CreationTime       DECIMAL(20,0),
 	Top10HolderBalance VARCHAR(150),
@@ -245,7 +245,7 @@ CREATE TABLE TokenSecurity(
 	MintAuthority      VARCHAR(100),
 	IsMutable          BIT,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdToken) REFERENCES Token(ID)
+	FOREIGN KEY (TokenId) REFERENCES Token(ID)
 );
 
 CREATE TABLE Transactions
@@ -271,18 +271,18 @@ CREATE TABLE Transactions
 	TotalTokenSourcePool         VARCHAR(150),
 	TotalTokenDestination        VARCHAR(150),
 	TotalTokenDestinationPool    VARCHAR(150),
-	IdTokenSource                UNIQUEIDENTIFIER,
-	IdTokenSourcePool            UNIQUEIDENTIFIER,
-	IdTokenDestination           UNIQUEIDENTIFIER,
-	IdTokenDestinationPool       UNIQUEIDENTIFIER,
-	IdWallet                     UNIQUEIDENTIFIER,
+	TokenSourceId                UNIQUEIDENTIFIER,
+	TokenSourcePoolId            UNIQUEIDENTIFIER,
+	TokenDestinationId           UNIQUEIDENTIFIER,
+	TokenDestinationPoolId       UNIQUEIDENTIFIER,
+	WalletId                     UNIQUEIDENTIFIER,
 	TypeOperation                INT, -- 1 For Buy, 2 For Sell, 3 For Transfer, 4 For Received, 5 SWAP, 6 POOL CREATE, 7 POOL FINALIZED
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdTokenSource) REFERENCES Token(ID),
-	FOREIGN KEY (IdTokenSourcePool) REFERENCES Token(ID),
-	FOREIGN KEY (IdTokenDestination) REFERENCES Token(ID),
-	FOREIGN KEY (IdTokenDestinationPool) REFERENCES Token(ID),
-	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
+	FOREIGN KEY (TokenSourceId) REFERENCES Token(ID),
+	FOREIGN KEY (TokenSourcePoolId) REFERENCES Token(ID),
+	FOREIGN KEY (TokenDestinationId) REFERENCES Token(ID),
+	FOREIGN KEY (TokenDestinationPoolId) REFERENCES Token(ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
 );
 GO
 
@@ -291,11 +291,11 @@ CREATE TABLE TransactionsOldForMapping
 	ID                           UNIQUEIDENTIFIER,
 	[Signature]                  VARCHAR(150),
 	DateOfTransaction            DATETIME2,
-	IdWallet                     UNIQUEIDENTIFIER,
+	WalletId                     UNIQUEIDENTIFIER,
 	CreateDate				     DATETIME2,
 	IsIntegrated				 BIT,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
 );
 GO
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
@@ -372,8 +372,8 @@ INSERT INTO Wallet VALUES (NEWID(),'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc
 CREATE TABLE WalletBalance
 (
 	ID            UNIQUEIDENTIFIER,
-	IdWallet      UNIQUEIDENTIFIER,
-	IdToken       UNIQUEIDENTIFIER,
+	WalletId      UNIQUEIDENTIFIER,
+	TokenId       UNIQUEIDENTIFIER,
 	TokenHash     VARCHAR(100),
 	Quantity      VARCHAR(100),
 	Price         VARCHAR(100),
@@ -381,14 +381,14 @@ CREATE TABLE WalletBalance
 	IsActive      BIT,
 	LastUpdate    DATETIME2,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
-	FOREIGN KEY(IdToken) REFERENCES Token(ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
+	FOREIGN KEY(TokenId) REFERENCES Token(ID),
 );
 
 CREATE TABLE WalletBalanceSFMCompare(
 	ID            UNIQUEIDENTIFIER,
-	IdWallet      UNIQUEIDENTIFIER,
-	IdToken       UNIQUEIDENTIFIER,
+	WalletId      UNIQUEIDENTIFIER,
+	TokenId       UNIQUEIDENTIFIER,
 	TokenHash     VARCHAR(100),
 	Quantity      VARCHAR(100),
 	Price         VARCHAR(100),
@@ -396,16 +396,16 @@ CREATE TABLE WalletBalanceSFMCompare(
 	IsActive      BIT,
 	LastUpdate    DATETIME2,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (IdWallet) REFERENCES Wallet(ID),
-	FOREIGN KEY(IdToken) REFERENCES Token(ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
+	FOREIGN KEY(TokenId) REFERENCES Token(ID),
 );
 
 CREATE TABLE WalletBalanceHistory
 (
 	ID                    UNIQUEIDENTIFIER,
-	IDWalletBalance       UNIQUEIDENTIFIER,
-	IdWallet              UNIQUEIDENTIFIER,
-	IdToken               UNIQUEIDENTIFIER,
+	WalletBalanceId       UNIQUEIDENTIFIER,
+	WalletId              UNIQUEIDENTIFIER,
+	TokenId               UNIQUEIDENTIFIER,
 	TokenHash             VARCHAR(100),
 	OldQuantity           VARCHAR(100),
 	NewQuantity           VARCHAR(100),
@@ -490,28 +490,40 @@ CREATE TABLE AlertParameter(
 
 CREATE TABLE TokenAlphaConfiguration
 (
-	ID            UNIQUEIDENTIFIER,
-	MaxMarketcap  VARCHAR(100),
-	DateOfLaunch  DATETIME2,
+	ID                   UNIQUEIDENTIFIER,
+	Name                 VARCHAR(300),
+	Ordernation          INT,
+	MaxMarketcap         VARCHAR(100),
+	MaxDateOfLaunchDays  INT,
+	PRIMARY KEY (ID)
 );
 GO
 
 CREATE TABLE TokenAlpha(
-	ID          UNIQUEIDENTIFIER,
-	TokenId     UNIQUEIDENTIFIER,
-	CallNumber  INT,
-	Marketcap   VARCHAR(100),
-	Price       VARCHAR(100),
-	CreateDate  DATETIME2,
-	LastUpdate  DATETIME2,
+	ID                        UNIQUEIDENTIFIER,
+	CallNumber                INT,
+	InitialMarketcap          VARCHAR(100),
+	ActualMarketcap           VARCHAR(100),
+	InitialPrice              VARCHAR(100),
+	ActualPrice               VARCHAR(100),
+	CreateDate                DATETIME2,
+	LastUpdate                DATETIME2,
+	IsCalledInChannel         BIT,
+	TokenId                   UNIQUEIDENTIFIER,
+	TokenAlphaConfigurationId UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (TokenId) REFERENCES Token(ID),
+	FOREIGN KEY (TokenAlphaConfigurationId) REFERENCES TokenAlphaConfiguration(ID)
 );
 GO
 CREATE TABLE TokenAlphaWallet(
-	ID            UNIQUEIDENTIFIER,
-	TokenAlphaId  UNIQUEIDENTIFIER,
-	WalletId      UNIQUEIDENTIFIER,
+	ID             UNIQUEIDENTIFIER,
+	NumberOfBuys   INT,
+	ValueSpentSol  VARCHAR(100),
+	ValueSpentUSDC VARCHAR(100),
+	ValueSpentUSDT VARCHAR(100),
+	TokenAlphaId   UNIQUEIDENTIFIER,
+	WalletId       UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (TokenAlphaId) REFERENCES TokenAlpha(ID),
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID)
@@ -661,7 +673,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 ------------------------------------------------------------
 
-SELECT * FROM TelegramMessage Order By MessageId
+SELECT * FROM RunTimeController Order By MessageId
 UPDATE RunTimeController SET IsRunning = 0 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (

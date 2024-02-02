@@ -65,8 +65,8 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
             {
                 balance = await this._walletBalanceRepository.Add(new WalletBalance
                 {
-                    IdWallet = request.WalletId,
-                    IdToken = token?.TokenId,
+                    WalletId = request.WalletId,
+                    TokenId = token?.TokenId,
                     TokenHash = item.Address,
                     Quantity = item.UiAmount,
                     Price = item.PriceUsd,
@@ -76,9 +76,9 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
                 });
                 await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                 {
-                    IdWalletBalance = balance?.ID,
-                    IdWallet = balance?.IdWallet,
-                    IdToken = balance?.IdToken,
+                    WalletBalanceId = balance?.ID,
+                    WalletId = balance?.WalletId,
+                    TokenId = balance?.TokenId,
                     TokenHash = balance?.TokenHash,
                     OldQuantity = (decimal?)0,
                     NewQuantity = balance?.Quantity,
@@ -96,9 +96,9 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
             {
                 await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                 {
-                    IdWalletBalance = null,
-                    IdWallet = request.WalletId,
-                    IdToken = token?.TokenId,
+                    WalletBalanceId = null,
+                    WalletId = request.WalletId,
+                    TokenId = token?.TokenId,
                     TokenHash = item.Address,
                     OldQuantity = (decimal?)0,
                     NewQuantity = item.UiAmount,

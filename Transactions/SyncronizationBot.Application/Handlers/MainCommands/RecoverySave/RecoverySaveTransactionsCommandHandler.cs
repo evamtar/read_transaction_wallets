@@ -122,11 +122,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TotalTokenSourcePool = CalculatedTotalUSD(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
                                     TotalTokenDestination = CalculatedTotalUSD(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
                                     TotalTokenDestinationPool = CalculatedTotalUSD(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
-                                    IdTokenSource = tokenSended?.TokenId,
-                                    IdTokenSourcePool = tokenSendedPool?.TokenId,
-                                    IdTokenDestination = tokenReceived?.TokenId,
-                                    IdTokenDestinationPool = tokenReceivedPool?.TokenId,
-                                    IdWallet = request?.WalletId,
+                                    TokenSourceId = tokenSended?.TokenId,
+                                    TokenSourcePoolId = tokenSendedPool?.TokenId,
+                                    TokenDestinationId = tokenReceived?.TokenId,
+                                    TokenDestinationPoolId = tokenReceivedPool?.TokenId,
+                                    WalletId = request?.WalletId,
                                     WalletHash = request?.WalletHash,
                                     ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
@@ -161,7 +161,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 await _transactionNotMappedRepository.Add(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
-                                    IdWallet = request?.WalletId,
+                                    WalletId = request?.WalletId,
                                     Link = "https://solscan.io/tx/" + transaction.Signature,
                                     Error = ETransactionType.INDEFINED.ToString(),
                                     StackTrace = null,

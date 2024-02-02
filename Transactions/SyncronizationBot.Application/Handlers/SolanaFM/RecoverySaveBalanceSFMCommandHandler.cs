@@ -72,8 +72,8 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 {
                     balance = await this._walletBalanceRepository.Add(new WalletBalance
                     {
-                        IdWallet = request.WalletId,
-                        IdToken = token?.TokenId,
+                        WalletId = request.WalletId,
+                        TokenId = token?.TokenId,
                         TokenHash = "So11111111111111111111111111111111111111112",
                         Quantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
                         Price = token?.MarketCap / token?.Supply,
@@ -83,9 +83,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     });
                     await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                     {
-                        IdWalletBalance = balance?.ID,
-                        IdWallet = balance?.IdWallet,
-                        IdToken = balance?.IdToken,
+                        WalletBalanceId = balance?.ID,
+                        WalletId = balance?.WalletId,
+                        TokenId = balance?.TokenId,
                         TokenHash = balance?.TokenHash,
                         OldQuantity = (decimal?)0,
                         NewQuantity = balance?.Quantity,
@@ -103,9 +103,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 {
                     await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                     {
-                        IdWalletBalance = null,
-                        IdWallet = request.WalletId,
-                        IdToken = token?.TokenId,
+                        WalletBalanceId = null,
+                        WalletId = request.WalletId,
+                        TokenId = token?.TokenId,
                         TokenHash = token?.Hash,
                         OldQuantity = (decimal?)0,
                         NewQuantity = accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals),
@@ -132,8 +132,8 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 {
                     balance = await this._walletBalanceRepository.Add(new WalletBalance
                     {
-                        IdWallet = request.WalletId,
-                        IdToken = token?.TokenId,
+                        WalletId = request.WalletId,
+                        TokenId = token?.TokenId,
                         TokenHash = tokenAccount.Pubkey,
                         Quantity = tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Amount / this.GetDivisor(tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Decimals ?? token?.Decimals),
                         Price = token?.MarketCap / token?.Supply,
@@ -143,9 +143,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     });
                     await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                     {
-                        IdWalletBalance = balance?.ID,
-                        IdWallet = balance?.IdWallet,
-                        IdToken = balance?.IdToken,
+                        WalletBalanceId = balance?.ID,
+                        WalletId = balance?.WalletId,
+                        TokenId = balance?.TokenId,
                         TokenHash = balance?.TokenHash,
                         OldQuantity = (decimal?)0,
                         NewQuantity = balance?.Quantity,
@@ -164,9 +164,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     var quantity = tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Amount / this.GetDivisor(tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Decimals ?? token?.Decimals);
                     await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
                     {
-                        IdWalletBalance = null,
-                        IdWallet = request.WalletId,
-                        IdToken = token?.TokenId,
+                        WalletBalanceId = null,
+                        WalletId = request.WalletId,
+                        TokenId = token?.TokenId,
                         TokenHash = tokenAccount.Pubkey,
                         OldQuantity = (decimal?)0,
                         NewQuantity = quantity,

@@ -11,7 +11,6 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("TokenAlpha");
             builder.Property(ta => ta.ID);
-            builder.Property(ta => ta.TokenId);
             builder.Property(ta => ta.CallNumber);
             builder.Property(ta => ta.InitialMarketcap).HasConversion<string?>();
             builder.Property(ta => ta.ActualMarketcap).HasConversion<string?>();
@@ -20,7 +19,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ta => ta.CreateDate);
             builder.Property(ta => ta.LastUpdate);
             builder.Property(ta => ta.IsCalledInChannel);
+            builder.Property(ta => ta.TokenId);
+            builder.Property(ta => ta.TokenAlphaConfigurationId);
             builder.HasOne(ta => ta.Token).WithMany(t => t.TokenAlphas).HasForeignKey(ta => ta.TokenId);
+            builder.HasOne(ta => ta.TokenAlphaConfiguration).WithMany(tac => tac.TokenAlphas).HasForeignKey(ta => ta.TokenAlphaConfigurationId);
             builder.HasKey(ta => ta.ID);
         }
     }

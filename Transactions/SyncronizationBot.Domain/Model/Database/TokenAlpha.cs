@@ -4,7 +4,6 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class TokenAlpha : Entity
     {
-        public Guid? TokenId { get; set; }
         public int? CallNumber { get; set; }
         public decimal? InitialMarketcap { get; set; }
         public decimal? ActualMarketcap { get; set; }
@@ -13,7 +12,10 @@ namespace SyncronizationBot.Domain.Model.Database
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
         public bool? IsCalledInChannel { get; set; }
+        public Guid? TokenId { get; set; }
+        public Guid? TokenAlphaConfigurationId { get; set; }
         public Token? Token { get; set; }
+        public virtual TokenAlphaConfiguration? TokenAlphaConfiguration { get; set; }
         public virtual List<TokenAlphaWallet>? TokenAlphas { get; set; }
     }
 }

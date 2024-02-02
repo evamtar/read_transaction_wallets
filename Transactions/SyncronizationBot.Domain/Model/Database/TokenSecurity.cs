@@ -5,7 +5,7 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class TokenSecurity : Entity
     {
-        public Guid? IdToken { get; set; }
+        public Guid? TokenId { get; set; }
         public string? CreatorAddress { get; set; }
         public long? CreationTime { get; set; }
         public DateTime? CreationTimeDate 

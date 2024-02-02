@@ -35,7 +35,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 var finalTicks = GetFinalTicks();
                 if (initialTicks > finalTicks)
                     initialTicks -= (initialTicks - finalTicks) * 2;
-                var classWallet = await _classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.IdClassWallet);
+                var classWallet = await _classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.ClassWalletId);
                 var response = await _mediator.Send(new RecoverySaveTransactionsCommand
                 {
                     WalletId = walletTracked?.ID,

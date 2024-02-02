@@ -12,12 +12,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly ITokenAlphaRepository _tokenAlphaRepository;
         private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
-        public VerifyAddTokenAlphaCommandHandler(IMediator mediator, 
+        private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
+        public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
+                                                 IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                  ITokenAlphaRepository tokenAlphaRepository,
                                                  ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                                  ITokenAlphaWalletRepository tokenAlphaWalletRepository)
         {
             this._mediator = mediator;
+            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
@@ -50,13 +53,46 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     });
                     await this._tokenAlphaWalletRepository.DetachedItem(tokekAlphaWallet);
                 }
+                tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
+                tokenAlphaCalled.ActualPrice = request?.Price;
                 tokenAlphaCalled.IsCalledInChannel = false;
+                tokenAlphaCalled.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlphaCalled);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
             }
             else 
-            { 
-                //Verify if is a new token alpha and mapping
+            {
+                var buysBeforeThis = await this._walletBalanceHistoryRepository.Get(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
+                if (buysBeforeThis == null || buysBeforeThis.Count() == 0) 
+                {
+                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.MaxMarketcap < request.MarketCap && request.LaunchDate < DateTime.Now.AddDays(x.MaxDateOfLaunchDays ?? 0), x => x.Ordernation!);
+                    if (tokenAlphaConfiguration != null)
+                    {
+                        var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha 
+                        {
+                            CallNumber = 1,
+                            InitialMarketcap = request.MarketCap,
+                            ActualMarketcap = request.MarketCap,
+                            InitialPrice = request.Price,
+                            ActualPrice = request.Price,
+                            CreateDate = DateTime.Now,
+                            LastUpdate = null,
+                            IsCalledInChannel = false,
+                            TokenId = request.TokenId,
+                            TokenAlphaConfigurationId = tokenAlphaConfiguration.ID
+                        });
+                        await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
+                        var tokenAlphaWallet = await this._tokenAlphaWalletRepository.Add(new TokenAlphaWallet
+                        {
+                            TokenAlphaId = tokenAlpha.ID,
+                            WalletId = request.WalletId,
+                            NumberOfBuys = 1,
+                            ValueSpentSol = request?.ValueBuySol,
+                            ValueSpentUSDC = request?.ValueBuyUSDC,
+                            ValueSpentUSDT = request?.ValueBuyUSDT
+                        });
+                    }
+                }
             }
             return new VerifyAddTokenAlphaCommandResponse { };
         }

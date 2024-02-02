@@ -27,7 +27,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
                     CreateDate = DateTime.Now,
-                    IdWallet = Guid.NewGuid(),
+                    WalletId = Guid.NewGuid(),
                     IsIntegrated = false,
                 });
             }
@@ -43,7 +43,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
                     CreateDate = DateTime.Now,
-                    IdWallet = Guid.NewGuid(),
+                    WalletId = Guid.NewGuid(),
                     IsIntegrated = false,
                 });
             }

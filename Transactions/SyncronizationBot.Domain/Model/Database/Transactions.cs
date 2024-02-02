@@ -25,11 +25,11 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? TotalTokenSourcePool { get; set; }
         public decimal? TotalTokenDestination { get; set; }
         public decimal? TotalTokenDestinationPool { get; set; }
-        public Guid? IdTokenSource { get; set; }
-        public Guid? IdTokenSourcePool { get; set; }
-        public Guid? IdTokenDestination { get; set; }
-        public Guid? IdTokenDestinationPool { get; set; }
-        public Guid? IdWallet { get; set; }
+        public Guid? TokenSourceId { get; set; }
+        public Guid? TokenSourcePoolId { get; set; }
+        public Guid? TokenDestinationId { get; set; }
+        public Guid? TokenDestinationPoolId { get; set; }
+        public Guid? WalletId { get; set; }
         public string? WalletHash { get; set; }
         public string? ClassWallet { get; set; }
         public ETypeOperation TypeOperation { get; set; }

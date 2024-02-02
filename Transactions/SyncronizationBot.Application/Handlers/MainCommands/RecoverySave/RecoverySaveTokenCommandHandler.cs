@@ -66,7 +66,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     });
                     var tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
                     {
-                        IdToken = tokenAdded.ID,
+                        TokenId = tokenAdded.ID,
                         CreatorAddress = null,
                         CreationTime = null,
                         Top10HolderBalance = null,
@@ -123,7 +123,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     var tokenSecurityResponse = await _tokenSecurityService.ExecuteRecoveryTokenCreationAsync(new TokenSecurityRequest { TokenHash = request.TokenHash! });
                     var tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
                     {
-                        IdToken = tokenAdded.ID,
+                        TokenId = tokenAdded.ID,
                         CreatorAddress = tokenSecurityResponse?.TokenData?.CreatorAddress,
                         CreationTime = tokenSecurityResponse?.TokenData?.CreationTime,
                         Top10HolderBalance = tokenSecurityResponse?.TokenData?.Top10HolderBalance,
@@ -164,7 +164,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             }
             else
             {
-                var tokenSecurity = await _tokenSecurityRepository.FindFirstOrDefault(x => x.IdToken == token.ID);
+                var tokenSecurity = await _tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
                 return new RecoverySaveTokenCommandResponse
                 {
                     TokenId = token?.ID,

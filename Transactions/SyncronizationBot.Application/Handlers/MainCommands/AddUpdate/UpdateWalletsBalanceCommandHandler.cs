@@ -27,7 +27,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
             var wallets = await _walletRepository.Get(x => x.IsLoadBalance == true);
             foreach (var wallet in wallets)
             {
-                var balances = await _walletBalanceRepository.Get(x => x.IdWallet == wallet.ID && x.IdToken != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < DateTime.Now);
+                var balances = await _walletBalanceRepository.Get(x => x.WalletId == wallet.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < DateTime.Now);
                 if (balances != null && balances.Any())
                 {
                     var prices = await _mediator.Send(new RecoveryPriceCommand { Ids = GetIdsTokens(balances) });
