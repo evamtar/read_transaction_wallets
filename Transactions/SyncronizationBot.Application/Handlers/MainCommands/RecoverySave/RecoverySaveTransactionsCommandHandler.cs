@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
+using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
@@ -15,6 +16,7 @@ using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
+using System.Diagnostics;
 
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -118,10 +120,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     PriceTokenDestinationUSD = tokenReceived?.Price,
                                     PriceTokenDestinationPoolUSD = tokenReceivedPool?.Price,
                                     PriceSol = tokenSolForPrice.Price,
-                                    TotalTokenSource = CalculatedTotalUSD(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
-                                    TotalTokenSourcePool = CalculatedTotalUSD(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
-                                    TotalTokenDestination = CalculatedTotalUSD(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
-                                    TotalTokenDestinationPool = CalculatedTotalUSD(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
+                                    TotalTokenSource = CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
+                                    TotalTokenSourcePool = CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
+                                    TotalTokenDestination = CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
+                                    TotalTokenDestinationPool = CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
                                     TokenSourceId = tokenSended?.TokenId,
                                     TokenSourcePoolId = tokenSendedPool?.TokenId,
                                     TokenDestinationId = tokenReceived?.TokenId,
@@ -139,11 +141,26 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokenReceivedPoolHash = tokenReceivedPool?.Hash
                                 });
+                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
+                                {
+                                    await this._mediator.Send(new VerifyAddTokenAlphaCommand
+                                    {
+                                        WalletId = request?.WalletId,
+                                        TokenId = transactionDB?.TokenDestinationId,
+                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
+                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
+                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
+                                        Signature = transactionDB?.Signature,
+                                        MarketCap = transactionDB?.MtkcapTokenDestination,
+                                        Price = tokenReceived?.Price,
+                                        LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
+                                    });
+                                }
                                 await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
                                     Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
                                                                                     {
-                                                                                        transactionDB,
+                                                                                        transactionDB!,
                                                                                         transferInfo!,
                                                                                         new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
                                                                                         balancePosition
@@ -198,11 +215,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             else
                 return supply * price;
         }
-        private DateTime AdjustDateTimeToPtBR(DateTime? dateTime)
-        {
-            return dateTime?.AddHours(_syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue;
-        }
-        private decimal? CalculatedTotalUSD(long? amount, decimal? price, int? divisor)
+        private decimal? CalculatedTotal(long? amount, decimal? price, int? divisor)
         {
             var ajustedAmount = ((decimal?)amount ?? 0) / ((decimal?)divisor ?? 1);
             return ajustedAmount * price;
@@ -212,5 +225,38 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
+        private decimal? CalculatedTotalSol(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation typeOperation) 
+        {
+            switch (typeOperation)
+            {
+                case ETypeOperation.BUY:
+                    if (tokenSended?.Token == "So11111111111111111111111111111111111111112")
+                        return tokenSended?.Amount;
+                    else 
+                        return tokenSended?.Amount / solPrice;
+                case ETypeOperation.SWAP:
+                    return (tokenSended?.Amount * tokenPrice) / solPrice;
+                default:
+                    break;
+            }
+            return null;
+        }
+        private decimal? CalculatedTotalUSD(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation typeOperation)
+        {
+            switch (typeOperation)
+            {
+                case ETypeOperation.BUY:
+                    if (tokenSended?.Token != "So11111111111111111111111111111111111111112")
+                        return tokenSended?.Amount;
+                    else
+                        return tokenSended?.Amount * solPrice;
+                case ETypeOperation.SWAP:
+                    return tokenSended?.Amount * tokenPrice;
+                default:
+                    break;
+            }
+            return null;
+        }
+
     }
 }
