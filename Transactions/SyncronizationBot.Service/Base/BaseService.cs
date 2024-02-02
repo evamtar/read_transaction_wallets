@@ -47,7 +47,8 @@ namespace SyncronizationBot.Service.Base
                 this.RunTimeController = await this.GetRunTimeControllerAsync();
                 this.InitiParameterContingency();
             }
-            return new PeriodicTimer(TimeSpan.FromMinutes(this.RunTimeController?.ConfigurationTimer ?? 1));
+            var minutesForTimeSpan = this.RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
+            return new PeriodicTimer(TimeSpan.FromMinutes((double)minutesForTimeSpan));
         }
 
         protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
