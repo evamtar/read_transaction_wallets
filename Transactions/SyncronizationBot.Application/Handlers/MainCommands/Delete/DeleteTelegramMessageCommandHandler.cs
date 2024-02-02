@@ -31,21 +31,21 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
         }
         public async Task<DeleteTelegramMessageCommandResponse> Handle(DeleteTelegramMessageCommand request, CancellationToken cancellationToken)
         {
+            var dateTimeToDelete = this.GetDateOfSendedToDelete();
             var telegramChannel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.ChannelName);
-            var messages = await this._telegramMessageRepository.Get(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < this.GetDateOfSendedToDelete());
-            var ordernedMessages = messages.OrderBy(x => x.MessageId).ToList();
-            if (ordernedMessages?.Count > 0) 
+            var message = await this._telegramMessageRepository.FindFirstOrDefault(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < dateTimeToDelete, x => x.MessageId!);
+            var hasNext = message != null;
+            while (hasNext) 
             {
-                foreach (var message in ordernedMessages)
+                var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
+                if (response.Result ?? false)
                 {
-                    var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
-                    if (response.Result ?? false)
-                    {
-                        message.IsDeleted = true;
-                        await this._telegramMessageRepository.Edit(message);
-                        await this._telegramMessageRepository.DetachedItem(message);
-                    }
+                    message.IsDeleted = true;
+                    await this._telegramMessageRepository.Edit(message);
+                    await this._telegramMessageRepository.DetachedItem(message);
                 }
+                message = await this._telegramMessageRepository.FindFirstOrDefault(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < dateTimeToDelete, x => x.MessageId!);
+                hasNext = message != null;
             }
             return new DeleteTelegramMessageCommandResponse { };
         }
