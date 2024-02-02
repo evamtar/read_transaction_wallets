@@ -14,39 +14,45 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
     {
         private readonly IMediator _mediator;
         private readonly ITelegramBotService _telegramBotService;
+        private readonly ITelegramMessageRepository _telegramMessageRepository;
         private readonly ITelegramChannelRepository _telegramChannelRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public DeleteTelegramMessageCommandHandler(IMediator mediator,
                                                    ITelegramBotService telegramBotService,
+                                                   ITelegramMessageRepository telegramMessageRepository,
                                                    ITelegramChannelRepository telegramChannelRepository,
-                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._telegramBotService = telegramBotService;
+            this._telegramMessageRepository = telegramMessageRepository;
             this._telegramChannelRepository = telegramChannelRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
         public async Task<DeleteTelegramMessageCommandResponse> Handle(DeleteTelegramMessageCommand request, CancellationToken cancellationToken)
         {
             var telegramChannel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ChannelName == request.ChannelName);
-            var messages = await this._telegramBotService.ExecuteRecoveryChannelUpdatesAsync(new TelegramBotChannelUpdateRequest { });
-            var filteredUpdates = messages?.Result?.FindAll(x => x.ChannelPost?.MessageId != null && x.ChannelPost?.SenderChat?.Id == telegramChannel?.ChannelId);
-            if (filteredUpdates?.Count > 0) 
+            var messages = await this._telegramMessageRepository.Get(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < this.GetDateOfSendedToDelete());
+            var ordernedMessages = messages.OrderBy(x => x.MessageId).ToList();
+            if (ordernedMessages?.Count > 0) 
             {
-                foreach (var updates in filteredUpdates)
+                foreach (var message in ordernedMessages)
                 {
-                    var messageId = updates?.ChannelPost?.MessageId;
-                    var dateOfMessage = AdjustDateTimeToPtBR(updates?.ChannelPost?.DateOfMessage);
-                    if (DateTime.Now.AddHours(-1) > dateOfMessage) 
-                        await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = messageId, ChatId = (long?)telegramChannel?.ChannelId });
+                    var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
+                    if (response.Result ?? false)
+                    {
+                        message.IsDeleted = true;
+                        await this._telegramMessageRepository.Edit(message);
+                        try { await this._telegramMessageRepository.DetachedItem(message); } catch { }
+                    }
                 }
             }
             return new DeleteTelegramMessageCommandResponse { };
         }
 
-        private DateTime? AdjustDateTimeToPtBR(DateTime? dateTime)
+        private DateTime? GetDateOfSendedToDelete()
         {
-            return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0);
+            return DateTime.Now.AddMinutes(this._syncronizationBotConfig.Value.MaxTimeBeforeDeleteLog ?? 0);
         }
     }
 }

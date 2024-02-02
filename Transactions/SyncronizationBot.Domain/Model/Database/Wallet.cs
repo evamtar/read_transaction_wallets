@@ -19,5 +19,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public virtual List<TransactionsOldForMapping>? TransactionsOldForMapping { get; set; }
         public virtual List<WalletBalance>? Balances { get; set; }
         public virtual List<WalletBalanceSFMCompare>? BalancesSFMCompare { get; set; }
+        public virtual List<TokenAlphaWallet>? TokenAlphas { get; set; }
     }
 }

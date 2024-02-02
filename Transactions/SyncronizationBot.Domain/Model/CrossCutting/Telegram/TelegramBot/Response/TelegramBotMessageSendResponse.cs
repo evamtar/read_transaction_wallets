@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using SyncronizationBot.Utils;
+using System.Text.Json;
+
 
 namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response
 {
@@ -14,11 +13,21 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Respo
 
     public class TelegramBotMessageResultResponse
     {
-        public int MessageId { get; set; }
+        [JsonProperty("message_id")]
+        public long? MessageId { get; set; }
         public string? AuthorSignature { get; set; }
         public TelegramBotMessageChatResponse? SenderChat { get; set; }
         public TelegramBotMessageChatResponse? Chat { get; set; }
-        public int Date { get; set; }
+        public long? Date { get; set; }
+        public DateTime? DateOfMessage
+        {
+            get
+            {
+                if (this.Date.HasValue)
+                    return DateTimeTicks.Instance.ConvertTicksToDateTime(this.Date.Value);
+                return null;
+            }
+        }
         public string? Text { get; set; }
         public List<TelegramBotMessageEntityResponse>? Entities { get; set; }
     }

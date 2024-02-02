@@ -94,10 +94,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
-    //services.AddHostedService<LoadBalanceWalletsService>();
+    services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<AlertPriceService>();
+    services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
+
     #region Only For Test
 
     //services.AddHostedService<AlertTesteService>();
@@ -158,6 +159,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IWalletRepository, WalletRepository>();
     services.AddTransient<ITokenRepository, TokenRepository>();
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
+    services.AddTransient<ITokenAlphaRepository, TokenAlphaRepository>();
+    services.AddTransient<ITokenAlphaWalletRepository, TokenAlphaWalletRepository>();
+    services.AddTransient<ITokenAlphaConfigurationRepository, TokenAlphaConfigurationRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
@@ -165,11 +169,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<WalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
     services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
+    services.AddTransient<ITelegramMessageRepository, TelegramMessageRepository>();
     services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();
     services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
     services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
     services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
-
+    
     #endregion
 
     #region External Services

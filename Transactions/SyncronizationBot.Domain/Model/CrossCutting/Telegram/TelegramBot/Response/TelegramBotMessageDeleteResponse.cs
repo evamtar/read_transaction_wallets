@@ -4,5 +4,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Respo
 {
     public class TelegramBotMessageDeleteResponse
     {
+        public bool? Ok { get; set; }
+        public bool? Result { get; set; }
     }
 }

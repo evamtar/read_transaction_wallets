@@ -24,6 +24,9 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<TransactionsOldForMapping> TransactionsOldForMappings { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
+        public DbSet<TokenAlpha> TokenAlphas { get; set; }
+        public DbSet<TokenAlphaWallet> TokenAlphaWallets { get; set; }
+        public DbSet<TokenAlphaConfiguration> TokenAlphaConfigurations { get; set; }
         public DbSet<WalletBalance> WalletBalances { get; set; }
         public DbSet<WalletBalanceSFMCompare> WalletBalancesSFMCompare { get; set; }
         public DbSet<WalletBalanceHistory> WalletBalanceHistories { get; set; }
@@ -32,7 +35,7 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<AlertConfiguration> AlertsConfigurations { get; set; }
         public DbSet<AlertInformation> AlertsInformations { get; set; }
         public DbSet<AlertParameter> AlertsParameters { get; set; }
-
+        public DbSet<TelegramMessage> TelegramMessages { get; set; }
 
         #endregion
 
@@ -43,7 +46,10 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new ClassWalletMap());
             modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             modelBuilder.ApplyConfiguration(new TokenMap());
-            modelBuilder.ApplyConfiguration(new TokenSecurityMap()); 
+            modelBuilder.ApplyConfiguration(new TokenSecurityMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());
             modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
@@ -52,6 +58,7 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new WalletBalanceSFMCompareMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
             modelBuilder.ApplyConfiguration(new TelegramChannelMap());
+            modelBuilder.ApplyConfiguration(new TelegramMessageMap()); 
             modelBuilder.ApplyConfiguration(new AlertPriceMap());
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());

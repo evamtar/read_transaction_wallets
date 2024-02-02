@@ -1,6 +1,25 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaConfiguration')
+BEGIN
+	DROP TABLE [TokenAlphaConfiguration]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaWallet')
+BEGIN
+	DROP TABLE [TokenAlphaWallet]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlpha')
+BEGIN
+	DROP TABLE [TokenAlpha]
+END
+GO
+
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalance')
 BEGIN
 	DROP TABLE [WalletBalance]
@@ -84,6 +103,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramMessage')
+BEGIN
+	DROP TABLE [TelegramMessage]
+END
+GO
+
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
 	CREATE TABLE TelegramChannel(
@@ -94,6 +119,7 @@ BEGIN
 	)
 END
 GO 
+
 
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertPrice')
 BEGIN
@@ -134,7 +160,7 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(1, 1, 1, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(4, 30, 4, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(4, 15, 4, 0, 0, null);
 END
 GO 
 
@@ -393,6 +419,21 @@ CREATE TABLE WalletBalanceHistory
 	LastUpdate            DATETIME2,
 	PRIMARY KEY (ID)
 );
+GO
+
+-- Telegram Messages
+CREATE TABLE TelegramMessage
+(
+	ID                 UNIQUEIDENTIFIER,
+	MessageId          BIGINT,
+	TelegramChannelId  UNIQUEIDENTIFIER,
+	DateSended         DATETIME2,
+	IsDeleted		   BIT
+	PRIMARY KEY (ID),
+	FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
+GO
+
 -- ALERTS
 CREATE TABLE AlertConfiguration(
 	ID                    UNIQUEIDENTIFIER,
@@ -445,6 +486,38 @@ CREATE TABLE AlertParameter(
 	PRIMARY KEY (ID),
 	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
 );
+
+
+CREATE TABLE TokenAlphaConfiguration
+(
+	ID            UNIQUEIDENTIFIER,
+	MaxMarketcap  VARCHAR(100),
+	DateOfLaunch  DATETIME2,
+);
+GO
+
+CREATE TABLE TokenAlpha(
+	ID          UNIQUEIDENTIFIER,
+	TokenId     UNIQUEIDENTIFIER,
+	CallNumber  INT,
+	Marketcap   VARCHAR(100),
+	Price       VARCHAR(100),
+	CreateDate  DATETIME2,
+	LastUpdate  DATETIME2,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TokenId) REFERENCES Token(ID),
+);
+GO
+CREATE TABLE TokenAlphaWallet(
+	ID            UNIQUEIDENTIFIER,
+	TokenAlphaId  UNIQUEIDENTIFIER,
+	WalletId      UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TokenAlphaId) REFERENCES TokenAlpha(ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID)
+);
+GO
+
 
 DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
 DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
@@ -588,7 +661,8 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 ------------------------------------------------------------
 
-SELECT * FROM RunTimeController
+SELECT * FROM TelegramMessage Order By MessageId
+UPDATE RunTimeController SET IsRunning = 0 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (
 SELECT CASE WHEN IsLoadBalance = 1 THEN
