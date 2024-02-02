@@ -2,9 +2,9 @@
 
 namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request
 {
-    public class TelegramBotMessageRequest
+    public class TelegramBotMessageDeleteRequest
     {
         public long? ChatId { get; set; }
-        public string? Message { get; set; }
+        public long? MessageId { get; set; }
     }
 }

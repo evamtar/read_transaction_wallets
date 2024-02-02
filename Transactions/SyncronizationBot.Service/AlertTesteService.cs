@@ -50,7 +50,7 @@ namespace SyncronizationBot.Service
             };
             var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = signature });
             var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails?.Result?.Data);
-            var transferAccount = TransferManagerHelper.GetTransferAccount(walletHash, transactionDetails?.Result.Data[0].Source, transferManager);
+            var transferAccount = TransferManagerHelper.GetTransferAccount(walletHash, transactionDetails?.Result?.Data?[0].Source, transferManager);
             var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, _mappedTokensConfig.Value);
             if (transferInfo.TransactionType != ETransactionType.INDEFINED)
             {
@@ -69,8 +69,8 @@ namespace SyncronizationBot.Service
                     tokenReceivedPool = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferInfo.TokenReceivedPool?.Token });
 
                 var transactionDB = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == signature);
-                transactionDB.ClassWallet = "TESTE ALERT";
-                transactionDB.WalletHash = "TESTE ALERT";
+                transactionDB!.ClassWallet = "TESTE ALERT";
+                transactionDB!.WalletHash = "TESTE ALERT";
                 await this._mediator.Send(new SendTransactionAlertsCommand
                 {
                     Parameters = SendTransactionAlertsCommand.GetParameters(new object[]

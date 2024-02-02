@@ -11,6 +11,8 @@ namespace SyncronizationBot.Domain.Model.Enum
         [DescriptionAttribute("Carregar balanços da wallet")]
         Balance,
         [DescriptionAttribute("Alerta de preços")]
-        Price
+        Price,
+        [DescriptionAttribute("Excluir mensagens de log antigas")]
+        DeleteOldMessages,
     }
 }

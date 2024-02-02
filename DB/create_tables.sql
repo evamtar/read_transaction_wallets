@@ -134,6 +134,7 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(1, 1, 1, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(4, 30, 4, 0, 0, null);
 END
 GO 
 

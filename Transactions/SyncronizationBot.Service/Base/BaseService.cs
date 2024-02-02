@@ -135,6 +135,9 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.Price:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
+                case ETypeService.DeleteOldMessages:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
                 default:
                     break;
             }

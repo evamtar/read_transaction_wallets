@@ -116,7 +116,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private string? AdjustDateTimeToPtBR(DateTime? dateTime, bool? hasAdjustment)
         {
             if (hasAdjustment ?? false)
-                return (dateTime?.AddHours(_syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss");
+                return (dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0) ?? DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss");
             return dateTime?.ToString("dd/MM/yyyy HH:mm:ss");
         }
 

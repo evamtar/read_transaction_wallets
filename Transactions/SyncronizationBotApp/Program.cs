@@ -8,18 +8,21 @@ using Polly;
 using Polly.Extensions.Http;
 using SyncronizationBot.Application.Commands.Birdeye;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Birdeye;
 using SyncronizationBot.Application.Handlers.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Handlers.MainCommands.Delete;
 using SyncronizationBot.Application.Handlers.MainCommands.Read;
 using SyncronizationBot.Application.Handlers.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Handlers.MainCommands.Send;
 using SyncronizationBot.Application.Handlers.SolanaFM;
 using SyncronizationBot.Application.Response.Birdeye;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Response.MainCommands.Delete;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.MainCommands.Send;
@@ -91,10 +94,10 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
-
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
+    services.AddHostedService<DeleteOldsMessagesLogService>();
     #region Only For Test
 
     //services.AddHostedService<AlertTesteService>();
@@ -125,6 +128,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
+    services.AddTransient<IRequestHandler<DeleteTelegramMessageCommand, DeleteTelegramMessageCommandResponse>, DeleteTelegramMessageCommandHandler>();
 
     #endregion
 

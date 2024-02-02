@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Response
 {
-    public class TelegramBotMessageResponse
+    public class TelegramBotMessageSendResponse
     {
         public bool Ok { get; set; }
         public TelegramBotMessageResultResponse? Result { get; set; }
