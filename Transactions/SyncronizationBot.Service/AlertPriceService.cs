@@ -1,5 +1,7 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
+using Microsoft.Extensions.Options;
+using SyncronizationBot.Application.Commands.MainCommands.Send;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
@@ -9,7 +11,8 @@ namespace SyncronizationBot.Service
     public class AlertPriceService : BaseService
     {
         public AlertPriceService(IMediator mediator, 
-                                 IRunTimeControllerRepository runTimeControllerRepository) : base(mediator, runTimeControllerRepository, ETypeService.Price)
+                                 IRunTimeControllerRepository runTimeControllerRepository,
+                                 IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.Price, syncronizationBotConfig)
         {
         
         }
@@ -36,6 +39,7 @@ namespace SyncronizationBot.Service
                         }
                         catch (Exception ex)
                         {
+                            await base.SendAlertServiceError(ex, timer);
                             await this.DetachedRuntimeControllerAsync();
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
@@ -45,7 +49,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning();
+                        await base.SendAlertServiceRunning();
                         base.LogMessage($"Alerta de Preços Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 

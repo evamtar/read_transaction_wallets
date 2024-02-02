@@ -16,6 +16,8 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ap => ap.Class);
             builder.Property(ap => ap.Parameter);
             builder.Property(ap => ap.FixValue);
+            builder.Property(ap => ap.DefaultValue);
+            builder.Property(ap => ap.HasAdjustment); 
             builder.Property(ap => ap.IsIcon);
             builder.Property(ap => ap.IsImage);
             builder.HasOne(ap => ap.AlertInformation).WithMany(ai => ai.AlertsParameters).HasForeignKey(ap => ap.AlertInformationId);

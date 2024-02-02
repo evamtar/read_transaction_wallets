@@ -1,9 +1,11 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
+using Microsoft.Extensions.Options;
+using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.Read;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.Base;
-using SyncronizationBot.Utils;
 
 
 namespace SyncronizationBot.Service
@@ -11,7 +13,8 @@ namespace SyncronizationBot.Service
     public class LoadBalanceWalletsService : BaseService
     {
         public LoadBalanceWalletsService(IMediator mediator,
-                                         IRunTimeControllerRepository runTimeControllerRepository):base(mediator, runTimeControllerRepository, ETypeService.Balance)
+                                         IRunTimeControllerRepository runTimeControllerRepository, 
+                                         IOptions<SyncronizationBotConfig> syncronizationBotConfig) :base(mediator, runTimeControllerRepository, ETypeService.Balance, syncronizationBotConfig)
         {
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
@@ -37,6 +40,7 @@ namespace SyncronizationBot.Service
                         }
                         catch (Exception ex)
                         {
+                            await base.SendAlertServiceError(ex, timer);
                             await this.DetachedRuntimeControllerAsync();
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
@@ -46,7 +50,7 @@ namespace SyncronizationBot.Service
                     }
                     else
                     {
-                        await base.SendAlertAppRunning();
+                        await base.SendAlertServiceRunning();
                         base.LogMessage($"Atualização de saldo Rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
 

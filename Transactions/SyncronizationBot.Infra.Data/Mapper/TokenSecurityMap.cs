@@ -11,7 +11,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("TokenSecurity");
             builder.Property(ts => ts.ID);
-            builder.Property(ts => ts.IdToken);
+            builder.Property(ts => ts.TokenId);
             builder.Property(ts => ts.CreatorAddress);
             builder.Property(ts => ts.CreationTime);
             builder.Property(ts => ts.Top10HolderBalance).HasConversion<string?>();
@@ -29,7 +29,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ts => ts.MintAuthority);
             builder.Property(ts => ts.IsMutable);
             builder.Ignore(ts => ts.CreationTimeDate);
-            builder.HasOne(ts => ts.Token).WithMany(t => t.TokenSecurities).HasForeignKey(ts => ts.IdToken);
+            builder.HasOne(ts => ts.Token).WithMany(t => t.TokenSecurities).HasForeignKey(ts => ts.TokenId);
             builder.HasKey(ts => ts.ID);
         }
     }

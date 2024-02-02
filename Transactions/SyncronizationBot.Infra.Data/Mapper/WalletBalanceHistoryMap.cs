@@ -10,9 +10,9 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("WalletBalanceHistory");
             builder.Property(wbh => wbh.ID);
-            builder.Property(wbh => wbh.IdWalletBalance);
-            builder.Property(wbh => wbh.IdWallet);
-            builder.Property(wbh => wbh.IdToken);
+            builder.Property(wbh => wbh.WalletBalanceId);
+            builder.Property(wbh => wbh.WalletId);
+            builder.Property(wbh => wbh.TokenId);
             builder.Property(wbh => wbh.TokenHash); 
             builder.Property(wbh => wbh.OldQuantity).HasConversion<string?>();
             builder.Property(wbh => wbh.NewQuantity).HasConversion<string?>();
@@ -21,9 +21,10 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(wbh => wbh.Price).HasConversion<string?>();
             builder.Property(wbh => wbh.TotalValueUSD).HasConversion<string?>();
             builder.Property(wbh => wbh.Signature);
+            builder.Property(wbh => wbh.FontType); 
             builder.Property(wbh => wbh.CreateDate);
             builder.Property(wbh => wbh.LastUpdate);
-            builder.HasKey(cw => cw.ID);
+            builder.HasKey(wbh => wbh.ID);
         }
     }
 }

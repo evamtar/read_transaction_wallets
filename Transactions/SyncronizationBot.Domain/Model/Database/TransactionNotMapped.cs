@@ -4,7 +4,7 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class TransactionNotMapped : Entity
     {
-        public Guid? IdWallet { get; set; }
+        public Guid? WalletId { get; set; }
         public string? Signature { get; set; }
         public string? Link { get; set; }
         public string? Error { get; set; }

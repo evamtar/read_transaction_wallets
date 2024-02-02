@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Infra.Cro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncronizationBot.Utils", "SyncronizationBot.Utils\SyncronizationBot.Utils.csproj", "{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Test", "6 - Test", "{4016C018-AFC3-4146-8BCD-E2E62BD613B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncronizationBot.Test", "SyncronizationBot.Test\SyncronizationBot.Test.csproj", "{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,10 @@ Global
 		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +87,7 @@ Global
 		{595381CC-5D14-481E-BF0D-90E54BF2B1A5} = {CB65C00E-C61B-4606-8B65-2D7C302806FE}
 		{50974CD4-F7B5-4455-85AF-DE7056F39FDE} = {3B78789B-FE8C-4374-AEBC-80DAAF73CDAD}
 		{0526A18B-DBB1-4B0D-8B9B-525CD7F02A65} = {A09392CB-2A8B-4265-B27B-39FD96F58183}
+		{7FA14E17-9693-4ACD-A07B-6E6A9ED704A2} = {4016C018-AFC3-4146-8BCD-E2E62BD613B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0DE01E3D-9AAF-4DFC-95AF-630848C917B1}

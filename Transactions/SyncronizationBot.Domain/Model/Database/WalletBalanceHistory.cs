@@ -1,12 +1,13 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
+using SyncronizationBot.Domain.Model.Enum;
 
 namespace SyncronizationBot.Domain.Model.Database
 {
     public class WalletBalanceHistory : Entity
     {
-        public Guid? IdWalletBalance { get; set; }
-        public Guid? IdWallet { get; set; }
-        public Guid? IdToken { get; set; }
+        public Guid? WalletBalanceId { get; set; }
+        public Guid? WalletId { get; set; }
+        public Guid? TokenId { get; set; }
         public string? TokenHash { get; set; }
         public decimal? OldQuantity { get; set; }
         public decimal? NewQuantity { get; set; }
@@ -15,6 +16,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? Price { get; set; }
         public decimal? TotalValueUSD { get; set; }
         public string? Signature { get; set; }
+        public EFontType FontType { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
     }
