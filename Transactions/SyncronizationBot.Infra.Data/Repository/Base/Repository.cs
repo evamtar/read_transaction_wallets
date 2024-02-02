@@ -25,8 +25,11 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
 
         public async Task<T> DetachedItem(T item)
         {
-            _context.Entry(item).State = EntityState.Detached;
-            await _context.SaveChangesAsync();
+            try 
+            {
+                _context.Entry(item).State = EntityState.Detached;
+                await _context.SaveChangesAsync();
+            }catch{ }
             return item;
         }
 

@@ -6,7 +6,7 @@ using SyncronizationBot.Infra.Data.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.Repository
 {
-    public class TokenAlphaConfigurationRepository : Repository<TokenAlphaConfiguration> ITokenAlphaConfigurationRepository
+    public class TokenAlphaConfigurationRepository : Repository<TokenAlphaConfiguration> , ITokenAlphaConfigurationRepository
     {
         public TokenAlphaConfigurationRepository(SqlContext context) : base(context)
         {

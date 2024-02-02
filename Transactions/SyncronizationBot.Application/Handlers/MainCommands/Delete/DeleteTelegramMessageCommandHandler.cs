@@ -43,7 +43,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                     {
                         message.IsDeleted = true;
                         await this._telegramMessageRepository.Edit(message);
-                        try { await this._telegramMessageRepository.DetachedItem(message); } catch { }
+                        await this._telegramMessageRepository.DetachedItem(message);
                     }
                 }
             }

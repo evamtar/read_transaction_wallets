@@ -53,7 +53,7 @@ namespace SyncronizationBot.Application.Handlers.Base
         {
             wallet.UnixTimeSeconds = finalTicks;
             await _walletRepository.Edit(wallet);
-            try { await _walletRepository.DetachedItem(wallet); } catch { }
+            await _walletRepository.DetachedItem(wallet);
         }
         protected decimal? GetDivisor(int? decimals)
         {

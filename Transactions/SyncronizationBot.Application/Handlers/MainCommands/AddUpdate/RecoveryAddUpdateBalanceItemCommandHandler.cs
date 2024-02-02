@@ -97,7 +97,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 }
                 balance.LastUpdate = DateTime.Now;
                 balance = await _walletBalanceRepository.Edit(balance);
-                try { await _walletBalanceRepository.DetachedItem(balance); } catch { }
+                await _walletBalanceRepository.DetachedItem(balance);
             }
 
             await _walletBalanceHistoryRepository.Add(new WalletBalanceHistory

@@ -60,8 +60,8 @@ namespace SyncronizationBot.Service.Base
 
         protected async Task<RunTimeController?> DetachedRuntimeControllerAsync()
         {
-            try { if(this.RunTimeController != null) this.RunTimeController = await this._runTimeControllerRepository.DetachedItem(this.RunTimeController); }
-            catch { }//NOTHING HERE 
+            if(this.RunTimeController != null) 
+                this.RunTimeController = await this._runTimeControllerRepository.DetachedItem(this.RunTimeController); 
             return this.RunTimeController;
         }
 

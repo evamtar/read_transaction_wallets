@@ -37,7 +37,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                             balance.TotalValueUSD = balance.Quantity * (prices?.Data?[balance.TokenHash!].Price ?? 0);
                         balance.LastUpdate = DateTime.Now;
                         await _walletBalanceRepository.Edit(balance);
-                        try { await _walletBalanceRepository.DetachedItem(balance); } catch { }
+                        await _walletBalanceRepository.DetachedItem(balance);
                     }
                 }
             }
