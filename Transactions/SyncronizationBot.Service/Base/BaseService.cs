@@ -127,7 +127,7 @@ namespace SyncronizationBot.Service.Base
             switch (this._typeService)
             {
                 case ETypeService.Transaction:
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.ForegroundColor = ConsoleColor.Green;
                     break;
                 case ETypeService.Balance:
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -136,6 +136,9 @@ namespace SyncronizationBot.Service.Base
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
                 case ETypeService.DeleteOldMessages:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case ETypeService.AlertTokenAlpha:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
                 default:

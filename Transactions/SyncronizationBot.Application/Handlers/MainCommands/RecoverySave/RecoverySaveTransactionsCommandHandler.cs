@@ -147,9 +147,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     {
                                         WalletId = request?.WalletId,
                                         TokenId = transactionDB?.TokenDestinationId,
-                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
-                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
-                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB.TypeOperation),
+                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         Signature = transactionDB?.Signature,
                                         MarketCap = transactionDB?.MtkcapTokenDestination,
                                         Price = tokenReceived?.Price,
@@ -225,7 +225,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-        private decimal? CalculatedTotalSol(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation typeOperation) 
+        private decimal? CalculatedTotalSol(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation) 
         {
             switch (typeOperation)
             {
@@ -241,7 +241,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             }
             return null;
         }
-        private decimal? CalculatedTotalUSD(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation typeOperation)
+        private decimal? CalculatedTotalUSD(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
             {

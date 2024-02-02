@@ -14,5 +14,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         Price,
         [DescriptionAttribute("Excluir mensagens de log antigas")]
         DeleteOldMessages,
+        [DescriptionAttribute("Alerta de Token Alpha")]
+        AlertTokenAlpha,
     }
 }
