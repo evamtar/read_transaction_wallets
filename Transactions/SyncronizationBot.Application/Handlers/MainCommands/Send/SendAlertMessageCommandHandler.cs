@@ -91,8 +91,65 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if ((type?.IsGenericType ?? false) && type?.GetGenericTypeDefinition() == typeof(List<>))
                             {
                                 var genericList = ((IList?)objParameter);
-                                int.TryParse(splitValue.Replace("[", string.Empty).Replace("]", string.Empty), out var index);
-                                objectFinded = genericList?[index];
+                                if (splitValue.StartsWith("Invoke"))
+                                {
+                                    if (splitValue.Contains("|"))
+                                    {
+                                        var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                                        var subInstruction = separetedInstructionAndParameters[0].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (subInstruction[subInstruction.Length - 1] == "Sum")
+                                        {
+                                            var sum = (decimal?)0;
+                                            foreach (var item in genericList)
+                                            {
+                                                var objPropertyInfo = item.GetType().GetProperty(separetedInstructionAndParameters[separetedInstructionAndParameters.Length - 1]);
+                                                var value = objPropertyInfo?.GetValue(item);
+                                                if (value?.GetType() == typeof(decimal) || value?.GetType() == typeof(decimal?) ||
+                                                    value?.GetType() == typeof(double) || value?.GetType() == typeof(double?) ||
+                                                    value?.GetType() == typeof(int) || value?.GetType() == typeof(int?))
+                                                    sum += (decimal?)objPropertyInfo?.GetValue(item);
+                                            }
+                                            return sum.ToString();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var subInstruction = splitValue.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (subInstruction[subInstruction.Length - 1] == "Count")
+                                            return genericList?.Count.ToString();
+                                    }
+                                }
+                                else if (splitValue.StartsWith("RANGE"))
+                                {
+                                    if (splitValue.Contains("|")) 
+                                    {
+                                        var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                                        var subInstruction = separetedInstructionAndParameters[0].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (subInstruction[subInstruction.Length - 1] == "ALL")
+                                        {
+                                            var aggregateValue = string.Empty;
+                                            foreach (var item in genericList)
+                                            {
+                                                var objPropertyInfo = item.GetType().GetProperty(separetedInstructionAndParameters[separetedInstructionAndParameters.Length - 1]);
+                                                aggregateValue += " - " + objPropertyInfo?.GetValue(item)?.ToString() + "{{NEWLINE}}";
+                                            }
+                                            return aggregateValue;
+                                        }
+                                        else 
+                                        {
+                                            //TODO
+                                        }
+                                    }
+                                    else
+                                    { 
+                                        //TODO
+                                    }
+                                }
+                                else 
+                                {
+                                    int.TryParse(splitValue.Replace("[", string.Empty).Replace("]", string.Empty), out var index);
+                                    objectFinded = genericList?[index];
+                                }
                             }
                             else
                             propertyFinded = objectFinded?.GetType().GetProperty(splitValue);

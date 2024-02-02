@@ -161,6 +161,7 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(4, 15, 4, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(5, 1, 5, 0, 0, null);
 END
 GO 
 
@@ -433,61 +434,7 @@ CREATE TABLE TelegramMessage
 	FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
 );
 GO
-
--- ALERTS
-CREATE TABLE AlertConfiguration(
-	ID                    UNIQUEIDENTIFIER,
-	[Name]                VARCHAR(200),
-	TypeAlert             INT, -- 1 BUY, 2 - REBUY, 3 - SELL, 4 - SWAP, 5 - POOL CREATE, 6 - POOL FINISH
-	TelegramChannelId     UNIQUEIDENTIFIER,
-	IsActive              BIT,
-	CreateDate            DATETIME2,
-	LastUpdate            DATETIME2,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
-);
-
-DECLARE @IdTelegramChannel UNIQUEIDENTIFIER;
-SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolanaLog';
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Execute', -1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Running', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Lost Configuration', -4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolana';
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Buy', 1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Rebuy', 2, @IdTelegramChannel,  1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Sell', 3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Swap', 4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Create', 5, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Finish', 6, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange';
-INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Price', 7, @IdTelegramChannel, 1, GETDATE(), GETDATE());
-CREATE TABLE AlertInformation(
-	ID                    UNIQUEIDENTIFIER,
-	[Message]             VARCHAR(4000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-	IdClassification      INT,
-	AlertConfigurationId  UNIQUEIDENTIFIER,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),
-	
-);
-
-CREATE TABLE AlertParameter(
-	ID                    UNIQUEIDENTIFIER,
-	[Name]                VARCHAR(200),
-	AlertInformationId    UNIQUEIDENTIFIER,
-	[Class]               VARCHAR(255),
-	[Parameter]           VARCHAR(255),
-	[FixValue]            VARCHAR(200),
-	[DefaultValue]        VARCHAR(200),
-	[HasAdjustment]       BIT,
-	IsIcon				  BIT,
-	IsImage               BIT
-	PRIMARY KEY (ID),
-	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
-);
-
-
+-- Token Alpha
 CREATE TABLE TokenAlphaConfiguration
 (
 	ID                   UNIQUEIDENTIFIER,
@@ -528,6 +475,7 @@ CREATE TABLE TokenAlpha(
 	FOREIGN KEY (TokenAlphaConfigurationId) REFERENCES TokenAlphaConfiguration(ID)
 );
 GO
+
 CREATE TABLE TokenAlphaWallet(
 	ID             UNIQUEIDENTIFIER,
 	NumberOfBuys   INT,
@@ -541,6 +489,62 @@ CREATE TABLE TokenAlphaWallet(
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID)
 );
 GO
+-- ALERTS
+CREATE TABLE AlertConfiguration(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	TypeAlert             INT, -- 1 BUY, 2 - REBUY, 3 - SELL, 4 - SWAP, 5 - POOL CREATE, 6 - POOL FINISH
+	TelegramChannelId     UNIQUEIDENTIFIER,
+	IsActive              BIT,
+	CreateDate            DATETIME2,
+	LastUpdate            DATETIME2,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
+
+DECLARE @IdTelegramChannel UNIQUEIDENTIFIER;
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolanaLog';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Execute', -1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Running', -2, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Error', -3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Log Service Lost Configuration', -4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'CallSolana';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Buy', 1, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Rebuy', 2, @IdTelegramChannel,  1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Sell', 3, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Swap', 4, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Create', 5, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Pool Finish', 6, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Price', 7, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+SELECT @IdTelegramChannel = ID FROM TelegramChannel WHERE ChannelName = 'TokenAlpha';
+INSERT INTO AlertConfiguration VALUES(NEWID(), 'Alert For Token Alpha', 8, @IdTelegramChannel, 1, GETDATE(), GETDATE());
+CREATE TABLE AlertInformation(
+	ID                    UNIQUEIDENTIFIER,
+	[Message]             VARCHAR(4000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+	IdClassification      INT,
+	AlertConfigurationId  UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),
+	
+);
+
+CREATE TABLE AlertParameter(
+	ID                    UNIQUEIDENTIFIER,
+	[Name]                VARCHAR(200),
+	AlertInformationId    UNIQUEIDENTIFIER,
+	[Class]               VARCHAR(255),
+	[Parameter]           VARCHAR(255),
+	[FixValue]            VARCHAR(200),
+	[DefaultValue]        VARCHAR(200),
+	[HasAdjustment]       BIT,
+	IsIcon				  BIT,
+	IsImage               BIT
+	PRIMARY KEY (ID),
+	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
+);
+
+
 
 
 DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
@@ -683,9 +687,26 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenName}}', @IdAlertInformation
 INSERT INTO AlertParameter VALUES (NEWID(), '{{PriceChance}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response.TokenData', 'Price', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.AlertPrice', 'IsRecurrence', NULL, NULL, 0, 0, 0);
 
-------------------------------------------------------------
+SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 8; -- Alert Token Alpha
+SELECT @IdAlertInformation = NEWID();
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<s>Alpha Classification:</s> {{AlphaRange}}{{NEWLINE}}<s>CallNumber:</s> {{CallNumber}}{{NEWLINE}}<s>Token Ca:</s> {{TokenCa}}{{NEWLINE}}<s>Name:</s> {{TokenName}}{{NEWLINE}}<s>Symbol:</s> {{TokenSymbol}}{{NEWLINE}}<s>MarketCap:</s> {{MarketCap}}{{NEWLINE}}<s>Price:</s> {{Price}}{{NEWLINE}}<s>Actual MarketCap:</s> {{ActualMarketCap}}{{NEWLINE}}<s>Actual Price:</s> {{ActualPrice}}{{NEWLINE}}<s>TotalWalletsBuy:</s> {{TotalWalletsBuy}}{{NEWLINE}}<s>ValueBuyInSol:</s> {{ValueBuyInSol}}{{NEWLINE}}<s>ValueBuyInUSD:</s> {{ValueBuyInUSD}}{{NEWLINE}}<s>Wallets:</s> {{NEWLINE}}{{RangeWallets}}', null, @IdAlertConfiguration);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{AlphaRange}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlphaConfiguration', 'Name', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{CallNumber}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'CallNumber', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Hash', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenName}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Name', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenSymbol}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Symbol', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{MarketCap}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'InitialMarketcap', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Price}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'InitialPrice', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ActualMarketCap}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'ActualMarketcap', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ActualPrice}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'ActualPrice', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TotalWalletsBuy}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Count', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInSol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentSol', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInUSD}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentUSDC', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.Wallet]', 'RANGE-ALL|Hash', NULL, NULL, 0, 0, 0);
 
-SELECT * FROM RunTimeController Order By MessageId
+------------------------------------------------------------
+UPDATE TokenAlpha SET IsCalledInChannel = 0
+SELECT * FROM TokenAlpha Order By MessageId
 UPDATE RunTimeController SET IsRunning = 0 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (

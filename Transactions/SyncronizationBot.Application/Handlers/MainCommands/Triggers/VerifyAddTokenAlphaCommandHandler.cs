@@ -53,6 +53,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     });
                     await this._tokenAlphaWalletRepository.DetachedItem(tokekAlphaWallet);
                 }
+                tokenAlphaCalled.CallNumber += 1;
                 tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
                 tokenAlphaCalled.ActualPrice = request?.Price;
                 tokenAlphaCalled.IsCalledInChannel = false;

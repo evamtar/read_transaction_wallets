@@ -31,7 +31,7 @@ namespace SyncronizationBot.Service
                         try
                         {
                             await base.SetRuntimeControllerAsync(true, false);
-                            await this._mediator.Send(new SendAlertPriceCommand { });
+                            await this._mediator.Send(new SendAlertTokenAlphaCommand { });
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"End Token Alpha: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await base.SendAlertExecute(timer);

@@ -99,6 +99,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddHostedService<ReadTransactionWalletsService>();
     services.AddHostedService<AlertPriceService>();
+    services.AddHostedService<AlertTokenAlphaService>();
     services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
 
@@ -139,6 +140,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Globais
 
     services.AddTransient<IRequestHandler<VerifyAddTokenAlphaCommand, VerifyAddTokenAlphaCommandResponse>, VerifyAddTokenAlphaCommandHandler>();
+    
 
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
@@ -152,6 +154,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<SendTransactionAlertsCommand, SendTransactionAlertsCommandResponse>, SendTransactionAlertsCommandHandler>();
+    services.AddTransient<IRequestHandler<SendAlertTokenAlphaCommand, SendAlertTokenAlphaCommandResponse>, SendAlertTokenAlphaCommandHandler>();
 
     #endregion
 
