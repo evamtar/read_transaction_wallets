@@ -37,7 +37,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
             var hasNext = message != null;
             while (hasNext) 
             {
-                var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
+                var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message!.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
                 if (response.Result ?? false)
                 {
                     message.IsDeleted = true;
