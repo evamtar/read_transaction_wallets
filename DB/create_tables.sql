@@ -149,7 +149,7 @@ BEGIN
 	CREATE TABLE RunTimeController
 	(	
 		IdRuntime				 INT,
-		ConfigurationTimer		 INT,
+		ConfigurationTimer		 DECIMAL(6, 3),
 		TypeService				 INT,
 		IsRunning				 BIT,
 		IsContingecyTransactions BIT,
@@ -159,7 +159,7 @@ BEGIN
 	INSERT INTO RunTimeController VALUES(1, 1, 1, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(4, 5, 4, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(4, 4.183, 4, 0, 0, null);
 	INSERT INTO RunTimeController VALUES(5, 1, 5, 0, 0, null);
 END
 GO 
@@ -705,8 +705,8 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformat
 
 ------------------------------------------------------------
 UPDATE TokenAlpha SET IsCalledInChannel = 0
-SELECT * FROM RunTimeController Order By MessageId
-UPDATE RunTimeController SET ConfigurationTimer = 5 WHERE TypeService = 4
+SELECT * FROM RunTimeController
+UPDATE RunTimeController SET ConfigurationTimer = 4.19 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (
 SELECT CASE WHEN IsLoadBalance = 1 THEN
@@ -718,3 +718,6 @@ SELECT CASE WHEN IsLoadBalance = 1 THEN
 AS T1
 GROUP BY T1.StatusLoad
 
+SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176' AND WalletId = '606E7ECE-4226-4643-948C-7B278D324D4A' AND Signature != '5Pnu4SvW6EiTpZ6M4oGjy1GS8Juqyf52czpz1kkPmQCSenXDbsnG2kfkNLjrJpDL57aQAe9hzEDroA3MjvQV7toV'
+SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176'
+SELECT COUNT(*), TokenId FROM WalletBalanceHistory WHERE Signature != 'CREATE BALANCE' GROUP BY TokenId ORDER BY 1 DESC

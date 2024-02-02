@@ -66,9 +66,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 var buysBeforeThis = await this._walletBalanceHistoryRepository.Get(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
                 if (buysBeforeThis == null || buysBeforeThis.Count() == 0) 
                 {
+                    Console.WriteLine($"*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* Init Alpha Verify *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+                    Console.WriteLine($" request.MarketCap = {request.MarketCap}");
+                    Console.WriteLine($" request.LaunchDate = {request.LaunchDate}"); 
+                    Console.WriteLine($" DateTime.Now.AddDays(x.MaxDateOfLaunchDays ?? 0) = {DateTime.Now}");
                     var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.MaxMarketcap < request.MarketCap && request.LaunchDate < DateTime.Now.AddDays(x.MaxDateOfLaunchDays ?? 0), x => x.Ordernation!);
+                    Console.WriteLine($" tokenAlphaConfiguration != null = {tokenAlphaConfiguration != null}");
                     if (tokenAlphaConfiguration != null)
                     {
+                        Console.WriteLine($"*** ALPHA IS HERE ***");
                         var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha 
                         {
                             CallNumber = 1,
@@ -93,6 +99,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             ValueSpentUSDT = request?.ValueBuyUSDT
                         });
                     }
+                    Console.WriteLine($"*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* End Alpha Verify *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
                 }
             }
             return new VerifyAddTokenAlphaCommandResponse { };
