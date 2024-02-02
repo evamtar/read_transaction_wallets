@@ -12,7 +12,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
         {
             builder.ToTable("RunTimeController");
             builder.Property(rt => rt.IdRuntime);
-            builder.Property(rt => rt.ConfigurationTimer);
+            builder.Property(rt => rt.ConfigurationTimer).HasPrecision(6, 3);
             builder.Property(rt => rt.TypeService); 
             builder.Property(rt => rt.IsRunning);
             builder.Property(rt => rt.IsContingecyTransactions);
