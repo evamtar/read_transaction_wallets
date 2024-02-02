@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.Commands;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
@@ -10,7 +9,7 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
-using SyncronizationBot.Utils;
+
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 {

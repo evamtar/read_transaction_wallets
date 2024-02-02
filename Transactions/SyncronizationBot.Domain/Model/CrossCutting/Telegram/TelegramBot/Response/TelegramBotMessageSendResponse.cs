@@ -8,16 +8,16 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Respo
     public class TelegramBotMessageSendResponse
     {
         public bool Ok { get; set; }
-        public TelegramBotMessageResultResponse? Result { get; set; }
+        public TelegramBotMessageSendResultResponse? Result { get; set; }
     }
 
-    public class TelegramBotMessageResultResponse
+    public class TelegramBotMessageSendResultResponse
     {
         [JsonProperty("message_id")]
         public long? MessageId { get; set; }
         public string? AuthorSignature { get; set; }
-        public TelegramBotMessageChatResponse? SenderChat { get; set; }
-        public TelegramBotMessageChatResponse? Chat { get; set; }
+        public TelegramBotMessageSendChatResponse? SenderChat { get; set; }
+        public TelegramBotMessageSendChatResponse? Chat { get; set; }
         public long? Date { get; set; }
         public DateTime? DateOfMessage
         {
@@ -29,17 +29,17 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Respo
             }
         }
         public string? Text { get; set; }
-        public List<TelegramBotMessageEntityResponse>? Entities { get; set; }
+        public List<TelegramBotMessageSendEntityResponse>? Entities { get; set; }
     }
 
-    public class TelegramBotMessageChatResponse
+    public class TelegramBotMessageSendChatResponse
     {
         public long Id { get; set; }
         public string? Title { get; set; }
         public string? Type { get; set; }
     }
 
-    public class TelegramBotMessageEntityResponse
+    public class TelegramBotMessageSendEntityResponse
     {
         public int Offset { get; set; }
         public int Length { get; set; }
