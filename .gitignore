@@ -84,3 +84,5 @@ dkms.conf
 /Transactions/SyncronizationBot.Utils/obj
 /Transactions/SyncronizationBotApp/bin/Debug/net8.0
 /Transactions/SyncronizationBotApp/obj
+/Transactions/SyncronizationBot.Test/bin/Debug/net8.0
+/Transactions/SyncronizationBot.Test/obj
