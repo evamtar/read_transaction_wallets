@@ -18,18 +18,18 @@ namespace SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
         }
 
-        public async Task<TelegramBotChatResponse> ExecuteRecoveryChatAsync(TelegramBotChatRequest request)
+        public async Task<TelegramBotResponse> ExecuteRecoveryChatAsync(TelegramBotRequest request)
         {
             var response = await _httpClient.PostAsync(string.Format(_config.Value.ParametersUrlPostChannel ?? string.Empty, _config.Value.Token ?? string.Empty), null);
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TelegramBotChatResponse>(responseBody) ?? new TelegramBotChatResponse { };
+            return JsonConvert.DeserializeObject<TelegramBotResponse>(responseBody) ?? new TelegramBotResponse { };
         }
 
-        public async Task<TelegramBotMessageResponse> ExecuteSendMessageAsync(TelegramBotMessageRequest request)
+        public async Task<TelegramBotResponse> ExecuteSendMessageAsync(TelegramBotRequest request)
         {
-            var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrlSendMessage ?? string.Empty, _config.Value.Token ?? string.Empty, request.ChatId, request.Message));
-            var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TelegramBotMessageResponse>(responseBody) ?? new TelegramBotMessageResponse { }; ;
+            //var response = await _httpClient.GetAsync(string.Format(_config.Value.ParametersUrlSendMessage ?? string.Empty, _config.Value.Token ?? string.Empty, request.ChatId, request.Message));
+            //var responseBody = await response.Content.ReadAsStringAsync();
+            return new TelegramBotResponse { };
         }
     }
 }
