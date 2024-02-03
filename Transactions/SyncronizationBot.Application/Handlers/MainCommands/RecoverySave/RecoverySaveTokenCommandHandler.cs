@@ -138,45 +138,61 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             }
             else
             {
-                //Get WITH Price update
-                tokenResponse = await _tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
-                if (tokenResponse != null)
+                if (token?.LastUpdate > DateTime.Now.AddMinutes(-3))
                 {
-                    token.Hash = tokenResponse?.Data?.Address;
-                    token.Symbol = tokenResponse?.Data?.Symbol;
-                    token.Name = tokenResponse?.Data?.Name;
-                    token.Supply = tokenResponse?.Data?.Supply;
-                    token.MarketCap = tokenResponse?.Data?.Mc;
-                    token.Liquidity = tokenResponse?.Data?.Liquidity;
-                    token.UniqueWallet24h = (int?)tokenResponse?.Data?.UniqueWallet24H;
-                    token.UniqueWalletHistory24h = (int?)tokenResponse?.Data?.UniqueWalletHistory24H;
-                    token.Decimals = (int?)tokenResponse?.Data?.Decimals;
-                    token.NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets;
-                    token.LastUpdate = DateTime.Now;
-                    await this._tokenRepository.Edit(token);
-                    await this._tokenRepository.DetachedItem(token);
+                    //Se atualizou a menos de 3 minutos não bate na API
                     tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
+                    await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
                 }
                 else 
                 {
-                    //Recupera preço da Jupiter
-                    var tokenSymbol = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
-                    if (tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
+                    //Get WITH Price update
+                    tokenResponse = await _tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
+                    if (tokenResponse != null)
                     {
-                        token.MarketCap = tokenSymbol?.Data?[request!.TokenHash!].Price * token.Supply;
+                        token!.Hash = tokenResponse?.Data?.Address;
+                        token!.Symbol = tokenResponse?.Data?.Symbol;
+                        token!.Name = tokenResponse?.Data?.Name;
+                        token!.Supply = tokenResponse?.Data?.Supply;
+                        token!.MarketCap = tokenResponse?.Data?.Mc;
+                        token!.Liquidity = tokenResponse?.Data?.Liquidity;
+                        token!.UniqueWallet24h = (int?)tokenResponse?.Data?.UniqueWallet24H;
+                        token!.UniqueWalletHistory24h = (int?)tokenResponse?.Data?.UniqueWalletHistory24H;
+                        token!.Decimals = (int?)tokenResponse?.Data?.Decimals;
+                        token!.NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets;
+                        token!.LastUpdate = DateTime.Now;
                         await this._tokenRepository.Edit(token);
                         await this._tokenRepository.DetachedItem(token);
+                        tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
+                        await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
                     }
-                    else 
+                    else
                     {
-                        //Recupera price da dexscreener
-                        var tokenResult = await this._dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
-                        if (tokenResult != null)
+                        //Recupera preço da Jupiter
+                        var tokenSymbol = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
+                        if (tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
                         {
-                            token.MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv;
-                            token.Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd);
+                            token!.MarketCap = tokenSymbol?.Data?[request!.TokenHash!].Price * token.Supply;
+                            token!.LastUpdate = DateTime.Now;
                             await this._tokenRepository.Edit(token);
                             await this._tokenRepository.DetachedItem(token);
+                            tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
+                            await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+                        }
+                        else
+                        {
+                            //Recupera price da dexscreener
+                            var tokenResult = await this._dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
+                            if (tokenResult != null)
+                            {
+                                token!.MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv;
+                                token!.Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd);
+                                token!.LastUpdate = DateTime.Now;
+                                await this._tokenRepository.Edit(token);
+                                await this._tokenRepository.DetachedItem(token);
+                                tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
+                                await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+                            }
                         }
                     }
                 }
