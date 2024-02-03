@@ -149,18 +149,18 @@ BEGIN
 	CREATE TABLE RunTimeController
 	(	
 		IdRuntime				 INT,
-		ConfigurationTimer		 DECIMAL(6, 3),
+		ConfigurationTimer		 VARCHAR(100),
 		TypeService				 INT,
 		IsRunning				 BIT,
 		IsContingecyTransactions BIT,
 		TimesWithoutTransactions INT,
 		PRIMARY KEY(IdRuntime)
 	);
-	INSERT INTO RunTimeController VALUES(1, 1, 1, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(2, 1, 2, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(3, 1, 3, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(4, 4.183, 4, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(5, 1, 5, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(1, '1', 1, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(2, '1', 2, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(4, '4.183', 4, 0, 0, null);
+	INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null);
 END
 GO 
 
@@ -229,7 +229,7 @@ CREATE TABLE TokenSecurity(
     ID                 UNIQUEIDENTIFIER,
 	TokenId            UNIQUEIDENTIFIER,
 	CreatorAddress     VARCHAR(100),
-	CreationTime       DECIMAL(20,0),
+	CreationTime       BIGINT,
 	Top10HolderBalance VARCHAR(150),
 	Top10HolderPercent VARCHAR(150),
 	Top10UserBalance   VARCHAR(150),
