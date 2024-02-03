@@ -236,7 +236,7 @@ CREATE TABLE TokenSecurity(
 	Top10UserPercent   VARCHAR(150),
 	IsTrueToken        BIT,
 	LockInfo		   VARCHAR(100),
-	Freezeable		   VARCHAR(100),
+	Freezeable		   BIT,
 	FreezeAuthority    VARCHAR(100),
 	TransferFeeEnable  VARCHAR(100),
 	TransferFeeData    VARCHAR(100),
@@ -730,5 +730,4 @@ SELECT COUNT(*), TokenId FROM WalletBalanceHistory WHERE Signature != 'CREATE BA
 INNER JOIN ClassWallet c
         ON c.ID = w.ClassWalletId
 
-	DELETE FROM TokenAlpha
-	DELETE FROM TokenAlphaWallet
+	SELECT * FROM TokenSecurity WHERE TransferFeeEnable IS NOT NULL

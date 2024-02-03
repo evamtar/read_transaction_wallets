@@ -34,9 +34,9 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Resp
         public decimal? TotalSupply { get; set; }
         public List<object>? PreMarketHolder { get; set; }
         public object? LockInfo { get; set; }
-        public object? Freezeable { get; set; }
-        public object? FreezeAuthority { get; set; }
-        public object? TransferFeeEnable { get; set; }
+        public bool? Freezeable { get; set; }
+        public string? FreezeAuthority { get; set; }
+        public bool? TransferFeeEnable { get; set; }
         public object? TransferFeeData { get; set; }
         public bool IsToken2022 { get; set; }
         public object? NonTransferable { get; set; }

@@ -12,6 +12,8 @@ using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using System.Xml.Linq;
 using System;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json;
 
 
 
@@ -78,13 +80,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         Top10UserBalance = tokenSecurityResponse?.Data?.Top10UserBalance,
                         Top10UserPercent = tokenSecurityResponse?.Data?.Top10UserPercent,
                         IsTrueToken = tokenSecurityResponse?.Data?.IsTrueToken,
-                        LockInfo = (string?)tokenSecurityResponse?.Data?.LockInfo,
-                        Freezeable = (string?)tokenSecurityResponse?.Data?.Freezeable,
-                        FreezeAuthority = (string?)tokenSecurityResponse?.Data?.FreezeAuthority,
-                        TransferFeeEnable = (string?)tokenSecurityResponse?.Data?.TransferFeeEnable,
-                        TransferFeeData = (string?)tokenSecurityResponse?.Data?.TransferFeeData,
+                        LockInfo = this.ConvertObjectToString(tokenSecurityResponse?.Data?.LockInfo),
+                        Freezeable = tokenSecurityResponse?.Data?.Freezeable,
+                        FreezeAuthority = tokenSecurityResponse?.Data?.FreezeAuthority,
+                        TransferFeeEnable = this.ConvertObjectToString(tokenSecurityResponse?.Data?.TransferFeeEnable),
+                        TransferFeeData = this.ConvertObjectToString(tokenSecurityResponse?.Data?.TransferFeeData),
                         IsToken2022 = tokenSecurityResponse?.Data?.IsToken2022,
-                        NonTransferable = (string?)tokenSecurityResponse?.Data?.NonTransferable,
+                        NonTransferable = this.ConvertObjectToString(tokenSecurityResponse?.Data?.NonTransferable),
                         MintAuthority = tokenSecurityResponse?.Data?.MintTx,
                         IsMutable = tokenSecurityResponse?.Data?.MutableMetadata
                     });
@@ -228,6 +230,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     return marketcap / supply;
             }
             return null;
+        }
+
+        private string? ConvertObjectToString(object? objectValue) 
+        { 
+            if(objectValue.GetType() == typeof(JsonObject))
+                return JsonConvert.SerializeObject(objectValue) ?? null;
+            return objectValue?.ToString();
+
         }
     }
 }
