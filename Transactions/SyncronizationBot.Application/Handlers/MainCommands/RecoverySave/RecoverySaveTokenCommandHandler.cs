@@ -234,7 +234,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         private string? ConvertObjectToString(object? objectValue) 
         { 
-            if(objectValue.GetType() == typeof(JsonObject))
+            if(objectValue?.GetType() == typeof(JsonObject))
                 return JsonConvert.SerializeObject(objectValue) ?? null;
             return objectValue?.ToString();
 

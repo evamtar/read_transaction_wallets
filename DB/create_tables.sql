@@ -235,7 +235,7 @@ CREATE TABLE TokenSecurity(
 	Top10UserBalance   VARCHAR(150),
 	Top10UserPercent   VARCHAR(150),
 	IsTrueToken        BIT,
-	LockInfo		   VARCHAR(100),
+	LockInfo		   VARCHAR(4000),
 	Freezeable		   BIT,
 	FreezeAuthority    VARCHAR(100),
 	TransferFeeEnable  VARCHAR(100),
@@ -731,3 +731,6 @@ INNER JOIN ClassWallet c
         ON c.ID = w.ClassWalletId
 
 	SELECT * FROM TokenSecurity WHERE TransferFeeEnable IS NOT NULL
+	SELECT * FROM TokenSecurity WHERE LockInfo IS NOT NULL
+	SELECT * FROM TokenSecurity WHERE TransferFeeData IS NOT NULL
+	SELECT * FROM TokenSecurity WHERE NonTransferable IS NOT NULL

@@ -43,6 +43,9 @@ namespace SyncronizationBot.Service
                             await SetRuntimeControllerAsync(false, true);
                             base.LogMessage($"Exceção: {ex.Message}");
                             base.LogMessage($"StackTrace: {ex.StackTrace}");
+                            base.LogMessage($"InnerException: {ex.InnerException}");
+                            base.LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
+                            base.LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
                             base.LogMessage($"Waiting for next tick in {timer.Period}");
                         }
                     }
