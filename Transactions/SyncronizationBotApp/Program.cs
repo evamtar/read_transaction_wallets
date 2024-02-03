@@ -97,11 +97,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
+    services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<AlertPriceService>();
     services.AddHostedService<AlertTokenAlphaService>();
-    //services.AddHostedService<LoadBalanceWalletsService>();
-    //services.AddHostedService<DeleteOldsMessagesLogService>();
+    services.AddHostedService<LoadBalanceWalletsService>();
+    services.AddHostedService<DeleteOldsMessagesLogService>();
 
     #region Only For Test
 

@@ -22,7 +22,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Response
         public VolumeResponse? Volume { get; set; }
         public PriceChangeResponse? PriceChange { get; set; }
         public LiquidityResponse? Liquidity { get; set; }
-        public int Fdv { get; set; }
+        public decimal? Fdv { get; set; }
         public long PairCreatedAt { get; set; }
         public InfoResponse? Info { get; set; }
     }

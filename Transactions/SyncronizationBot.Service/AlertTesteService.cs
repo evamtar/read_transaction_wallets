@@ -95,27 +95,27 @@ namespace SyncronizationBot.Service
                         ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                         ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                         Signature = transactionDB?.Signature,
-                        MarketCap = transactionDB?.MtkcapTokenDestination,
-                        Price = transactionDB?.PriceTokenDestinationUSD,
+                        MarketCap = transactionDB?.MtkcapTokenDestination ?? (decimal?)644100.28,
+                        Price = transactionDB?.PriceTokenDestinationUSD ?? (decimal?)644100.28 / 1000000,
                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
                     });
                 }
-                await this._mediator.Send(new SendTransactionAlertsCommand
-                {
-                    Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
-                                                                    {
-                                                                                        transactionDB!,
-                                                                                        transferInfo!,
-                                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
-                                                                                        balancePosition
-                                                                    }),
-                    IdClassification = 3,
-                    WalletId = walletId,
-                    Transactions = transactionDB,
-                    TokenSendedHash = tokenSended?.Hash,
-                    TokenReceivedHash = tokenReceived?.Hash,
-                    TokensMapped = this._mappedTokensConfig.Value.Tokens
-                });
+                //await this._mediator.Send(new SendTransactionAlertsCommand
+                //{
+                //    Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
+                //                                                    {
+                //                                                                        transactionDB!,
+                //                                                                        transferInfo!,
+                //                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
+                //                                                                        balancePosition
+                //                                                    }),
+                //    IdClassification = 3,
+                //    WalletId = walletId,
+                //    Transactions = transactionDB,
+                //    TokenSendedHash = tokenSended?.Hash,
+                //    TokenReceivedHash = tokenReceived?.Hash,
+                //    TokensMapped = this._mappedTokensConfig.Value.Tokens
+                //});
             }
         }
         private async Task TesteVerificacaoAlpha()
