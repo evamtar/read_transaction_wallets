@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Response.MainCommands.Triggers;
+using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 
@@ -13,17 +15,20 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
+        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
                                                  IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                  ITokenAlphaRepository tokenAlphaRepository,
                                                  ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
-                                                 ITokenAlphaWalletRepository tokenAlphaWalletRepository)
+                                                 ITokenAlphaWalletRepository tokenAlphaWalletRepository,
+                                                 IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
+            this._syncronizationBotConfig = syncronizationBotConfig;
         }
         public async Task<VerifyAddTokenAlphaCommandResponse> Handle(VerifyAddTokenAlphaCommand request, CancellationToken cancellationToken)
         {
@@ -63,46 +68,54 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             }
             else 
             {
+                var maxDateOfLaunchDays = (decimal?)0;
                 var buysBeforeThis = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
                 if (buysBeforeThis == null) 
                 {
-                    Console.WriteLine($"*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* Init Alpha Verify *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
-                    Console.WriteLine($" request.MarketCap = {request.MarketCap}");
-                    Console.WriteLine($" request.LaunchDate = {request.LaunchDate}"); 
-                    Console.WriteLine($" DateTime.Now.AddDays(x.MaxDateOfLaunchDays ?? 0) = {DateTime.Now}");
-                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.MaxMarketcap < request.MarketCap && request.LaunchDate < DateTime.Now.AddDays(x.MaxDateOfLaunchDays ?? 0), x => x.Ordernation!);
-                    Console.WriteLine($" tokenAlphaConfiguration != null = {tokenAlphaConfiguration != null}");
+                    if(request?.LaunchDate != null)
+                        maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
+                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.MaxMarketcap < request!.MarketCap && x.MaxDateOfLaunchDays > maxDateOfLaunchDays, x => x.Ordernation!);
                     if (tokenAlphaConfiguration != null)
                     {
-                        Console.WriteLine($"*** ALPHA IS HERE ***");
                         var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha 
                         {
                             CallNumber = 1,
-                            InitialMarketcap = request.MarketCap,
-                            ActualMarketcap = request.MarketCap,
-                            InitialPrice = request.Price,
-                            ActualPrice = request.Price,
-                            CreateDate = DateTime.Now,
+                            InitialMarketcap = request?.MarketCap,
+                            ActualMarketcap = request?.MarketCap,
+                            InitialPrice = request?.Price,
+                            ActualPrice = request?.Price,
+                            CreateDate = AdjustDateTimeToPtBR(request?.LaunchDate),
                             LastUpdate = null,
                             IsCalledInChannel = false,
-                            TokenId = request.TokenId,
+                            TokenId = request?.TokenId,
                             TokenAlphaConfigurationId = tokenAlphaConfiguration.ID
                         });
                         await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
                         var tokenAlphaWallet = await this._tokenAlphaWalletRepository.Add(new TokenAlphaWallet
                         {
                             TokenAlphaId = tokenAlpha.ID,
-                            WalletId = request.WalletId,
+                            WalletId = request?.WalletId,
                             NumberOfBuys = 1,
                             ValueSpentSol = request?.ValueBuySol,
                             ValueSpentUSDC = request?.ValueBuyUSDC,
                             ValueSpentUSDT = request?.ValueBuyUSDT
                         });
                     }
-                    Console.WriteLine($"*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* End Alpha Verify *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
                 }
             }
             return new VerifyAddTokenAlphaCommandResponse { };
+        }
+
+        private decimal? CalculatedMaxDaysOfLaunch(DateTime? launchDate) 
+        {
+            var dateTimePtBr = this.AdjustDateTimeToPtBR(launchDate);
+            var dateDiff = DateTime.Now - dateTimePtBr;
+            return (decimal?)dateDiff?.TotalDays;
+        }
+
+        private DateTime? AdjustDateTimeToPtBR(DateTime? dateTime)
+        {
+            return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0);
         }
     }
 }

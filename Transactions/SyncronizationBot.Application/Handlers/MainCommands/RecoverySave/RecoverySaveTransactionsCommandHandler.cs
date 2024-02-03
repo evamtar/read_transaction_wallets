@@ -147,9 +147,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     {
                                         WalletId = request?.WalletId,
                                         TokenId = transactionDB?.TokenDestinationId,
-                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         Signature = transactionDB?.Signature,
                                         MarketCap = transactionDB?.MtkcapTokenDestination,
                                         Price = tokenReceived?.Price,
@@ -225,33 +225,33 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-        private decimal? CalculatedTotalSol(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation) 
+        private decimal? CalculatedTotalSol(string? tokenHash, decimal? amountSource, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
-                    if (tokenSended?.Token == "So11111111111111111111111111111111111111112")
-                        return tokenSended?.Amount;
-                    else 
-                        return tokenSended?.Amount / solPrice;
+                    if (tokenHash == "So11111111111111111111111111111111111111112")
+                        return Math.Abs(amountSource ?? 0);
+                    else
+                        return Math.Abs(amountSource / solPrice ?? 0);
                 case ETypeOperation.SWAP:
-                    return (tokenSended?.Amount * tokenPrice) / solPrice;
+                    return Math.Abs((amountSource * tokenPrice) / solPrice ?? 0);
                 default:
                     break;
             }
             return null;
         }
-        private decimal? CalculatedTotalUSD(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
+        private decimal? CalculatedTotalUSD(string? tokenHash, decimal? amountSource, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
-                    if (tokenSended?.Token != "So11111111111111111111111111111111111111112")
-                        return tokenSended?.Amount;
+                    if (tokenHash != "So11111111111111111111111111111111111111112")
+                        return Math.Abs(amountSource ?? 0);
                     else
-                        return tokenSended?.Amount * solPrice;
+                        return Math.Abs(amountSource * solPrice ?? 0);
                 case ETypeOperation.SWAP:
-                    return tokenSended?.Amount * tokenPrice;
+                    return Math.Abs(amountSource * tokenPrice ?? 0);
                 default:
                     break;
             }

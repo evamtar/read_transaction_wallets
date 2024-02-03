@@ -124,22 +124,22 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     var tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
                     {
                         TokenId = tokenAdded.ID,
-                        CreatorAddress = tokenSecurityResponse?.TokenData?.CreatorAddress,
-                        CreationTime = tokenSecurityResponse?.TokenData?.CreationTime,
-                        Top10HolderBalance = tokenSecurityResponse?.TokenData?.Top10HolderBalance,
-                        Top10HolderPercent = tokenSecurityResponse?.TokenData?.Top10HolderPercent,
-                        Top10UserBalance = tokenSecurityResponse?.TokenData?.Top10UserBalance,
-                        Top10UserPercent = tokenSecurityResponse?.TokenData?.Top10UserPercent,
-                        IsTrueToken = tokenSecurityResponse?.TokenData?.IsTrueToken,
-                        LockInfo = (string?)tokenSecurityResponse?.TokenData?.LockInfo,
-                        Freezeable = (string?)tokenSecurityResponse?.TokenData?.Freezeable,
-                        FreezeAuthority = (string?)tokenSecurityResponse?.TokenData?.FreezeAuthority,
-                        TransferFeeEnable = (string?)tokenSecurityResponse?.TokenData?.TransferFeeEnable,
-                        TransferFeeData = (string?)tokenSecurityResponse?.TokenData?.TransferFeeData,
-                        IsToken2022 = tokenSecurityResponse?.TokenData?.IsToken2022,
-                        NonTransferable = (string?)tokenSecurityResponse?.TokenData?.NonTransferable,
-                        MintAuthority = tokenSecurityResponse?.TokenData?.MintTx,
-                        IsMutable = tokenSecurityResponse?.TokenData?.MutableMetadata
+                        CreatorAddress = tokenSecurityResponse?.Data?.CreatorAddress,
+                        CreationTime = tokenSecurityResponse?.Data?.CreationTime,
+                        Top10HolderBalance = tokenSecurityResponse?.Data?.Top10HolderBalance,
+                        Top10HolderPercent = tokenSecurityResponse?.Data?.Top10HolderPercent,
+                        Top10UserBalance = tokenSecurityResponse?.Data?.Top10UserBalance,
+                        Top10UserPercent = tokenSecurityResponse?.Data?.Top10UserPercent,
+                        IsTrueToken = tokenSecurityResponse?.Data?.IsTrueToken,
+                        LockInfo = (string?)tokenSecurityResponse?.Data?.LockInfo,
+                        Freezeable = (string?)tokenSecurityResponse?.Data?.Freezeable,
+                        FreezeAuthority = (string?)tokenSecurityResponse?.Data?.FreezeAuthority,
+                        TransferFeeEnable = (string?)tokenSecurityResponse?.Data?.TransferFeeEnable,
+                        TransferFeeData = (string?)tokenSecurityResponse?.Data?.TransferFeeData,
+                        IsToken2022 = tokenSecurityResponse?.Data?.IsToken2022,
+                        NonTransferable = (string?)tokenSecurityResponse?.Data?.NonTransferable,
+                        MintAuthority = tokenSecurityResponse?.Data?.MintTx,
+                        IsMutable = tokenSecurityResponse?.Data?.MutableMetadata
                     });
                     return new RecoverySaveTokenCommandResponse
                     {

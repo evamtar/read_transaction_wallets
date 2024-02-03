@@ -5,7 +5,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Resp
     {
         public bool Success { get; set; }
         public int StatusCode { get; set; }
-        public ResultData? TokenData { get; set; }
+        public ResultData? Data { get; set; }
     }
 
     public class ResultData

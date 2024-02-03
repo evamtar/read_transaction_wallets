@@ -444,18 +444,18 @@ CREATE TABLE TokenAlphaConfiguration
 	PRIMARY KEY (ID)
 );
 GO
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 5 days ago', 1, 2000000, -5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 5 days ago', 2, 5000000, -5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 5 days ago', 3, 10000000, -5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 15 days ago', 4, 2000000, -15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 15 days ago', 5, 5000000, -15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 15 days ago', 6, 10000000, -15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Creation Until 30 days ago', 7, 2000000, -30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Mid Mktcap Creation Until 30 days ago', 8, 50000000, -30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Big Mktcap Creation Until 30 days ago', 9, 100000000, -30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s shitcoin Creation Until 2 months ago', 10, 2000000, -60);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Mid Mktcap shitcoin Creation Until 2 months ago', 11, 5000000, -60);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Big Mktcap shitcoin Creation Until 2 months ago', 12, 10000000, -60);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 5 days ago', 1, 2000000, 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 5 days ago', 2, 5000000, 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 5 days ago', 3, 10000000, 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 15 days ago', 4, 2000000, 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 15 days ago', 5, 5000000, 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 15 days ago', 6, 10000000, 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Creation Until 30 days ago', 7, 2000000, 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Mid Mktcap Creation Until 30 days ago', 8, 50000000, 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Big Mktcap Creation Until 30 days ago', 9, 100000000, 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s shitcoin Creation Until 2 months ago', 10, 2000000, 60);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Mid Mktcap shitcoin Creation Until 2 months ago', 11, 5000000, 60);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Big Mktcap shitcoin Creation Until 2 months ago', 12, 10000000, 60);
 
 CREATE TABLE TokenAlpha(
 	ID                        UNIQUEIDENTIFIER,
@@ -579,7 +579,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{DateTimeNow}}', @IdAlertInformati
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 1; --BUY
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** NEW BUY ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>{{NEWLINE}}<s>Signature:</s> {{Signature}}{{NEWLINE}}<s>WalletHash:</s> {{WalletHash}{{NEWLINE}}<s>ClassWallet:</s> {{ClassWallet}} {{NEWLINE}}<s>Token:</s> {{Token}}{{NEWLINE}}<s>Ca:</s> {{Ca}}<pre>{{NEWLINE}}</pre><s>Minth Authority:</s>{{MinthAuthority}}{{NEWLINE}}<s>Freeze Authority:</s> {{FreezeAuthority}}{{NEWLINE}}<s>Is Mutable:</s>{{IsMutable}}<s>Quantity:</s> {{Quantity}} {{QuantitySymbol}} {{NEWLINE}}<s>Value Spent:</s> {{ValueSpent}} {{ValueSpentSymbol}}{{NEWLINE}}<s>Date:</s> {{Date}}{{NEWLINE}}<s>Position Increase</s> {{PositionIncrease}} % {{NEWLINE}}<a href=''https://birdeye.so/token/{{Ca}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** NEW BUY ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢</tg-emoji>{{NEWLINE}}<s>Signature:</s> {{Signature}}{{NEWLINE}}<s>WalletHash:</s> {{WalletHash}}{{NEWLINE}}<s>ClassWallet:</s> {{ClassWallet}} {{NEWLINE}}<s>Token:</s> {{Token}}{{NEWLINE}}<s>Ca:</s> <pre>{{Ca}}</pre>{{NEWLINE}}<s>Minth Authority:</s>{{MinthAuthority}}{{NEWLINE}}<s>Freeze Authority:</s> {{FreezeAuthority}}{{NEWLINE}}<s>Is Mutable:</s>{{IsMutable}}{{NEWLINE}}<s>Quantity:</s> {{Quantity}} {{QuantitySymbol}} {{NEWLINE}}<s>Value Spent:</s> {{ValueSpent}} {{ValueSpentSymbol}}{{NEWLINE}}<s>Date:</s> {{Date}}{{NEWLINE}}<s>Position Increase</s> {{PositionIncrease}} % {{NEWLINE}}<a href=''https://birdeye.so/token/{{Ca}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, NULL, 0, 0, 0);
@@ -590,7 +590,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{FreezeAuthority}}', @IdAlertInfor
 INSERT INTO AlertParameter VALUES (NEWID(), '{{IsMutable}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].IsMutable', NULL, 'NO', 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Quantity}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'AmountValueDestination', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantitySymbol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Symbol', NULL, NULL, 0, 0, 0);
-INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpent}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', 'AmountValueSource', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpent}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'AmountValueSource', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpentSymbol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[0].Symbol', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Utils.Transfer.TransferInfo', 'DataOfTransfer', NULL, NULL, 1, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{PositionIncrease}}', @IdAlertInformation, 'SyncronizationBot.Application.Response.MainCommands.AddUpdate.RecoveryAddUpdateBalanceItemCommandResponse', 'PercentModify', NULL, NULL, 0, 0, 0);
@@ -688,7 +688,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 8; -- Alert Token Alpha
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<s>Alpha Classification:</s> {{AlphaRange}}{{NEWLINE}}<s>CallNumber:</s> {{CallNumber}}{{NEWLINE}}<s>Token Ca:</s> {{TokenCa}}{{NEWLINE}}<s>Name:</s> {{TokenName}}{{NEWLINE}}<s>Symbol:</s> {{TokenSymbol}}{{NEWLINE}}<s>MarketCap:</s> {{MarketCap}}{{NEWLINE}}<s>Price:</s> {{Price}}{{NEWLINE}}<s>Actual MarketCap:</s> {{ActualMarketCap}}{{NEWLINE}}<s>Actual Price:</s> {{ActualPrice}}{{NEWLINE}}<s>TotalWalletsBuy:</s> {{TotalWalletsBuy}}{{NEWLINE}}<s>ValueBuyInSol:</s> {{ValueBuyInSol}}{{NEWLINE}}<s>ValueBuyInUSD:</s> {{ValueBuyInUSD}}{{NEWLINE}}<s>Wallets:</s> {{NEWLINE}}{{RangeWallets}}', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}<b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}<b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}<b>Name:</b> {{TokenName}}{{NEWLINE}}<b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}<b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}<b>Price:</b> {{Price}}{{NEWLINE}}<b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}<b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}<b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}<b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}<b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}<b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}<b>Classifications:</b>{{NEWLINE}}{{Classifications}}', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{AlphaRange}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlphaConfiguration', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CallNumber}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'CallNumber', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Hash', NULL, NULL, 0, 0, 0);
@@ -702,11 +702,14 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{TotalWalletsBuy}}', @IdAlertInfor
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInSol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentSol', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInUSD}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentUSDC', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.Wallet]', 'RANGE-ALL|Hash', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.ClassWallet]', 'RANGE-ALL|Description', NULL, NULL, 0, 0, 0);
 
 ------------------------------------------------------------
+SELECT * FROM RunTimeController
 UPDATE TokenAlpha SET IsCalledInChannel = 0
 SELECT * FROM RunTimeController
-UPDATE RunTimeController SET ConfigurationTimer = 4.19 WHERE TypeService = 4
+UPDATE RunTimeController SET IsRunning = 0
+UPDATE RunTimeController SET ConfigurationTimer = 4.183 WHERE TypeService = 4
 
 SELECT COUNT(*) , StatusLoad FROM (
 SELECT CASE WHEN IsLoadBalance = 1 THEN
@@ -721,3 +724,11 @@ GROUP BY T1.StatusLoad
 SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176' AND WalletId = '606E7ECE-4226-4643-948C-7B278D324D4A' AND Signature != '5Pnu4SvW6EiTpZ6M4oGjy1GS8Juqyf52czpz1kkPmQCSenXDbsnG2kfkNLjrJpDL57aQAe9hzEDroA3MjvQV7toV'
 SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176'
 SELECT COUNT(*), TokenId FROM WalletBalanceHistory WHERE Signature != 'CREATE BALANCE' GROUP BY TokenId ORDER BY 1 DESC
+
+	SELECT w.Hash, c.Description 
+	  FROM Wallet w
+INNER JOIN ClassWallet c
+        ON c.ID = w.ClassWalletId
+
+	DELETE FROM TokenAlpha
+	DELETE FROM TokenAlphaWallet
