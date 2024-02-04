@@ -44,7 +44,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 case ETypeOperation.SWAP:
                 case ETypeOperation.POOLCREATE:
                 case ETypeOperation.POOLFINALIZED:
-                    return ((ETypeAlert)((int)request!.Transactions!.TypeOperation) + 1);
+                    return ((ETypeAlert)((int)request!.Transactions!.TypeOperation) -1);
                 default:
                     return ETypeAlert.NONE;
             }
