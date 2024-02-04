@@ -25,7 +25,9 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
         public DbSet<TokenAlpha> TokenAlphas { get; set; }
+        public DbSet<TokenAlphaHistory> TokenAlphaHistories { get; set; }
         public DbSet<TokenAlphaWallet> TokenAlphaWallets { get; set; }
+        public DbSet<TokenAlphaWalletHistory> TokenAlphaWalletHistories { get; set; }
         public DbSet<TokenAlphaConfiguration> TokenAlphaConfigurations { get; set; }
         public DbSet<WalletBalance> WalletBalances { get; set; }
         public DbSet<WalletBalanceSFMCompare> WalletBalancesSFMCompare { get; set; }
@@ -48,7 +50,9 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new TokenMap());
             modelBuilder.ApplyConfiguration(new TokenSecurityMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());

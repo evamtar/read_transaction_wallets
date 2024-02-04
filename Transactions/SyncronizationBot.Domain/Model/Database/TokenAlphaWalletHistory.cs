@@ -10,6 +10,11 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? ValueSpentSol { get; set; }
         public decimal? ValueSpentUSDC { get; set; }
         public decimal? ValueSpentUSDT { get; set; }
+        public decimal? QuantityToken { get; set; }
+        public decimal? RequestValueInSol { get; set; }
+        public decimal? RequestValueInUSDC { get; set; }
+        public decimal? RequestValueInUSDT { get; set; }
+        public decimal? RequestQuantityToken { get; set; }
         public Guid? TokenAlphaId { get; set; }
         public Guid? WalletId { get; set; }
     }

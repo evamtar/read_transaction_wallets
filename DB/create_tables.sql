@@ -151,8 +151,10 @@ BEGIN
 	--DELETE FROM AlertPrice
 	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
 	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '1.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '22.3', null, 1, 0, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
+	--INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '1.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '22.3', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '23.4', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '9.2', null, 2, 0, @TelegramChannelId);
+	--INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
 END
 GO
 
@@ -456,18 +458,19 @@ CREATE TABLE TokenAlphaConfiguration
 	PRIMARY KEY (ID)
 );
 GO
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 5 days ago', 1, 2000000, 5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 5 days ago', 2, 5000000, 5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 5 days ago', 3, 10000000, 5);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 15 days ago', 4, 2000000, 15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 15 days ago', 5, 5000000, 15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 15 days ago', 6, 10000000, 15);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Creation Until 30 days ago', 7, 2000000, 30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Mid Mktcap Creation Until 30 days ago', 8, 50000000, 30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Big Mktcap Creation Until 30 days ago', 9, 100000000, 30);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s shitcoin Creation Until 2 months ago', 10, 2000000, 60);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Mid Mktcap shitcoin Creation Until 2 months ago', 11, 5000000, 60);
-INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Big Mktcap shitcoin Creation Until 2 months ago', 12, 10000000, 60);
+
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 5 days ago', 1, '2000000', 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Creation Until 15 days ago', 4, '2000000', 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Creation Until 30 days ago', 7, '2000000', 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s shitcoin Creation Until 2 months ago', 10, '2000000', 60);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 5 days ago', 2, '5000000', 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Mid Mktcap Creation Until 15 days ago', 5, '5000000', 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Mid Mktcap Creation Until 30 days ago', 8, '5000000', 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Mid Mktcap shitcoin Creation Until 2 months ago', 11, '5000000', 60);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 5 days ago', 3, '10000000', 5);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Alpha Big Mktcap Creation Until 15 days ago', 6, '10000000', 15);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe Alpha Big Mktcap Creation Until 30 days ago', 9, '10000000', 30);
+INSERT INTO TokenAlphaConfiguration VALUES(NEWID(), 'Maybe it''s Big Mktcap shitcoin Creation Until 2 months ago', 12, '10000000', 60);
 
 CREATE TABLE TokenAlpha(
 	ID                        UNIQUEIDENTIFIER,
@@ -495,6 +498,8 @@ CREATE TABLE TokenAlphaHistory(
 	ActualMarketcap           VARCHAR(100),
 	InitialPrice              VARCHAR(100),
 	ActualPrice               VARCHAR(100),
+	RequestMarketCap          VARCHAR(100),
+	RequestPrice              VARCHAR(100),
 	CreateDate                DATETIME2,
 	LastUpdate                DATETIME2,
 	IsCalledInChannel         BIT,
@@ -510,6 +515,7 @@ CREATE TABLE TokenAlphaWallet(
 	ValueSpentSol  VARCHAR(100),
 	ValueSpentUSDC VARCHAR(100),
 	ValueSpentUSDT VARCHAR(100),
+	QuantityToken  VARCHAR(100),
 	TokenAlphaId   UNIQUEIDENTIFIER,
 	WalletId       UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
@@ -524,6 +530,11 @@ CREATE TABLE TokenAlphaWalletHistory(
 	ValueSpentSol        VARCHAR(100),
 	ValueSpentUSDC       VARCHAR(100),
 	ValueSpentUSDT		 VARCHAR(100),
+	QuantityToken        VARCHAR(100),
+	RequestValueInSol    VARCHAR(100),
+	RequestValueInUSDC   VARCHAR(100),
+	RequestValueInUSDT   VARCHAR(100),
+	RequestQuantityToken VARCHAR(100),
 	TokenAlphaId		 UNIQUEIDENTIFIER,
 	WalletId			 UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID)
@@ -583,9 +594,6 @@ CREATE TABLE AlertParameter(
 	PRIMARY KEY (ID),
 	FOREIGN KEY (AlertInformationId) REFERENCES AlertInformation(ID),
 );
-
-
-
 
 DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
 DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
@@ -714,14 +722,14 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'Sy
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 7; -- Alert Price
 -- ALERT PRICE UP
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** PRICE UP ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</tg-emoji>{{NEWLINE}}<s>Token Hash:</s>{{TokenHash}}{{NEWLINE}}<s>Token Name:</s>{{TokenName}}{{NEWLINE}}<s>New Price Change:</s>{{PriceChance}}{{NEWLINE}}<s>Is Recurrency Alert:</s> {{IsRecurrencyAlert}}{{NEWLINE}}', 1, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** PRICE UP ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</tg-emoji>{{NEWLINE}}🔒 <b>Token Hash:</b> {{TokenHash}}{{NEWLINE}}⚠ <b>Token Name:</b> {{TokenName}}{{NEWLINE}}💲 <b>New Price Change:</b> {{PriceChance}}{{NEWLINE}}🔁 <b>Is Recurrency Alert:</b>  {{IsRecurrencyAlert}}{{NEWLINE}}', 1, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.AlertPrice', 'TokenHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenName}}', @IdAlertInformation, 'SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{PriceChance}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response.TokenData', 'Price', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.AlertPrice', 'IsRecurrence', NULL, NULL, 0, 0, 0);
 -- ALERT PRICE DOWN
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** PRICE DOWN ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨</tg-emoji>{{NEWLINE}}<s>Token Hash:</s>{{TokenHash}}{{NEWLINE}}<s>Token Name:</s>{{TokenName}}{{NEWLINE}}<s>New Price Change:</s>{{PriceChance}}{{NEWLINE}}<s>Is Recurrency Alert:</s> {{IsRecurrencyAlert}}{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>💸💸💸💸💸💸💸💸💸💸💸</tg-emoji>{{NEWLINE}}', 2, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** PRICE DOWN ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨</tg-emoji>{{NEWLINE}}🔒 <b>Token Hash:</b> {{TokenHash}}{{NEWLINE}}⚠ <b>Token Name:</b> {{TokenName}}{{NEWLINE}}💲 <b>New Price Change:</b> {{PriceChance}}{{NEWLINE}}🔁 <b>Is Recurrency Alert:</b>  {{IsRecurrencyAlert}}{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>💸💸💸💸💸💸💸💸💸💸💸</tg-emoji>{{NEWLINE}}', 2, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.AlertPrice', 'TokenHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenName}}', @IdAlertInformation, 'SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{PriceChance}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response.TokenData', 'Price', NULL, NULL, 0, 0, 0);
@@ -729,7 +737,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 8; -- Alert Token Alpha
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}<b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}<b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}<b>Name:</b> {{TokenName}}{{NEWLINE}}<b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💸<b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}<b>Price:</b> {{Price}}{{NEWLINE}}💸<b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}💲<b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}🟢<b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}💲<b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}💲<b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}💼<b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}🔎<b>Classifications:</b>{{NEWLINE}}{{Classifications}}{{NEWLINE}}📊<a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}📰 <b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}☎ <b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}🔒 <b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}⚠ <b>Name:</b> {{TokenName}}{{NEWLINE}}🪙 <b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💰 <b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}💲 <b>Price:</b> {{Price}}{{NEWLINE}}💰 <b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}💲 <b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}💼 <b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}💲 <b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}💲 <b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}💼 <b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}🔎 <b>Classifications:</b>{{NEWLINE}}{{Classifications}}{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{AlphaRange}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlphaConfiguration', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CallNumber}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'CallNumber', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Hash', NULL, NULL, 0, 0, 0);

@@ -47,6 +47,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     tokenAlphaBuyBefore.ValueSpentSol += request?.ValueBuySol;
                     tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
                     tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
+                    tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
                     tokenAlphaBuyBefore.NumberOfBuys += 1;
                     await this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
                     await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
@@ -60,10 +61,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         NumberOfBuys = 1,
                         ValueSpentSol = request?.ValueBuySol,
                         ValueSpentUSDC = request?.ValueBuyUSDC,
-                        ValueSpentUSDT = request?.ValueBuyUSDT
-                    });
+                        ValueSpentUSDT = request?.ValueBuyUSDT,
+                        QuantityToken = request?.QuantityTokenReceived
+                });
                     await this._tokenAlphaWalletRepository.DetachedItem(tokekAlphaWallet);
-                    await SaveTokenAlphaWalletsHistory(tokekAlphaWallet);
+                    await SaveTokenAlphaWalletsHistory(request, tokekAlphaWallet);
                 }
                 tokenAlphaCalled.CallNumber += 1;
                 tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
@@ -72,7 +74,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 tokenAlphaCalled.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlphaCalled);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
-                await SaveTokenAlphaHistory(tokenAlphaCalled);
+                await SaveTokenAlphaHistory(request, tokenAlphaCalled);
             }
             else 
             {
@@ -99,7 +101,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             TokenAlphaConfigurationId = tokenAlphaConfiguration.ID
                         });
                         await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
-                        await SaveTokenAlphaHistory(tokenAlpha);
+                        await SaveTokenAlphaHistory(request, tokenAlpha);
 
                         var tokenAlphaWallet = await this._tokenAlphaWalletRepository.Add(new TokenAlphaWallet
                         {
@@ -110,13 +112,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             ValueSpentUSDC = request?.ValueBuyUSDC,
                             ValueSpentUSDT = request?.ValueBuyUSDT
                         });
-                        await SaveTokenAlphaWalletsHistory(tokenAlphaWallet);
+                        await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
                     }
                 }
             }
             return new VerifyAddTokenAlphaCommandResponse { };
         }
-        private async Task SaveTokenAlphaHistory(TokenAlpha? tokenAlpha) 
+        private async Task SaveTokenAlphaHistory(VerifyAddTokenAlphaCommand? request, TokenAlpha? tokenAlpha) 
         {
             var tokenAlphaHistory = await this._tokenAlphaHistoryRepository.Add(new TokenAlphaHistory
             {
@@ -126,16 +128,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 ActualMarketcap = tokenAlpha?.ActualMarketcap,
                 InitialPrice = tokenAlpha?.InitialPrice,
                 ActualPrice = tokenAlpha?.ActualPrice,
+                RequestMarketCap = request?.MarketCap,
+                RequestPrice = request?.Price,
                 CreateDate = tokenAlpha?.CreateDate,
                 LastUpdate = tokenAlpha?.LastUpdate,
-                IsCalledInChannel = tokenAlpha?.IsCalledInChannel,
                 TokenId = tokenAlpha?.TokenId,
                 TokenAlphaConfigurationId = tokenAlpha?.TokenAlphaConfigurationId
             });
             await this._tokenAlphaHistoryRepository.DetachedItem(tokenAlphaHistory);
         }
 
-        private async Task SaveTokenAlphaWalletsHistory(TokenAlphaWallet? tokenAlphaWallet)
+        private async Task SaveTokenAlphaWalletsHistory(VerifyAddTokenAlphaCommand? request, TokenAlphaWallet? tokenAlphaWallet)
         {
             var tokenAlphaWalletHistory = await this._tokenAlphaWalletHistoryRepository.Add(new TokenAlphaWalletHistory
             {
@@ -145,7 +148,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 NumberOfBuys = tokenAlphaWallet?.NumberOfBuys,
                 ValueSpentSol = tokenAlphaWallet?.ValueSpentSol,
                 ValueSpentUSDC = tokenAlphaWallet?.ValueSpentUSDC,
-                ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT
+                ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT,
+                QuantityToken = tokenAlphaWallet?.QuantityToken,
+                RequestValueInSol = request?.ValueBuySol,
+                RequestValueInUSDC = request?.ValueBuyUSDC,
+                RequestValueInUSDT = request?.ValueBuyUSDT,
+                RequestQuantityToken = request?.QuantityTokenReceived
             });
             await this._tokenAlphaWalletHistoryRepository.DetachedItem(tokenAlphaWalletHistory);
         }

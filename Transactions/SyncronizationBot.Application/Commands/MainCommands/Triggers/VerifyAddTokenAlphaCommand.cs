@@ -10,6 +10,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Triggers
         public decimal? ValueBuySol { get; set; }
         public decimal? ValueBuyUSDC { get; set; }
         public decimal? ValueBuyUSDT { get; set; }
+        public decimal? QuantityTokenReceived { get; set; }
         public string? Signature { get; set; }
         public decimal? MarketCap { get; set; }
         public decimal? Price { get; set; }

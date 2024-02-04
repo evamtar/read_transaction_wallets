@@ -150,6 +150,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        QuantityTokenReceived = transactionDB?.AmountValueDestination,
                                         Signature = transactionDB?.Signature,
                                         MarketCap = transactionDB?.MtkcapTokenDestination,
                                         Price = tokenReceived?.Price,
