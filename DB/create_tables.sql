@@ -1,9 +1,21 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaWalletHistory')
+BEGIN
+	DROP TABLE [TokenAlphaWalletHistory]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaWallet')
 BEGIN
 	DROP TABLE [TokenAlphaWallet]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaHistory')
+BEGIN
+	DROP TABLE [TokenAlpha]
 END
 GO
 
@@ -239,7 +251,7 @@ CREATE TABLE TokenSecurity(
 	Freezeable		   BIT,
 	FreezeAuthority    VARCHAR(100),
 	TransferFeeEnable  VARCHAR(100),
-	TransferFeeData    VARCHAR(100),
+	TransferFeeData    VARCHAR(4000),
 	IsToken2022        BIT,
 	NonTransferable    VARCHAR(100),
 	MintAuthority      VARCHAR(100),
@@ -475,6 +487,23 @@ CREATE TABLE TokenAlpha(
 );
 GO
 
+CREATE TABLE TokenAlphaHistory(
+	ID                        UNIQUEIDENTIFIER,
+	TokenAlphaId              UNIQUEIDENTIFIER,
+	CallNumber                INT,
+	InitialMarketcap          VARCHAR(100),
+	ActualMarketcap           VARCHAR(100),
+	InitialPrice              VARCHAR(100),
+	ActualPrice               VARCHAR(100),
+	CreateDate                DATETIME2,
+	LastUpdate                DATETIME2,
+	IsCalledInChannel         BIT,
+	TokenId                   UNIQUEIDENTIFIER,
+	TokenAlphaConfigurationId UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID)
+);
+GO
+
 CREATE TABLE TokenAlphaWallet(
 	ID             UNIQUEIDENTIFIER,
 	NumberOfBuys   INT,
@@ -486,6 +515,18 @@ CREATE TABLE TokenAlphaWallet(
 	PRIMARY KEY (ID),
 	FOREIGN KEY (TokenAlphaId) REFERENCES TokenAlpha(ID),
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID)
+);
+GO
+CREATE TABLE TokenAlphaWalletHistory(
+	ID                   UNIQUEIDENTIFIER,
+	TokenAlphaWalletId   UNIQUEIDENTIFIER,
+	NumberOfBuys	     INT,
+	ValueSpentSol        VARCHAR(100),
+	ValueSpentUSDC       VARCHAR(100),
+	ValueSpentUSDT		 VARCHAR(100),
+	TokenAlphaId		 UNIQUEIDENTIFIER,
+	WalletId			 UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID)
 );
 GO
 -- ALERTS
@@ -688,7 +729,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 8; -- Alert Token Alpha
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}<b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}<b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}<b>Name:</b> {{TokenName}}{{NEWLINE}}<b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}<b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}<b>Price:</b> {{Price}}{{NEWLINE}}<b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}<b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}<b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}<b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}<b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}<b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}<b>Classifications:</b>{{NEWLINE}}{{Classifications}}', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}<b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}<b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}<b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}<b>Name:</b> {{TokenName}}{{NEWLINE}}<b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💸<b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}<b>Price:</b> {{Price}}{{NEWLINE}}💸<b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}💲<b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}🟢<b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}💲<b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}💲<b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}💼<b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}🔎<b>Classifications:</b>{{NEWLINE}}{{Classifications}}{{NEWLINE}}📊<a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{AlphaRange}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlphaConfiguration', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CallNumber}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'CallNumber', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Hash', NULL, NULL, 0, 0, 0);

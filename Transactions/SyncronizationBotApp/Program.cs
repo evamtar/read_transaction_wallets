@@ -168,7 +168,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenRepository, TokenRepository>();
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddTransient<ITokenAlphaRepository, TokenAlphaRepository>();
+    services.AddTransient<ITokenAlphaHistoryRepository, TokenAlphaHistoryRepository>();
     services.AddTransient<ITokenAlphaWalletRepository, TokenAlphaWalletRepository>();
+    services.AddTransient<ITokenAlphaWalletHistoryRepository, TokenAlphaWalletHistoryRepository>();
     services.AddTransient<ITokenAlphaConfigurationRepository, TokenAlphaConfigurationRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
