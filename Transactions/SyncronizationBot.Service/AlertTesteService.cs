@@ -48,13 +48,13 @@ namespace SyncronizationBot.Service
         private async Task TesteEnvioAlerta() 
         {
             base.LogMessage("Iniciando o serviço de teste de alertas");
-            var walletId = Guid.Parse("1C7D55B4-6289-4106-A684-AC5853531129");
-            var walletHash = "ufQ6EY7bzKdWNpC8hZH86WEzX6zkgqYd2eGaKbDyTU3";
+            var walletId = Guid.Parse("6719E6CD-F7EA-4934-BB3C-DAC7574EDF84");
+            var walletHash = "4bce4DGEBmgL5cuQUSs5CEp9PBMFQPWCZNkpfKmWytHo";
             /*
              * "5zietZumjqQiwj6TgR5UPc7pXYfgHuMZK5DxYa4DqZPDC7S8wVhJrLsFaDtMtb2y5KhLtaTW7aWmyyVp8rPHFuEG"; CALL 1
              * "66Nvub4hvrDp7Q6X5vFsTkFQQMHoqrybZS7BkJyPHyF7pyVbzWPcxjpGg9pyfG2m8AFwW7JSjKFSrzoWEni9qiT1"; CALL 2
              */
-            var signature = "66Nvub4hvrDp7Q6X5vFsTkFQQMHoqrybZS7BkJyPHyF7pyVbzWPcxjpGg9pyfG2m8AFwW7JSjKFSrzoWEni9qiT1";
+            var signature = "3v2QG6yjiR5fDPTrvNpB3f5mN4qAYjM2VVMP2sjCpEqK1zPuuagqJccdHMXrjYYzfQ1GnQgdLsEj9Nk6LmY8RoVo";
             var balancePosition = new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = (decimal?)-1032.196408,
@@ -85,37 +85,37 @@ namespace SyncronizationBot.Service
                 var transactionDB = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == signature);
                 transactionDB!.ClassWallet = "TESTE ALERT";
                 transactionDB!.WalletHash = "TESTE ALERT";
-                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
-                {
-                    await this._mediator.Send(new VerifyAddTokenAlphaCommand
-                    {
-                        WalletId = walletId,
-                        TokenId = transactionDB?.TokenDestinationId,
-                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                        Signature = transactionDB?.Signature,
-                        MarketCap = transactionDB?.MtkcapTokenDestination ?? (decimal?)644100.28,
-                        Price = transactionDB?.PriceTokenDestinationUSD ?? (decimal?)644100.28 / 1000000,
-                        LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
-                    });
-                }
-                //await this._mediator.Send(new SendTransactionAlertsCommand
+                //if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
                 //{
-                //    Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
-                //                                                    {
-                //                                                                        transactionDB!,
-                //                                                                        transferInfo!,
-                //                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
-                //                                                                        balancePosition
-                //                                                    }),
-                //    IdClassification = 3,
-                //    WalletId = walletId,
-                //    Transactions = transactionDB,
-                //    TokenSendedHash = tokenSended?.Hash,
-                //    TokenReceivedHash = tokenReceived?.Hash,
-                //    TokensMapped = this._mappedTokensConfig.Value.Tokens
-                //});
+                //    await this._mediator.Send(new VerifyAddTokenAlphaCommand
+                //    {
+                //        WalletId = walletId,
+                //        TokenId = transactionDB?.TokenDestinationId,
+                //        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                //        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                //        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                //        Signature = transactionDB?.Signature,
+                //        MarketCap = transactionDB?.MtkcapTokenDestination ?? (decimal?)644100.28,
+                //        Price = transactionDB?.PriceTokenDestinationUSD ?? (decimal?)644100.28 / 1000000,
+                //        LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
+                //    });
+                //}
+                await this._mediator.Send(new SendTransactionAlertsCommand
+                {
+                    Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
+                                                                    {
+                                                                                        transactionDB!,
+                                                                                        transferInfo!,
+                                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
+                                                                                        balancePosition
+                                                                    }),
+                    IdClassification = 3,
+                    WalletId = walletId,
+                    Transactions = transactionDB,
+                    TokenSendedHash = tokenSended?.Hash,
+                    TokenReceivedHash = tokenReceived?.Hash,
+                    TokensMapped = this._mappedTokensConfig.Value.Tokens
+                });
             }
         }
         private async Task TesteVerificacaoAlpha()

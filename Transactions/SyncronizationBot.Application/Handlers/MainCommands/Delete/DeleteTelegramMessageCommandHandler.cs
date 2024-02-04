@@ -38,14 +38,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
             while (hasNext) 
             {
                 var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message! .MessageId, ChatId = (long?)telegramChannel?.ChannelId });
-                if (response.Result ?? false)
-                {
-                    message.IsDeleted = true;
-                    await this._telegramMessageRepository.Edit(message);
-                    await this._telegramMessageRepository.DetachedItem(message);
-                }
-                else
-                    await this._telegramMessageRepository.DetachedItem(message);
+                message.IsDeleted = true;
+                await this._telegramMessageRepository.Edit(message);
+                await this._telegramMessageRepository.DetachedItem(message);
                 message = await this._telegramMessageRepository.FindFirstOrDefault(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < dateTimeToDelete, x => x.MessageId!);
                 hasNext = message != null;
             }

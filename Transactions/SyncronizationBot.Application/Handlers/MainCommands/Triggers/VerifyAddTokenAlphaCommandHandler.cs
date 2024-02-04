@@ -63,7 +63,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         ValueSpentUSDC = request?.ValueBuyUSDC,
                         ValueSpentUSDT = request?.ValueBuyUSDT,
                         QuantityToken = request?.QuantityTokenReceived
-                });
+                    });
                     await this._tokenAlphaWalletRepository.DetachedItem(tokekAlphaWallet);
                     await SaveTokenAlphaWalletsHistory(request, tokekAlphaWallet);
                 }
@@ -110,7 +110,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             NumberOfBuys = 1,
                             ValueSpentSol = request?.ValueBuySol,
                             ValueSpentUSDC = request?.ValueBuyUSDC,
-                            ValueSpentUSDT = request?.ValueBuyUSDT
+                            ValueSpentUSDT = request?.ValueBuyUSDT,
+                            QuantityToken = request?.QuantityTokenReceived
                         });
                         await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
                     }

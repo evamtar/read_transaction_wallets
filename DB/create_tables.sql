@@ -15,7 +15,7 @@ GO
 
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaHistory')
 BEGIN
-	DROP TABLE [TokenAlpha]
+	DROP TABLE [TokenAlphaHistory]
 END
 GO
 
@@ -114,12 +114,6 @@ BEGIN
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramMessage')
-BEGIN
-	DROP TABLE [TelegramMessage]
-END
-GO
-
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
 	CREATE TABLE TelegramChannel(
@@ -151,10 +145,10 @@ BEGIN
 	--DELETE FROM AlertPrice
 	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
 	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
-	--INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '1.958', 'BjBzvw6VX7UJtrC7BaYLG1dHBiwrXP1T9j2YfDEdP4zU', '22.3', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.008302', '5jcDWDV3HYeFvDBGEfPtk68WNmV7ZoLU8QUvDAnACpnE', '1.3', null, 1, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '23.4', null, 1, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '9.2', null, 2, 0, @TelegramChannelId);
-	--INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
 END
 GO
 
@@ -200,13 +194,10 @@ CREATE TABLE ClassWallet(
 	PRIMARY KEY (ID)
 );
 GO
-INSERT INTO ClassWallet VALUES(NEWID(), 1, 'Premier');
-INSERT INTO ClassWallet VALUES(NEWID(), 2, 'Whales');
-INSERT INTO ClassWallet VALUES(NEWID(), 3, 'MM');
-INSERT INTO ClassWallet VALUES(NEWID(), 4, 'Whales Top Gainers');
-INSERT INTO ClassWallet VALUES(NEWID(), 5, 'Arbitradores');
-INSERT INTO ClassWallet VALUES(NEWID(), 6, 'BIG BIG Whale');
+
+INSERT INTO ClassWallet VALUES(NEWID(), 1, 'Smart Whales');
 GO
+
 CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
 	[Hash]               VARCHAR(50),
@@ -312,21 +303,16 @@ CREATE TABLE TransactionsOldForMapping
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
 );
 GO
+
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 1
 INSERT INTO Wallet VALUES (NEWID(),'3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskzS', @IdClassWallet, null, 0, null, null, 1, 1, null); 
 INSERT INTO Wallet VALUES (NEWID(),'FZNrSiYifncDHTRNB6L8AyGX3sQu4T5Jb9k56S1zgTsz', @IdClassWallet, null, 0, null, null, 1, 1, null);
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
 INSERT INTO Wallet VALUES (NEWID(),'HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'DUHbm9JZ9D82h1pmRZYZAMA9U44hS4D7z6ZxyEjbMYNn', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'GZR6XTytmQwa2goHtq4D6F5FSJRDvA477gdC7jCrt7Qc', @IdClassWallet, null, 0, null, null, 1, 1, null);
-
-
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
 INSERT INTO Wallet VALUES (NEWID(), 'GhuBeitd7eh8KwCurXy1tFCRxGphpVxa8X4rUX8dQxHc', @IdClassWallet, null, 0, null, null, 1, 1, null);
-
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 3
 INSERT INTO Wallet VALUES (NEWID(),'HzoNzi7mLVCxsa9EkdBmoob75rkXCjWLHy131ch1oEbX', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'43QLsYdyomxCyoZiz1W18LaZaY3tevxLM4KyJWnVeFaB', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'8usu4t61wPgUjwU1qohajaYGDjqz43Jp8oGMJ4Sa82A7', @IdClassWallet, null, 0, null, null, 1, 1, null);
@@ -380,9 +366,8 @@ INSERT INTO Wallet VALUES (NEWID(),'3xWhH42D1skKHhpanvBdn6zvoPiXoThRcuaMEjqjzmmA
 INSERT INTO Wallet VALUES (NEWID(),'AR1Eb6GjQScNWc8HBvzE19TMksu4ambaP87wppQ4g7vz', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'8ZPqRatB9U43DYoaVk9YZKZTnjNQR9uK1HaGaPKgvKzZ', @IdClassWallet, null, 0, null, null, 1, 1, null);
 INSERT INTO Wallet VALUES (NEWID(),'7s3MckqAqdci8b1y8QZ4oYL1PDz1yPBmb1PeZfBTVnac', @IdClassWallet, null, 0, null, null, 1, 1, null);
-
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 5
 INSERT INTO Wallet VALUES (NEWID(),'F3SexpfyD785mndnj38EGoxZdAAQEMxBmJCvNe15rz5B', @IdClassWallet, null, 0, null, null, 1, 1, null);
+
 CREATE TABLE WalletBalance
 (
 	ID            UNIQUEIDENTIFIER,
@@ -435,18 +420,23 @@ CREATE TABLE WalletBalanceHistory
 );
 GO
 
--- Telegram Messages
-CREATE TABLE TelegramMessage
-(
-	ID                 UNIQUEIDENTIFIER,
-	MessageId          BIGINT,
-	TelegramChannelId  UNIQUEIDENTIFIER,
-	DateSended         DATETIME2,
-	IsDeleted		   BIT
-	PRIMARY KEY (ID),
-	FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
-);
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES WHERE NAME = 'TelegramMessage')
+BEGIN
+	-- Telegram Messages
+	CREATE TABLE TelegramMessage
+	(
+		ID                 UNIQUEIDENTIFIER,
+		MessageId          BIGINT,
+		TelegramChannelId  UNIQUEIDENTIFIER,
+		DateSended         DATETIME2,
+		IsDeleted		   BIT
+		PRIMARY KEY (ID),
+		FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
+	);
+END
 GO
+
+
 -- Token Alpha
 CREATE TABLE TokenAlphaConfiguration
 (
@@ -502,7 +492,6 @@ CREATE TABLE TokenAlphaHistory(
 	RequestPrice              VARCHAR(100),
 	CreateDate                DATETIME2,
 	LastUpdate                DATETIME2,
-	IsCalledInChannel         BIT,
 	TokenId                   UNIQUEIDENTIFIER,
 	TokenAlphaConfigurationId UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID)
@@ -541,6 +530,24 @@ CREATE TABLE TokenAlphaWalletHistory(
 );
 GO
 -- ALERTS
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
+BEGIN
+	DROP TABLE [AlertParameter]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
+BEGIN
+	DROP TABLE [AlertInformation]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
+BEGIN
+	DROP TABLE [AlertConfiguration]
+END
+GO
+
 CREATE TABLE AlertConfiguration(
 	ID                    UNIQUEIDENTIFIER,
 	[Name]                VARCHAR(200),
@@ -678,7 +685,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{PositionSell}}', @IdAlertInformat
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 4; --SWAP
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** SWAP ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>{{NEWLINE}}<s>Signature:</s> {{Signature}}{{NEWLINE}}<s>WalletHash:</s> {{WalletHash}}{{NEWLINE}}<s>ClassWallet:</s> {{ClassWallet}}{{NEWLINE}}<s>Token Change:</s> {{TokenChange}}  {{TokenChangeSymbol}}{{NEWLINE}}Token Received:</s> {{TokenReceived}}{{NEWLINE}}Ca:</s> <pre>{{Ca}}</pre>{{NEWLINE}}Date:</s> {{Date}}{{NEWLINE}}Position Swap:</s> {{PositionSwap}} %{{NEWLINE}}<a href=''https://birdeye.so/token/{{TokenReceivedHash}}?chain=solana''>Chart1</a>{{NEWLINE}}<a href=''https://birdeye.so/token/{{TokenSendedHash}}?chain=solana''>Chart2</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** SWAP ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>{{NEWLINE}}🖌 <b>Signature:</b> {{Signature}}{{NEWLINE}}💼 <b>WalletHash:</b> {{WalletHash}}{{NEWLINE}}📰 <b>ClassWallet:</b> {{ClassWallet}}{{NEWLINE}}⬇ <b>Token Change:</b> {{TokenChange}}  {{TokenChangeSymbol}}{{NEWLINE}}⬆ <b>Token Received:</b> {{TokenReceived}}{{NEWLINE}}🔒 <b>Ca:</b> <pre>{{Ca}}</pre>{{NEWLINE}}📆 <b>Date:</b> {{Date}}{{NEWLINE}}🔁 <b>Position Swap:</b> {{PositionSwap}} %{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenReceivedHash}}?chain=solana''>Chart1</a>{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenSendedHash}}?chain=solana''>Chart2</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, NULL, 0, 0, 0);
@@ -737,7 +744,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{IsRecurrencyAlert}}', @IdAlertInf
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 8; -- Alert Token Alpha
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}📰 <b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}☎ <b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}🔒 <b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}⚠ <b>Name:</b> {{TokenName}}{{NEWLINE}}🪙 <b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💰 <b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}💲 <b>Price:</b> {{Price}}{{NEWLINE}}💰 <b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}💲 <b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}💼 <b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}💲 <b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}💲 <b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}💼 <b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}🔎 <b>Classifications:</b>{{NEWLINE}}{{Classifications}}{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** TOKEN ALPHA INFORMATION ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>✅✅⚠⚠💲💲💲⚠⚠✅✅</tg-emoji>{{NEWLINE}}📰<b>Alpha Classification:</b> {{AlphaRange}}{{NEWLINE}}☎ <b>CallNumber:</b> {{CallNumber}}{{NEWLINE}}🔒 <b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}⚠ <b>Name:</b> {{TokenName}}{{NEWLINE}}🪙 <b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💰 <b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}💲 <b>Price:</b> {{Price}}{{NEWLINE}}💰 <b>Actual MarketCap:</b> {{ActualMarketCap}}{{NEWLINE}}💲 <b>Actual Price:</b> {{ActualPrice}}{{NEWLINE}}💼 <b>TotalWalletsBuy:</b> {{TotalWalletsBuy}}{{NEWLINE}}💲 <b>ValueBuyInSol:</b> {{ValueBuyInSol}}{{NEWLINE}}💲 <b>ValueBuyInUSD:</b> {{ValueBuyInUSD}}{{NEWLINE}}*⃣  <b>Quanity Token:</b> {{QuantityToken}}{{NEWLINE}}💼 <b>Wallets:</b> {{NEWLINE}}{{RangeWallets}}🔎 <b>Classifications:</b>{{NEWLINE}}{{Classifications}}{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{AlphaRange}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlphaConfiguration', 'Name', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{CallNumber}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.TokenAlpha', 'CallNumber', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Token', 'Hash', NULL, NULL, 0, 0, 0);
@@ -750,6 +757,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{ActualPrice}}', @IdAlertInformati
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TotalWalletsBuy}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Count', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInSol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentSol', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueBuyInUSD}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|ValueSpentUSDC', NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantityToken}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'RANGE-ALL|QuantityToken', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.Wallet]', 'RANGE-ALL|Hash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.ClassWallet]', 'RANGE-ALL|Description', NULL, NULL, 0, 0, 0);
 
