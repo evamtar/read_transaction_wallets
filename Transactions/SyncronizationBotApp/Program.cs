@@ -8,6 +8,7 @@ using Polly;
 using Polly.Extensions.Http;
 using SyncronizationBot.Application.Commands.Birdeye;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.Calculated;
 using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
@@ -16,6 +17,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Birdeye;
 using SyncronizationBot.Application.Handlers.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Handlers.MainCommands.Calculated;
 using SyncronizationBot.Application.Handlers.MainCommands.Delete;
 using SyncronizationBot.Application.Handlers.MainCommands.Read;
 using SyncronizationBot.Application.Handlers.MainCommands.RecoverySave;
@@ -24,6 +26,7 @@ using SyncronizationBot.Application.Handlers.MainCommands.Triggers;
 using SyncronizationBot.Application.Handlers.SolanaFM;
 using SyncronizationBot.Application.Response.Birdeye;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Response.MainCommands.Calculated;
 using SyncronizationBot.Application.Response.MainCommands.Delete;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
@@ -155,6 +158,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<SendTransactionAlertsCommand, SendTransactionAlertsCommandResponse>, SendTransactionAlertsCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertTokenAlphaCommand, SendAlertTokenAlphaCommandResponse>, SendAlertTokenAlphaCommandHandler>();
+
+    services.AddTransient<IRequestHandler<CalculatedProfitCommand, CalculatedProfitCommandResponse>, CalculatedProfitCommandHandler>();
+    services.AddTransient<IRequestHandler<CalculatedProfitOperationCommand, CalculatedProfitOperationCommandResponse>, CalculatedProfitOperationCommandHandler>();
 
     #endregion
 

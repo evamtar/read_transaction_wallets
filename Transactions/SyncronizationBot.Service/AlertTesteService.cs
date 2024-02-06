@@ -48,13 +48,9 @@ namespace SyncronizationBot.Service
         private async Task TesteEnvioAlerta() 
         {
             base.LogMessage("Iniciando o serviço de teste de alertas");
-            var walletId = Guid.Parse("07FD1FA0-BE06-43FC-B558-B2ECE18191BD");
-            var walletHash = "BsgFVpmEBB3Ps39aNQJPXt5mndbEQ7aP3fLXNRL8BTxW";
-            /*
-             * "5zietZumjqQiwj6TgR5UPc7pXYfgHuMZK5DxYa4DqZPDC7S8wVhJrLsFaDtMtb2y5KhLtaTW7aWmyyVp8rPHFuEG"; CALL 1
-             * "66Nvub4hvrDp7Q6X5vFsTkFQQMHoqrybZS7BkJyPHyF7pyVbzWPcxjpGg9pyfG2m8AFwW7JSjKFSrzoWEni9qiT1"; CALL 2
-             */
-            var signature = "3fjGw5ma2s6XaZjSNHDcnfNJ7iKRByEc4R2KEnpgfj9iwJ6NZpsXQnRaR5r4Sz9jimqWvCyMbgPjTMkYwv4SdUgS";
+            var walletId = Guid.Parse("684B5A8C-5078-41C8-9D49-31DEEDC938C7");
+            var walletHash = "HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX";
+            var signature = "66Nvub4hvrDp7Q6X5vFsTkFQQMHoqrybZS7BkJyPHyF7pyVbzWPcxjpGg9pyfG2m8AFwW7JSjKFSrzoWEni9qiT1";
             var balancePosition = new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = (decimal?)-1032.196408,

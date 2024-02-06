@@ -1,6 +1,12 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaProfit')
+BEGIN
+	DROP TABLE [TokenAlphaProfit]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaWalletHistory')
 BEGIN
 	DROP TABLE [TokenAlphaWalletHistory]
@@ -428,6 +434,7 @@ BEGIN
 		ID                 UNIQUEIDENTIFIER,
 		MessageId          BIGINT,
 		TelegramChannelId  UNIQUEIDENTIFIER,
+		EntityId		   UNIQUEIDENTIFIER,
 		DateSended         DATETIME2,
 		IsDeleted		   BIT
 		PRIMARY KEY (ID),
@@ -527,6 +534,19 @@ CREATE TABLE TokenAlphaWalletHistory(
 	TokenAlphaId		 UNIQUEIDENTIFIER,
 	WalletId			 UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID)
+);
+GO
+CREATE TABLE TokenAlphaProfit
+(
+	ID						    UNIQUEIDENTIFIER,
+	TokenAlphaWalletId          UNIQUEIDENTIFIER,
+	OperationType               INT, -- 1 BUY, 2 - SELL, 3 - SWAP
+	AmountToken                 VARCHAR(100),
+	ValueOperationInSol         VARCHAR(100),
+	ValueOperationInUSD         VARCHAR(100),
+	ProfitCalculatedInOperation VARCHAR(100), --(TOTAL BUY  / TOTAL TOKEN = PRICE PER TOKEN | TOTAL SELL / TOTAL TOKEN = PRICE PER TOKEN)
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TokenAlphaWalletId) REFERENCES TokenAlphaWallet(ID)
 );
 GO
 -- ALERTS
@@ -667,7 +687,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{PositionSell}}', @IdAlertInformat
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 4; --SWAP
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** SWAP ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>{{NEWLINE}}🖌 <b>Signature:</b> {{Signature}}{{NEWLINE}}💼 <b>WalletHash:</b> {{WalletHash}}{{NEWLINE}}📰 <b>ClassWallet:</b> {{ClassWallet}}{{NEWLINE}}⬇ <b>Token Change:</b> {{TokenChange}}  {{TokenChangeSymbol}}{{NEWLINE}}⬆ <b>Token Received:</b> {{TokenReceived}}{{NEWLINE}}🔒 <b>Ca:</b> {{Ca}}{{NEWLINE}}📆 <b>Date:</b> {{Date}}{{NEWLINE}}🔁 <b>Position Swap:</b> {{PositionSwap}} %{{NEWLINE}}⬇📊 <a href=''https://birdeye.so/token/{{TokenReceivedHash}}?chain=solana''>Chart</a>{{NEWLINE}}⬆📊 <a href=''https://birdeye.so/token/{{TokenSendedHash}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** SWAP ALERT ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄🔄</tg-emoji>{{NEWLINE}}🖌 <b>Signature:</b> {{Signature}}{{NEWLINE}}💼 <b>WalletHash:</b> {{WalletHash}}{{NEWLINE}}📰 <b>ClassWallet:</b> {{ClassWallet}}{{NEWLINE}}⬇ <b>Token Change:</b> {{TokenChange}}  {{TokenChangeSymbol}}{{NEWLINE}}⬆ <b>Token Received:</b> {{TokenReceived}} {{TokenReceivedSymbol}}{{NEWLINE}}🔒 <b>Ca:</b> {{Ca}}{{NEWLINE}}📆 <b>Date:</b> {{Date}}{{NEWLINE}}🔁 <b>Position Swap:</b> {{PositionSwap}} %{{NEWLINE}}⬇📊 <a href=''https://birdeye.so/token/{{TokenReceivedHash}}?chain=solana''>Chart</a>{{NEWLINE}}⬆📊 <a href=''https://birdeye.so/token/{{TokenSendedHash}}?chain=solana''>Chart</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, NULL, 0, 0, 0);
@@ -683,7 +703,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenSendedHash}}', @IdAlertInfor
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 5; -- POOL CREATED
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** POOL CREATED ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊</tg-emoji>{{NEWLINE}}<s>Signature:</s>{{Signature}}{{NEWLINE}}<s>WalletHash:</s>{{WalletHash}}{{NEWLINE}}<s>ClassWallet:</s>{{ClassWallet}}{{NEWLINE}}<s>Amount Pool:</s>{{QuantitySend}}  {{QuantitySendSymbol}}{{NEWLINE}}<s>Amount Pool:</s>{{QuantitySendPool}} {{QuantitySendPoolSymbol}}{{NEWLINE}}<s>Ca Token Pool:</s> {{CaSended}}{{NEWLINE}}<s>Ca Token Pool:</s> {{CaSendedPool}}{{NEWLINE}}<s>Date:</s>{{Date}}{{NEWLINE}}<a href=''https://birdeye.so/token/{{CaSended}}?chain=solana''> Chart1</a>}{{NEWLINE}}<a href=''https://birdeye.so/token/{{CaSendedPool}}?chain=solana''> Chart2</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** POOL CREATED ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊</tg-emoji>{{NEWLINE}}🖌 <b>Signature:</b>{{Signature}}{{NEWLINE}}💼 <b>WalletHash:</b>{{WalletHash}}{{NEWLINE}}📰 <b>ClassWallet:</b>{{ClassWallet}}{{NEWLINE}}💰 <b>Amount Pool:</b>{{QuantitySend}}  {{QuantitySendSymbol}}{{NEWLINE}}💰 <b>Amount Pool:</b>{{QuantitySendPool}} {{QuantitySendPoolSymbol}}{{NEWLINE}}🔒 <b>Ca Token Pool:</b> {{CaSended}}{{NEWLINE}}🔒 <b>Ca Token Pool:</b> {{CaSendedPool}}{{NEWLINE}}📆 <b>Date:</b>{{Date}}{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{CaSended}}?chain=solana''> Chart Sended</a>{{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{CaSendedPool}}?chain=solana''> Chart Sended 2</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, NULL, 0, 0, 0);
@@ -697,7 +717,7 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'Sy
 
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 6; -- POOL FINISH
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** POOL FINALIZED ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>❌❌❌❌❌❌❌❌❌❌❌</tg-emoji>{{NEWLINE}}<s>Signature:</s>{{Signature}}{{NEWLINE}}<s>WalletHash:</s>{{WalletHash}}{{NEWLINE}}<s>ClassWallet:</s>{{ClassWallet}}{{NEWLINE}}<s>Amount Pool:</s> {{QuantityReceived}} {{QuantityReceivedSymbol}}{{NEWLINE}}<s>Amount Pool:</s> {{QuantityReceivedPool}} {{QuantityReceivedPoolSymbol}}{{NEWLINE}}<s>Ca Token Pool:</s>{{CaReceived}}{{NEWLINE}}<s>Ca Token Pool:</s>{{CaReceivedPool}}{{NEWLINE}}<s>Date:</s>{{Date}}{{NEWLINE}}<a href=''https://birdeye.so/token/{{CaReceived}}?chain=solana''>Chart1</a>{{NEWLINE}}<a href=''https://birdeye.so/token/{{CaReceivedPool}}?chain=solana''>Chart2</a>', null, @IdAlertConfiguration);
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** POOL FINALIZED ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>❌❌❌❌❌❌❌❌❌❌❌</tg-emoji>{{NEWLINE}}🖌 <b>Signature:</b>{{Signature}}{{NEWLINE}}💼 <b>WalletHash:</b>{{WalletHash}}{{NEWLINE}}📰 <b>ClassWallet:</b>{{ClassWallet}}{{NEWLINE}}💰 <b>Amount Pool:</b> {{QuantityReceived}} {{QuantityReceivedSymbol}}{{NEWLINE}}💰 <b>Amount Pool:</b> {{QuantityReceivedPool}} {{QuantityReceivedPoolSymbol}}{{NEWLINE}}🔒 <b>Ca Token Pool:</b>{{CaReceived}}{{NEWLINE}}🔒 <b>Ca Token Pool:</b>{{CaReceivedPool}}{{NEWLINE}}📆 <b>Date:</b>{{Date}}{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{CaReceived}}?chain=solana''>Chart Received</a>{{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{CaReceivedPool}}?chain=solana''>Chart Received 2</a>', null, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{ClassWallet}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'ClassWallet', NULL, NULL, 0, 0, 0);
@@ -745,6 +765,16 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformat
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.ClassWallet]', 'RANGE-ALL|Description', NULL, NULL, 0, 0, 0);
 
 ------------------------------------------------------------
+	SELECT * FROM RunTimeController
+	SELECT t.Hash, taw.*, w.Hash 
+	  FROM TokenAlpha ta
+INNER JOIN TokenAlphaWallet taw
+		ON taw.TokenAlphaId = ta.ID
+INNER JOIN Token t
+        ON t.ID = ta.TokenId
+INNER JOIN Wallet w
+        ON w.Id = taw.WalletId
+     
 SELECT * FROM RunTimeController
 UPDATE TokenAlpha SET IsCalledInChannel = 0
 SELECT * FROM RunTimeController
@@ -774,3 +804,12 @@ INNER JOIN ClassWallet c
 	SELECT * FROM TokenSecurity WHERE LockInfo IS NOT NULL
 	SELECT * FROM TokenSecurity WHERE TransferFeeData IS NOT NULL
 	SELECT * FROM TokenSecurity WHERE NonTransferable IS NOT NULL
+
+
+	SELECT SUM(CAST(AmountValueSource AS DECIMAL(38,18))), SUM(CAST(AmountValueDestination AS DECIMAL(38,18))) FROM Transactions WHERE WalletId = '0B182709-98E1-412A-9B10-9D5FCA0A6310' AND TokenDestinationId = '1683EF7F-0479-4073-62B6-08DC263DDFA2'
+	SELECT (SUM(CAST(AmountValueDestination AS DECIMAL(38,18))) * SUM(CAST(PriceSol AS DECIMAL(38,18)))) , SUM(CAST(AmountValueSource AS DECIMAL(38,18)))FROM Transactions WHERE WalletId = '0B182709-98E1-412A-9B10-9D5FCA0A6310' AND TokenSourceId = '1683EF7F-0479-4073-62B6-08DC263DDFA2'
+
+	-- COMPRA
+	SELECT 1500.671749000000000000 / 242696.761643719000000000
+	-- VENDA
+	SELECT 449.007951	/ 92696.761643719000000000
