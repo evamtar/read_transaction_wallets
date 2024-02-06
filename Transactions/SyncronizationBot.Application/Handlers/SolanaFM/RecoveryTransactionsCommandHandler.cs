@@ -62,10 +62,13 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                                 }
                                 else
                                     await this.SaveTransactionsOldForMapping(transaction);
-                                
+
                             }
                             else
+                            {
+                                await this._transactionsRepository.DetachedItem(exists);
                                 await this.SaveTransactionsOldForMapping(transaction);
+                            }
                         }
                     }
                 }

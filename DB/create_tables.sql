@@ -220,46 +220,53 @@ CREATE TABLE Wallet(
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ClassWalletId) REFERENCES ClassWallet(ID)
 );
+IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Token')
+BEGIN
+	CREATE TABLE Token(
+		ID                     UNIQUEIDENTIFIER,
+		[Hash]                 VARCHAR(50),
+		Symbol                 VARCHAR(50),
+		[Name]			       VARCHAR(200),
+		Supply                 VARCHAR(150),
+		MarketCap              VARCHAR(150),
+		Liquidity              VARCHAR(150),
+		UniqueWallet24h        INT,
+		UniqueWalletHistory24h INT,
+		Decimals               INT,
+		NumberMarkets          INT,
+		CreateDate             DATETIME,
+		LastUpdate             DATETIME,
+		PRIMARY KEY (ID)
+	);
+END
+GO
 
-CREATE TABLE Token(
-	ID                     UNIQUEIDENTIFIER,
-	[Hash]                 VARCHAR(50),
-	Symbol                 VARCHAR(50),
-	[Name]			       VARCHAR(200),
-	Supply                 VARCHAR(150),
-	MarketCap              VARCHAR(150),
-	Liquidity              VARCHAR(150),
-	UniqueWallet24h        INT,
-	UniqueWalletHistory24h INT,
-	Decimals               INT,
-	NumberMarkets          INT,
-	CreateDate             DATETIME,
-	LastUpdate             DATETIME,
-	PRIMARY KEY (ID)
-);
-
-CREATE TABLE TokenSecurity(
-    ID                 UNIQUEIDENTIFIER,
-	TokenId            UNIQUEIDENTIFIER,
-	CreatorAddress     VARCHAR(100),
-	CreationTime       BIGINT,
-	Top10HolderBalance VARCHAR(150),
-	Top10HolderPercent VARCHAR(150),
-	Top10UserBalance   VARCHAR(150),
-	Top10UserPercent   VARCHAR(150),
-	IsTrueToken        BIT,
-	LockInfo		   VARCHAR(4000),
-	Freezeable		   BIT,
-	FreezeAuthority    VARCHAR(100),
-	TransferFeeEnable  VARCHAR(100),
-	TransferFeeData    VARCHAR(4000),
-	IsToken2022        BIT,
-	NonTransferable    VARCHAR(100),
-	MintAuthority      VARCHAR(100),
-	IsMutable          BIT,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (TokenId) REFERENCES Token(ID)
-);
+IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenSecurity')
+BEGIN
+	CREATE TABLE TokenSecurity(
+		ID                 UNIQUEIDENTIFIER,
+		TokenId            UNIQUEIDENTIFIER,
+		CreatorAddress     VARCHAR(100),
+		CreationTime       BIGINT,
+		Top10HolderBalance VARCHAR(150),
+		Top10HolderPercent VARCHAR(150),
+		Top10UserBalance   VARCHAR(150),
+		Top10UserPercent   VARCHAR(150),
+		IsTrueToken        BIT,
+		LockInfo		   NVARCHAR(MAX),
+		Freezeable		   BIT,
+		FreezeAuthority    VARCHAR(100),
+		TransferFeeEnable  VARCHAR(100),
+		TransferFeeData    NVARCHAR(MAX),
+		IsToken2022        BIT,
+		NonTransferable    VARCHAR(100),
+		MintAuthority      VARCHAR(100),
+		IsMutable          BIT,
+		PRIMARY KEY (ID),
+		FOREIGN KEY (TokenId) REFERENCES Token(ID)
+	);
+END
+GO
 
 CREATE TABLE Transactions
 (
@@ -788,51 +795,3 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformat
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.ClassWallet]', 'RANGE-ALL|Description', NULL, NULL, 0, 0, 0);
 
 ------------------------------------------------------------
-	SELECT * FROM RunTimeController
-	SELECT t.Hash, taw.*, w.Hash 
-	  FROM TokenAlpha ta
-INNER JOIN TokenAlphaWallet taw
-		ON taw.TokenAlphaId = ta.ID
-INNER JOIN Token t
-        ON t.ID = ta.TokenId
-INNER JOIN Wallet w
-        ON w.Id = taw.WalletId
-     
-SELECT * FROM RunTimeController
-UPDATE TokenAlpha SET IsCalledInChannel = 0
-SELECT * FROM RunTimeController
-UPDATE RunTimeController SET IsRunning = 0
-UPDATE RunTimeController SET ConfigurationTimer = 4.183 WHERE TypeService = 4
-
-SELECT COUNT(*) , StatusLoad FROM (
-SELECT CASE WHEN IsLoadBalance = 1 THEN
-            'Carregada'
-	   ELSE
-			'Não Carregada'
-	   END StatusLoad
-	   FROM Wallet)
-AS T1
-GROUP BY T1.StatusLoad
-
-SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176' AND WalletId = '606E7ECE-4226-4643-948C-7B278D324D4A' AND Signature != '5Pnu4SvW6EiTpZ6M4oGjy1GS8Juqyf52czpz1kkPmQCSenXDbsnG2kfkNLjrJpDL57aQAe9hzEDroA3MjvQV7toV'
-SELECT * FROM WalletBalanceHistory WHERE TokenId = 'CF695CB4-DACD-416E-C220-08DC23E1D176'
-SELECT COUNT(*), TokenId FROM WalletBalanceHistory WHERE Signature != 'CREATE BALANCE' GROUP BY TokenId ORDER BY 1 DESC
-
-	SELECT w.Hash, c.Description 
-	  FROM Wallet w
-INNER JOIN ClassWallet c
-        ON c.ID = w.ClassWalletId
-
-	SELECT * FROM TokenSecurity WHERE TransferFeeEnable IS NOT NULL
-	SELECT * FROM TokenSecurity WHERE LockInfo IS NOT NULL
-	SELECT * FROM TokenSecurity WHERE TransferFeeData IS NOT NULL
-	SELECT * FROM TokenSecurity WHERE NonTransferable IS NOT NULL
-
-
-	SELECT SUM(CAST(AmountValueSource AS DECIMAL(38,18))), SUM(CAST(AmountValueDestination AS DECIMAL(38,18))) FROM Transactions WHERE WalletId = '0B182709-98E1-412A-9B10-9D5FCA0A6310' AND TokenDestinationId = '1683EF7F-0479-4073-62B6-08DC263DDFA2'
-	SELECT (SUM(CAST(AmountValueDestination AS DECIMAL(38,18))) * SUM(CAST(PriceSol AS DECIMAL(38,18)))) , SUM(CAST(AmountValueSource AS DECIMAL(38,18)))FROM Transactions WHERE WalletId = '0B182709-98E1-412A-9B10-9D5FCA0A6310' AND TokenSourceId = '1683EF7F-0479-4073-62B6-08DC263DDFA2'
-
-	-- COMPRA
-	SELECT 1500.671749000000000000 / 242696.761643719000000000
-	-- VENDA
-	SELECT 449.007951	/ 92696.761643719000000000

@@ -17,6 +17,7 @@ using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
 using System.Diagnostics;
+using System.Transactions;
 
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -133,6 +134,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
+                                await this._transactionsRepository.DetachedItem(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                                 {
                                     Transactions = transactionDB,
@@ -177,7 +179,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                             }
                             else
                             {
-                                await _transactionNotMappedRepository.Add(new TransactionNotMapped
+                                var transactionNotMapped = await _transactionNotMappedRepository.Add(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
                                     WalletId = request?.WalletId,
@@ -186,6 +188,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     StackTrace = null,
                                     DateTimeRunner = DateTime.Now
                                 });
+                                await this._transactionNotMappedRepository.DetachedItem(transactionNotMapped!);
                             }
                         }
                         catch (Exception ex)

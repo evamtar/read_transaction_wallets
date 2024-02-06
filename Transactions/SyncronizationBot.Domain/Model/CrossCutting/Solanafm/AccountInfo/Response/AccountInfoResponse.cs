@@ -25,7 +25,7 @@
         public bool? Executable { get; set; }
         public long? Lamports { get; set; }
         public string? Owner { get; set; }
-        public int? RentEpoch { get; set; }
+        public decimal? RentEpoch { get; set; }
         public int? Space { get; set; }
     }
 }
