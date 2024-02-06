@@ -71,7 +71,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
             if (balance == null)
             {
                 var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { tokenHash! } });
-                balance = await _walletBalanceRepository.Add(new WalletBalance
+                balance = await this._walletBalanceRepository.Add(new WalletBalance
                 {
                     WalletId = walleId,
                     TokenId = tokenId,
@@ -82,6 +82,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     IsActive = quantity > 0,
                     LastUpdate = DateTime.Now
                 });
+                await this._walletBalanceRepository.DetachedItem(balance);
             }
             else
             {
@@ -96,11 +97,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance.TotalValueUSD = balance.Quantity * price?.Data?[tokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
-                balance = await _walletBalanceRepository.Edit(balance);
-                await _walletBalanceRepository.DetachedItem(balance);
+                balance = await this._walletBalanceRepository.Edit(balance);
+                await this._walletBalanceRepository.DetachedItem(balance);
             }
 
-            await _walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+            var walletBalanceHistory = await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
             {
                 WalletBalanceId = balance.ID,
                 WalletId = balance.WalletId,
@@ -116,6 +117,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 CreateDate = DateTime.Now,
                 LastUpdate = balance.LastUpdate
             });
+            await this._walletBalanceHistoryRepository.DetachedItem(walletBalanceHistory);
             return new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = balance.Quantity,
