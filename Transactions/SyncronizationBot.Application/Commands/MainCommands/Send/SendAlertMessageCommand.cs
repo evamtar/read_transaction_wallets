@@ -7,6 +7,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
     public class SendAlertMessageCommand : IRequest<SendAlertMessageCommandResponse>
     {
         public ETypeAlert TypeAlert { get; set; }
+        public Guid? EntityId { get; set; }
         public int? IdClassification { get; set; }
         public Dictionary<string, object>? Parameters { get; set; }
 

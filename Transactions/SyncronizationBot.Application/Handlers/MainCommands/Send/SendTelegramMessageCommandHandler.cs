@@ -34,9 +34,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             var response = await _telegramBotService.ExecuteSendMessageAsync(new TelegramBotMessageSendRequest { ChatId = channel.ChannelId, Message = request.Message });
             await this._telegramMessageRepository.Add(new TelegramMessage 
             { 
+                EntityId = request?.EntityId,
                 MessageId = response.Result?.MessageId ?? 0,
                 DateSended = AdjustDateTimeToPtBR(response.Result?.DateOfMessage),
-                TelegramChannelId = request.TelegramChannelId,
+                TelegramChannelId = request?.TelegramChannelId,
                 IsDeleted = false
             });
             return new SendTelegramMessageCommandResponse { };

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Database.Base;
 
 
 namespace SyncronizationBot.Infra.Data.Mapper
@@ -13,6 +14,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tm => tm.ID);
             builder.Property(tm => tm.MessageId);
             builder.Property(tm => tm.TelegramChannelId);
+            builder.Property(tm => tm.EntityId);
             builder.Property(tm => tm.DateSended);
             builder.Property(tm => tm.IsDeleted);
             builder.HasOne(tm => tm.TelegramChannel).WithMany(tc => tc.TelegramMessages).HasForeignKey(tm => tm.TelegramChannelId);

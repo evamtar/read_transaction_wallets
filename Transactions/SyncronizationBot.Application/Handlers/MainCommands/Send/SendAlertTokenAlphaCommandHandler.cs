@@ -49,9 +49,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 await this._mediator.Send(new SendAlertMessageCommand 
                 {
                     IdClassification = null,
+                    EntityId = tokenAlpha?.ID,
                     Parameters = SendAlertMessageCommand.GetParameters(new object[] 
                     {
-                        tokenAlpha,
+                        tokenAlpha!,
                         tokenAlphaConfiguration!,
                         token!,
                         tokensAlphaWalletsToAlert,
@@ -60,8 +61,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     }),
                     TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
                 });
-                tokenAlpha.IsCalledInChannel = true;
-                tokenAlpha.LastUpdate = DateTime.Now;
+                tokenAlpha!.IsCalledInChannel = true;
+                tokenAlpha!.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlpha);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
             }

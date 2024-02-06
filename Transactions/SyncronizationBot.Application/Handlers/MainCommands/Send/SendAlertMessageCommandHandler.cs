@@ -42,10 +42,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     foreach (var information in informations)
                     {
                         var parameters = await _alertParameterRepository.Get(x => x.AlertInformationId == information.ID);
-                        var message = ReplaceParametersInformation(request.Parameters, information, parameters);
+                        var message = ReplaceParametersInformation(request?.Parameters, information, parameters);
                         message = message?.Replace("{{NEWLINE}}", Environment.NewLine);
                         await _mediator.Send(new SendTelegramMessageCommand
                         {
+                            EntityId = request?.EntityId,
                             TelegramChannelId = configuration.TelegramChannelId,
                             Message = message
                         });

@@ -159,6 +159,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 }
                                 await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
+                                    EntityId = transactionDB?.ID,
                                     Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
                                                                                     {
                                                                                         transactionDB!,

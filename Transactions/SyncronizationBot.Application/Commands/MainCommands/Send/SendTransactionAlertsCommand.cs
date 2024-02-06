@@ -7,6 +7,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
     public class SendTransactionAlertsCommand : IRequest<SendTransactionAlertsCommandResponse>
     {
         public Dictionary<string, object>? Parameters { get; set; }
+        public Guid? EntityId { get; set; }
         public int? IdClassification { get; set; }
         public Guid? WalletId { get; set; }
         public Transactions? Transactions { get; set; }

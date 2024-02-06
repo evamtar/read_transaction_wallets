@@ -25,6 +25,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
+                EntityId = request?.EntityId,
                 Parameters = request?.Parameters,
                 TypeAlert = await this.TransalateTypeOperationInTypeAlert(request)
             });
