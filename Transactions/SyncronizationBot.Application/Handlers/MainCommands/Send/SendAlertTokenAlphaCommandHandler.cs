@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Database;
@@ -46,6 +47,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 var wallets = await this._walletRepository.Get(x => listWalletsIds.Contains(x.ID));
                 var listClassWalletsIds = this.GetClassWalletsIds(wallets);
                 var classWallets = await this._classWalletRepository.Get(x => listClassWalletsIds.Contains(x.ID));
+                //Limpar mensagens de calls anteriores do mesmo token
+                await this._mediator.Send(new DeleteOldCallsCommand 
+                { 
+                    EntityId = tokenAlpha.ID
+                });
                 await this._mediator.Send(new SendAlertMessageCommand 
                 {
                     IdClassification = null,

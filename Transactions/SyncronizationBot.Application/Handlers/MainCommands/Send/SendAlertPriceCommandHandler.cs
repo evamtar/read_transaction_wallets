@@ -31,11 +31,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
-            var alerts = await _alertPriceRepository.Get(x => x.EndDate >= DateTime.Now || x.EndDate == null);
-            var prices = await _jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = GetIdsAlerts(alerts.ToList()) });
-            foreach (var alert in alerts)
+            var alertsSended = new List<Guid?>();
+            var alert = await _alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
+            var hasNext = alert != null;
+            while(hasNext) 
             {
-                if (prices!.Data!.ContainsKey(alert.TokenHash!))
+                var prices = await _jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { alert!.TokenHash! } });
+                if (prices!.Data!.ContainsKey(alert.TokenHash!)) 
                 {
                     var price = prices?.Data[alert.TokenHash!];
                     var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = alert.TokenHash });
@@ -69,7 +71,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             await _alertPriceRepository.Edit(alert);
                             await _alertPriceRepository.DetachedItem(alert);
                         }
-                        else 
+                        else
                         {
                             alert.EndDate = DateTime.Now;
                             await _alertPriceRepository.Edit(alert);
@@ -77,6 +79,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         }
                     }
                 }
+                alertsSended.Add(alert!.ID);
+                alert = await _alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
+                hasNext = alert != null;
             }
             return new SendAlertPriceCommandResponse();
         }
@@ -91,19 +96,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             });
         }
 
-        private List<string> GetIdsAlerts(List<AlertPrice> alerts)
-        {
-            var listIdsTokens = new List<string>();
-            foreach (var alert in alerts)
-            {
-                if (alert.TokenHash != null)
-                {
-                    if (!listIdsTokens.Contains(alert.TokenHash))
-                        listIdsTokens.Add(alert.TokenHash);
-                }
-            }
-            return listIdsTokens;
-        }
+        
     }
 
     public enum EClassifictionMessage 
