@@ -37,26 +37,27 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertTokenAlphaCommandResponse> Handle(SendAlertTokenAlphaCommand request, CancellationToken cancellationToken)
         {
-            var tokensAlphaToAlert = await this._tokenAlphaRepository.Get(x => x.IsCalledInChannel == false);
-            foreach (var tokenAlpha in tokensAlphaToAlert) 
+            var tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefault(x => x.IsCalledInChannel == false);
+            var hasNext = tokenAlpha != null;
+            while (hasNext) 
             {
-                var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha.TokenAlphaConfigurationId);
-                var token = await this._tokenRepository.FindFirstOrDefault(x => x.ID == tokenAlpha.TokenId);
-                var tokensAlphaWalletsToAlert = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha.ID);
+                var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenAlphaConfigurationId);
+                var token = await this._tokenRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenId);
+                var tokensAlphaWalletsToAlert = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID);
                 var listWalletsIds = this.GetListWalletsIds(tokensAlphaWalletsToAlert);
                 var wallets = await this._walletRepository.Get(x => listWalletsIds.Contains(x.ID));
                 var listClassWalletsIds = this.GetClassWalletsIds(wallets);
                 var classWallets = await this._classWalletRepository.Get(x => listClassWalletsIds.Contains(x.ID));
                 //Limpar mensagens de calls anteriores do mesmo token
-                await this._mediator.Send(new DeleteOldCallsCommand 
-                { 
-                    EntityId = tokenAlpha.ID
+                await this._mediator.Send(new DeleteOldCallsCommand
+                {
+                    EntityId = tokenAlpha!.ID
                 });
-                await this._mediator.Send(new SendAlertMessageCommand 
+                await this._mediator.Send(new SendAlertMessageCommand
                 {
                     IdClassification = null,
                     EntityId = tokenAlpha?.ID,
-                    Parameters = SendAlertMessageCommand.GetParameters(new object[] 
+                    Parameters = SendAlertMessageCommand.GetParameters(new object[]
                     {
                         tokenAlpha!,
                         tokenAlphaConfiguration!,
@@ -71,8 +72,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 tokenAlpha!.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlpha);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
+                tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefault(x => x.IsCalledInChannel == false);
+                hasNext = tokenAlpha != null;
             }
-            
             return new SendAlertTokenAlphaCommandResponse{ };
         }
 

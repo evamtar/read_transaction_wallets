@@ -25,7 +25,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
         }
         public async Task<DeleteOldCallsCommandResponse> Handle(DeleteOldCallsCommand request, CancellationToken cancellationToken)
         {
-            var oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId);
+            var oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId && x.IsDeleted == false);
             var hasNext = oldCallsMessage != null;
             while (hasNext) 
             {
@@ -35,7 +35,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                 await this._telegramMessageRepository.Edit(oldCallsMessage);
                 await this._telegramChannelRepository.DetachedItem(telegramChannel!);
                 await this._telegramMessageRepository.DetachedItem(oldCallsMessage);
-                oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId);
+                oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId && x.IsDeleted == false);
                 hasNext = oldCallsMessage != null;
             }
             return new DeleteOldCallsCommandResponse { };

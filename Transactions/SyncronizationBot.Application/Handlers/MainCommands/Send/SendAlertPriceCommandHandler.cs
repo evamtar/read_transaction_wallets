@@ -32,15 +32,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
             var alertsSended = new List<Guid?>();
-            var alert = await _alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
+            var alert = await this._alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
             var hasNext = alert != null;
             while(hasNext) 
             {
-                var prices = await _jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { alert!.TokenHash! } });
+                var prices = await this._jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { alert!.TokenHash! } });
                 if (prices!.Data!.ContainsKey(alert.TokenHash!)) 
                 {
                     var price = prices?.Data[alert.TokenHash!];
-                    var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = alert.TokenHash });
+                    var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = alert.TokenHash });
                     var isSendAlert = false;
                     switch (alert.TypeAlert!)
                     {
@@ -68,19 +68,19 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if (alert.PricePercent == null)
                                 alert.PriceValue += alert.PriceValue - alert.PriceBase;
                             alert.PriceBase = price?.Price;
-                            await _alertPriceRepository.Edit(alert);
-                            await _alertPriceRepository.DetachedItem(alert);
+                            await this._alertPriceRepository.Edit(alert);
+                            await this._alertPriceRepository.DetachedItem(alert);
                         }
                         else
                         {
                             alert.EndDate = DateTime.Now;
-                            await _alertPriceRepository.Edit(alert);
-                            await _alertPriceRepository.DetachedItem(alert);
+                            await this._alertPriceRepository.Edit(alert);
+                            await this._alertPriceRepository.DetachedItem(alert);
                         }
                     }
                 }
                 alertsSended.Add(alert!.ID);
-                alert = await _alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
+                alert = await this._alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
                 hasNext = alert != null;
             }
             return new SendAlertPriceCommandResponse();
