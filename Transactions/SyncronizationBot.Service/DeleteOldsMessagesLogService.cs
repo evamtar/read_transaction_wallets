@@ -14,7 +14,7 @@ namespace SyncronizationBot.Service
                                             IRunTimeControllerRepository runTimeControllerRepository,
                                             IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.DeleteOldMessages, syncronizationBotConfig)
         {
-            
+            base.LogMessage("Iniciando o serviço de exclusão de mensagens de log antigas");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)

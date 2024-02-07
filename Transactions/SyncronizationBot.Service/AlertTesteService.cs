@@ -38,6 +38,7 @@ namespace SyncronizationBot.Service
             this._transactionsRepository = transactionsRepository;
             this._walletBalanceHistory = walletBalanceHistory;
             this._mappedTokensConfig = mappedTokensConfig;
+            base.LogMessage("Iniciando o serviço de teste de alertas");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
@@ -48,7 +49,7 @@ namespace SyncronizationBot.Service
         
         private async Task TesteEnvioAlerta() 
         {
-            base.LogMessage("Iniciando o serviço de teste de alertas");
+            
             var walletId = Guid.Parse("684B5A8C-5078-41C8-9D49-31DEEDC938C7");
             var walletHash = "HwQ9NTLB1QthB3Tsq9eWCXogVHWZSLZrhySiknr2cKFX";
             var signature = "66Nvub4hvrDp7Q6X5vFsTkFQQMHoqrybZS7BkJyPHyF7pyVbzWPcxjpGg9pyfG2m8AFwW7JSjKFSrzoWEni9qiT1";

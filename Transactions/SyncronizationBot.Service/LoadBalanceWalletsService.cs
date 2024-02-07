@@ -16,6 +16,7 @@ namespace SyncronizationBot.Service
                                          IRunTimeControllerRepository runTimeControllerRepository, 
                                          IOptions<SyncronizationBotConfig> syncronizationBotConfig) :base(mediator, runTimeControllerRepository, ETypeService.Balance, syncronizationBotConfig)
         {
+            base.LogMessage("Iniciando o serviço de atualização de saldo de conta");
         }
 
         protected override async Task DoExecute(PeriodicTimer? timer, CancellationToken stoppingToken)

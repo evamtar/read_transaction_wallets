@@ -14,7 +14,7 @@ namespace SyncronizationBot.Service
                                  IRunTimeControllerRepository runTimeControllerRepository,
                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.Price, syncronizationBotConfig)
         {
-        
+            base.LogMessage("Iniciando o serviço de alerta de preços");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)

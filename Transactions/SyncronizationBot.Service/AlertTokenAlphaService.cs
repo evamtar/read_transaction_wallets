@@ -14,7 +14,7 @@ namespace SyncronizationBot.Service
                                       IRunTimeControllerRepository runTimeControllerRepository,
                                       IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.AlertTokenAlpha, syncronizationBotConfig)
         {
-        
+            base.LogMessage("Iniciando o serviço de alerta de token alpha");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
