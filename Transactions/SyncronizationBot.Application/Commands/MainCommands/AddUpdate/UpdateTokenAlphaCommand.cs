@@ -1,0 +1,16 @@
+﻿
+using MediatR;
+using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
+
+namespace SyncronizationBot.Application.Commands.MainCommands.AddUpdate
+{
+    public class UpdateTokenAlphaCommand : IRequest<UpdateTokenAlphaCommandResponse>
+    {
+        public Guid? WalletId { get; set; }
+        public Guid? TokenId { get; set; }
+        public decimal? AmountTokenSell { get; set; }
+        public decimal? AmountTokenSol { get; set; }
+        public decimal? AmountTokenUSDC { get; set; }
+        public decimal? AmountTokenUSDT { get; set; }
+    }
+}

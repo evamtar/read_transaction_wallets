@@ -39,12 +39,13 @@ namespace SyncronizationBot.Service
             this._walletBalanceHistory = walletBalanceHistory;
             this._mappedTokensConfig = mappedTokensConfig;
         }
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
+
+        protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
             //await this.TesteVerificacaoAlpha();
             await this.TesteEnvioAlerta();
         }
-
+        
         private async Task TesteEnvioAlerta() 
         {
             base.LogMessage("Iniciando o serviço de teste de alertas");
@@ -162,5 +163,7 @@ namespace SyncronizationBot.Service
             }
             return null;
         }
+
+       
     }
 }

@@ -18,55 +18,42 @@ namespace SyncronizationBot.Service
 
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
-            base.LogMessage("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
-            using var timer = await base.GetPeriodicTimer();
-            if (timer != null)
+            base.LogMessage($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            if (base.RunTimeController != null && (!base.RunTimeController!.IsRunning ?? true))
             {
-                while (await timer.WaitForNextTickAsync(stoppingToken))
+                try
                 {
-                    base.LogMessage($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    if (base.RunTimeController != null && (!base.RunTimeController!.IsRunning ?? true))
-                    {
-                        try
-                        {
-                            await base.SetRuntimeControllerAsync(true, false);
-                            var response = await this._mediator.Send(new ReadWalletsCommand { IsContingecyTransactions = base.IsContingecyTransactions });
-                            if(response.HasWalletsWithBalanceLoad)
-                                base.EndTransactionsContingencySum(response.TotalValidTransactions);
-                            await SetRuntimeControllerAsync(false, true);
-                            base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await base.SendAlertExecute(timer);
-                            base.LogMessage($"Waiting for next tick in {timer.Period}");
-                        }
-                        catch (Exception ex)
-                        {
-                            await base.SendAlertServiceError(ex, timer);
-                            await SetRuntimeControllerAsync(false, true);
-                            base.LogMessage($"Exceção: {ex.Message}");
-                            base.LogMessage($"StackTrace: {ex.StackTrace}");
-                            base.LogMessage($"InnerException: {ex.InnerException}");
-                            base.LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
-                            base.LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
-                            base.LogMessage($"Waiting for next tick in {timer.Period}");
-                        }
-                    }
-                    else
-                    {
-                        await base.SendAlertServiceRunning();
-                        base.LogMessage($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    }
+                    await base.SetRuntimeControllerAsync(true, false);
+                    var response = await this._mediator.Send(new ReadWalletsCommand { IsContingecyTransactions = base.IsContingecyTransactions });
+                    if (response.HasWalletsWithBalanceLoad)
+                        base.EndTransactionsContingencySum(response.TotalValidTransactions);
+                    await SetRuntimeControllerAsync(false, true);
+                    base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                    await base.SendAlertExecute(timer);
+                    base.LogMessage($"Waiting for next tick in {timer.Period}");
+                }
+                catch (Exception ex)
+                {
+                    await base.SendAlertServiceError(ex, timer);
+                    await SetRuntimeControllerAsync(false, true);
+                    base.LogMessage($"Exceção: {ex.Message}");
+                    base.LogMessage($"StackTrace: {ex.StackTrace}");
+                    base.LogMessage($"InnerException: {ex.InnerException}");
+                    base.LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
+                    base.LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
+                    base.LogMessage($"Waiting for next tick in {timer.Period}");
                 }
             }
-            else 
+            else
             {
-                await base.SendAlertTimerIsNull();
-                base.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                await base.SendAlertServiceRunning();
+                base.LogMessage($"Aplicativo rodando: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
-            base.LogMessage("Finalizado");
-            return;
         }
+
+        
         
     }
 }

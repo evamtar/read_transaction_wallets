@@ -100,15 +100,15 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
 
-    services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
-    services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
 
     #region Only For Test
 
-    //services.AddHostedService<AlertTesteService>();
+    services.AddHostedService<AlertTesteService>();
 
     #endregion
 
@@ -143,10 +143,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Globais
 
     services.AddTransient<IRequestHandler<VerifyAddTokenAlphaCommand, VerifyAddTokenAlphaCommandResponse>, VerifyAddTokenAlphaCommandHandler>();
-    services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
-
+    
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
+    services.AddTransient<IRequestHandler<UpdateTokenAlphaCommand, UpdateTokenAlphaCommandResponse>, UpdateTokenAlphaCommandHandler>();
+
+    services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
 
     services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();

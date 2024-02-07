@@ -44,13 +44,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 var tokenAlphaBuyBefore = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.WalletId == request.WalletId);
                 if (tokenAlphaBuyBefore != null)
                 {
-                    tokenAlphaBuyBefore.ValueSpentSol += request?.ValueBuySol;
-                    tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
-                    tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
-                    tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
-                    tokenAlphaBuyBefore.NumberOfBuys += 1;
-                    await this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
-                    await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
+                     
                 }
                 else 
                 {
