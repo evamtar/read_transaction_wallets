@@ -82,7 +82,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
             return await this.FindFirstOrDefault(e => e.ID == id);
         }
 
-        public virtual async Task<IList<T>> Get(Expression<Func<T, bool>> predicate)
+        public virtual async Task<List<T>> Get(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().Where(predicate).AsNoTracking().ToListAsync();
         }
@@ -95,7 +95,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
                 return await _context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public virtual async Task<IList<T>> GetAll()
+        public virtual async Task<List<T>> GetAll()
         {
             return await _context.Set<T>().AsNoTracking().ToListAsync();
         }

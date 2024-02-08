@@ -43,9 +43,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             {
                 var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenAlphaConfigurationId);
                 var token = await this._tokenRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenId);
-                var tokensAlphaWalletsToAlert = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID);
+                var tokensAlphaWalletsToAlert = (await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID)).ToList();
                 var listWalletsIds = this.GetListWalletsIds(tokensAlphaWalletsToAlert);
-                var wallets = await this._walletRepository.Get(x => listWalletsIds.Contains(x.ID));
+                var wallets = (await this._walletRepository.Get(x => listWalletsIds.Contains(x.ID))).ToList();
                 var listClassWalletsIds = this.GetClassWalletsIds(wallets);
                 var classWallets = await this._classWalletRepository.Get(x => listClassWalletsIds.Contains(x.ID));
                 //Limpar mensagens de calls anteriores do mesmo token
@@ -78,13 +78,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return new SendAlertTokenAlphaCommandResponse{ };
         }
 
-        public int GetClassificationAlert(IEnumerable<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
+        public int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
         {
             if (tokensAlphaWalletsToAlert.Count() > 4)
                 return 4;
             return tokensAlphaWalletsToAlert.Count();
         }
-        private List<Guid?> GetClassWalletsIds(IEnumerable<Wallet> wallets) 
+        private List<Guid?> GetClassWalletsIds(List<Wallet> wallets) 
         {
             var listIds = new List<Guid?>();
             foreach (var wallet in wallets)
@@ -92,7 +92,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return listIds;
         }
 
-        private List<Guid?> GetListWalletsIds(IEnumerable<TokenAlphaWallet> tokenAlphaWallets) 
+        private List<Guid?> GetListWalletsIds(List<TokenAlphaWallet> tokenAlphaWallets) 
         {
             var listIds = new List<Guid?>();
             foreach (var wallets in tokenAlphaWallets)
