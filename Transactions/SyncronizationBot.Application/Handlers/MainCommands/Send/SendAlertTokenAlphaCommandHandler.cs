@@ -55,7 +55,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 });
                 await this._mediator.Send(new SendAlertMessageCommand
                 {
-                    IdClassification = null,
+                    IdClassification = this.GetClassificationAlert(tokensAlphaWalletsToAlert),
                     EntityId = tokenAlpha?.ID,
                     Parameters = SendAlertMessageCommand.GetParameters(new object[]
                     {
@@ -78,6 +78,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return new SendAlertTokenAlphaCommandResponse{ };
         }
 
+        public int GetClassificationAlert(IEnumerable<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
+        {
+            if (tokensAlphaWalletsToAlert.Count() > 4)
+                return 4;
+            return tokensAlphaWalletsToAlert.Count();
+        }
         private List<Guid?> GetClassWalletsIds(IEnumerable<Wallet> wallets) 
         {
             var listIds = new List<Guid?>();

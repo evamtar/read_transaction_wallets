@@ -66,7 +66,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     if (parametersObjects != null)
                     {
                         var objParameter = parametersObjects[parameter.Class!];
-                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue, parameter.HasAdjustment);
+                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue, parameter.FormatValue, parameter.HasAdjustment);
                         message = message!.Replace(parameter.Name ?? string.Empty, parameterValue);
                     }
                 }
@@ -74,7 +74,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return message;
         }
 
-        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue, bool? hasAdjustment)
+        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue, string? formatValue, bool? hasAdjustment)
         {
             if (fixValue != null) return fixValue;
             if (parameter != null)
@@ -110,7 +110,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                                     value?.GetType() == typeof(int) || value?.GetType() == typeof(int?))
                                                     sum += (decimal?)objPropertyInfo?.GetValue(item);
                                             }
-                                            return sum.ToString();
+                                            return formatValue != null ? sum?.ToString(formatValue) : sum?.ToString();
                                         }
                                     }
                                     else
