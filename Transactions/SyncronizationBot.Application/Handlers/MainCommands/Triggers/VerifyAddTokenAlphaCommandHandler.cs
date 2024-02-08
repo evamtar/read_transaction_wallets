@@ -78,7 +78,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 {
                     if(request?.LaunchDate != null)
                         maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
-                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.MaxMarketcap < request!.MarketCap && x.MaxDateOfLaunchDays > maxDateOfLaunchDays, x => x.Ordernation!);
+                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => request!.MarketCap <= x.MaxMarketcap && maxDateOfLaunchDays <= x.MaxDateOfLaunchDays, x => x.Ordernation!);
                     if (tokenAlphaConfiguration != null)
                     {
                         var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha 
