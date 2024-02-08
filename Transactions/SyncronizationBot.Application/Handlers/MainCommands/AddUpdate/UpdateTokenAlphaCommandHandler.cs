@@ -44,18 +44,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     tokenAlphaWallet.ValueSpentSol -= request?.AmountTokenSol;
                     tokenAlphaWallet.ValueSpentUSDC -= request?.AmountTokenUSDC;
                     tokenAlphaWallet.ValueSpentUSDT -= request?.AmountTokenUSDT;
-                    //tokenAlphaWallet.QuantityToken -= request?.QuantityTokenReceived;
-                    //await this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
-                    //await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
+                    tokenAlphaWallet.QuantityToken -= request?.AmountTokenSell;
+                    await this._tokenAlphaWalletRepository.Edit(tokenAlphaWallet);
+                    await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaWallet);
 
                 }
-            }
-            else {
-                //tokenAlphaCalled.CallNumber += 1;
-                //tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
-                //tokenAlphaCalled.ActualPrice = request?.Price;
-                //tokenAlphaCalled.IsCalledInChannel = false;
-                //tokenAlphaCalled.LastUpdate = DateTime.Now;
+                tokenAlpha.ActualMarketcap = request?.MarketCap;
+                tokenAlpha.ActualPrice = request?.Price;
+                tokenAlpha.IsCalledInChannel = true;
+                tokenAlpha.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlpha!);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlpha!);
             }

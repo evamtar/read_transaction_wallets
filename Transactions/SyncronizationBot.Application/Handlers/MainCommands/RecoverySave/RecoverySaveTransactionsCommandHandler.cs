@@ -143,7 +143,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokenReceivedPoolHash = tokenReceivedPool?.Hash
                                 });
-                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
+                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
                                 {
                                     await this._mediator.Send(new VerifyAddTokenAlphaCommand
                                     {
@@ -157,6 +157,20 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         MarketCap = transactionDB?.MtkcapTokenDestination,
                                         Price = tokenReceived?.Price,
                                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
+                                    });
+                                }
+                                else if (transactionDB?.TypeOperation == ETypeOperation.SELL) 
+                                {
+                                    await this._mediator.Send(new UpdateTokenAlphaCommand
+                                    {
+                                        WalletId = request?.WalletId,
+                                        TokenId = transactionDB?.TokenDestinationId,
+                                        AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenSell = transactionDB?.AmountValueDestination,
+                                        MarketCap = transactionDB?.MtkcapTokenDestination,
+                                        Price = tokenReceived?.Price
                                     });
                                 }
                                 await this._mediator.Send(new SendTransactionAlertsCommand
@@ -235,6 +249,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
+                case ETypeOperation.SELL:
                     if (tokenHash == "So11111111111111111111111111111111111111112")
                         return Math.Abs(amountSource ?? 0);
                     else
@@ -251,6 +266,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
+                case ETypeOperation.SELL:
                     if (tokenHash != "So11111111111111111111111111111111111111112")
                         return Math.Abs(amountSource ?? 0);
                     else

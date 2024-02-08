@@ -12,5 +12,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.AddUpdate
         public decimal? AmountTokenSol { get; set; }
         public decimal? AmountTokenUSDC { get; set; }
         public decimal? AmountTokenUSDT { get; set; }
+        public decimal? MarketCap { get; set; }
+        public decimal? Price { get; set; }
     }
 }
