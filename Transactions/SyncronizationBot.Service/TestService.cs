@@ -49,8 +49,8 @@ namespace SyncronizationBot.Service
         {
             await this._mediator.Send(new VerifyAddTokenAlphaCommand
             {
-                TokenId = Guid.Parse("F335EC73-547A-477A-A3E8-08DC273E3DA2"),
-                WalletId = Guid.Parse("C6787D38-226F-4F61-BE5A-091CB515A431"),
+                TokenId = Guid.Parse("A9AFF2C0-4D2E-429C-2C00-08DC289BD3E8"),
+                WalletId = Guid.Parse("42A905A6-CE0D-49AD-B1E8-20567BDA41AE"),
                 LaunchDate = DateTime.Now.AddHours(-10),
                 MarketCap = (decimal?)2000001.00,
                 ValueBuySol = (decimal?)(250.00000000 / 98.8967628),

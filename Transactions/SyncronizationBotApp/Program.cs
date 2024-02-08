@@ -94,7 +94,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")).EnableDetailedErrors(), ServiceLifetime.Transient);
 
     #endregion
 
