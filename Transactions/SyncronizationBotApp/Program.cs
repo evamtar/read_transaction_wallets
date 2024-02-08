@@ -108,7 +108,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Only For Test
 
-    //services.AddHostedService<AlertTesteService>();
+    //services.AddHostedService<TestService>();
 
     #endregion
 

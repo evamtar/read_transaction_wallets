@@ -5,28 +5,26 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response.MainCommands.Triggers;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Service.Base;
-using System.Diagnostics;
+
 
 namespace SyncronizationBot.Service
 {
-    public class AlertTesteService : BaseService
+    public class TestService : BaseService
     {
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistory;
         private readonly ITransfersService _transfersService;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
 
-        public AlertTesteService(IMediator mediator,
+        public TestService(IMediator mediator,
                                          IRunTimeControllerRepository runTimeControllerRepository,
                                          IOptions<SyncronizationBotConfig> syncronizationBotConfig,
                                          ITransfersService transfersService,
@@ -44,9 +42,24 @@ namespace SyncronizationBot.Service
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
             //await this.TesteVerificacaoAlpha();
-            await this.TesteEnvioAlerta();
+            //await this.TesteEnvioAlerta();
+            await this.TesteAlphaVerification();
         }
-        
+        private async Task TesteAlphaVerification() 
+        {
+            await this._mediator.Send(new VerifyAddTokenAlphaCommand
+            {
+                TokenId = Guid.Parse("F335EC73-547A-477A-A3E8-08DC273E3DA2"),
+                WalletId = Guid.Parse("C6787D38-226F-4F61-BE5A-091CB515A431"),
+                LaunchDate = DateTime.Now.AddHours(-10),
+                MarketCap = (decimal?)2000001.00,
+                ValueBuySol = (decimal?)(250.00000000 / 98.8967628),
+                ValueBuyUSDC = (decimal?)250,
+                ValueBuyUSDT = (decimal?)250,
+                Signature = "5zietZumjqQiwj6TgR5UPc7pXYfgHuMZK5DxYa4DqZPDC7S8wVhJrLsFaDtMtb2y5KhLtaTW7aWmyyVp8rPHFuEG",
+                Price = (decimal?)0.000000214747
+            });
+        }
         private async Task TesteEnvioAlerta() 
         {
             

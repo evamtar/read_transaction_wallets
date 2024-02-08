@@ -51,7 +51,9 @@ namespace SyncronizationBot.Service.Base
             {
                 using var timer = this.Timer;
                 {
-                    if (await timer!.WaitForNextTickAsync(stoppingToken)) 
+                    if (this.GetType() == typeof(TestService)) 
+                        await this.DoExecute(this.Timer!, stoppingToken);
+                    else if (await timer!.WaitForNextTickAsync(stoppingToken)) 
                         await this.DoExecute(this.Timer!, stoppingToken);
                 }
                 await this.SetPeriodicTimer();

@@ -44,7 +44,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 var tokenAlphaBuyBefore = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.WalletId == request.WalletId);
                 if (tokenAlphaBuyBefore != null)
                 {
-                     
+                    tokenAlphaBuyBefore.ValueSpentSol = +request?.ValueBuySol;
+                    tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
+                    tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
+                    tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
+                    await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
+                    await SaveTokenAlphaWalletsHistory(request, tokenAlphaBuyBefore);
                 }
                 else 
                 {
@@ -72,16 +77,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             }
             else 
             {
-                var maxDateOfLaunchDays = (decimal?)0;
                 var buysBeforeThis = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
                 if (buysBeforeThis == null) 
                 {
-                    if(request?.LaunchDate != null)
-                        maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
-                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => request!.MarketCap <= x.MaxMarketcap && maxDateOfLaunchDays <= x.MaxDateOfLaunchDays, x => x.Ordernation!);
+                    var tokenAlphaConfiguration = await this.GetTokenAlphaConfiguration(request, 0);
                     if (tokenAlphaConfiguration != null)
                     {
-                        var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha 
+                        var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha
                         {
                             CallNumber = 1,
                             InitialMarketcap = request?.MarketCap,
@@ -163,6 +165,22 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private DateTime? AdjustDateTimeToPtBR(DateTime? dateTime)
         {
             return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0);
+        }
+
+        private async Task<TokenAlphaConfiguration> GetTokenAlphaConfiguration(VerifyAddTokenAlphaCommand? request, int? ordenation) 
+        {
+            var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.Ordernation >= ordenation, x => x.Ordernation!);
+
+            if(tokenAlphaConfiguration != null) 
+            {
+                var maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
+                if (request?.MarketCap <= tokenAlphaConfiguration.MaxMarketcap  && maxDateOfLaunchDays <= tokenAlphaConfiguration.MaxDateOfLaunchDays)
+                    return tokenAlphaConfiguration;
+                else 
+                    return await this.GetTokenAlphaConfiguration(request, tokenAlphaConfiguration.Ordernation + 1);
+                
+            }
+            return null!;
         }
     }
 }
