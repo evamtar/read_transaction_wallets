@@ -48,7 +48,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 var tokenAlphaBuyBefore = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.WalletId == request.WalletId);
                 if (tokenAlphaBuyBefore != null)
                 {
-                    tokenAlphaBuyBefore.ValueSpentSol = +request?.ValueBuySol;
+                    tokenAlphaBuyBefore.ValueSpentSol += request?.ValueBuySol;
                     tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
                     tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
@@ -76,7 +76,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 tokenAlphaCalled.CallNumber += 1;
                 tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
                 tokenAlphaCalled.ActualPrice = request?.Price;
-                tokenAlphaCalled.IsCalledInChannel = false;
                 tokenAlphaCalled.TokenHash = request?.TokenHash;
                 tokenAlphaCalled.TokenName = request?.TokenName;
                 tokenAlphaCalled.TokenSymbol = request?.TokenSymbol;
@@ -105,7 +104,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             ActualPrice = request?.Price,
                             CreateDate = AdjustDateTimeToPtBR(request?.LaunchDate),
                             LastUpdate = null,
-                            IsCalledInChannel = false,
                             TokenId = request?.TokenId,
                             TokenHash = request?.TokenHash,
                             TokenName = request?.TokenName,

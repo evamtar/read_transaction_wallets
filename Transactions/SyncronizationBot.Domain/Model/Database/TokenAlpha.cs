@@ -11,7 +11,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? ActualPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
-        public bool? IsCalledInChannel { get; set; }
         public Guid? TokenId { get; set; }
         public string? TokenHash { get; set; }
         public string? TokenSymbol { get; set; }

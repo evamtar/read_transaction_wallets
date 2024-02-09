@@ -18,7 +18,6 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(ta => ta.ActualPrice).HasConversion<string?>();
             builder.Property(ta => ta.CreateDate);
             builder.Property(ta => ta.LastUpdate);
-            builder.Property(ta => ta.IsCalledInChannel);
             builder.Property(ta => ta.TokenId);
             builder.Property(ta => ta.TokenHash);
             builder.Property(ta => ta.TokenSymbol);

@@ -51,7 +51,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 }
                 tokenAlpha.ActualMarketcap = request?.MarketCap;
                 tokenAlpha.ActualPrice = request?.Price;
-                tokenAlpha.IsCalledInChannel = true;
                 tokenAlpha.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlpha!);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlpha!);

@@ -169,13 +169,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     await this._mediator.Send(new UpdateTokenAlphaCommand
                                     {
                                         WalletId = request?.WalletId,
-                                        TokenId = transactionDB?.TokenDestinationId,
+                                        TokenId = transactionDB?.TokenSourceId,
                                         AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        AmountTokenSell = transactionDB?.AmountValueDestination,
-                                        MarketCap = transactionDB?.MtkcapTokenDestination,
-                                        Price = tokenReceived?.Price
+                                        AmountTokenSell = transactionDB?.AmountValueSource,
+                                        MarketCap = transactionDB?.MtkcapTokenSource,
+                                        Price = tokenSended?.Price
                                     });
                                 }
                                 await this._mediator.Send(new SendTransactionAlertsCommand
