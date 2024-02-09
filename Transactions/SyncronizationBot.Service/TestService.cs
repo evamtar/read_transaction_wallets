@@ -63,7 +63,7 @@ namespace SyncronizationBot.Service
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
             //await this.TestePublicMessage();
-            //await this.TesteAdicionarAlpha();
+            await this.TesteAdicionarAlpha();
             //await this.RepublishTokenAlpha();
         }
 
@@ -118,12 +118,12 @@ namespace SyncronizationBot.Service
 
         private async Task TesteAdicionarAlpha() 
         {
-            var signature = "5mosdaXmcLE5PEBwB95Kwj48t7FehKeJ8ph6HWmrpZn2PL7RXRZ8q47pTh9fHZqLQuhGm3WxpQfijD1Zz47FXmdW";
-            var walletHash = "3BVEYnRCE2R6S6GdzvxueWsxgmqDwMtoEw9LvsAHpXEL";
-            var classWallet = "Smart Whales";
-            var tokenHash = "AcY6RWuWKM5NU7BeSE4c4zQxBZpyU7pTLNF3g5DTWUC2";
+            var signature = "UjnNkQ3kNmR6t1Xk1TNvPVw7XdtdgiNbuxmcayUjrX6N1DUjRvxGsH568UtPGrEZcNWuGca2ymRcMZXyFfEJbaA";
+            var walletHash = "3ivNHNjUhAgEHWCZsMPicX9QMKvgu9BDK1DdH57n5RfK";
+            var classWallet = "Insiders";
+            var tokenHash = "7obg932wg2A1oTZhrPzR4DSdhKbjXzKSfHTBo2Hu5EbP";
             var tokenName = "Catfish";
-            var tokenSymbol = "CATFISH";
+            var tokenSymbol = "LEH";
             var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = signature });
             if (transactionDetails?.Result != null && transactionDetails.Result.Data?.Count > 0)
             {

@@ -109,7 +109,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Only For Test
 
-    //services.AddHostedService<TestService>();
+    services.AddHostedService<TestService>();
 
     #endregion
 

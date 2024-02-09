@@ -14,21 +14,18 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
         private readonly IMediator _mediator;
         private readonly ITokenAlphaRepository _tokenAlphaRepository;
         private readonly ITokenAlphaHistoryRepository _tokenAlphaHistoryRepository;
-        private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         private readonly ITokenAlphaWalletHistoryRepository _tokenAlphaWalletHistoryRepository;
 
         public UpdateTokenAlphaCommandHandler(IMediator mediator,
                                               ITokenAlphaRepository tokenAlphaRepository,
                                               ITokenAlphaHistoryRepository tokenAlphaHistoryRepository,
-                                              ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                               ITokenAlphaWalletRepository tokenAlphaWalletRepository,
                                               ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository)
         {
             this._mediator = mediator;
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaHistoryRepository = tokenAlphaHistoryRepository;
-            this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
             this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
         }

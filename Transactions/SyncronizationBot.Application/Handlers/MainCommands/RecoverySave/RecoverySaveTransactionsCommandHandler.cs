@@ -29,20 +29,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
-        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
-                                                      IOptions<MappedTokensConfig> mappedTokensConfig,
-                                                      IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                      IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
-            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
