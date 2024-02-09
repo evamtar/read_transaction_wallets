@@ -22,6 +22,8 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tawh => tawh.RequestQuantityToken).HasConversion<string?>();
             builder.Property(tawh => tawh.TokenAlphaId);
             builder.Property(tawh => tawh.WalletId);
+            builder.Property(tawh => tawh.WalletHash);
+            builder.Property(tawh => tawh.ClassWalletDescription);
             builder.HasKey(tawh => tawh.ID);
         }
     }

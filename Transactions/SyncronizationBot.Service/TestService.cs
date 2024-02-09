@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
+using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.MainCommands.Triggers;
@@ -7,6 +8,7 @@ using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
+using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
@@ -22,6 +24,10 @@ namespace SyncronizationBot.Service
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistory;
         private readonly ITransfersService _transfersService;
+        private readonly ITokenRepository _tokenRepository;
+        private readonly ITokenAlphaRepository _tokenAlphaRepository;
+        private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
+        private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
 
         public TestService(IMediator mediator,
@@ -30,23 +36,64 @@ namespace SyncronizationBot.Service
                                          ITransfersService transfersService,
                                          ITransactionsRepository transactionsRepository,
                                          IWalletBalanceHistoryRepository walletBalanceHistory,
+                                         ITokenAlphaRepository tokenAlphaRepository,
+                                         ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
+                                         ITokenAlphaWalletRepository tokenAlphaWalletRepository,
                                          IOptions<MappedTokensConfig> mappedTokensConfig) : base(mediator, runTimeControllerRepository, ETypeService.Balance, syncronizationBotConfig)
         {
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._walletBalanceHistory = walletBalanceHistory;
             this._mappedTokensConfig = mappedTokensConfig;
+            this._tokenAlphaRepository = tokenAlphaRepository;
+            this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
+            this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
             base.LogMessage("Iniciando o serviço de teste de alertas");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
-            //await this.TesteVerificacaoAlpha();
             //await this.TesteEnvioAlerta();
-            await this.TesteAlphaVerification();
+            //await this.TesteAlphaVerification();
+            await this.TestAlertAlphaValidation();
+        }
+
+        private async Task TestAlertAlphaValidation() 
+        {
+            var tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefault(x => x.IsCalledInChannel == true);
+            var hasNext = tokenAlpha != null;
+            while (hasNext)
+            {
+                var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenAlphaConfigurationId);
+                var tokensAlphaWalletsToAlert = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID);
+                //Limpar mensagens de calls anteriores do mesmo token
+                await this._mediator.Send(new DeleteOldCallsCommand
+                {
+                    EntityId = tokenAlpha!.ID
+                });
+                await this._mediator.Send(new SendAlertMessageCommand
+                {
+                    IdClassification = this.GetClassificationAlert(tokensAlphaWalletsToAlert),
+                    EntityId = tokenAlpha?.ID,
+                    Parameters = SendAlertMessageCommand.GetParameters(new object[]
+                    {
+                        tokenAlpha!,
+                        tokenAlphaConfiguration!,
+                        tokensAlphaWalletsToAlert
+                    }),
+                    TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
+                });
+                tokenAlpha!.IsCalledInChannel = true;
+                tokenAlpha!.LastUpdate = DateTime.Now;
+                await this._tokenAlphaRepository.Edit(tokenAlpha);
+                await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
+                tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefault(x => x.IsCalledInChannel == false);
+                hasNext = tokenAlpha != null;
+            }
         }
         private async Task TesteAlphaVerification() 
         {
+            ///DEPRECATE-
             await this._mediator.Send(new VerifyAddTokenAlphaCommand
             {
                 TokenId = Guid.Parse("A9AFF2C0-4D2E-429C-2C00-08DC289BD3E8"),
@@ -129,22 +176,7 @@ namespace SyncronizationBot.Service
                 });
             }
         }
-        private async Task TesteVerificacaoAlpha()
-        {
-            await this._mediator.Send(new VerifyAddTokenAlphaCommand
-            {
-                TokenId = Guid.Parse("090B6F31-D20C-4484-1DA5-08DC242D3536"),
-                WalletId = Guid.Parse("1C7D55B4-6289-4106-A684-AC5853531129"),
-                LaunchDate = DateTime.Now,
-                MarketCap = (decimal?)333877.000000000,
-                ValueBuySol = (decimal?)(250.00000000 / 98.8967628),
-                ValueBuyUSDC = (decimal?)250,
-                ValueBuyUSDT = (decimal?)250,
-                Signature = "5zietZumjqQiwj6TgR5UPc7pXYfgHuMZK5DxYa4DqZPDC7S8wVhJrLsFaDtMtb2y5KhLtaTW7aWmyyVp8rPHFuEG",
-                Price = (decimal?)0.000332494
-            });
-        }
-
+        
         private decimal? CalculatedTotalSol(string? tokenHash, decimal? amountSource, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
@@ -178,6 +210,11 @@ namespace SyncronizationBot.Service
             return null;
         }
 
-       
+        private int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert)
+        {
+            if (tokensAlphaWalletsToAlert.Count() > 4)
+                return 4;
+            return tokensAlphaWalletsToAlert.Count();
+        }
     }
 }

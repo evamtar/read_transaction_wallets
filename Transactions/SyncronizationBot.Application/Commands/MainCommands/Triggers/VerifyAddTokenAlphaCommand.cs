@@ -6,7 +6,12 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Triggers
     public class VerifyAddTokenAlphaCommand : IRequest<VerifyAddTokenAlphaCommandResponse>
     {
         public Guid? TokenId { get; set; }
+        public string? TokenHash { get; set; }
+        public string? TokenSymbol { get; set; }
+        public string? TokenName { get; set; }
         public Guid? WalletId { get; set; }
+        public string? WalletHash { get; set; }
+        public string? ClassWalletDescription { get; set; }
         public decimal? ValueBuySol { get; set; }
         public decimal? ValueBuyUSDC { get; set; }
         public decimal? ValueBuyUSDT { get; set; }

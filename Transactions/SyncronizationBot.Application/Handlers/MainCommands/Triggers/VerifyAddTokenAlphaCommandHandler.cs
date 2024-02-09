@@ -48,6 +48,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
                     tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
+                    await this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
                     await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaBuyBefore);
                 }
@@ -57,6 +58,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     {
                         TokenAlphaId = tokenAlphaCalled.ID,
                         WalletId = request.WalletId,
+                        WalletHash = request?.WalletHash,
+                        ClassWalletDescription = request?.ClassWalletDescription,
                         NumberOfBuys = 1,
                         ValueSpentSol = request?.ValueBuySol,
                         ValueSpentUSDC = request?.ValueBuyUSDC,
@@ -70,6 +73,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 tokenAlphaCalled.ActualMarketcap = request?.MarketCap;
                 tokenAlphaCalled.ActualPrice = request?.Price;
                 tokenAlphaCalled.IsCalledInChannel = false;
+                tokenAlphaCalled.TokenHash = request?.TokenHash;
+                tokenAlphaCalled.TokenName = request?.TokenName;
+                tokenAlphaCalled.TokenSymbol = request?.TokenSymbol;
                 tokenAlphaCalled.LastUpdate = DateTime.Now;
                 await this._tokenAlphaRepository.Edit(tokenAlphaCalled);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
@@ -94,6 +100,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             LastUpdate = null,
                             IsCalledInChannel = false,
                             TokenId = request?.TokenId,
+                            TokenHash = request?.TokenHash,
+                            TokenName = request?.TokenName,
+                            TokenSymbol = request?.TokenSymbol,
                             TokenAlphaConfigurationId = tokenAlphaConfiguration.ID
                         });
                         await this._tokenAlphaRepository.DetachedItem(tokenAlpha);
@@ -103,6 +112,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         {
                             TokenAlphaId = tokenAlpha.ID,
                             WalletId = request?.WalletId,
+                            WalletHash = request?.WalletHash,
+                            ClassWalletDescription = request?.ClassWalletDescription,
                             NumberOfBuys = 1,
                             ValueSpentSol = request?.ValueBuySol,
                             ValueSpentUSDC = request?.ValueBuyUSDC,
@@ -130,6 +141,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 CreateDate = tokenAlpha?.CreateDate,
                 LastUpdate = tokenAlpha?.LastUpdate,
                 TokenId = tokenAlpha?.TokenId,
+                TokenHash = tokenAlpha?.TokenHash,
+                TokenName = tokenAlpha?.TokenName,
+                TokenSymbol = tokenAlpha?.TokenSymbol,
                 TokenAlphaConfigurationId = tokenAlpha?.TokenAlphaConfigurationId
             });
             await this._tokenAlphaHistoryRepository.DetachedItem(tokenAlphaHistory);
@@ -142,6 +156,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 TokenAlphaWalletId = tokenAlphaWallet?.ID,
                 TokenAlphaId = tokenAlphaWallet?.TokenAlphaId,
                 WalletId = tokenAlphaWallet?.WalletId,
+                WalletHash = tokenAlphaWallet?.WalletHash,
+                ClassWalletDescription = tokenAlphaWallet?.ClassWalletDescription,
                 NumberOfBuys = tokenAlphaWallet?.NumberOfBuys,
                 ValueSpentSol = tokenAlphaWallet?.ValueSpentSol,
                 ValueSpentUSDC = tokenAlphaWallet?.ValueSpentUSDC,

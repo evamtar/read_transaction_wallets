@@ -12,24 +12,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
     public class SendAlertTokenAlphaCommandHandler : IRequestHandler<SendAlertTokenAlphaCommand, SendAlertTokenAlphaCommandResponse>
     {
         private readonly IMediator _mediator;
-        private readonly ITokenRepository _tokenRepository;
-        private readonly IWalletRepository _walletRepository;
-        private readonly IClassWalletRepository _classWalletRepository;
         private readonly ITokenAlphaRepository _tokenAlphaRepository;
         private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         public SendAlertTokenAlphaCommandHandler(IMediator mediator,
-                                                 ITokenRepository tokenRepository,
-                                                 IWalletRepository walletRepository,
-                                                 IClassWalletRepository classWalletRepository,
                                                  ITokenAlphaRepository tokenAlphaRepository,
                                                  ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                                  ITokenAlphaWalletRepository tokenAlphaWalletRepository)
         {
             this._mediator = mediator;
-            this._tokenRepository = tokenRepository;
-            this._walletRepository = walletRepository;
-            this._classWalletRepository = classWalletRepository;
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
@@ -42,12 +33,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             while (hasNext) 
             {
                 var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenAlphaConfigurationId);
-                var token = await this._tokenRepository.FindFirstOrDefault(x => x.ID == tokenAlpha!.TokenId);
-                var tokensAlphaWalletsToAlert = (await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID)).ToList();
-                var listWalletsIds = this.GetListWalletsIds(tokensAlphaWalletsToAlert);
-                var wallets = (await this._walletRepository.Get(x => listWalletsIds.Contains(x.ID))).ToList();
-                var listClassWalletsIds = this.GetClassWalletsIds(wallets);
-                var classWallets = await this._classWalletRepository.Get(x => listClassWalletsIds.Contains(x.ID));
+                var tokensAlphaWalletsToAlert = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha!.ID);
                 //Limpar mensagens de calls anteriores do mesmo token
                 await this._mediator.Send(new DeleteOldCallsCommand
                 {
@@ -61,10 +47,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     {
                         tokenAlpha!,
                         tokenAlphaConfiguration!,
-                        token!,
-                        tokensAlphaWalletsToAlert,
-                        wallets,
-                        classWallets!
+                        tokensAlphaWalletsToAlert
                     }),
                     TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
                 });
@@ -78,26 +61,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return new SendAlertTokenAlphaCommandResponse{ };
         }
 
-        public int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
+        private int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
         {
             if (tokensAlphaWalletsToAlert.Count() > 4)
                 return 4;
             return tokensAlphaWalletsToAlert.Count();
         }
-        private List<Guid?> GetClassWalletsIds(List<Wallet> wallets) 
-        {
-            var listIds = new List<Guid?>();
-            foreach (var wallet in wallets)
-                listIds.Add(wallet.ClassWalletId);
-            return listIds;
-        }
-
-        private List<Guid?> GetListWalletsIds(List<TokenAlphaWallet> tokenAlphaWallets) 
-        {
-            var listIds = new List<Guid?>();
-            foreach (var wallets in tokenAlphaWallets)
-                listIds.Add(wallets.WalletId);
-            return listIds;
-        }
+        
     }
 }

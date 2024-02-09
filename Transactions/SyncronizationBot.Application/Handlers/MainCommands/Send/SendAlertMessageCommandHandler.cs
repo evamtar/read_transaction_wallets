@@ -165,10 +165,27 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     }
                     return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded), hasAdjustment) :
                            propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool) ? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
-                           !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? propertyFinded?.GetValue(objectFinded)?.ToString() : defaultValue;
+                           !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? RecoveryFormatedValue(propertyFinded?.GetValue(objectFinded), formatValue) : defaultValue;
                 }
             }
             return defaultValue;
+        }
+
+        private string? RecoveryFormatedValue(object? objToFormat, string? formatValue)
+        {
+            if (formatValue == null || formatValue == string.Empty || objToFormat == null) return objToFormat?.ToString();
+            else 
+            {
+                if (objToFormat?.GetType() == typeof(decimal))
+                    return ((decimal)objToFormat).ToString(formatValue);
+                else if(objToFormat?.GetType() == typeof(int))
+                    return ((int)objToFormat).ToString(formatValue);
+                else if (objToFormat?.GetType() == typeof(double))
+                    return ((double)objToFormat).ToString(formatValue);
+                else if (objToFormat?.GetType() == typeof(long))
+                    return ((long)objToFormat).ToString(formatValue);
+                return string.Empty;
+            }
         }
 
         private string? AdjustDateTimeToPtBR(DateTime? dateTime, bool? hasAdjustment)

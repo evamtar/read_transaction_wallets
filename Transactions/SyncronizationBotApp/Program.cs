@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -94,21 +95,21 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")).EnableDetailedErrors().LogTo(Console.WriteLine), ServiceLifetime.Transient);
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
 
     #endregion
 
     #region Hosted Service
 
-    services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
-    services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
 
     #region Only For Test
 
-    //services.AddHostedService<TestService>();
+    services.AddHostedService<TestService>();
 
     #endregion
 

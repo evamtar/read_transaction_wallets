@@ -12,6 +12,8 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? QuantityToken { get; set; }
         public Guid? TokenAlphaId { get; set; }
         public Guid? WalletId { get; set; }
+        public string? WalletHash { get; set; }
+        public string? ClassWalletDescription { get; set; }
         public virtual TokenAlpha? TokenAlpha { get; set; }
         public virtual Wallet? Wallet { get; set; }
     }

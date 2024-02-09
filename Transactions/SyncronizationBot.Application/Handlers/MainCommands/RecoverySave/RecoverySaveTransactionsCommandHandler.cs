@@ -148,7 +148,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     await this._mediator.Send(new VerifyAddTokenAlphaCommand
                                     {
                                         WalletId = request?.WalletId,
+                                        WalletHash = request?.WalletHash,
+                                        ClassWalletDescription = request?.ClassWallet?.Description,
                                         TokenId = transactionDB?.TokenDestinationId,
+                                        TokenHash = tokenReceived?.Hash,
+                                        TokenName = tokenReceived?.Name,
+                                        TokenSymbol = tokenReceived?.Symbol,
                                         ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),

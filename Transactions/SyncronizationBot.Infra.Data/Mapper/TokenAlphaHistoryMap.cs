@@ -22,6 +22,9 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tah => tah.CreateDate);
             builder.Property(tah => tah.LastUpdate);
             builder.Property(tah => tah.TokenId);
+            builder.Property(tah => tah.TokenHash);
+            builder.Property(tah => tah.TokenSymbol);
+            builder.Property(tah => tah.TokenName);
             builder.Property(tah => tah.TokenAlphaConfigurationId);
             builder.HasKey(tah => tah.ID);
         }
