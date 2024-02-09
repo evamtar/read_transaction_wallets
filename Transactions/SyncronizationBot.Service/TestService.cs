@@ -11,6 +11,7 @@ using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
@@ -33,6 +34,7 @@ namespace SyncronizationBot.Service
         private readonly ITokenAlphaRepository _tokenAlphaRepository;
         private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
+        private readonly IPublishMessageRepository _publishMessageRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
 
         public TestService(IMediator mediator,
@@ -44,6 +46,7 @@ namespace SyncronizationBot.Service
                                          ITokenAlphaRepository tokenAlphaRepository,
                                          ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                          ITokenAlphaWalletRepository tokenAlphaWalletRepository,
+                                         IPublishMessageRepository publishMessageRepositor,
                                          IOptions<MappedTokensConfig> mappedTokensConfig) : base(mediator, runTimeControllerRepository, ETypeService.Balance, syncronizationBotConfig)
         {
             this._transfersService = transfersService;
@@ -53,13 +56,58 @@ namespace SyncronizationBot.Service
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
+            this._publishMessageRepository = publishMessageRepositor;
             base.LogMessage("Iniciando o serviço de teste de alertas");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
             //await this.TestePublicMessage();
-            await this.TesteAdicionarAlpha();
+            //await this.TesteAdicionarAlpha();
+            //await this.RepublishTokenAlpha();
+        }
+
+        private async Task RepublishTokenAlpha() 
+        {
+            var tokensAlpha = await this._tokenAlphaRepository.GetAll();
+            if(tokensAlpha != null) 
+            {
+                foreach (var tokenAlpha in tokensAlpha)
+                {
+                    var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlpha.TokenAlphaConfigurationId);
+                    await PublishMessage(tokenAlpha!, tokenAlphaConfiguration!);
+                }
+            }
+            
+
+        }
+        private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration)
+        {
+            var listTokenAlphaWalletsIds = new List<Guid?>();
+            var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID);
+            var hasNext = tokenAlphaWallet != null;
+            var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
+            await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
+            while (hasNext)
+            {
+                listTokenAlphaWalletsIds.Add(tokenAlphaWallet!.ID);
+                await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+                tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID && !listTokenAlphaWalletsIds.Contains(x.ID));
+                hasNext = tokenAlphaWallet != null;
+            }
+        }
+        private async Task<PublishMessage> SavePublishMessage<T>(T entity, Guid? parentId) where T : Entity
+        {
+            var publishMessage = await this._publishMessageRepository.Add(new PublishMessage
+            {
+                EntityId = entity.ID,
+                Entity = typeof(T).ToString(),
+                JsonValue = entity.JsonSerialize(),
+                ItWasPublished = false,
+                EntityParentId = parentId,
+            });
+            await this._publishMessageRepository.DetachedItem(publishMessage);
+            return publishMessage;
         }
 
         private async Task TestePublicMessage()

@@ -84,7 +84,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
                 await SaveTokenAlphaHistory(request, tokenAlphaCalled);
                 var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlphaCalled.TokenAlphaConfigurationId);
-                PublishMessage(tokenAlphaCalled, tokenAlphaConfiguration!);
+                await PublishMessage(tokenAlphaCalled, tokenAlphaConfiguration!);
                 await this._tokenAlphaConfigurationRepository.DetachedItem(tokenAlphaConfiguration!);
             }
             else 
@@ -126,7 +126,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             QuantityToken = request?.QuantityTokenReceived
                         });
                         await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
-                        PublishMessage(tokenAlpha, tokenAlphaWallet, tokenAlphaConfiguration);
+                        await PublishMessage(tokenAlpha, tokenAlphaWallet, tokenAlphaConfiguration);
                     }
                 }
             }
@@ -207,7 +207,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             return null!;
         }
 
-        private async void PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration) 
+        private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration) 
         { 
             var listTokenAlphaWalletsIds = new List<Guid?>();
             var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID);
@@ -223,7 +223,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             }
         }
 
-        private async void PublishMessage(TokenAlpha tokenAlpha, TokenAlphaWallet tokenAlphaWallet, TokenAlphaConfiguration tokenAlphaConfiguration)
+        private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaWallet tokenAlphaWallet, TokenAlphaConfiguration tokenAlphaConfiguration)
         {
             var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
             await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
