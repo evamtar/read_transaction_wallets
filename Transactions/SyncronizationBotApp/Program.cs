@@ -193,7 +193,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
     services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
     services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
-    
+    services.AddTransient<IPublishMessageRepository, PublishMessageRepository>();
+
     #endregion
 
     #region External Services

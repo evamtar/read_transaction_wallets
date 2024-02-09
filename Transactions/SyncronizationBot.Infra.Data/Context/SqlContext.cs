@@ -38,6 +38,7 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<AlertInformation> AlertsInformations { get; set; }
         public DbSet<AlertParameter> AlertsParameters { get; set; }
         public DbSet<TelegramMessage> TelegramMessages { get; set; }
+        public DbSet<PublishMessage> PublishMessages { get; set; }
 
         #endregion
 
@@ -67,6 +68,7 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
             modelBuilder.ApplyConfiguration(new AlertParameterMap());
+            modelBuilder.ApplyConfiguration(new PublishMessageMap());
             base.OnModelCreating(modelBuilder);
         }
 

@@ -4,6 +4,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Response.MainCommands.Triggers;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
@@ -17,6 +18,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         private readonly ITokenAlphaWalletHistoryRepository _tokenAlphaWalletHistoryRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
+        private readonly IPublishMessageRepository _publishMessageRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
                                                  IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
@@ -25,6 +27,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                                                  ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                                  ITokenAlphaWalletRepository tokenAlphaWalletRepository,
                                                  ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository,
+                                                 IPublishMessageRepository publishMessageRepository,
                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
@@ -34,6 +37,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
             this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
+            this._publishMessageRepository = publishMessageRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
         public async Task<VerifyAddTokenAlphaCommandResponse> Handle(VerifyAddTokenAlphaCommand request, CancellationToken cancellationToken)
@@ -80,6 +84,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 await this._tokenAlphaRepository.Edit(tokenAlphaCalled);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
                 await SaveTokenAlphaHistory(request, tokenAlphaCalled);
+                var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlphaCalled.TokenAlphaConfigurationId);
+                PublishMessage(tokenAlphaCalled, tokenAlphaConfiguration!);
+                await this._tokenAlphaConfigurationRepository.DetachedItem(tokenAlphaConfiguration!);
             }
             else 
             {
@@ -121,11 +128,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             QuantityToken = request?.QuantityTokenReceived
                         });
                         await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
+                        PublishMessage(tokenAlpha, tokenAlphaWallet, tokenAlphaConfiguration);
                     }
                 }
             }
+            
             return new VerifyAddTokenAlphaCommandResponse { };
         }
+
         private async Task SaveTokenAlphaHistory(VerifyAddTokenAlphaCommand? request, TokenAlpha? tokenAlpha) 
         {
             var tokenAlphaHistory = await this._tokenAlphaHistoryRepository.Add(new TokenAlphaHistory
@@ -198,5 +208,43 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             }
             return null!;
         }
+
+        private async void PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration) 
+        { 
+            var listTokenAlphaWalletsIds = new List<Guid?>();
+            var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID);
+            var hasNext = tokenAlphaWallet != null;
+            var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
+            await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
+            while (hasNext) 
+            {
+                listTokenAlphaWalletsIds.Add(tokenAlphaWallet!.ID);
+                await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+                tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID && !listTokenAlphaWalletsIds.Contains(x.ID));
+                hasNext = tokenAlphaWallet != null;
+            }
+        }
+
+        private async void PublishMessage(TokenAlpha tokenAlpha, TokenAlphaWallet tokenAlphaWallet, TokenAlphaConfiguration tokenAlphaConfiguration)
+        {
+            var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
+            await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
+            await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+        }
+
+        private async Task<PublishMessage> SavePublishMessage<T>(T entity, Guid? parentId) where T : Entity 
+        {
+            var publishMessage = await this._publishMessageRepository.Add(new PublishMessage
+            {
+                EntityId = entity.ID,
+                Entity = typeof(T).ToString(),
+                JsonValue = entity.JsonSerialize(),
+                ItWasPublished = false,
+                EntityParentId = parentId,
+            });
+            await this._publishMessageRepository.DetachedItem(publishMessage);
+            return publishMessage;
+        }
+
     }
 }

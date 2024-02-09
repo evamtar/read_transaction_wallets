@@ -591,6 +591,18 @@ CREATE TABLE TokenAlphaProfit
 	FOREIGN KEY (TokenAlphaWalletId) REFERENCES TokenAlphaWallet(ID)
 );
 GO
+
+CREATE TABLE PublishMessage(
+	ID                  UNIQUEIDENTIFIER,
+	EntityId			UNIQUEIDENTIFIER,
+	Entity				VARCHAR(500),
+	JsonValue           NVARCHAR(MAX),
+	ItWasPublished      BIT,
+	EntityParentId      UNIQUEIDENTIFIER,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (EntityParentId) REFERENCES PublishMessage(ID)
+);
+GO
 -- ALERTS
 CREATE TABLE AlertConfiguration(
 	ID                    UNIQUEIDENTIFIER,
