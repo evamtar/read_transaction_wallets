@@ -161,7 +161,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
                                     });
                                 }
-                                else if (transactionDB?.TypeOperation == ETypeOperation.SELL) 
+                                else if (transactionDB?.TypeOperation == ETypeOperation.SELL || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
                                 {
                                     await this._mediator.Send(new UpdateTokenAlphaCommand
                                     {
