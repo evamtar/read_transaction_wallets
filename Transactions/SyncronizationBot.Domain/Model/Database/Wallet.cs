@@ -14,6 +14,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? OldTransactionHours { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? LastUpdate { get; set; }
+        public bool? IsRunningProcess { get; set; }
         public virtual ClassWallet? ClassWallet { get; set; }
         public virtual List<Transactions>? Transactions { get; set; }
         public virtual List<TransactionsOldForMapping>? TransactionsOldForMapping { get; set; }

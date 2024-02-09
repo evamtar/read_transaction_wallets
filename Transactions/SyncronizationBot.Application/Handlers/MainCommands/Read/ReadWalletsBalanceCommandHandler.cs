@@ -25,7 +25,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 
         public async Task<ReadWalletsBalanceCommandResponse> Handle(ReadWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
-            var wallet = await GetWallet(x => x.IsLoadBalance == false && x.IsActive == true);
+            var wallet = await GetWallet(x => x.IsLoadBalance == false && x.IsActive == true && x.IsRunningProcess == false);
             var hasNext = wallet != null;
             while (hasNext)
             {

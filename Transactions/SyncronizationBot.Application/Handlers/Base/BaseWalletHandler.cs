@@ -37,7 +37,11 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected async Task<Wallet?> GetWallet(Expression<Func<Wallet, bool>> predicate, Expression<Func<Wallet, object>> keySelector = null!)
         {
-            return await _walletRepository.FindFirstOrDefault(predicate, keySelector);
+            var wallet = await _walletRepository.FindFirstOrDefault(predicate, keySelector);
+            if (wallet == null) return wallet;
+            wallet.IsRunningProcess = true;
+            wallet = await this._walletRepository.Edit(wallet!);
+            return wallet;
         }
 
         protected long GetInitialTicks(decimal? initialTicks)
@@ -52,6 +56,7 @@ namespace SyncronizationBot.Application.Handlers.Base
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
             wallet.UnixTimeSeconds = finalTicks;
+            wallet.IsRunningProcess = false;
             await _walletRepository.Edit(wallet);
             await _walletRepository.DetachedItem(wallet);
         }

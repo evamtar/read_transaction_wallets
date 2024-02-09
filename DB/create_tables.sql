@@ -182,13 +182,13 @@ GO
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
 BEGIN
 	CREATE TABLE TransactionNotMapped(
-		ID                UNIQUEIDENTIFIER,
-		[WalletId]        UNIQUEIDENTIFIER,
-		[Signature]       VARCHAR(150),
-		[Link]            VARCHAR(500),
-		[Error]           VARCHAR(500),
-		[StackTrace]      NVARCHAR(MAX),
-		[DateTimeRunner]  DATETIME2,
+		ID                 UNIQUEIDENTIFIER,
+		[WalletId]         UNIQUEIDENTIFIER,
+		[Signature]        VARCHAR(150),
+		[Link]             VARCHAR(500),
+		[Error]            VARCHAR(500),
+		[StackTrace]       NVARCHAR(MAX),
+		[DateTimeRunner]   DATETIME2
 		PRIMARY KEY (ID)
 	);
 END
@@ -216,8 +216,9 @@ CREATE TABLE Wallet(
 	DateLoadBalance      DATETIME2,
 	OldTransactionStared DATETIME2,
 	OldTransactionHours  INT,
-	IsActive         BIT,
-	LastUpdate       DATETIME2, 
+	IsActive             BIT,
+	LastUpdate           DATETIME2, 
+	IsRunningProcess     BIT
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ClassWalletId) REFERENCES ClassWallet(ID)
 );
