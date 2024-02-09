@@ -45,6 +45,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance = await this._walletBalanceRepository.FindFirstOrDefault(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < datetimeLimit);
                     hasNextBalance = balance != null;
                 }
+                walletTracked.LastUpdate = DateTime.Now;
+                await base.UpdateUnixTimeSeconds((long?)walletTracked.UnixTimeSeconds, walletTracked);
                 walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
                 hasNext = walletTracked != null;
             }
