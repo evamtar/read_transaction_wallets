@@ -29,7 +29,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         }
         public async Task<ReadWalletsCommandForTransacionsOldCommandResponse> Handle(ReadWalletsCommandForTransacionsOldCommand request, CancellationToken cancellationToken)
         {
-            var walletsTracked = await GetWallets(x => x.IsActive == true, x => x.UnixTimeSeconds!);
+            var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
             if (walletsTracked != null) 
             {
                 foreach (var walletTracked in walletsTracked)

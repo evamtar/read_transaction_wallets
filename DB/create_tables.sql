@@ -516,7 +516,6 @@ CREATE TABLE TokenAlpha(
 	ActualPrice               VARCHAR(100),
 	CreateDate                DATETIME2,
 	LastUpdate                DATETIME2,
-	IsCalledInChannel         BIT,
 	TokenId                   UNIQUEIDENTIFIER,
 	TokenHash                 VARCHAR(50),
 	TokenSymbol               VARCHAR(50),
