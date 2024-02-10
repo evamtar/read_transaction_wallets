@@ -7,10 +7,15 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public Guid? TokenAlphaWalletId { get; set; }
         public int? NumberOfBuys { get; set; }
+        public int? NumberOfSells { get; set; }
         public decimal? ValueSpentSol { get; set; }
         public decimal? ValueSpentUSDC { get; set; }
         public decimal? ValueSpentUSDT { get; set; }
         public decimal? QuantityToken { get; set; }
+        public decimal? ValueReceivedSol { get; set; }
+        public decimal? ValueReceivedUSDC { get; set; }
+        public decimal? ValueReceivedUSDT { get; set; }
+        public decimal? QuantityTokenSell { get; set; }
         public decimal? RequestValueInSol { get; set; }
         public decimal? RequestValueInUSDC { get; set; }
         public decimal? RequestValueInUSDT { get; set; }

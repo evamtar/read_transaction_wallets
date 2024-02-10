@@ -38,10 +38,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 if (tokenAlphaWallet != null)
                 {
                     //UpdateValues
-                    tokenAlphaWallet.ValueSpentSol -= request?.AmountTokenSol;
-                    tokenAlphaWallet.ValueSpentUSDC -= request?.AmountTokenUSDC;
-                    tokenAlphaWallet.ValueSpentUSDT -= request?.AmountTokenUSDT;
-                    tokenAlphaWallet.QuantityToken -= request?.AmountTokenSell;
+                    tokenAlphaWallet.NumberOfSells = tokenAlphaWallet.NumberOfSells ?? 0 + 1;
+                    tokenAlphaWallet.ValueReceivedSol = tokenAlphaWallet.ValueReceivedSol ?? 0 + request?.AmountTokenSol;
+                    tokenAlphaWallet.ValueReceivedUSDC = tokenAlphaWallet.ValueReceivedUSDC ?? 0 + request?.AmountTokenUSDC;
+                    tokenAlphaWallet.ValueReceivedUSDT = tokenAlphaWallet.ValueReceivedUSDT ?? 0 + request?.AmountTokenUSDT;
+                    tokenAlphaWallet.QuantityTokenSell = tokenAlphaWallet.QuantityTokenSell?? 0 + request?.AmountTokenSell;
                     await this._tokenAlphaWalletRepository.Edit(tokenAlphaWallet);
                     await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaWallet);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
@@ -94,6 +95,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 ValueSpentUSDC = tokenAlphaWallet?.ValueSpentUSDC,
                 ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT,
                 QuantityToken = tokenAlphaWallet?.QuantityToken,
+                NumberOfSells = tokenAlphaWallet?.NumberOfSells,
+                ValueReceivedSol = tokenAlphaWallet?.ValueReceivedSol,
+                ValueReceivedUSDC = tokenAlphaWallet?.ValueReceivedUSDC,
+                ValueReceivedUSDT = tokenAlphaWallet?.ValueReceivedUSDT,
+                QuantityTokenSell = tokenAlphaWallet?.QuantityTokenSell,
                 RequestValueInSol = request?.AmountTokenSol,
                 RequestValueInUSDC = request?.AmountTokenUSDC,
                 RequestValueInUSDT = request?.AmountTokenUSDC,

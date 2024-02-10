@@ -16,6 +16,11 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tawh => tawh.ValueSpentUSDC).HasConversion<string?>();
             builder.Property(tawh => tawh.ValueSpentUSDT).HasConversion<string?>();
             builder.Property(tawh => tawh.QuantityToken).HasConversion<string?>();
+            builder.Property(tawh => tawh.NumberOfSells);
+            builder.Property(tawh => tawh.ValueReceivedSol).HasConversion<string?>();
+            builder.Property(tawh => tawh.ValueReceivedUSDC).HasConversion<string?>();
+            builder.Property(tawh => tawh.ValueReceivedUSDT).HasConversion<string?>();
+            builder.Property(tawh => tawh.QuantityTokenSell).HasConversion<string?>();
             builder.Property(tawh => tawh.RequestValueInSol).HasConversion<string?>();
             builder.Property(tawh => tawh.RequestValueInUSDC).HasConversion<string?>();
             builder.Property(tawh => tawh.RequestValueInUSDT).HasConversion<string?>();
