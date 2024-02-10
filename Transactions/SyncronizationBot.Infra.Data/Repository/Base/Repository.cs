@@ -92,7 +92,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
         public virtual async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).AsNoTracking().FirstOrDefaultAsync();
+                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
             else
                 return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
         }

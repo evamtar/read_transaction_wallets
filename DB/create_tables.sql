@@ -233,7 +233,7 @@ BEGIN
 	CREATE TABLE Token(
 		ID                     UNIQUEIDENTIFIER,
 		[Hash]                 VARCHAR(50),
-		Symbol                 VARCHAR(50),
+		Symbol                 VARCHAR(500),
 		[Name]			       VARCHAR(200),
 		Supply                 VARCHAR(150),
 		MarketCap              VARCHAR(150),
