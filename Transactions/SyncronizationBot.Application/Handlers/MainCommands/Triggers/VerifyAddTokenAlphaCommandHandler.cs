@@ -17,26 +17,29 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
         private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
         private readonly ITokenAlphaWalletHistoryRepository _tokenAlphaWalletHistoryRepository;
+        private readonly ITransactionsRepository _transactionsRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly IPublishMessageRepository _publishMessageRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
-                                                 IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                  ITokenAlphaRepository tokenAlphaRepository,
                                                  ITokenAlphaHistoryRepository tokenAlphaHistoryRepository,
                                                  ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
                                                  ITokenAlphaWalletRepository tokenAlphaWalletRepository,
                                                  ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository,
+                                                 IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
+                                                 ITransactionsRepository transactionsRepository,
                                                  IPublishMessageRepository publishMessageRepository,
                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._tokenAlphaRepository = tokenAlphaRepository;
             this._tokenAlphaHistoryRepository = tokenAlphaHistoryRepository;
             this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
             this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
             this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
+            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            this._transactionsRepository = transactionsRepository;
             this._publishMessageRepository = publishMessageRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
@@ -90,9 +93,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             else 
             {
                 var buysBeforeThis = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
-                if (buysBeforeThis == null) 
+                var transactionsBefore = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature != request.Signature && (x.TokenSourceId == request.TokenId || x.TokenDestinationId == request.TokenId));
+                if (transactionsBefore == null && buysBeforeThis == null) 
                 {
-                    var tokenAlphaConfiguration = await this.GetTokenAlphaConfiguration(request, 0);
+                    var tokenAlphaConfiguration = await this.GetTokenAlphaConfiguration(request);
                     if (tokenAlphaConfiguration != null)
                     {
                         var tokenAlpha = await this._tokenAlphaRepository.Add(new TokenAlpha
@@ -196,18 +200,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             return dateTime?.AddHours(this._syncronizationBotConfig.Value.GTMHoursAdjust ?? 0);
         }
 
-        private async Task<TokenAlphaConfiguration> GetTokenAlphaConfiguration(VerifyAddTokenAlphaCommand? request, int? ordenation) 
+        private async Task<TokenAlphaConfiguration> GetTokenAlphaConfiguration(VerifyAddTokenAlphaCommand? request) 
         {
-            var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.Ordernation >= ordenation, x => x.Ordernation!);
-
-            if(tokenAlphaConfiguration != null) 
+            var tokenAlphaConfigurations = await this._tokenAlphaConfigurationRepository.Get(x => x.Ordernation > -1, x => x.Ordernation!);
+            if(tokenAlphaConfigurations.Count > 0) 
             {
-                var maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
-                if (request?.MarketCap <= tokenAlphaConfiguration.MaxMarketcap  && maxDateOfLaunchDays <= tokenAlphaConfiguration.MaxDateOfLaunchDays)
-                    return tokenAlphaConfiguration;
-                else 
-                    return await this.GetTokenAlphaConfiguration(request, tokenAlphaConfiguration.Ordernation + 1);
-                
+                foreach (var tokenAlphaConfiguration in tokenAlphaConfigurations)
+                {
+                    var maxDateOfLaunchDays = this.CalculatedMaxDaysOfLaunch(request?.LaunchDate);
+                    if (request?.MarketCap <= tokenAlphaConfiguration.MaxMarketcap && maxDateOfLaunchDays <= tokenAlphaConfiguration.MaxDateOfLaunchDays)
+                        return tokenAlphaConfiguration;
+                }
             }
             return null!;
         }
