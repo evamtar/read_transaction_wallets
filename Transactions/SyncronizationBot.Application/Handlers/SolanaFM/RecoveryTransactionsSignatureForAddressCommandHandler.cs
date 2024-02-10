@@ -32,7 +32,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         public async Task<RecoveryTransactionsSignatureForAddressCommandResponse> Handle(RecoveryTransactionsSignatureForAddressCommand request, CancellationToken cancellationToken)
         {
             var listTransactions = new List<TransactionsResponse>();
-            var response = await this._transactionsSignatureForAddressService.ExecuteRecoveryTransactionsForAddressAsync(new TransactionsSignatureForAddressRequest { WalletPublicKeyHash = request?.WalletHash });
+            var response = await this._transactionsSignatureForAddressService.ExecuteRecoveryTransactionsForAddressAsync(new TransactionsSignatureForAddressRequest { WalletPublicKeyHash = request?.WalletHash, Limit = request?.Limit });
             if (response?.Result?.Count > 0)
             {
                 var responseDataOrdened = response.Result!.OrderBy(x => x.BlockTime).ThenBy(x => x.DateOfTransaction);
@@ -50,12 +50,12 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                             });
                         }
                         else
-                            await this.SaveTransactionsOldForMapping(transaction);
+                            await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                     }
                     else 
                     {
                         await this._transactionsRepository.DetachedItem(exists);
-                        await this.SaveTransactionsOldForMapping(transaction);
+                        await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                     }
                 }
             }

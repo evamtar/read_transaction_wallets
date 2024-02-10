@@ -28,27 +28,24 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 
         public async Task<UpdateWalletsBalanceCommandResponse> Handle(UpdateWalletsBalanceCommand request, CancellationToken cancellationToken)
         {
-            var datetimeLimit = DateTime.Now;
-            var walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit) && x.IsRunningProcess == false, x => x.DateLoadBalance!);
-            var hasNext = walletTracked != null;
-            while (hasNext)
+            var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.DateLoadBalance!);
+            if(walletsTracked?.Count() > 0) 
             {
-                var balance = await this._walletBalanceRepository.FindFirstOrDefault(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < datetimeLimit);
-                var hasNextBalance = balance != null;
-                while (hasNextBalance) 
+                foreach (var walletTracked in walletsTracked)
                 {
-                    var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = balance!.TokenHash! });
-                    balance.TotalValueUSD = balance.Quantity * (token.Price ?? 0);
-                    balance.LastUpdate = DateTime.Now;
-                    await this._walletBalanceRepository.Edit(balance);
-                    await this._walletBalanceRepository.DetachedItem(balance);
-                    balance = await this._walletBalanceRepository.FindFirstOrDefault(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < datetimeLimit);
-                    hasNextBalance = balance != null;
+                    var balances = await this._walletBalanceRepository.Get(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < DateTime.Now) ;
+                    if (balances?.Count() > 0) 
+                    {
+                        foreach (var balance in balances) 
+                        {
+                            var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = balance!.TokenHash! });
+                            balance.TotalValueUSD = balance.Quantity * (token.Price ?? 0);
+                            balance.LastUpdate = DateTime.Now;
+                            await this._walletBalanceRepository.Edit(balance);
+                            await this._walletBalanceRepository.DetachedItem(balance);
+                        }
+                    }
                 }
-                walletTracked.LastUpdate = DateTime.Now;
-                await base.UpdateUnixTimeSeconds((long?)walletTracked.UnixTimeSeconds, walletTracked);
-                walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
-                hasNext = walletTracked != null;
             }
             return new UpdateWalletsBalanceCommandResponse { };
         }

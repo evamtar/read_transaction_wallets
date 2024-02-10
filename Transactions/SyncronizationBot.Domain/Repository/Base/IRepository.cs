@@ -8,7 +8,7 @@ namespace SyncronizationBot.Domain.Repository.Base
     {
         Task<List<T>> GetAll();
         Task<T?> Get(Guid id);
-        Task<List<T>> Get(Expression<Func<T, bool>> predicate);
+        Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T> Add(T item);
         Task<T> DetachedItem(T item);

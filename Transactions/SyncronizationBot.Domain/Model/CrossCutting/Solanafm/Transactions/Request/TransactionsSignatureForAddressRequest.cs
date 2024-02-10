@@ -6,5 +6,6 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Requ
     {
         public string? WalletPublicKeyHash { get; set; }
         public Guid? ID { get; set; } = Guid.NewGuid();
+        public int? Limit { get; set; } = 50;
     }
 }

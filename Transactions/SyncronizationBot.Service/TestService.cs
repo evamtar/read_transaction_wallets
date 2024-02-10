@@ -84,16 +84,16 @@ namespace SyncronizationBot.Service
         private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration)
         {
             var listTokenAlphaWalletsIds = new List<Guid?>();
-            var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID);
-            var hasNext = tokenAlphaWallet != null;
+            var tokenAlphaWallets = await this._tokenAlphaWalletRepository.Get(x => x.TokenAlphaId == tokenAlpha.ID);
             var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
             await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
-            while (hasNext)
+            if (tokenAlphaWallets.Count > 0) 
             {
-                listTokenAlphaWalletsIds.Add(tokenAlphaWallet!.ID);
-                await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
-                tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID && !listTokenAlphaWalletsIds.Contains(x.ID));
-                hasNext = tokenAlphaWallet != null;
+                foreach (var tokenAlphaWallet in tokenAlphaWallets)
+                {
+                    listTokenAlphaWalletsIds.Add(tokenAlphaWallet!.ID);
+                    await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+                }
             }
         }
         private async Task<PublishMessage> SavePublishMessage<T>(T entity, Guid? parentId) where T : Entity

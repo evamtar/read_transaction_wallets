@@ -95,18 +95,18 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context
 
-    services.AddDbContext<SqlContext>(options => options.EnableSensitiveDataLogging().UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
 
     #endregion
 
     #region Hosted Service
-
+    
     services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
     services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
-
+    services.AddHostedService<ReadTransactionsOldForMapping>();
     #region Only For Test
 
     //services.AddHostedService<TestService>();
@@ -153,6 +153,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>, RecoverySaveTransactionsOldForMappingCommandHandler>();
 
     services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();

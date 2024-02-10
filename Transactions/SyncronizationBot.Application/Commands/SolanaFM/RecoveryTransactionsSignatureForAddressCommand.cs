@@ -6,6 +6,6 @@ namespace SyncronizationBot.Application.Commands.SolanaFM
 {
     public class RecoveryTransactionsSignatureForAddressCommand : TransactionsCommand, IRequest<RecoveryTransactionsSignatureForAddressCommandResponse>
     {
-        
+        public int? Limit { get; set; } = 50;
     }
 }

@@ -81,10 +81,12 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
         {
             return await this.FindFirstOrDefault(e => e.ID == id);
         }
-
-        public virtual async Task<List<T>> Get(Expression<Func<T, bool>> predicate)
+        public virtual async Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
-            return await _context.Set<T>().Where(predicate).AsNoTracking().ToListAsync();
+            if (keySelector != null)
+                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).ToListAsync();
+            else
+                return await _context.Set<T>().Where(predicate).ToListAsync();
         }
 
         public virtual async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
@@ -92,12 +94,12 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
             if (keySelector != null)
                 return await _context.Set<T>().Where(predicate).OrderBy(keySelector).AsNoTracking().FirstOrDefaultAsync();
             else
-                return await _context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
+                return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
         }
 
         public virtual async Task<List<T>> GetAll()
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
     }
 }

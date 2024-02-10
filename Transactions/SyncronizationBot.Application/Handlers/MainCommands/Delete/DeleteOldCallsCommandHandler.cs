@@ -25,18 +25,18 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
         }
         public async Task<DeleteOldCallsCommandResponse> Handle(DeleteOldCallsCommand request, CancellationToken cancellationToken)
         {
-            var oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId && x.IsDeleted == false);
-            var hasNext = oldCallsMessage != null;
-            while (hasNext) 
+            var oldCallsMessages = await this._telegramMessageRepository.Get(x => x.EntityId == request.EntityId && x.IsDeleted == false);
+            if (oldCallsMessages?.Count > 0) 
             {
-                var telegramChannel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ID == oldCallsMessage!.TelegramChannelId);
-                var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = oldCallsMessage!.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
-                oldCallsMessage.IsDeleted = true;
-                await this._telegramMessageRepository.Edit(oldCallsMessage);
-                await this._telegramChannelRepository.DetachedItem(telegramChannel!);
-                await this._telegramMessageRepository.DetachedItem(oldCallsMessage);
-                oldCallsMessage = await this._telegramMessageRepository.FindFirstOrDefault(x => x.EntityId == request.EntityId && x.IsDeleted == false);
-                hasNext = oldCallsMessage != null;
+                foreach (var oldCallsMessage in oldCallsMessages)
+                {
+                    var telegramChannel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ID == oldCallsMessage!.TelegramChannelId);
+                    var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = oldCallsMessage!.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
+                    oldCallsMessage.IsDeleted = true;
+                    await this._telegramMessageRepository.Edit(oldCallsMessage);
+                    await this._telegramChannelRepository.DetachedItem(telegramChannel!);
+                    await this._telegramMessageRepository.DetachedItem(oldCallsMessage);
+                }
             }
             return new DeleteOldCallsCommandResponse { };
         }

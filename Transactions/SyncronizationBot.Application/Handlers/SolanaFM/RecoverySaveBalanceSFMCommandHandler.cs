@@ -53,9 +53,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     if (tokenAccountsByOwner?.Result?.Value?.Any() ?? false)
                     {
                         foreach (var tokenResultResponse in tokenAccountsByOwner.Result.Value)
-                        {
                             await this.SaveBalance(request, tokenResultResponse, dateLoadBalance);
-                        }
                     }
                 }
             }

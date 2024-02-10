@@ -28,6 +28,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             var data = this._config.Value.Data ?? string.Empty;
             data = data.Replace("{{WalletPublicKeyHash}}", request.WalletPublicKeyHash);
             data = data.Replace("{{Id}}", request.ID?.ToString());
+            data = data.Replace("{{Limit}}", request.Limit?.ToString());
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("", content);
             var responseBody = await response.Content.ReadAsStringAsync();

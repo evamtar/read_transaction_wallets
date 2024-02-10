@@ -50,6 +50,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             {
                 var response = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
                 {
+                    WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
                     DateLoadBalance = request.DateLoadBalance,
                     InitialTicks = request.InitialTicks,
@@ -63,6 +64,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             {
                 var response = await _mediator.Send(new RecoveryTransactionsCommand
                 {
+                    WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
                     DateLoadBalance = request.DateLoadBalance,
                     InitialTicks = request.InitialTicks,

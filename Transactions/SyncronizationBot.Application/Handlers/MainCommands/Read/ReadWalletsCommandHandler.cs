@@ -24,34 +24,33 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         }
         public async Task<ReadWalletsCommandResponse> Handle(ReadWalletsCommand request, CancellationToken cancellationToken)
         {
-            var datetimeLimit = DateTime.Now;
             var hasWalletsWithBalanceLoad = false;
-            var walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit), x => x.UnixTimeSeconds!);
-            var hasNext = walletTracked != null;
-            while (hasNext)
+            var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
+            if(walletsTracked?.Count() > 0) 
             {
-                hasWalletsWithBalanceLoad = true;
-                var initialTicks = GetInitialTicks(walletTracked?.UnixTimeSeconds);
-                var finalTicks = GetFinalTicks();
-                if (initialTicks > finalTicks)
-                    initialTicks -= (initialTicks - finalTicks) * 2;
-                var classWallet = await _classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.ClassWalletId);
-                var response = await _mediator.Send(new RecoverySaveTransactionsCommand
+                foreach (var walletTracked in walletsTracked)
                 {
-                    WalletId = walletTracked?.ID,
-                    WalletHash = walletTracked?.Hash,
-                    ClassWallet = classWallet,
-                    DateLoadBalance = walletTracked?.DateLoadBalance,
-                    IsContingecyTransactions = request?.IsContingecyTransactions,
-                    InitialTicks = initialTicks,
-                    FinalTicks = finalTicks
-                });
-                this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
-                walletTracked!.LastUpdate = DateTime.Now;
-                await _classWalletRepository.DetachedItem(classWallet!);
-                await UpdateUnixTimeSeconds(finalTicks, walletTracked);
-                walletTracked = await GetWallet(x => x.IsActive == true && x.IsLoadBalance == true && (x.LastUpdate == null || x.LastUpdate <= datetimeLimit));
-                hasNext = walletTracked != null;
+                    hasWalletsWithBalanceLoad = true;
+                    var initialTicks = GetInitialTicks(walletTracked?.UnixTimeSeconds);
+                    var finalTicks = GetFinalTicks();
+                    if (initialTicks > finalTicks)
+                        initialTicks -= (initialTicks - finalTicks) * 2;
+                    var classWallet = await _classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked!.ClassWalletId);
+                    var response = await _mediator.Send(new RecoverySaveTransactionsCommand
+                    {
+                        WalletId = walletTracked?.ID,
+                        WalletHash = walletTracked?.Hash,
+                        ClassWallet = classWallet,
+                        DateLoadBalance = walletTracked?.DateLoadBalance,
+                        IsContingecyTransactions = request?.IsContingecyTransactions,
+                        InitialTicks = initialTicks,
+                        FinalTicks = finalTicks
+                    });
+                    this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
+                    walletTracked!.LastUpdate = DateTime.Now;
+                    await _classWalletRepository.DetachedItem(classWallet!);
+                    await UpdateUnixTimeSeconds(finalTicks, walletTracked);
+                }
             }
             return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
         }

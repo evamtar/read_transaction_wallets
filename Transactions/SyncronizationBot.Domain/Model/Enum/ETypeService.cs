@@ -16,5 +16,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         DeleteOldMessages,
         [DescriptionAttribute("Alerta de Token Alpha")]
         AlertTokenAlpha,
+        [DescriptionAttribute("Transacões Antigas para Mapear")]
+        TransactionsOldForMapping,
     }
 }

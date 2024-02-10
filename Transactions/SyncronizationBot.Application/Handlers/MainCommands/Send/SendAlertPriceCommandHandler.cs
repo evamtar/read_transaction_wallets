@@ -32,56 +32,55 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
             var alertsSended = new List<Guid?>();
-            var alert = await this._alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
-            var hasNext = alert != null;
-            while(hasNext) 
+            var alerts = await this._alertPriceRepository.Get(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
+            if (alerts?.Count > 0) 
             {
-                var prices = await this._jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { alert!.TokenHash! } });
-                if (prices!.Data!.ContainsKey(alert.TokenHash!)) 
+                foreach (var alert in alerts) 
                 {
-                    var price = prices?.Data[alert.TokenHash!];
-                    var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = alert.TokenHash });
-                    var isSendAlert = false;
-                    switch (alert.TypeAlert!)
+                    var prices = await this._jupiterPriceService.ExecuteRecoveryPriceAsync(new JupiterPricesRequest { Ids = new List<string> { alert!.TokenHash! } });
+                    if (prices!.Data!.ContainsKey(alert.TokenHash!))
                     {
-                        case ETypeAlertPrice.UP:
-                            if (price!.Price >= alert.PriceValue || price!.Price >= alert.PriceValue + alert.PriceBase * alert.PriceBase)
-                            {
-                                await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_UP);
-                                isSendAlert = true;
-                            }
-                            break;
-                        case ETypeAlertPrice.DOWN:
-                            if (price!.Price <= alert.PriceValue || price!.Price <= alert.PriceBase + alert.PriceBase * alert.PricePercent)
-                            {
-                                await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_DOWN);
-                                isSendAlert = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    if (isSendAlert)
-                    {
-                        if (alert.IsRecurrence ?? false)
+                        var price = prices?.Data[alert.TokenHash!];
+                        var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = alert.TokenHash });
+                        var isSendAlert = false;
+                        switch (alert.TypeAlert!)
                         {
-                            if (alert.PricePercent == null)
-                                alert.PriceValue += alert.PriceValue - alert.PriceBase;
-                            alert.PriceBase = price?.Price;
-                            await this._alertPriceRepository.Edit(alert);
-                            await this._alertPriceRepository.DetachedItem(alert);
+                            case ETypeAlertPrice.UP:
+                                if (price!.Price >= alert.PriceValue || price!.Price >= alert.PriceValue + alert.PriceBase * alert.PriceBase)
+                                {
+                                    await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_UP);
+                                    isSendAlert = true;
+                                }
+                                break;
+                            case ETypeAlertPrice.DOWN:
+                                if (price!.Price <= alert.PriceValue || price!.Price <= alert.PriceBase + alert.PriceBase * alert.PricePercent)
+                                {
+                                    await SendAlertMessage(alert, token, price, EClassifictionMessage.PRICE_DOWN);
+                                    isSendAlert = true;
+                                }
+                                break;
+                            default:
+                                break;
                         }
-                        else
+                        if (isSendAlert)
                         {
-                            alert.EndDate = DateTime.Now;
-                            await this._alertPriceRepository.Edit(alert);
-                            await this._alertPriceRepository.DetachedItem(alert);
+                            if (alert.IsRecurrence ?? false)
+                            {
+                                if (alert.PricePercent == null)
+                                    alert.PriceValue += alert.PriceValue - alert.PriceBase;
+                                alert.PriceBase = price?.Price;
+                                await this._alertPriceRepository.Edit(alert);
+                                await this._alertPriceRepository.DetachedItem(alert);
+                            }
+                            else
+                            {
+                                alert.EndDate = DateTime.Now;
+                                await this._alertPriceRepository.Edit(alert);
+                                await this._alertPriceRepository.DetachedItem(alert);
+                            }
                         }
                     }
                 }
-                alertsSended.Add(alert!.ID);
-                alert = await this._alertPriceRepository.FindFirstOrDefault(x => (x.EndDate >= DateTime.Now || x.EndDate == null) && !alertsSended.Contains(x.ID));
-                hasNext = alert != null;
             }
             return new SendAlertPriceCommandResponse();
         }

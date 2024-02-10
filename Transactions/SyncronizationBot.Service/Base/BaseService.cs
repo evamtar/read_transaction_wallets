@@ -153,6 +153,9 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.AlertTokenAlpha:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
+                case ETypeService.TransactionsOldForMapping:
+                    Console.ForegroundColor = ConsoleColor.Magenta; 
+                    break;
                 default:
                     break;
             }

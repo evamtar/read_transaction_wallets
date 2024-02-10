@@ -38,9 +38,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 var transactionResponse = await this._transactionsService.ExecuteRecoveryTransactionsAsync(new TransactionsRequest
                 {
                     Page = page,
-                    UtcFrom = request.InitialTicks,
-                    UtcTo = request.FinalTicks,
-                    WalletPublicKey = request.WalletHash
+                    UtcFrom = request?.InitialTicks,
+                    UtcTo = request?.FinalTicks,
+                    WalletPublicKey = request?.WalletHash
                 });
                 if (transactionResponse.Result != null)
                 {
@@ -61,13 +61,13 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                                     });
                                 }
                                 else
-                                    await this.SaveTransactionsOldForMapping(transaction);
+                                    await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
 
                             }
                             else
                             {
                                 await this._transactionsRepository.DetachedItem(exists);
-                                await this.SaveTransactionsOldForMapping(transaction);
+                                await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                             }
                         }
                     }
