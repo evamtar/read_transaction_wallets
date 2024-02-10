@@ -90,8 +90,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         private int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert) 
         {
-            if (tokensAlphaWalletsToAlert.Count() > 4)
-                return 4;
+            if (tokensAlphaWalletsToAlert.Count() > 5)
+                return 5;
             return tokensAlphaWalletsToAlert.Count();
         }
         
