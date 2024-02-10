@@ -8,15 +8,11 @@ namespace SyncronizationBot.Infra.Data.Context
 {
     public class SqlContext : DbContext
     {
-        private readonly StreamWriter _logStream = new StreamWriter("C:\\log.txt", append: true);
-
         #region Constructor
 
         public SqlContext(DbContextOptions<SqlContext> options) : base(options) { }
 
         #endregion
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.LogTo(_logStream.WriteLine);
 
         #region DbSetConfiguration
 
@@ -78,17 +74,6 @@ namespace SyncronizationBot.Infra.Data.Context
 
         #endregion
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            _logStream.Dispose();
-        }
-
-        public override async ValueTask DisposeAsync()
-        {
-            await base.DisposeAsync();
-            await _logStream.DisposeAsync();
-        }
     }
 
 
