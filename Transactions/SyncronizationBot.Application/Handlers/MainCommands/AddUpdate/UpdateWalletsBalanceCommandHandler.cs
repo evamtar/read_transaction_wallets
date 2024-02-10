@@ -36,10 +36,16 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     var balances = await this._walletBalanceRepository.Get(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < DateTime.Now) ;
                     if (balances?.Count() > 0) 
                     {
-                        foreach (var balance in balances) 
+                        var prices = await this._mediator.Send(new RecoveryPriceCommand { Ids = this.GetIdsTokens(balances) });
+                        foreach (var balance in balances)
                         {
-                            var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = balance!.TokenHash! });
-                            balance.TotalValueUSD = balance.Quantity * (token.Price ?? 0);
+                            if (prices?.Data?.ContainsKey(balance.TokenHash!) ?? false)
+                                balance.TotalValueUSD = balance.Quantity * (prices?.Data?[balance.TokenHash!].Price ?? 0);
+                            else 
+                            {
+                                var token = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = balance!.TokenHash! });
+                                balance.TotalValueUSD = balance.Quantity * (token.Price ?? 0);
+                            }
                             balance.LastUpdate = DateTime.Now;
                             await this._walletBalanceRepository.Edit(balance);
                             await this._walletBalanceRepository.DetachedItem(balance);
@@ -48,6 +54,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 }
             }
             return new UpdateWalletsBalanceCommandResponse { };
+        }
+
+        private List<string> GetIdsTokens(IEnumerable<WalletBalance> walletBalances)
+        {
+            var listIdsTokens = new List<string> { };
+            foreach (var walletBalance in walletBalances)
+                listIdsTokens.Add(walletBalance.TokenHash!);
+            return listIdsTokens;
         }
     }
 }
