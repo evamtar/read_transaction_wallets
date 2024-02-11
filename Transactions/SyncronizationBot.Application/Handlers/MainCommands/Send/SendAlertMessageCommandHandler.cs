@@ -147,7 +147,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                 }
                                 else if (splitValue.StartsWith("AGGREGATE")) 
                                 {
-                                    
                                     var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                                     var aggregateResult = new Dictionary<string, int>();
                                     var resultAggregated = string.Empty;
