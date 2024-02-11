@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
@@ -63,13 +64,14 @@ namespace SyncronizationBot.Service
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
             //await this.TestePublicMessage();
-            await this.TesteAdicionarAlpha();
+            //await this.TesteAdicionarAlpha();
             //await this.RepublishTokenAlpha();
+            await this.Handle();
         }
 
         private async Task RepublishTokenAlpha() 
         {
-            var tokensAlpha = await this._tokenAlphaRepository.GetAll();
+            var tokensAlpha = await this._tokenAlphaRepository.Get(x => x.ID == Guid.Parse("EC818521-CB96-495B-F70B-08DC2A2EC105"));
             if(tokensAlpha != null) 
             {
                 foreach (var tokenAlpha in tokensAlpha)
@@ -103,7 +105,7 @@ namespace SyncronizationBot.Service
                 EntityId = entity.ID,
                 Entity = typeof(T).ToString(),
                 JsonValue = entity.JsonSerialize(),
-                ItWasPublished = false,
+                ItWasPublished = true,
                 EntityParentId = parentId,
             });
             await this._publishMessageRepository.DetachedItem(publishMessage);
@@ -212,6 +214,78 @@ namespace SyncronizationBot.Service
                     break;
             }
             return null;
+        }
+
+        public async Task<SendAlertTokenAlphaCommandResponse> Handle()
+        {
+            var publicsMessages = await this._publishMessageRepository.Get(x => x.ItWasPublished == true && x.EntityParent == null && x.EntityId == Guid.Parse("EC818521-CB96-495B-F70B-08DC2A2EC105"));
+            if (publicsMessages?.Count > 0)
+            {
+                foreach (var publicMessage in publicsMessages)
+                {
+                    var tokenAlpha = JsonConvert.DeserializeObject<TokenAlpha>(publicMessage!.JsonValue ?? string.Empty);
+                    var tokenAlphaConfiguration = await this.GetPublicMessage<TokenAlphaConfiguration>(publicMessage!.ID);
+                    var tokensAlphaWalletsToAlert = await this.GetListOfPublicMessage<TokenAlphaWallet>(publicMessage!.ID);
+                    //Limpar mensagens de calls anteriores do mesmo token
+                    await this._mediator.Send(new DeleteOldCallsCommand
+                    {
+                        EntityId = publicMessage!.EntityId
+                    });
+                    await this._mediator.Send(new SendAlertMessageCommand
+                    {
+                        IdClassification = this.GetClassificationAlert(tokensAlphaWalletsToAlert!),
+                        EntityId = publicMessage!.EntityId,
+                        Parameters = SendAlertMessageCommand.GetParameters(new object[]
+                        {
+                        tokenAlpha!,
+                        tokenAlphaConfiguration!,
+                        tokensAlphaWalletsToAlert
+                        }),
+                        TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
+                    });
+                    publicMessage!.ItWasPublished = true;
+                    await this._publishMessageRepository.Edit(publicMessage!);
+                    await this._publishMessageRepository.DetachedItem(publicMessage!);
+                }
+            }
+            return new SendAlertTokenAlphaCommandResponse { };
+        }
+
+        private async Task<List<T?>> GetListOfPublicMessage<T>(Guid? publicMessageParentId) where T : Entity
+        {
+            var listOfEntity = new List<T?>();
+            var publicsMessages = await this._publishMessageRepository.Get(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == true && x.Entity == typeof(T).ToString());
+            if (publicsMessages?.Count > 0)
+            {
+                foreach (var publicMessage in publicsMessages)
+                {
+                    listOfEntity.Add(JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty));
+                    publicMessage!.ItWasPublished = true;
+                    await this._publishMessageRepository.Edit(publicMessage);
+                    await this._publishMessageRepository.DetachedItem(publicMessage);
+                }
+            }
+            return listOfEntity;
+        }
+
+        private async Task<T?> GetPublicMessage<T>(Guid? publicMessageParentId) where T : Entity
+        {
+            var publicMessage = await this._publishMessageRepository.FindFirstOrDefault(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == true && x.Entity == typeof(T).ToString());
+            if (publicMessage != null)
+            {
+                publicMessage.ItWasPublished = true;
+                await this._publishMessageRepository.Edit(publicMessage);
+                await this._publishMessageRepository.DetachedItem(publicMessage);
+                return JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty);
+            }
+            return null!;
+        }
+
+        private int GetClassificationAlert(List<TokenAlphaWallet> tokensAlphaWalletsToAlert)
+        {
+            if (tokensAlphaWalletsToAlert.Count() > 5)
+                return 5;
+            return tokensAlphaWalletsToAlert.Count();
         }
 
     }

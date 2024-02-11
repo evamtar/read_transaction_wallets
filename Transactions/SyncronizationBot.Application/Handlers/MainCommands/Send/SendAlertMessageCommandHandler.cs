@@ -4,7 +4,6 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using System.Collections;
 using System.Reflection;
@@ -163,9 +162,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                             else
                                                 aggregateResult[aggregateValue] += 1;
                                         }
-                                        foreach (var aggregateItem in aggregateResult)
-                                            resultAggregated += " - " + aggregateItem.Key + "(" + aggregateItem.Value.ToString() + ")";
                                     }
+                                    foreach (var aggregateItem in aggregateResult)
+                                        resultAggregated += " - " + aggregateItem.Key + "(" + aggregateItem.Value.ToString() + ") {{NEWLINE}}";
                                     return resultAggregated;
                                 }
                                 else
