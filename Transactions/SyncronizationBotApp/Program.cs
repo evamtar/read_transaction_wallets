@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -102,11 +101,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Hosted Service
     
     services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
-    services.AddHostedService<ReadTransactionsOldForMapping>();
+    services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<ReadTransactionsOldForMapping>(); 
 
     #region Only For Test
 
