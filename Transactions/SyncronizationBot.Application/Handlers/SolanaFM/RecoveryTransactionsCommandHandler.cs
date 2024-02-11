@@ -35,6 +35,8 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             var hasNextPage = true;
             while (hasNextPage)
             {
+                //rate limit 60 conexoes por minuto
+                await Task.Delay(250);
                 var transactionResponse = await this._transactionsService.ExecuteRecoveryTransactionsAsync(new TransactionsRequest
                 {
                     Page = page,

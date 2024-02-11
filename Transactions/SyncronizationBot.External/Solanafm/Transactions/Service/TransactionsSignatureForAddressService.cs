@@ -32,7 +32,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("", content);
             var responseBody = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode) 
                 throw new Exception(responseBody);
             return JsonConvert.DeserializeObject<TransactionsSignatureForAddressResponse>(responseBody) ?? new TransactionsSignatureForAddressResponse { };
         }

@@ -9,5 +9,7 @@ DELETE FROM TransactionNotMapped WHERE StackTrace IS NULL
 	--DELETE
 	--  FROM WalletBalance
 	--WHERE WalletId IN(SELECT ID FROM Wallet WHERE IsLoadBalance = 0)
-
+SELECT *
+  FROM WalletBalance
+WHERE WalletId IN(SELECT ID FROM Wallet WHERE IsLoadBalance = 0)
 	 

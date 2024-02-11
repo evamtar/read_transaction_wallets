@@ -50,6 +50,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     walletTracked!.LastUpdate = DateTime.Now;
                     await _classWalletRepository.DetachedItem(classWallet!);
                     await UpdateUnixTimeSeconds(finalTicks, walletTracked);
+                    await Task.Delay(100);
                 }
             }
             return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
