@@ -2,7 +2,6 @@
 --
 DECLARE @IdClassWallet UNIQUEIDENTIFIER
 SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 4
-INSERT INTO Wallet VALUES (NEWID(),'Fjswd2XtU3vV11Ncr3PAFAB7ocfDKJgcbn3tATynMcw9', @IdClassWallet, null, 0, null, null, 1, 1, null); 
 INSERT INTO Wallet VALUES (NEWID(),'DA4tpAyUCabKbKfcqon6Rbq92DmQaPajjUxo3Aufmhzk', @IdClassWallet, null, 0, null, null, 1, 1, null); 
 INSERT INTO Wallet VALUES (NEWID(),'8EhYM2RCiNZgK5oFBcArtTot7hVgNQaYMbFMYo2iFt9d', @IdClassWallet, null, 0, null, null, 1, 1, null); 
 INSERT INTO Wallet VALUES (NEWID(),'7pSS6UDQ7MGDkLa9xoWZHCCGyJhJKMwQjdU5V7EGo6dL', @IdClassWallet, null, 0, null, null, 1, 1, null); 

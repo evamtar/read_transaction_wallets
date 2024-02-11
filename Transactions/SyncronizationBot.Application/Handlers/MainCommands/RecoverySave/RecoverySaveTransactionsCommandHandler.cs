@@ -156,7 +156,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        QuantityTokenReceived = transactionDB?.AmountValueDestination,
+                                        QuantityTokenReceived = Math.Abs(transactionDB?.AmountValueDestination ?? 0),
                                         Signature = transactionDB?.Signature,
                                         MarketCap = transactionDB?.MtkcapTokenDestination,
                                         Price = tokenReceived?.Price,
@@ -172,7 +172,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        AmountTokenSell = transactionDB?.AmountValueSource,
+                                        AmountTokenSell = Math.Abs(transactionDB?.AmountValueSource ?? 0),
                                         MarketCap = transactionDB?.MtkcapTokenSource,
                                         Price = tokenSended?.Price
                                     });
