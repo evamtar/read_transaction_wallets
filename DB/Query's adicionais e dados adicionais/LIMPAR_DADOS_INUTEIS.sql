@@ -4,3 +4,10 @@ SELECT * FROM TransactionNotMapped WHERE StackTrace IS NULL
 DELETE FROM PublishMessage WHERE ItWasPublished = 1
 DELETE FROM TelegramMessage WHERE IsDeleted = 1
 DELETE FROM TransactionNotMapped WHERE StackTrace IS NULL
+
+--LIMPAR CARTEIRAS COM FALHA NO CARREGAMENTO COM DADOS NO BALANCE
+	--DELETE
+	--  FROM WalletBalance
+	--WHERE WalletId IN(SELECT ID FROM Wallet WHERE IsLoadBalance = 0)
+
+	 

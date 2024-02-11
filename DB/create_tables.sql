@@ -207,9 +207,7 @@ CREATE TABLE ClassWallet(
 	PRIMARY KEY (ID)
 );
 GO
-INSERT INTO ClassWallet VALUES(NEWID(), 1, 'Top 15');
-INSERT INTO ClassWallet VALUES(NEWID(), 2, 'Smart Whales');
-INSERT INTO ClassWallet VALUES(NEWID(), 3, 'Insiders');
+
 
 GO
 
@@ -326,91 +324,6 @@ CREATE TABLE TransactionsOldForMapping
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
 );
 GO
-
-DECLARE @IdClassWallet UNIQUEIDENTIFIER
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 1
-INSERT INTO Wallet VALUES (NEWID(),'HzoNzi7mLVCxsa9EkdBmoob75rkXCjWLHy131ch1oEbX', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'43QLsYdyomxCyoZiz1W18LaZaY3tevxLM4KyJWnVeFaB', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2cSsWeb3v7uD4dGgcqoCNWBwBcos9iK7jEEfyVTH2LSZ', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'FZNrSiYifncDHTRNB6L8AyGX3sQu4T5Jb9k56S1zgTsz', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HG1xNEhagquSPVNGgQqwUPH12eroWfgDzwLecVVxyPvY', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'BwUY5UwPwwR9rS852aHoQch4e7XA3f8XFeZbPNwwW4cY', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2bAVD7hHAoLJV939Goo5id6uguHXHaQDbqqsFijwcPEC', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'8KoQ9ReE1P2bCVf9AJttNxrJTyqyHRHBPpooRpfE3LGt', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2SeHoXXuWsSj4GanNS5TJfpmKNUtTB9pmtkYQdbyqRQ9', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'DqFEdkAjcqqPV7C1kmjhyCayxCaJsdjb7JWHUKZk7hYX', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'5nrcb94ECUhF4TjveNXp9Ycz7kDfu7zpMFF8cqJg4N8d', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'3oc7EzM8UWf4o3MJYvt52uEL4GnTEGK72tYwGq5eskzS', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'AVAZvHLR2PcWpDf8BXY4rVxNHYRBytycHkcB5z5QNXYm', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'66db6fiCTJFFAuyvcvLJT91EFwTS24gY2jYsVhpqXYLo', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'AwFUbwt27KQUwJdKgcfwEi1ySMYrKZt3Z8mDrVghEbNu', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 2
-INSERT INTO Wallet VALUES (NEWID(),'Fjswd2XtU3vV11Ncr3PAFAB7ocfDKJgcbn3tATynMcw9', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'EgZNycuVcr4YWxgjoDK3METamtSDjrPnCUs7jWgmgYSq', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CoRo7P1kfdgRPvFbWG9oSVGezpFjq6mccD2p898djc4Z', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'4fhbCSdeR9HG5m8J8Pwd3NWMpftmX4TFeCuj4c6qj226', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2YZpjmb7iaUeizbapfqX1Dr9LTae55XerVqhhgJyyR2D', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'AYMPkUdnLPWaZSM257QEnKQ82RCwmz9WvJUVm8mmA3Ua', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HuCULqprhabZjhZ6bpVxbKr4U81p5QjTmqMQVaac3WvF', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CLee88KHw1tBdpY1hkxDgendy7UjCD3PMGDY4xbLTbys', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HjSFTLNLPuX8Nw5HjZpWXzgo9rQ5iHTycYxwkvj1TAJW', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HsAvAv5jwuBAotn9GbfFni8mrRFSrK1iz6J8ZNAYgHLX', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'D7Lwt6j2hzDhy14oC5YdfXh4pPeoAGbaNWQZX2UCPUKZ', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'5Q5y8bTjCUZJc9cP7FosT461G2Ej5n1M8zKmnMxpFHFV', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'Erja5wNDfvvWWvYe9sHYgjxBKpqxaK2Uk33mEV3Ts5du', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'7wrn7YPNiHEStcqGz2zNSSUWMq1WiUxQfb3ZkYUnfvkt', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2XEEKN4XPG5WUCJ56F5byagGazAFvThieanqEgdunwJC', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'BsgFVpmEBB3Ps39aNQJPXt5mndbEQ7aP3fLXNRL8BTxW', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'Hfvi411tTZfqENEnmc7jFSnV7SRZ3iHt2cYhWzXySLqj', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'6SAazHQPYBf6bA3RLmFRChUD6o7hebyawfuBw7XiK2FX', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'3BVEYnRCE2R6S6GdzvxueWsxgmqDwMtoEw9LvsAHpXEL', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CfCEBC1SxVULDZCnYpSEZG1i7wFyHd8j7vyGcM16yAUz', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'6KFVsnfPLJoTTSKDoUsEntsS7Pxj33mbTTYTZUiY4Kwp', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CxaA6Dmhq8xf9dfo3SuvupHB2mCPQLc1K6wkv8i6us6d', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HMBTg1sY5FX48BkAaazZ5Rw9z9rVGYt1Tk5dQTf67Bfc', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HzMZ89kGbgfut7KgyFk1GXdWibUK4owwXZsoKDnuqNQL', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'4twHV2bRBtC2m3QGou4x5ThQMUvtx7S2JbXFTocKxumu', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'5GCrq266doDtV3k4yBADTFW7Z2AjR49AhV7D6VR7vNRP', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'ERD97gqCAbHt7HEdS1767ZSZJzh4nFTJ5KvMtoNRbP19', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'47KPjHWkoEGedin1k1Zx6W89MxNWBaKZ3u7AHmVfX8ZD', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'Asyuz72ArUZ1yMW2WQtdwjCaN7uJN4iD41jKm6SY8e65', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'FxNevm194FWuUMrx8jWaTyPHUgz5QwvLWKAbX5zHzcUi', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HSAxeaos35XJAAeua67Bdw3rnSCecPziCokXSGWR4fQD', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'3FStqMiq38s1gz8iANJYehi4LYZk1XghpLWwJiaiMEW3', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'8upBybQKUvHJNdQNndEGtBp57gimBsmfGEpE3DG1VvVo', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'6hqR9urgXPXnPFYybvwYdhLZ7TRKS4NcLcNivJhRr7Jf', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HaiB6nNvsNvDckneUux1JFyUZ95o33gpvfSQqCeEMjSv', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'9Ltbz7RQr7Bd3dCD3qmhkWNwR2fAfKAn6NXEjPrd9UUE', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'6C8qysda5dg8WpPJoj6iMLELhtLzQe2A7nnSA1A7ttpF', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2gEDcZRdr7Pn75kbpw6L2LMsjS8E7X9pvzR2Ho7ubxwJ', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'HcmFRHNvjz2iYvTqGHmixjjiDoJV61s8Mfanaaga6HCo', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'4g7Em5VamMQNLZaGgTPgWy7fuf514Evsjuv558b6HE6J', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'9ZGyuZdayrdtVENieN2ezh1PaSoUNqaM9F9KuJoLiJGa', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-SELECT @IdClassWallet = ID FROM ClassWallet WHERE IdClassification = 3
-INSERT INTO Wallet VALUES (NEWID(),'GLf82418u3jtRDrbZeCm2p2xNrq1M38NgejuCe8XhXdh', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'F9suLkrZdwCmhTd3QgMM41r6uYeomRqhPYGGUtrR6QCH', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'4N26JXkBUAmUxtJqjtM9w4aJdaJ6axxWGsFxShb8ttKt', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'54mhnkCKNyAzf1TvS25sUTytvwFkqYKkWsC2kNirafaH', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'5oxSw52WsZoQxyCboDHZKWquwiRJK1xu3HPXSXuJhNGL', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2gW9oDrEn8tycU5Shc53RgBS2ep5Jvs8EoGr8i6YqMxp', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'JCbUdQJ1t9HYZJtvENU57w9AoXQqGWsYfXz9htDHjHUN', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'H2irGaJ6Dy53DbRmsBpfTsL4C2Z6WPF9YGbh1mcb2TVL', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'3mQmKRVa5upCZrPmS4rvA7vbsFkVptThwZqjfyy87mA1', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'ADiXVdd3fYsUWAzs3ujVpDBb9RRhhpoF3LFKPfzb3Ym3', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CqasVpm5vhPLewcJSXGD9czEiz2BYv3K1KuRRaZ4WuCh', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'SCaMrbx78vrpnTqWQciphGYKhLHCE9KfQrSWxdcZvHP', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'7rWYawCksFUuCXuhigB5ocT3dLCHeBhvQmZxA71fwztj', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'E436oeUxjDBwjHdFdAYGEUjrJZPWeq2ETu7yxV3ZiG3n', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'DJRYeqRmrPbsqSm6zVyU4SU1kz3BTi37QrCUstM1kFjH', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'CQHYV5Y2dSdm3XTSzAdE6PnRoMwrzprsY6tB9QZ67ycw', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'BY6zVRFCfrvN7rF922Ys21CQSkrWsontyBVJXJVyBLGo', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'EMuMfGyo9TCJQTtWyP4u9aaMNS6varm3i3wWH1aX7kYC', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'3ivNHNjUhAgEHWCZsMPicX9QMKvgu9BDK1DdH57n5RfK', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'46pxjKjJvi1obWMiHwa6Zy1ukcuFJAyoahdBzcrinoz5', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'2Ay2sNNzeWvw7DCGkzEu88JD7LtujPLUPXF1CJ6uB48F', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'ELoqJYcFTc8qjGhJShUupEkRomed8rykb3CUhrzAT4Q1', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-INSERT INTO Wallet VALUES (NEWID(),'4ea35LmdwcqqkMxgsxtGk7tRZFuWXu2JVdkLC88ryu7B', @IdClassWallet, null, 0, null, null, 1, 1, null); 
-
 
 CREATE TABLE WalletBalance
 (
