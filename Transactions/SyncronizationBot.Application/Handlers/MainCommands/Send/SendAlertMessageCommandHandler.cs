@@ -122,7 +122,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                 }
                                 else if (splitValue.StartsWith("RANGE"))
                                 {
-                                    if (splitValue.Contains("|")) 
+                                    if (splitValue.Contains("|"))
                                     {
                                         var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                                         var subInstruction = separetedInstructionAndParameters[0].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
@@ -136,17 +136,39 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                             }
                                             return aggregateValue;
                                         }
-                                        else 
+                                        else
                                         {
                                             //TODO
                                         }
                                     }
                                     else
-                                    { 
+                                    {
                                         //TODO
                                     }
                                 }
-                                else 
+                                else if (splitValue.StartsWith("AGGREGATE")) 
+                                {
+                                    
+                                    var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                                    var aggregateResult = new Dictionary<string, int>();
+                                    var resultAggregated = string.Empty;
+                                    foreach (var item in genericList)
+                                    {
+                                        var objPropertyInfo = item.GetType().GetProperty(separetedInstructionAndParameters[separetedInstructionAndParameters.Length - 1]);
+                                        var aggregateValue = objPropertyInfo?.GetValue(item)?.ToString();
+                                        if (!string.IsNullOrEmpty(aggregateValue)) 
+                                        {
+                                            if (!aggregateResult.ContainsKey(aggregateValue))
+                                                aggregateResult.Add(aggregateValue, 1);
+                                            else
+                                                aggregateResult[aggregateValue] += 1;
+                                        }
+                                        foreach (var aggregateItem in aggregateResult)
+                                            resultAggregated += " - " + aggregateItem.Key + "(" + aggregateItem.Value.ToString() + ")";
+                                    }
+                                    return resultAggregated;
+                                }
+                                else
                                 {
                                     int.TryParse(splitValue.Replace("[", string.Empty).Replace("]", string.Empty), out var index);
                                     objectFinded = genericList?[index];
