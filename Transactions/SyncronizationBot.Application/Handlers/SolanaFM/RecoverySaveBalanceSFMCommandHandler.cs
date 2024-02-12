@@ -42,7 +42,8 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             // Recovery Total Amount in SOL
             var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = request.WalletHash });
             await this.SaveBalance(request, accountInfo, DateTime.Now);
-
+            
+            await Task.Delay(1000);
             // Recovery Total Amount in another tokens
             var tokensAccountsByOwners = await this._tokensAccountsByOwnerService.ExecuteRecoveryTokensAccountsByOwnerAsync(new TokensAccountsByOwnerRequest { WalletPublicKeyHash = request.WalletHash });
             var dateLoadBalance = DateTime.Now;
