@@ -29,25 +29,29 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
             var wallets = await GetWallets(x => x.IsLoadBalance == false && x.IsActive == true);
             if(wallets?.Count() > 0) 
             {
-                int totalWalletPerRange = 10;
-                var rest = wallets.Count % totalWalletPerRange;
-                var total = ((int)wallets.Count / totalWalletPerRange) + (rest > 0 ? 1 : 0);
-                for (int i = 0; i < total; i++)
+                foreach (var wallet in wallets)
                 {
-                    int initRange = (totalWalletPerRange * i);
-                    var walletsToTask = wallets.GetRange(initRange, totalWalletPerRange);
-                    await Parallel.ForEachAsync(walletsToTask, async (wallet, cancellationToken) =>
-                    {
-                        var finalTicks = GetInitialTicks(GetFinalTicks());
-                        var taskSFM = _mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
-                        var taskByrdeye = _mediator.Send(new RecoverySaveBalanceBirdeyeCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
-                        await Task.WhenAll(taskSFM, taskByrdeye);
-                        wallet!.DateLoadBalance = taskByrdeye.Result.DateLoadBalance ?? taskSFM.Result.DateLoadBalance ?? DateTime.Now;
-                        wallet!.OldTransactionStared = wallet!.DateLoadBalance;
-                        wallet!.IsLoadBalance = true;
-                        await UpdateUnixTimeSeconds(finalTicks, wallet);
-                    });
+                    var finalTicks = GetInitialTicks(GetFinalTicks());
+                    var taskSFM = _mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
+                    var taskByrdeye = _mediator.Send(new RecoverySaveBalanceBirdeyeCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
+                    await Task.WhenAll(taskSFM, taskByrdeye);
+                    wallet!.DateLoadBalance = taskByrdeye.Result.DateLoadBalance ?? taskSFM.Result.DateLoadBalance ?? DateTime.Now;
+                    wallet!.OldTransactionStared = wallet!.DateLoadBalance;
+                    wallet!.IsLoadBalance = true;
+                    await UpdateUnixTimeSeconds(finalTicks, wallet);
                 }
+                //int totalWalletPerRange = 10;
+                //var rest = wallets.Count % totalWalletPerRange;
+                //var total = ((int)wallets.Count / totalWalletPerRange) + (rest > 0 ? 1 : 0);
+                //for (int i = 0; i < total; i++)
+                //{
+                //    int initRange = (totalWalletPerRange * i);
+                //    var walletsToTask = wallets.GetRange(initRange, totalWalletPerRange);
+                //    await Parallel.ForEachAsync(walletsToTask, async (wallet, cancellationToken) =>
+                //    {
+                        
+                //    });
+                //}
             }
             return new ReadWalletsBalanceCommandResponse { };
         }
