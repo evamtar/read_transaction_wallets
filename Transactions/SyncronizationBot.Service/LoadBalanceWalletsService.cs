@@ -28,7 +28,7 @@ namespace SyncronizationBot.Service
                 {
                     await base.SetRuntimeControllerAsync(true, false);
                     await this._mediator.Send(new ReadWalletsBalanceCommand { });
-                    await this._mediator.Send(new UpdateWalletsBalanceCommand { });
+                    //await this._mediator.Send(new UpdateWalletsBalanceCommand { });
                     await SetRuntimeControllerAsync(false, true);
                     base.LogMessage($"End Balance Update: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     await base.SendAlertExecute(timer!);

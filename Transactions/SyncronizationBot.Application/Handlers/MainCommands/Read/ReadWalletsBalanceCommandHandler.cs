@@ -29,7 +29,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
             var wallets = await GetWallets(x => x.IsLoadBalance == false && x.IsActive == true);
             if(wallets?.Count() > 0) 
             {
-                int totalWalletPerRange = 30;
+                int totalWalletPerRange = 10;
                 var rest = wallets.Count % totalWalletPerRange;
                 var total = ((int)wallets.Count / totalWalletPerRange) + (rest > 0 ? 1 : 0);
                 for (int i = 0; i < total; i++)
