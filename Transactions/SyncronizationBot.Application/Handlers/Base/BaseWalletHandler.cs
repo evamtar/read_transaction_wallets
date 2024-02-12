@@ -30,7 +30,7 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected int TotalValidTransactions { get; set; } = 0;
 
-        protected async Task<IEnumerable<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
+        protected async Task<List<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
         {
             return await _walletRepository.Get(predicate);
         }
