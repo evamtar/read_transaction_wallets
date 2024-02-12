@@ -51,6 +51,25 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             var token = await this._tokenRepository.FindFirstOrDefault(x => x.Hash == request.TokenHash);
             if(request.LazyLoad ?? false) 
             {
+                if (token == null) 
+                {
+                    token = await _tokenRepository.Add(new Token
+                    {
+                        Hash = request.TokenHash,
+                        Symbol = LAZY_LOAD,
+                        Name = LAZY_LOAD,
+                        Supply = null,
+                        MarketCap = null,
+                        Liquidity = null,
+                        UniqueWallet24h = null,
+                        UniqueWalletHistory24h = null,
+                        Decimals = 1,
+                        NumberMarkets = null,
+                        CreateDate = DateTime.Now,
+                        LastUpdate = DateTime.Now
+                    });
+                    await _tokenRepository.DetachedItem(token);
+                }
                 return new RecoverySaveTokenCommandResponse
                 {
                     TokenId = token?.ID,
