@@ -156,6 +156,9 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.TransactionsOldForMapping:
                     Console.ForegroundColor = ConsoleColor.Magenta; 
                     break;
+                case ETypeService.NewTokensBetAwards:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    break;
                 default:
                     break;
             }

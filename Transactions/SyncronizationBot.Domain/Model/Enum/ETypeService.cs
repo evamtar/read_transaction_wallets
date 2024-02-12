@@ -8,7 +8,7 @@ namespace SyncronizationBot.Domain.Model.Enum
     {
         [DescriptionAttribute("Alerta de Transações")]
         Transaction = 1,
-        [DescriptionAttribute("Carregar balanços da wallet")]
+        [DescriptionAttribute("Carregar balanços das wallets")]
         Balance,
         [DescriptionAttribute("Alerta de preços")]
         Price,
@@ -18,5 +18,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         AlertTokenAlpha,
         [DescriptionAttribute("Transacões Antigas para Mapear")]
         TransactionsOldForMapping,
+        [DescriptionAttribute("Carregar Listagem de Novos Tokens")]
+        NewTokensBetAwards
     }
 }

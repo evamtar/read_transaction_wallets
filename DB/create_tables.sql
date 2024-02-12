@@ -161,6 +161,9 @@ BEGIN
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '23.4', null, 1, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '9.2', null, 2, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000000989687', 1, null, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000001977806', 1, null, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000010002757', 1, null, 0, @TelegramChannelId);
 END
 GO
 
@@ -176,12 +179,14 @@ BEGIN
 		TimesWithoutTransactions INT,
 		PRIMARY KEY(IdRuntime)
 	);
-	INSERT INTO RunTimeController VALUES(1, '1', 1, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(2, '1', 2, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(4, '4.183', 4, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null);
-	INSERT INTO RunTimeController VALUES(6, '1', 6, 0, 0, null);
+	SELECT * FROM RunTimeController (NOLOCK) 
+	INSERT INTO RunTimeController VALUES(1, '1', 1, 0, 0, null, 'Alerta de Transações');
+	INSERT INTO RunTimeController VALUES(2, '1', 2, 0, 0, null, 'Carregar balanços das wallets');
+	INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null, 'Alerta de preços');
+	INSERT INTO RunTimeController VALUES(4, '4.183', 4, 0, 0, null, 'Excluir mensagens de log antigas');
+	INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null, 'Alerta de Token Alpha');
+	INSERT INTO RunTimeController VALUES(6, '1', 6, 0, 0, null, 'Transacões Antigas para Mapear');
+	INSERT INTO RunTimeController VALUES(7, '1', 6, 0, 0, null, 'Carregar Listagem de Novos Tokens');
 END
 GO 
 

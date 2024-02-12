@@ -100,12 +100,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Hosted Service
     
-    services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<DeleteOldsMessagesLogService>();
-    services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<ReadTransactionsOldForMapping>(); 
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<ReadTransactionsOldForMapping>();
+    //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 
     #region Only For Test
 
@@ -155,9 +156,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>, RecoverySaveTransactionsOldForMappingCommandHandler>();
-
     services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveNewsTokensCommand, RecoverySaveNewsTokensCommandResponse>, RecoverySaveNewsTokensCommandHandler>();
 
     services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();

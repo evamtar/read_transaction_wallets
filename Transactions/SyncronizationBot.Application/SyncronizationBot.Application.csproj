@@ -10,6 +10,10 @@
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Solana.Unity.Rpc" Version="2.6.1.2" />
+    <PackageReference Include="Solnet.Programs" Version="6.1.0" />
+    <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
+    <PackageReference Include="Solnet.Serum" Version="6.0.13" />
   </ItemGroup>
 
   <ItemGroup>
