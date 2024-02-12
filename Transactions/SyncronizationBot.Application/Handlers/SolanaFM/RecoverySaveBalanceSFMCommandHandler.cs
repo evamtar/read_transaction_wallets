@@ -122,7 +122,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private async Task SaveBalance(RecoverySaveBalanceSFMCommand request, TokenAccountResponse tokenAccount, DateTime? dateLoadBalance)
         {
             var balance = (WalletBalance)null!;
-            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = tokenAccount.Pubkey });
+            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = tokenAccount.Pubkey, LazyLoad = true });
             if (tokenAccount != null && tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount!= null)
             {
                 if (base.IsSaveBalance() ?? false)

@@ -51,7 +51,7 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
                     if (item.Address == "So11111111111111111111111111111111111111111" || item.Address == "So11111111111111111111111111111111111111112")
                         token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                     else 
-                        token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address });
+                        token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = item.Address, LazyLoad = true });
                     await this.SaveBalance(request, token, item, dateLoadBalance);
                 }
             }
