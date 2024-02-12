@@ -78,6 +78,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 totalValidTransactions = listTransactions.Count;
                 foreach (var transaction in listTransactions)
                 {
+                    await Task.Delay(100);
                     var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
                     if (transactionDetails?.Result != null && transactionDetails.Result.Data?.Count > 0)
                     {
