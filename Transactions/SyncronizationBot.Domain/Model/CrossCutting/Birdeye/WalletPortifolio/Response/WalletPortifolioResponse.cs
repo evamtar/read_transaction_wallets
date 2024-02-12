@@ -16,7 +16,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.R
     {
         public string? Address { get; set; }
         public int? Decimals { get; set; }
-        public long? Balance { get; set; }
+        public decimal? Balance { get; set; }
         public decimal? UiAmount { get; set; }
         public string? ChainId { get; set; }
         public string? Name { get; set; }
