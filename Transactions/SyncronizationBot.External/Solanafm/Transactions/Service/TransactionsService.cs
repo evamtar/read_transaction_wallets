@@ -20,7 +20,7 @@ namespace SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service
             _httpClient = httpClient;
             _config = config;
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
-            //_httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
+            _httpClient.DefaultRequestHeaders.Add("ApiKey", _config.Value.ApiKey ?? string.Empty);
         }
         public async Task<TransactionsResponse> ExecuteRecoveryTransactionsAsync(TransactionsRequest request)
         {

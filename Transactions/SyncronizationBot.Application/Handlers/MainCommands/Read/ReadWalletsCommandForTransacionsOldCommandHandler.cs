@@ -37,7 +37,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked.ClassWalletId);
                     var saveTransactionsOldForMappingResponse = await this._mediator.Send(new RecoverySaveTransactionsOldForMappingCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, ClassWallet = classWallet, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now });
                     var transactionsOldForMapping = await this._mediator.Send(new RecoveryTransactionsSignatureForAddressCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now });
-                    await Task.Delay(2000);
                 }
             }
             

@@ -132,7 +132,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 });
                             }
                         }
-                        await Task.Delay(300);
                     }
                     transaction!.IsIntegrated = true;
                     await this._transactionsOldForMappingRepository.Edit(transaction);

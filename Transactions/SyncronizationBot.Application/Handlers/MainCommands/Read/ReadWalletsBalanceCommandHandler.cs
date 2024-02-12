@@ -36,7 +36,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 {
                     int initRange = (totalWalletPerRange * i);
                     var walletsToTask = wallets.GetRange(initRange, totalWalletPerRange);
-                    var result = Parallel.ForEach(walletsToTask, async wallet =>
+                    await Parallel.ForEachAsync(walletsToTask, async (wallet, cancellationToken) =>
                     {
                         var finalTicks = GetInitialTicks(GetFinalTicks());
                         var taskSFM = _mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
@@ -49,7 +49,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     });
                 }
             }
-            Task.WaitAll();
             return new ReadWalletsBalanceCommandResponse { };
         }
     }
