@@ -50,6 +50,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     walletTracked!.LastUpdate = DateTime.Now;
                     await _classWalletRepository.DetachedItem(classWallet!);
                     await UpdateUnixTimeSeconds(finalTicks, walletTracked);
+                    //Por causa da caceta do rate limit da solana FM
+                    await Task.Delay(new Random().Next(20, 80));
                 }
             }
             return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };

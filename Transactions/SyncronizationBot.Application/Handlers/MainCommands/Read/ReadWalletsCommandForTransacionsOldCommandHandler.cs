@@ -7,7 +7,6 @@ using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 
