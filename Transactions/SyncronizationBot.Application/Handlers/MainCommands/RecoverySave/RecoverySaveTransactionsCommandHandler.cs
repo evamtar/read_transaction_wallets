@@ -106,24 +106,24 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 {
                                     Signature = transaction?.Signature,
                                     DateOfTransaction = transaction?.DateOfTransaction,
-                                    AmountValueSource = CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
-                                    AmountValueSourcePool = CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
-                                    AmountValueDestination = CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
-                                    AmountValueDestinationPool = CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
-                                    MtkcapTokenSource = CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
-                                    MtkcapTokenSourcePool = CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
-                                    MtkcapTokenDestination = CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
-                                    MtkcapTokenDestinationPool = CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
-                                    FeeTransaction = CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
+                                    AmountValueSource = this.CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
+                                    AmountValueSourcePool = this.CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
+                                    AmountValueDestination = this.CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
+                                    AmountValueDestinationPool = this.CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
+                                    MtkcapTokenSource = this.CalculatedMarketcap(tokenSended, tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
+                                    MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool, tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
+                                    MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived, tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
+                                    MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool, tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
+                                    FeeTransaction = this.CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
                                     PriceTokenSourceUSD = tokenSended?.Price,
                                     PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
                                     PriceTokenDestinationUSD = tokenReceived?.Price,
                                     PriceTokenDestinationPoolUSD = tokenReceivedPool?.Price,
                                     PriceSol = tokenSolForPrice.Price,
-                                    TotalTokenSource = CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
-                                    TotalTokenSourcePool = CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
-                                    TotalTokenDestination = CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
-                                    TotalTokenDestinationPool = CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
+                                    TotalTokenSource = this.CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
+                                    TotalTokenSourcePool = this.CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
+                                    TotalTokenDestination = this.CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
+                                    TotalTokenDestinationPool = this.CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
                                     TokenSourceId = tokenSended?.TokenId,
                                     TokenSourcePoolId = tokenSendedPool?.TokenId,
                                     TokenDestinationId = tokenReceived?.TokenId,
@@ -231,8 +231,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-        private decimal? CalculatedMarketcap(decimal? marketCap, decimal? supply, decimal? price)
+        private decimal? CalculatedMarketcap(RecoverySaveTokenCommandResponse token, decimal? marketCap, decimal? supply, decimal? price)
         {
+            if(token.MarketCap != null) 
+                return token.MarketCap;
             if (marketCap != null)
                 return marketCap;
             else

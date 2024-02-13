@@ -105,7 +105,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHostedService<AlertPriceService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
     services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<ReadTransactionsOldForMapping>();
+    //services.AddHostedService<ReadTransactionsOldForMapping>();
     //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 
     #region Only For Test
