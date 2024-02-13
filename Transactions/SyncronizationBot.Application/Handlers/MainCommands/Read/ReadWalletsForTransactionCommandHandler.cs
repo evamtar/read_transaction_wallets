@@ -11,18 +11,18 @@ using SyncronizationBot.Domain.Repository;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 {
-    public class ReadWalletsCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>
+    public class ReadWalletsForTransactionCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>
     {
         private readonly IClassWalletRepository _classWalletRepository;
 
-        public ReadWalletsCommandHandler(IMediator mediator,
+        public ReadWalletsForTransactionCommandHandler(IMediator mediator,
                                          IWalletRepository walletRepository,
                                          IClassWalletRepository classWalletRepository,
                                          IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
         {
             _classWalletRepository = classWalletRepository;
         }
-        public async Task<ReadWalletsCommandResponse> Handle(ReadWalletsCommand request, CancellationToken cancellationToken)
+        public async Task<ReadWalletsForTransactionCommandResponse> Handle(ReadWalletsForTransactionCommand request, CancellationToken cancellationToken)
         {
             var hasWalletsWithBalanceLoad = false;
             var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
@@ -52,7 +52,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     await UpdateUnixTimeSeconds(finalTicks, walletTracked);
                 }
             }
-            return new ReadWalletsCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
+            return new ReadWalletsForTransactionCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
         }
     }
 }

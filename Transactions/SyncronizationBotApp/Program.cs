@@ -152,7 +152,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
 
-    services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>, RecoverySaveTransactionsOldForMappingCommandHandler>();
