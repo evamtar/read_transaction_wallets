@@ -6,6 +6,7 @@ namespace SyncronizationBot.Domain.Model.Enum
 {
     public enum ETypeService
     {
+        NONE = 0,
         [DescriptionAttribute("Alerta de Transações")]
         Transaction = 1,
         [DescriptionAttribute("Carregar balanços das wallets")]

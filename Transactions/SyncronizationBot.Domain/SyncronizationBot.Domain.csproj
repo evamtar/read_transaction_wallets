@@ -15,4 +15,9 @@
     <ProjectReference Include="..\SyncronizationBot.Utils\SyncronizationBot.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\CrossCutting\SolnetRpc\Transactions\Request\" />
+    <Folder Include="Model\CrossCutting\SolnetRpc\Transactions\Response\" />
+  </ItemGroup>
+
 </Project>

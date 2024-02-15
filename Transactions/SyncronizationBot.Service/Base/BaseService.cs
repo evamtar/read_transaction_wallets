@@ -14,6 +14,7 @@ namespace SyncronizationBot.Service.Base
 {
     public abstract class BaseService : BackgroundService
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         protected readonly IMediator _mediator;
         protected readonly IRunTimeControllerRepository _runTimeControllerRepository;
         protected readonly ETypeService _typeService;
@@ -45,21 +46,33 @@ namespace SyncronizationBot.Service.Base
         
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
         {
-            await this.SetPeriodicTimer();
-            var hasNextExecute = this.Timer != null;
-            while(hasNextExecute) 
-            {
-                using var timer = this.Timer;
+                #if DEBUG
+                if (this.GetType() == typeof(TestService)) 
                 {
-                    if (await timer!.WaitForNextTickAsync(stoppingToken)) 
-                        await this.DoExecute(this.Timer!, stoppingToken);
+                    await this.DoExecute(this.Timer!, stoppingToken);
+                    return;
                 }
+                #endif
                 await this.SetPeriodicTimer();
-                hasNextExecute = this.Timer != null;
-            }
-            await this.SendAlertTimerIsNull();
-            this.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-            this.LogMessage("Finalizado");
+                var hasNextExecute = this.Timer != null;
+                while (hasNextExecute)
+                {
+
+                    using var timer = this.Timer;
+                    {
+                        try 
+                        { 
+                            if (await timer!.WaitForNextTickAsync(stoppingToken))
+                                await this.DoExecute(this.Timer!, stoppingToken);
+                        } 
+                        catch { }
+                    }
+                    await this.SetPeriodicTimer();
+                    hasNextExecute = this.Timer != null;
+                }
+                await this.SendAlertTimerIsNull();
+                this.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                this.LogMessage("Finalizado");
         }
 
         protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
@@ -191,13 +204,21 @@ namespace SyncronizationBot.Service.Base
         }
         private async Task SetPeriodicTimer()
         {
-            if (this.RunTimeController == null)
+            await _semaphore.WaitAsync();
+            try
             {
-                this.RunTimeController = await this.GetRunTimeControllerAsync();
-                this.InitiParameterContingency();
+                if (this.RunTimeController == null)
+                {
+                    this.RunTimeController = await this.GetRunTimeControllerAsync();
+                    this.InitiParameterContingency();
+                }
+                var minutesForTimeSpan = this.RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
+                this.Timer = new PeriodicTimer(TimeSpan.FromMinutes((double)minutesForTimeSpan));
             }
-            var minutesForTimeSpan = this.RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
-            this.Timer = new PeriodicTimer(TimeSpan.FromMinutes((double)minutesForTimeSpan));
+            finally
+            {
+                _semaphore.Release();
+            }
         }
     }
 }

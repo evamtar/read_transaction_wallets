@@ -1,6 +1,12 @@
 USE [Monitoring]
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionsRPCRecovery')
+BEGIN
+	DROP TABLE [TransactionsRPCRecovery]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'PublishMessage')
 BEGIN
 	DROP TABLE [PublishMessage]
@@ -133,7 +139,7 @@ BEGIN
 		ChannelId    DECIMAL(30,0),
 		ChannelName  VARCHAR(50),
 		PRIMARY KEY (ID)
-	)
+	);
 END
 GO 
 
@@ -154,16 +160,16 @@ BEGIN
 		PRIMARY KEY(ID),
 		FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
 	);
-	--DELETE FROM AlertPrice
+	DELETE FROM AlertPrice
 	DECLARE @TelegramChannelId UNIQUEIDENTIFIER
 	SELECT @TelegramChannelId = ID FROM TelegramChannel WHERE ChannelName = 'AlertPriceChange'
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.008302', '5jcDWDV3HYeFvDBGEfPtk68WNmV7ZoLU8QUvDAnACpnE', '1.3', null, 1, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '23.4', null, 1, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '12.180', '3QYAWuowfaLC1CqYKx2eTe1SwV9MqAe1dUZT3NPt3srQ', '9.2', null, 2, 0, @TelegramChannelId);
 	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '85.60', 'So11111111111111111111111111111111111111112', '81.58', null, 2, 1, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000000989687', 1, null, 0, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000001977806', 1, null, 0, @TelegramChannelId);
-	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000010002757', 1, null, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000000989687', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000001977806', null, 1, 0, @TelegramChannelId);
+	INSERT INTO AlertPrice VALUES(NEWID(), GETDATE(), NULL, '0.000000100380', '2PCegSVAesdb8ffZViieXUC3gH2wku7ieXRteB8Az7o6', '0.000010002757', null, 1, 0, @TelegramChannelId);
 END
 GO
 
@@ -177,13 +183,13 @@ BEGIN
 		IsRunning				 BIT,
 		IsContingecyTransactions BIT,
 		TimesWithoutTransactions INT,
+		JobName                  VARCHAR(200),
 		PRIMARY KEY(IdRuntime)
 	);
-	SELECT * FROM RunTimeController (NOLOCK) 
 	INSERT INTO RunTimeController VALUES(1, '1', 1, 0, 0, null, 'Alerta de Transações');
 	INSERT INTO RunTimeController VALUES(2, '1', 2, 0, 0, null, 'Carregar balanços das wallets');
 	INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null, 'Alerta de preços');
-	INSERT INTO RunTimeController VALUES(4, '4.183', 4, 0, 0, null, 'Excluir mensagens de log antigas');
+	INSERT INTO RunTimeController VALUES(4, '4', 4, 0, 0, null, 'Excluir mensagens de log antigas');
 	INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null, 'Alerta de Token Alpha');
 	INSERT INTO RunTimeController VALUES(6, '1', 6, 0, 0, null, 'Transacões Antigas para Mapear');
 	INSERT INTO RunTimeController VALUES(7, '1', 6, 0, 0, null, 'Carregar Listagem de Novos Tokens');
@@ -330,6 +336,20 @@ CREATE TABLE TransactionsOldForMapping
 );
 GO
 
+CREATE TABLE TransactionsRPCRecovery
+(
+	ID                           UNIQUEIDENTIFIER,
+	[Signature]                  VARCHAR(150),
+	[BlockTime]                  VARCHAR(100),
+	DateOfTransaction            DATETIME2,
+	WalletId                     UNIQUEIDENTIFIER,
+	CreateDate				     DATETIME2,
+	IsIntegrated				 BIT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
+);
+GO
+
 CREATE TABLE WalletBalance
 (
 	ID            UNIQUEIDENTIFIER,
@@ -436,7 +456,7 @@ CREATE TABLE TokenAlpha(
 	LastUpdate                DATETIME2,
 	TokenId                   UNIQUEIDENTIFIER,
 	TokenHash                 VARCHAR(50),
-	TokenSymbol               VARCHAR(50),
+	TokenSymbol               VARCHAR(500),
 	TokenName		          VARCHAR(200),
 	TokenAlphaConfigurationId UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
@@ -459,7 +479,7 @@ CREATE TABLE TokenAlphaHistory(
 	LastUpdate                DATETIME2,
 	TokenId                   UNIQUEIDENTIFIER,
 	TokenHash                 VARCHAR(50),
-	TokenSymbol               VARCHAR(50),
+	TokenSymbol               VARCHAR(500),
 	TokenName		          VARCHAR(200),
 	TokenAlphaConfigurationId UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID)
@@ -536,25 +556,6 @@ CREATE TABLE PublishMessage(
 	FOREIGN KEY (EntityParentId) REFERENCES PublishMessage(ID)
 );
 GO
--- ALERTS
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
-BEGIN
-	DROP TABLE [AlertParameter]
-END
-GO
-
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
-BEGIN
-	DROP TABLE [AlertInformation]
-END
-GO
-
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
-BEGIN
-	DROP TABLE [AlertConfiguration]
-END
-GO
-
 -- ALERTS
 CREATE TABLE AlertConfiguration(
 	ID                    UNIQUEIDENTIFIER,
@@ -858,6 +859,4 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSellInUSD}}', @IdAlertInform
 INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantityTokenSell}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'Invoke-Sum|QuantityTokenSell', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'RANGE-ALL|WalletHash', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'RANGE-ALL|ClassWalletDescription', NULL, NULL, NULL, 0, 0, 0);
-
-
 ------------------------------------------------------------

@@ -48,7 +48,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             var listTransactions = (List<TransactionsResponse>?)null!;
             if (request.IsContingecyTransactions ?? false)
             {
-                var response = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
+                var responseContingency = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
                 {
                     WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
@@ -56,13 +56,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     InitialTicks = request.InitialTicks,
                     FinalTicks = request.FinalTicks
                 });
-                if (response != null)
-                    listTransactions = response.Result;
+                if (responseContingency != null)
+                    listTransactions = responseContingency.Result;
 
             }
             else
             {
-                var response = await _mediator.Send(new RecoveryTransactionsCommand
+                var responseTransactions = await _mediator.Send(new RecoveryTransactionsCommand
                 {
                     WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
@@ -70,8 +70,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     InitialTicks = request.InitialTicks,
                     FinalTicks = request.FinalTicks
                 });
-                if (response != null)
-                    listTransactions = response.Result;
+                if (responseTransactions != null)
+                    listTransactions = responseTransactions.Result;
             }
             if (listTransactions != null)
             {
@@ -110,10 +110,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     AmountValueSourcePool = this.CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
                                     AmountValueDestination = this.CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
                                     AmountValueDestinationPool = this.CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
-                                    MtkcapTokenSource = this.CalculatedMarketcap(tokenSended, tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
-                                    MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool, tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
-                                    MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived, tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
-                                    MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool, tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
+                                    MtkcapTokenSource = this.CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
+                                    MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
+                                    MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
+                                    MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
                                     FeeTransaction = this.CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
                                     PriceTokenSourceUSD = tokenSended?.Price,
                                     PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
@@ -158,7 +158,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         QuantityTokenReceived = Math.Abs(transactionDB?.AmountValueDestination ?? 0),
                                         Signature = transactionDB?.Signature,
-                                        MarketCap = transactionDB?.MtkcapTokenDestination,
+                                        MarketCap = transactionDB?.MtkcapTokenDestination ?? tokenReceived?.Supply * tokenReceived?.Price,
                                         Price = tokenReceived?.Price,
                                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
                                     });
@@ -173,7 +173,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenSell = Math.Abs(transactionDB?.AmountValueSource ?? 0),
-                                        MarketCap = transactionDB?.MtkcapTokenSource,
+                                        MarketCap = transactionDB?.MtkcapTokenSource ?? tokenSended?.Supply * tokenSended?.Price,
                                         Price = tokenSended?.Price
                                     });
                                 }
@@ -231,10 +231,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-        private decimal? CalculatedMarketcap(RecoverySaveTokenCommandResponse token, decimal? marketCap, decimal? supply, decimal? price)
+        private decimal? CalculatedMarketcap(decimal? marketCap, decimal? supply, decimal? price)
         {
-            if(token.MarketCap != null) 
-                return token.MarketCap;
             if (marketCap != null)
                 return marketCap;
             else

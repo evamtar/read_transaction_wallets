@@ -39,6 +39,8 @@ using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
+using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
+using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Transactions;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Configs;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Service;
@@ -60,6 +62,10 @@ using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Service;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Configs;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Configs;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
@@ -69,7 +75,6 @@ using System.Reflection;
 
 
 var builder = Host.CreateApplicationBuilder(args);
-
 ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
@@ -88,20 +93,25 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Configs
 
     services.Configure<SyncronizationBotConfig>(configuration.GetSection("SyncronizationBot"));
-    services.Configure<MappedTokensConfig> (configuration.GetSection("MappedTokens"));
+    services.Configure<MappedTokensConfig>(configuration.GetSection("MappedTokens"));
+    services.Configure<SolnetRpcBalanceConfig>(configuration.GetSection("SolnetRpcBalance"));
+    services.Configure<SolnetRpcTransactionConfig>(configuration.GetSection("SolnetRpcTransaction"));
 
     #endregion
 
     #region Context
-
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    #if DEBUG
+        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringDev")), ServiceLifetime.Transient);
+    #else
+        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    #endif
 
     #endregion
 
     #region Hosted Service
-    
+
     services.AddHostedService<ReadTransactionWalletsService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<AlertPriceService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
     services.AddHostedService<AlertTokenAlphaService>();
@@ -187,6 +197,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
+    services.AddTransient<ITransactionsRPCRecoveryRepository, TransactionsRPCRecoveryRepository>(); 
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddTransient<IWalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
@@ -299,6 +310,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
+    #region Solnet
+
+    services.AddTransient<ISolnetBalanceService, SolnetBalanceService>();
+    services.AddTransient<ISolnetTransactionService, SolnetTransactionService>();
 
     #endregion
 

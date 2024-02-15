@@ -40,14 +40,17 @@ namespace SyncronizationBot.Application.Handlers.Base
             return await _walletRepository.Get(predicate, keySelector);
         }
 
+
         protected long GetInitialTicks(decimal? initialTicks)
         {
             var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes(_config.Value.UTCTransactionMinutesAdjust ?? -5);
             return DateTimeTicks.Instance.ConvertDateTimeToTicks(dateAjusted);
-
         }
 
-        protected long GetFinalTicks() => DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.UtcNow);
+        protected long GetFinalTicks() 
+        {
+            return DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.UtcNow);
+        }
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
@@ -55,6 +58,11 @@ namespace SyncronizationBot.Application.Handlers.Base
             await _walletRepository.Edit(wallet);
             await _walletRepository.DetachedItem(wallet);
         }
+        protected async Task UpdateUnixTimeSeconds(Wallet wallet) 
+        {
+            await this.UpdateUnixTimeSeconds((long?)wallet.UnixTimeSeconds, wallet);
+        }
+
         protected decimal? GetDivisor(int? decimals)
         {
             string number = "1";

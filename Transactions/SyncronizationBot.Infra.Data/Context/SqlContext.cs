@@ -22,6 +22,7 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<TransactionNotMapped> TransactionsNotMapped { get; set; }
         public DbSet<TransactionsOldForMapping> TransactionsOldForMappings { get; set; }
+        public DbSet<TransactionsRPCRecovery> TransactionsContingencies { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
         public DbSet<TokenAlpha> TokenAlphas { get; set; }
@@ -57,6 +58,7 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());
+            modelBuilder.ApplyConfiguration(new TransactionsRPCRecoveryMap());
             modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());

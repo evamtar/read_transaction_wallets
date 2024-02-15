@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
+using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
@@ -26,7 +26,7 @@ namespace SyncronizationBot.Service
                 try
                 {
                     await base.SetRuntimeControllerAsync(true, false);
-                    var response = await this._mediator.Send(new RecoverySaveNewsTokensCommandResponse { });
+                    var response = await this._mediator.Send(new RecoverySaveNewsTokensCommand { });
                     await SetRuntimeControllerAsync(false, true);
                     base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     await base.SendAlertExecute(timer);
