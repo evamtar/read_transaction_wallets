@@ -7,6 +7,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
     public class SendTelegramMessageCommand : IRequest<SendTelegramMessageCommandResponse>
     {
         public Guid? TelegramChannelId { get; set; }
+        public Guid? EntityId { get; set; }
         public string? Message { get; set; }
 
     }

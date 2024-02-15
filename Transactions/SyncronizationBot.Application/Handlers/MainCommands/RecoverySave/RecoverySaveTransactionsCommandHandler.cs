@@ -17,6 +17,7 @@ using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
 using System.Diagnostics;
+using System.Transactions;
 
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -28,20 +29,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
-        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
                                                       ITransactionsRepository transactionsRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
-                                                      IOptions<MappedTokensConfig> mappedTokensConfig,
-                                                      IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                      IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
             this._transfersService = transfersService;
             this._transactionsRepository = transactionsRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
-            this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
@@ -50,28 +48,30 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             var listTransactions = (List<TransactionsResponse>?)null!;
             if (request.IsContingecyTransactions ?? false)
             {
-                var response = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
+                var responseContingency = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
                 {
+                    WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
                     DateLoadBalance = request.DateLoadBalance,
                     InitialTicks = request.InitialTicks,
                     FinalTicks = request.FinalTicks
                 });
-                if (response != null)
-                    listTransactions = response.Result;
+                if (responseContingency != null)
+                    listTransactions = responseContingency.Result;
 
             }
             else
             {
-                var response = await _mediator.Send(new RecoveryTransactionsCommand
+                var responseTransactions = await _mediator.Send(new RecoveryTransactionsCommand
                 {
+                    WalletId = request.WalletId,
                     WalletHash = request.WalletHash,
                     DateLoadBalance = request.DateLoadBalance,
                     InitialTicks = request.InitialTicks,
                     FinalTicks = request.FinalTicks
                 });
-                if (response != null)
-                    listTransactions = response.Result;
+                if (responseTransactions != null)
+                    listTransactions = responseTransactions.Result;
             }
             if (listTransactions != null)
             {
@@ -106,24 +106,24 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 {
                                     Signature = transaction?.Signature,
                                     DateOfTransaction = transaction?.DateOfTransaction,
-                                    AmountValueSource = CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
-                                    AmountValueSourcePool = CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
-                                    AmountValueDestination = CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
-                                    AmountValueDestinationPool = CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
-                                    MtkcapTokenSource = CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
-                                    MtkcapTokenSourcePool = CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
-                                    MtkcapTokenDestination = CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
-                                    MtkcapTokenDestinationPool = CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
-                                    FeeTransaction = CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
+                                    AmountValueSource = this.CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
+                                    AmountValueSourcePool = this.CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
+                                    AmountValueDestination = this.CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
+                                    AmountValueDestinationPool = this.CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
+                                    MtkcapTokenSource = this.CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
+                                    MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
+                                    MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
+                                    MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
+                                    FeeTransaction = this.CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
                                     PriceTokenSourceUSD = tokenSended?.Price,
                                     PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
                                     PriceTokenDestinationUSD = tokenReceived?.Price,
                                     PriceTokenDestinationPoolUSD = tokenReceivedPool?.Price,
                                     PriceSol = tokenSolForPrice.Price,
-                                    TotalTokenSource = CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
-                                    TotalTokenSourcePool = CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
-                                    TotalTokenDestination = CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
-                                    TotalTokenDestinationPool = CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
+                                    TotalTokenSource = this.CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
+                                    TotalTokenSourcePool = this.CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
+                                    TotalTokenDestination = this.CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
+                                    TotalTokenDestinationPool = this.CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
                                     TokenSourceId = tokenSended?.TokenId,
                                     TokenSourcePoolId = tokenSendedPool?.TokenId,
                                     TokenDestinationId = tokenReceived?.TokenId,
@@ -133,6 +133,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
+                                await this._transactionsRepository.DetachedItem(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                                 {
                                     Transactions = transactionDB,
@@ -141,23 +142,44 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokenReceivedPoolHash = tokenReceivedPool?.Hash
                                 });
-                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
+                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
                                 {
                                     await this._mediator.Send(new VerifyAddTokenAlphaCommand
                                     {
                                         WalletId = request?.WalletId,
+                                        WalletHash = request?.WalletHash,
+                                        ClassWalletDescription = request?.ClassWallet?.Description,
                                         TokenId = transactionDB?.TokenDestinationId,
-                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        TokenHash = tokenReceived?.Hash,
+                                        TokenName = tokenReceived?.Name,
+                                        TokenSymbol = tokenReceived?.Symbol,
+                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        QuantityTokenReceived = Math.Abs(transactionDB?.AmountValueDestination ?? 0),
                                         Signature = transactionDB?.Signature,
-                                        MarketCap = transactionDB?.MtkcapTokenDestination,
+                                        MarketCap = transactionDB?.MtkcapTokenDestination ?? tokenReceived?.Supply * tokenReceived?.Price,
                                         Price = tokenReceived?.Price,
                                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
                                     });
                                 }
+                                else if (transactionDB?.TypeOperation == ETypeOperation.SELL || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
+                                {
+                                    await this._mediator.Send(new UpdateTokenAlphaCommand
+                                    {
+                                        WalletId = request?.WalletId,
+                                        TokenId = transactionDB?.TokenSourceId,
+                                        AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        AmountTokenSell = Math.Abs(transactionDB?.AmountValueSource ?? 0),
+                                        MarketCap = transactionDB?.MtkcapTokenSource ?? tokenSended?.Supply * tokenSended?.Price,
+                                        Price = tokenSended?.Price
+                                    });
+                                }
                                 await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
+                                    EntityId = transactionDB?.ID,
                                     Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
                                                                                     {
                                                                                         transactionDB!,
@@ -175,7 +197,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                             }
                             else
                             {
-                                await _transactionNotMappedRepository.Add(new TransactionNotMapped
+                                var transactionNotMapped = await _transactionNotMappedRepository.Add(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
                                     WalletId = request?.WalletId,
@@ -184,6 +206,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     StackTrace = null,
                                     DateTimeRunner = DateTime.Now
                                 });
+                                await this._transactionNotMappedRepository.DetachedItem(transactionNotMapped!);
                             }
                         }
                         catch (Exception ex)
@@ -225,33 +248,35 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (value == null || divisor == null) return null;
             return value / (divisor ?? 1) ?? 0;
         }
-        private decimal? CalculatedTotalSol(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation) 
+        private decimal? CalculatedTotalSol(string? tokenHash, decimal? amountSource, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
-                    if (tokenSended?.Token == "So11111111111111111111111111111111111111112")
-                        return tokenSended?.Amount;
-                    else 
-                        return tokenSended?.Amount / solPrice;
+                case ETypeOperation.SELL:
+                    if (tokenHash == "So11111111111111111111111111111111111111112")
+                        return Math.Abs(amountSource ?? 0);
+                    else
+                        return Math.Abs(amountSource / solPrice ?? 0);
                 case ETypeOperation.SWAP:
-                    return (tokenSended?.Amount * tokenPrice) / solPrice;
+                    return Math.Abs((amountSource * tokenPrice) / solPrice ?? 0);
                 default:
                     break;
             }
             return null;
         }
-        private decimal? CalculatedTotalUSD(TransferToken? tokenSended, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
+        private decimal? CalculatedTotalUSD(string? tokenHash, decimal? amountSource, decimal? solPrice, decimal? tokenPrice, ETypeOperation? typeOperation)
         {
             switch (typeOperation)
             {
                 case ETypeOperation.BUY:
-                    if (tokenSended?.Token != "So11111111111111111111111111111111111111112")
-                        return tokenSended?.Amount;
+                case ETypeOperation.SELL:
+                    if (tokenHash != "So11111111111111111111111111111111111111112")
+                        return Math.Abs(amountSource ?? 0);
                     else
-                        return tokenSended?.Amount * solPrice;
+                        return Math.Abs(amountSource * solPrice ?? 0);
                 case ETypeOperation.SWAP:
-                    return tokenSended?.Amount * tokenPrice;
+                    return Math.Abs(amountSource * tokenPrice ?? 0);
                 default:
                     break;
             }

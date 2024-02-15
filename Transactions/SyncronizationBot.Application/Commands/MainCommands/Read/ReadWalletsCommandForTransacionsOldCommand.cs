@@ -3,8 +3,8 @@ using SyncronizationBot.Application.Response.MainCommands.Read;
 
 namespace SyncronizationBot.Application.Commands.MainCommands.Read
 {
-    public class ReadWalletsCommand : IRequest<ReadWalletsCommandResponse>
+    public class ReadWalletsCommandForTransacionsOldCommand : IRequest<ReadWalletsCommandForTransacionsOldCommandResponse>
     {
-        public bool? IsContingecyTransactions { get; set; }
+        
     }
 }

@@ -31,11 +31,11 @@ namespace SyncronizationBot.Infra.CrossCutting.Birdeye.WalletPortifolio.Service
                 var response = await this._httpClient.GetAsync(string.Format(_config.Value.ParametersUrl ?? string.Empty, request.WalletHash));
                 var responseBody = await response.Content.ReadAsStringAsync();
                 responseValue = JsonConvert.DeserializeObject<WalletPortifolioResponse>(responseBody);
-                if ((responseValue?.Success ?? false) && responseValue?.Data?.Items?.Count > 0 && retryCount <= retryMaxCount)
+                if(((responseValue?.Success ?? false) && responseValue?.Data?.Items?.Count > 0) || retryCount > retryMaxCount)
                     makeRetry = false;
                 else
                 {
-                    Thread.Sleep((retryCount * 2) + 2);
+                    await Task.Delay((retryCount * 2) + 2);
                     retryCount++;
                 }
             }

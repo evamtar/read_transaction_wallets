@@ -8,6 +8,7 @@ using Polly;
 using Polly.Extensions.Http;
 using SyncronizationBot.Application.Commands.Birdeye;
 using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Commands.MainCommands.Calculated;
 using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
@@ -16,6 +17,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Triggers;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Handlers.Birdeye;
 using SyncronizationBot.Application.Handlers.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Handlers.MainCommands.Calculated;
 using SyncronizationBot.Application.Handlers.MainCommands.Delete;
 using SyncronizationBot.Application.Handlers.MainCommands.Read;
 using SyncronizationBot.Application.Handlers.MainCommands.RecoverySave;
@@ -24,6 +26,7 @@ using SyncronizationBot.Application.Handlers.MainCommands.Triggers;
 using SyncronizationBot.Application.Handlers.SolanaFM;
 using SyncronizationBot.Application.Response.Birdeye;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
+using SyncronizationBot.Application.Response.MainCommands.Calculated;
 using SyncronizationBot.Application.Response.MainCommands.Delete;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
@@ -36,6 +39,8 @@ using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
+using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
+using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Transactions;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Configs;
 using SyncronizationBot.Infra.CrossCutting.Birdeye.TokenCreation.Service;
@@ -57,6 +62,10 @@ using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Service;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Configs;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Configs;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
@@ -66,7 +75,6 @@ using System.Reflection;
 
 
 var builder = Host.CreateApplicationBuilder(args);
-
 ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
@@ -85,27 +93,34 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Configs
 
     services.Configure<SyncronizationBotConfig>(configuration.GetSection("SyncronizationBot"));
-    services.Configure<MappedTokensConfig> (configuration.GetSection("MappedTokens"));
+    services.Configure<MappedTokensConfig>(configuration.GetSection("MappedTokens"));
+    services.Configure<SolnetRpcBalanceConfig>(configuration.GetSection("SolnetRpcBalance"));
+    services.Configure<SolnetRpcTransactionConfig>(configuration.GetSection("SolnetRpcTransaction"));
 
     #endregion
 
     #region Context
-
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    #if DEBUG
+        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringDev")), ServiceLifetime.Transient);
+    #else
+        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    #endif
 
     #endregion
 
     #region Hosted Service
 
     services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<AlertTokenAlphaService>();
-    services.AddHostedService<LoadBalanceWalletsService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
+    services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<ReadTransactionsOldForMapping>();
+    //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 
     #region Only For Test
 
-    //services.AddHostedService<AlertTesteService>();
+    //services.AddHostedService<TestService>();
 
     #endregion
 
@@ -141,20 +156,27 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<VerifyAddTokenAlphaCommand, VerifyAddTokenAlphaCommandResponse>, VerifyAddTokenAlphaCommandHandler>();
     
-
     services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
     services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
+    services.AddTransient<IRequestHandler<UpdateTokenAlphaCommand, UpdateTokenAlphaCommandResponse>, UpdateTokenAlphaCommandHandler>();
 
-    services.AddTransient<IRequestHandler<ReadWalletsCommand, ReadWalletsCommandResponse>, ReadWalletsCommandHandler>();
+    services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
+
+    services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
-
+    services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>, RecoverySaveTransactionsOldForMappingCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveNewsTokensCommand, RecoverySaveNewsTokensCommandResponse>, RecoverySaveNewsTokensCommandHandler>();
 
     services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
     services.AddTransient<IRequestHandler<SendTransactionAlertsCommand, SendTransactionAlertsCommandResponse>, SendTransactionAlertsCommandHandler>();
     services.AddTransient<IRequestHandler<SendAlertTokenAlphaCommand, SendAlertTokenAlphaCommandResponse>, SendAlertTokenAlphaCommandHandler>();
+
+    services.AddTransient<IRequestHandler<CalculatedProfitCommand, CalculatedProfitCommandResponse>, CalculatedProfitCommandHandler>();
+    services.AddTransient<IRequestHandler<CalculatedProfitOperationCommand, CalculatedProfitOperationCommandResponse>, CalculatedProfitOperationCommandHandler>();
 
     #endregion
 
@@ -168,11 +190,14 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenRepository, TokenRepository>();
     services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
     services.AddTransient<ITokenAlphaRepository, TokenAlphaRepository>();
+    services.AddTransient<ITokenAlphaHistoryRepository, TokenAlphaHistoryRepository>();
     services.AddTransient<ITokenAlphaWalletRepository, TokenAlphaWalletRepository>();
+    services.AddTransient<ITokenAlphaWalletHistoryRepository, TokenAlphaWalletHistoryRepository>();
     services.AddTransient<ITokenAlphaConfigurationRepository, TokenAlphaConfigurationRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
     services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
+    services.AddTransient<ITransactionsRPCRecoveryRepository, TransactionsRPCRecoveryRepository>(); 
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddTransient<IWalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
     services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
@@ -182,7 +207,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
     services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
     services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
-    
+    services.AddTransient<IPublishMessageRepository, PublishMessageRepository>();
+
     #endregion
 
     #region External Services
@@ -284,6 +310,13 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
+    #region Solnet
+
+    services.AddTransient<ISolnetBalanceService, SolnetBalanceService>();
+    services.AddTransient<ISolnetTransactionService, SolnetTransactionService>();
 
     #endregion
 

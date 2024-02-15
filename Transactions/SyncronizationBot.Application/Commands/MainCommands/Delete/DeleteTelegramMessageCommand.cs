@@ -5,6 +5,6 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Delete
 {
     public class DeleteTelegramMessageCommand : IRequest<DeleteTelegramMessageCommandResponse>
     {
-        public string? ChannelName { get; set; }
+        public List<string>? ChannelsNames { get; set; }
     }
 }

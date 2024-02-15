@@ -42,7 +42,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             // Recovery Total Amount in SOL
             var accountInfo = await this._accountInfoService.ExecuteRecoveryAccountInfoAsync(new AccountInfoRequest { WalletHash = request.WalletHash });
             await this.SaveBalance(request, accountInfo, DateTime.Now);
-
             // Recovery Total Amount in another tokens
             var tokensAccountsByOwners = await this._tokensAccountsByOwnerService.ExecuteRecoveryTokensAccountsByOwnerAsync(new TokensAccountsByOwnerRequest { WalletPublicKeyHash = request.WalletHash });
             var dateLoadBalance = DateTime.Now;
@@ -52,10 +51,11 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 {
                     if (tokenAccountsByOwner?.Result?.Value?.Any() ?? false)
                     {
-                        foreach (var tokenResultResponse in tokenAccountsByOwner.Result.Value)
-                        {
+                        //Tras apenas os tokens com valores
+                        var filteredTokenWithAmount = from resultValue in tokenAccountsByOwner.Result.Value
+                                                      where resultValue.Account?.Data?.Parsed?.Info?.TokenAmount?.Amount > 0 select resultValue;
+                        foreach (var tokenResultResponse in filteredTokenWithAmount)
                             await this.SaveBalance(request, tokenResultResponse, dateLoadBalance);
-                        }
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private async Task SaveBalance(RecoverySaveBalanceSFMCommand request, AccountInfoResponse accountInfo, DateTime? dateLoadBalance)
         {
             var balance = (WalletBalance)null!;
-            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
+            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112", LazyLoad = true });
             if (accountInfo != null && accountInfo.Result?.Value?.Lamports > 0)
             {
                 if (base.IsSaveBalance() ?? false)
@@ -125,7 +125,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private async Task SaveBalance(RecoverySaveBalanceSFMCommand request, TokenAccountResponse tokenAccount, DateTime? dateLoadBalance)
         {
             var balance = (WalletBalance)null!;
-            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = tokenAccount.Pubkey });
+            var token = await this._mediator.Send(new RecoverySaveTokenCommand { TokenHash = tokenAccount.Pubkey, LazyLoad = true });
             if (tokenAccount != null && tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount!= null)
             {
                 if (base.IsSaveBalance() ?? false)

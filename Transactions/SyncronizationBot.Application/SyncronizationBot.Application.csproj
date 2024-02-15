@@ -4,11 +4,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<WarningsAsErrors>CS4014</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Solana.Unity.Dex" Version="1.2.0" />
+    <PackageReference Include="Solana.Unity.Extensions" Version="2.6.1.2" />
+    <PackageReference Include="Solana.Unity.KeyStore" Version="2.6.1.2" />
+    <PackageReference Include="Solana.Unity.Programs" Version="2.6.1.2" />
+    <PackageReference Include="Solana.Unity.Rpc" Version="2.6.1.2" />
+    <PackageReference Include="Solana.Unity.Wallet" Version="2.6.1.2" />
+    <PackageReference Include="ZstdNet" Version="1.4.5" />
   </ItemGroup>
 
   <ItemGroup>

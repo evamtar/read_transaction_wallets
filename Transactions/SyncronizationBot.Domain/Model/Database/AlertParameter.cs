@@ -10,6 +10,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? Parameter { get; set; }
         public string? FixValue { get; set; }
         public string? DefaultValue { get; set; }
+        public string? FormatValue { get; set; }
         public bool? HasAdjustment { get; set; }
         public bool? IsIcon { get; set; }
         public bool? IsImage { get; set; }

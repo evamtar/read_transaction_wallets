@@ -11,8 +11,10 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? ActualPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
-        public bool? IsCalledInChannel { get; set; }
         public Guid? TokenId { get; set; }
+        public string? TokenHash { get; set; }
+        public string? TokenSymbol { get; set; }
+        public string? TokenName { get; set; }
         public Guid? TokenAlphaConfigurationId { get; set; }
         public Token? Token { get; set; }
         public virtual TokenAlphaConfiguration? TokenAlphaConfiguration { get; set; }

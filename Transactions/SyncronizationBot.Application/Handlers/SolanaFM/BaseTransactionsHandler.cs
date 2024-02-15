@@ -17,9 +17,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
-        protected async Task SaveTransactionsOldForMapping(TransactionInfoResponse? transactions)
+        protected async Task SaveTransactionsOldForMapping(TransactionInfoResponse? transactions, Guid? walletId)
         {
-            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
+            var exists = await this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
                 await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping
@@ -27,13 +27,13 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
                     CreateDate = DateTime.Now,
-                    WalletId = Guid.NewGuid(),
+                    WalletId = walletId,
                     IsIntegrated = false,
                 });
             }
         }
 
-        protected async Task SaveTransactionsOldForMapping(TransactionResponse? transactions)
+        protected async Task SaveTransactionsOldForMapping(TransactionResponse? transactions, Guid? walletId)
         {
             var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
             if (exists == null)
@@ -43,7 +43,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
                     CreateDate = DateTime.Now,
-                    WalletId = Guid.NewGuid(),
+                    WalletId = walletId,
                     IsIntegrated = false,
                 });
             }

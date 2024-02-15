@@ -4,7 +4,6 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
 using System.Collections;
 using System.Reflection;
@@ -42,10 +41,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     foreach (var information in informations)
                     {
                         var parameters = await _alertParameterRepository.Get(x => x.AlertInformationId == information.ID);
-                        var message = ReplaceParametersInformation(request.Parameters, information, parameters);
+                        var message = ReplaceParametersInformation(request?.Parameters, information, parameters);
                         message = message?.Replace("{{NEWLINE}}", Environment.NewLine);
                         await _mediator.Send(new SendTelegramMessageCommand
                         {
+                            EntityId = request?.EntityId,
                             TelegramChannelId = configuration.TelegramChannelId,
                             Message = message
                         });
@@ -65,7 +65,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     if (parametersObjects != null)
                     {
                         var objParameter = parametersObjects[parameter.Class!];
-                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue, parameter.HasAdjustment);
+                        var parameterValue = GetParameterValue(objParameter, parameter.Parameter, parameter.FixValue, parameter.DefaultValue, parameter.FormatValue, parameter.HasAdjustment);
                         message = message!.Replace(parameter.Name ?? string.Empty, parameterValue);
                     }
                 }
@@ -73,7 +73,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return message;
         }
 
-        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue, bool? hasAdjustment)
+        private string? GetParameterValue(object objParameter, string? parameter, string? fixValue, string? defaultValue, string? formatValue, bool? hasAdjustment)
         {
             if (fixValue != null) return fixValue;
             if (parameter != null)
@@ -109,7 +109,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                                     value?.GetType() == typeof(int) || value?.GetType() == typeof(int?))
                                                     sum += (decimal?)objPropertyInfo?.GetValue(item);
                                             }
-                                            return sum.ToString();
+                                            return formatValue != null ? sum?.ToString(formatValue) : sum?.ToString();
                                         }
                                     }
                                     else
@@ -121,7 +121,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                 }
                                 else if (splitValue.StartsWith("RANGE"))
                                 {
-                                    if (splitValue.Contains("|")) 
+                                    if (splitValue.Contains("|"))
                                     {
                                         var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                                         var subInstruction = separetedInstructionAndParameters[0].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
@@ -135,17 +135,38 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                             }
                                             return aggregateValue;
                                         }
-                                        else 
+                                        else
                                         {
                                             //TODO
                                         }
                                     }
                                     else
-                                    { 
+                                    {
                                         //TODO
                                     }
                                 }
-                                else 
+                                else if (splitValue.StartsWith("AGGREGATE")) 
+                                {
+                                    var separetedInstructionAndParameters = splitValue.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                                    var aggregateResult = new Dictionary<string, int>();
+                                    var resultAggregated = string.Empty;
+                                    foreach (var item in genericList)
+                                    {
+                                        var objPropertyInfo = item.GetType().GetProperty(separetedInstructionAndParameters[separetedInstructionAndParameters.Length - 1]);
+                                        var aggregateValue = objPropertyInfo?.GetValue(item)?.ToString();
+                                        if (!string.IsNullOrEmpty(aggregateValue)) 
+                                        {
+                                            if (!aggregateResult.ContainsKey(aggregateValue))
+                                                aggregateResult.Add(aggregateValue, 1);
+                                            else
+                                                aggregateResult[aggregateValue] += 1;
+                                        }
+                                    }
+                                    foreach (var aggregateItem in aggregateResult)
+                                        resultAggregated += " - " + aggregateItem.Key + "(" + aggregateItem.Value.ToString() + ") {{NEWLINE}}";
+                                    return resultAggregated;
+                                }
+                                else
                                 {
                                     int.TryParse(splitValue.Replace("[", string.Empty).Replace("]", string.Empty), out var index);
                                     objectFinded = genericList?[index];
@@ -164,10 +185,27 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     }
                     return propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(DateTime) ? AdjustDateTimeToPtBR((DateTime?)propertyFinded?.GetValue(objectFinded), hasAdjustment) :
                            propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool?) || propertyFinded?.GetValue(objectFinded)?.GetType() == typeof(bool) ? RecoveryDefaultAswers((bool?)propertyFinded?.GetValue(objectFinded)):
-                           !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? propertyFinded?.GetValue(objectFinded)?.ToString() : defaultValue;
+                           !string.IsNullOrEmpty(propertyFinded?.GetValue(objectFinded)?.ToString()) ? RecoveryFormatedValue(propertyFinded?.GetValue(objectFinded), formatValue) : defaultValue;
                 }
             }
             return defaultValue;
+        }
+
+        private string? RecoveryFormatedValue(object? objToFormat, string? formatValue)
+        {
+            if (formatValue == null || formatValue == string.Empty || objToFormat == null) return objToFormat?.ToString();
+            else 
+            {
+                if (objToFormat?.GetType() == typeof(decimal))
+                    return ((decimal)objToFormat).ToString(formatValue);
+                else if(objToFormat?.GetType() == typeof(int))
+                    return ((int)objToFormat).ToString(formatValue);
+                else if (objToFormat?.GetType() == typeof(double))
+                    return ((double)objToFormat).ToString(formatValue);
+                else if (objToFormat?.GetType() == typeof(long))
+                    return ((long)objToFormat).ToString(formatValue);
+                return string.Empty;
+            }
         }
 
         private string? AdjustDateTimeToPtBR(DateTime? dateTime, bool? hasAdjustment)

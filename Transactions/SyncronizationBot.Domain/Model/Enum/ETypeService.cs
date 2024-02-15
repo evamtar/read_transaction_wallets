@@ -6,9 +6,10 @@ namespace SyncronizationBot.Domain.Model.Enum
 {
     public enum ETypeService
     {
+        NONE = 0,
         [DescriptionAttribute("Alerta de Transações")]
         Transaction = 1,
-        [DescriptionAttribute("Carregar balanços da wallet")]
+        [DescriptionAttribute("Carregar balanços das wallets")]
         Balance,
         [DescriptionAttribute("Alerta de preços")]
         Price,
@@ -16,5 +17,9 @@ namespace SyncronizationBot.Domain.Model.Enum
         DeleteOldMessages,
         [DescriptionAttribute("Alerta de Token Alpha")]
         AlertTokenAlpha,
+        [DescriptionAttribute("Transacões Antigas para Mapear")]
+        TransactionsOldForMapping,
+        [DescriptionAttribute("Carregar Listagem de Novos Tokens")]
+        NewTokensBetAwards
     }
 }

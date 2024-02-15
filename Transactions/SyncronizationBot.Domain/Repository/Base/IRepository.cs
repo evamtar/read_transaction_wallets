@@ -6,9 +6,9 @@ namespace SyncronizationBot.Domain.Repository.Base
 {
     public interface IRepository<T> where T : Entity
     {
-        Task<IEnumerable<T>> GetAll();
+        Task<List<T>> GetAll();
         Task<T?> Get(Guid id);
-        Task<IEnumerable<T>> Get(Expression<Func<T, bool>> predicate);
+        Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T> Add(T item);
         Task<T> DetachedItem(T item);

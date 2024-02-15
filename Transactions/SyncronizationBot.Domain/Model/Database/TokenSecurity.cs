@@ -23,7 +23,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? Top10UserPercent { get; set; }
         public bool? IsTrueToken { get; set; }
         public string? LockInfo { get; set; }
-        public string? Freezeable { get; set; }
+        public bool? Freezeable { get; set; }
         public string? FreezeAuthority { get; set; }
         public string? TransferFeeEnable { get; set; }
         public string? TransferFeeData { get; set; }

@@ -5,7 +5,7 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Resp
     {
         public bool Success { get; set; }
         public int StatusCode { get; set; }
-        public ResultData? TokenData { get; set; }
+        public ResultData? Data { get; set; }
     }
 
     public class ResultData
@@ -34,8 +34,8 @@ namespace SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Resp
         public decimal? TotalSupply { get; set; }
         public List<object>? PreMarketHolder { get; set; }
         public object? LockInfo { get; set; }
-        public object? Freezeable { get; set; }
-        public object? FreezeAuthority { get; set; }
+        public bool? Freezeable { get; set; }
+        public string? FreezeAuthority { get; set; }
         public object? TransferFeeEnable { get; set; }
         public object? TransferFeeData { get; set; }
         public bool IsToken2022 { get; set; }

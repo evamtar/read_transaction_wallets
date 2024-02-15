@@ -14,11 +14,13 @@ namespace SyncronizationBot.Service.Base
 {
     public abstract class BaseService : BackgroundService
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         protected readonly IMediator _mediator;
         protected readonly IRunTimeControllerRepository _runTimeControllerRepository;
         protected readonly ETypeService _typeService;
         protected readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         protected RunTimeController? RunTimeController { get; set; }
+        protected PeriodicTimer Timer { get; set; }
         private int? TimesWithoutTransactions { get; set; }
         public bool? IsContingecyTransactions
         {
@@ -36,19 +38,41 @@ namespace SyncronizationBot.Service.Base
             this._mediator = mediator;
             this._runTimeControllerRepository = runTimeControllerRepository;
             this._typeService = typeService;
+            this.Timer = null!;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 
+        protected abstract Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken);
         
-        protected async Task<PeriodicTimer?> GetPeriodicTimer() 
-        { 
-            if(this.RunTimeController == null) 
-            { 
-                this.RunTimeController = await this.GetRunTimeControllerAsync();
-                this.InitiParameterContingency();
-            }
-            var minutesForTimeSpan = this.RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
-            return new PeriodicTimer(TimeSpan.FromMinutes((double)minutesForTimeSpan));
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
+        {
+                #if DEBUG
+                if (this.GetType() == typeof(TestService)) 
+                {
+                    await this.DoExecute(this.Timer!, stoppingToken);
+                    return;
+                }
+                #endif
+                await this.SetPeriodicTimer();
+                var hasNextExecute = this.Timer != null;
+                while (hasNextExecute)
+                {
+
+                    using var timer = this.Timer;
+                    {
+                        try 
+                        { 
+                            if (await timer!.WaitForNextTickAsync(stoppingToken))
+                                await this.DoExecute(this.Timer!, stoppingToken);
+                        } 
+                        catch { }
+                    }
+                    await this.SetPeriodicTimer();
+                    hasNextExecute = this.Timer != null;
+                }
+                await this.SendAlertTimerIsNull();
+                this.LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                this.LogMessage("Finalizado");
         }
 
         protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
@@ -142,6 +166,12 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.AlertTokenAlpha:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
+                case ETypeService.TransactionsOldForMapping:
+                    Console.ForegroundColor = ConsoleColor.Magenta; 
+                    break;
+                case ETypeService.NewTokensBetAwards:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    break;
                 default:
                     break;
             }
@@ -171,6 +201,24 @@ namespace SyncronizationBot.Service.Base
         private void InitiParameterContingency()
         {
             this.TimesWithoutTransactions = this.RunTimeController?.TimesWithoutTransactions ?? 0;
+        }
+        private async Task SetPeriodicTimer()
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (this.RunTimeController == null)
+                {
+                    this.RunTimeController = await this.GetRunTimeControllerAsync();
+                    this.InitiParameterContingency();
+                }
+                var minutesForTimeSpan = this.RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
+                this.Timer = new PeriodicTimer(TimeSpan.FromMinutes((double)minutesForTimeSpan));
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
     }
 }

@@ -25,6 +25,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
+                EntityId = request?.EntityId,
                 Parameters = request?.Parameters,
                 TypeAlert = await this.TransalateTypeOperationInTypeAlert(request)
             });
@@ -41,10 +42,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash == request!.TokenReceivedHash && x.WalletId == request!.WalletId && x.Signature != request!.Transactions!.Signature);
                     return existsTokenWallet == null ? ETypeAlert.BUY : ETypeAlert.REBUY;
                 case ETypeOperation.SELL:
+                    return ETypeAlert.SELL;
                 case ETypeOperation.SWAP:
+                    return ETypeAlert.SWAP;
                 case ETypeOperation.POOLCREATE:
+                    return ETypeAlert.POOL_CREATE;
                 case ETypeOperation.POOLFINALIZED:
-                    return ((ETypeAlert)((int)request!.Transactions!.TypeOperation) + 1);
+                    return ETypeAlert.POOL_FINISH;
                 default:
                     return ETypeAlert.NONE;
             }
