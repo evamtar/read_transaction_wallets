@@ -93,7 +93,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             else 
             {
                 var buysBeforeThis = await this._walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId && x.Signature != request.Signature);
-                var transactionsBefore = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature != request.Signature && (x.TokenSourceId == request.TokenId || x.TokenDestinationId == request.TokenId));
+                var transactionsBefore = (Transactions?)null!;
+                ///TODO:EVANDRO
+                //var transactionsBefore = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature != request.Signature && (x.TokenSourceId == request.TokenId || x.TokenDestinationId == request.TokenId));
                 if (transactionsBefore == null && buysBeforeThis == null) 
                 {
                     var tokenAlphaConfiguration = await this.GetTokenAlphaConfiguration(request);

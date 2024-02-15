@@ -8,9 +8,9 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
 {
     public class BaseTransactionsHandler
     {
-        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
+        private readonly ITransactionOldForMappingRepository _transactionsOldForMappingRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
-        public BaseTransactionsHandler(ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
+        public BaseTransactionsHandler(ITransactionOldForMappingRepository transactionsOldForMappingRepository,
                                        IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._transactionsOldForMappingRepository = transactionsOldForMappingRepository;

@@ -15,7 +15,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(rt => rt.ConfigurationTimer).HasConversion<string>();
             builder.Property(rt => rt.TypeService); 
             builder.Property(rt => rt.IsRunning);
-            builder.Property(rt => rt.IsContingecyTransactions);
+            builder.Property(rt => rt.IsContingecyTransaction);
             builder.Property(rt => rt.TimesWithoutTransactions); 
             builder.Ignore(rt => rt.ID);
             builder.HasKey(rt => rt.IdRuntime);

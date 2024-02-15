@@ -75,7 +75,8 @@ using System.Reflection;
 
 
 var builder = Host.CreateApplicationBuilder(args);
-ConfigureServices(builder.Services, builder.Configuration);
+
+//(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
 
@@ -164,8 +165,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
-    services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>, RecoverySaveTransactionsOldForMappingCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionOldCommand, ReadWalletsCommandForTransacionOldCommandResponse>, ReadWalletsCommandForTransacionOldCommandHandler>();
+    services.AddTransient<IRequestHandler<RecoverySaveTransactionOldForMappingCommand, RecoverySaveTransactionOldForMappingCommandResponse>, RecoverySaveTransactionOldForMappingCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
     services.AddTransient<IRequestHandler<RecoverySaveNewsTokensCommand, RecoverySaveNewsTokensCommandResponse>, RecoverySaveNewsTokensCommandHandler>();
@@ -196,7 +197,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddTransient<ITokenAlphaConfigurationRepository, TokenAlphaConfigurationRepository>();
     services.AddTransient<ITransactionsRepository, TransactionsRepository>();
     services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
-    services.AddTransient<ITransactionsOldForMappingRepository, TransactionsOldForMappingRepository>();
+    services.AddTransient<ITransactionOldForMappingRepository, TransactionOldForMappingRepository>();
     services.AddTransient<ITransactionsRPCRecoveryRepository, TransactionsRPCRecoveryRepository>(); 
     services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
     services.AddTransient<IWalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();

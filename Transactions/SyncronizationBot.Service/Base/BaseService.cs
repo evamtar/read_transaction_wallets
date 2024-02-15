@@ -21,12 +21,12 @@ namespace SyncronizationBot.Service.Base
         protected readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         protected RunTimeController? RunTimeController { get; set; }
         protected PeriodicTimer Timer { get; set; }
-        private int? TimesWithoutTransactions { get; set; }
-        public bool? IsContingecyTransactions
+        private int? TimesWithoutTransaction { get; set; }
+        public bool? IsContingecyTransaction
         {
             get
             {
-                return this.RunTimeController?.IsContingecyTransactions;
+                return this.RunTimeController?.IsContingecyTransaction;
             }
         }
 
@@ -166,7 +166,7 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.AlertTokenAlpha:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
-                case ETypeService.TransactionsOldForMapping:
+                case ETypeService.TransactionOldForMapping:
                     Console.ForegroundColor = ConsoleColor.Magenta; 
                     break;
                 case ETypeService.NewTokensBetAwards:
@@ -181,14 +181,14 @@ namespace SyncronizationBot.Service.Base
         protected void EndTransactionsContingencySum(int? totalValidTransactions)
         {
             if (totalValidTransactions == 0)
-                this.TimesWithoutTransactions += 1;
+                this.TimesWithoutTransaction += 1;
             else
-                this.TimesWithoutTransactions = 0;
-            this.RunTimeController!.TimesWithoutTransactions = this.TimesWithoutTransactions;
-            if (this.TimesWithoutTransactions > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions) 
+                this.TimesWithoutTransaction = 0;
+            this.RunTimeController!.TimesWithoutTransactions = this.TimesWithoutTransaction;
+            if (this.TimesWithoutTransaction > this._syncronizationBotConfig.Value.MaxTimesWithoutTransactions) 
             {
                 if(!this._syncronizationBotConfig.Value.InValidation)
-                  this.RunTimeController!.IsContingecyTransactions = !this.RunTimeController!.IsContingecyTransactions;
+                  this.RunTimeController!.IsContingecyTransaction = !this.RunTimeController!.IsContingecyTransaction;
                 this.RunTimeController!.TimesWithoutTransactions = 0;
             }
         }
@@ -200,7 +200,7 @@ namespace SyncronizationBot.Service.Base
 
         private void InitiParameterContingency()
         {
-            this.TimesWithoutTransactions = this.RunTimeController?.TimesWithoutTransactions ?? 0;
+            this.TimesWithoutTransaction = this.RunTimeController?.TimesWithoutTransactions ?? 0;
         }
         private async Task SetPeriodicTimer()
         {

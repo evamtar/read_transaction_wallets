@@ -15,19 +15,19 @@ using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 {
-    public class RecoverySaveTransactionsOldForMappingCommandHandler : IRequestHandler<RecoverySaveTransactionsOldForMappingCommand, RecoverySaveTransactionsOldForMappingCommandResponse>
+    public class RecoverySaveTransactionOldForMappingCommandHandler : IRequestHandler<RecoverySaveTransactionOldForMappingCommand, RecoverySaveTransactionOldForMappingCommandResponse>
     {
         private readonly IMediator _mediator;
         private readonly ITransfersService _transfersService;
-        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
+        private readonly ITransactionOldForMappingRepository _transactionsOldForMappingRepository;
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
-        public RecoverySaveTransactionsOldForMappingCommandHandler(IMediator mediator,
+        public RecoverySaveTransactionOldForMappingCommandHandler(IMediator mediator,
                                                                    ITransfersService transfersService,
                                                                    ITransactionsRepository transactionsRepository,
                                                                    ITransactionNotMappedRepository transactionNotMappedRepository,
-                                                                   ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
+                                                                   ITransactionOldForMappingRepository transactionsOldForMappingRepository,
                                                                    IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
@@ -38,7 +38,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             this._mappedTokensConfig = mappedTokensConfig;
         }
 
-        public async Task<RecoverySaveTransactionsOldForMappingCommandResponse> Handle(RecoverySaveTransactionsOldForMappingCommand request, CancellationToken cancellationToken)
+        public async Task<RecoverySaveTransactionOldForMappingCommandResponse> Handle(RecoverySaveTransactionOldForMappingCommand request, CancellationToken cancellationToken)
         {
             var listTransactions = await this._transactionsOldForMappingRepository.Get(x => x.WalletId == request.WalletId && x.IsIntegrated == false, x => x.DateOfTransaction!);
             if (listTransactions != null)
@@ -75,33 +75,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     var transactionDB = await _transactionsRepository.Add(new Transactions
                                     {
                                         Signature = transaction?.Signature,
-                                        DateOfTransaction = transaction?.DateOfTransaction,
-                                        AmountValueSource = CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
-                                        AmountValueSourcePool = CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
-                                        AmountValueDestination = CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
-                                        AmountValueDestinationPool = CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
-                                        MtkcapTokenSource = CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
-                                        MtkcapTokenSourcePool = CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
-                                        MtkcapTokenDestination = CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
-                                        MtkcapTokenDestinationPool = CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
+                                        DateTransactionUTC = transaction?.DateOfTransaction,
                                         FeeTransaction = CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
-                                        PriceTokenSourceUSD = tokenSended?.Price,
-                                        PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
-                                        PriceTokenDestinationUSD = tokenReceived?.Price,
-                                        PriceTokenDestinationPoolUSD = tokenReceivedPool?.Price,
                                         PriceSol = tokenSolForPrice.Price,
-                                        TotalTokenSource = CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
-                                        TotalTokenSourcePool = CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
-                                        TotalTokenDestination = CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
-                                        TotalTokenDestinationPool = CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
-                                        TokenSourceId = tokenSended?.TokenId,
-                                        TokenSourcePoolId = tokenSendedPool?.TokenId,
-                                        TokenDestinationId = tokenReceived?.TokenId,
-                                        TokenDestinationPoolId = tokenReceivedPool?.TokenId,
+                                        TotalOperationSol = null, ///TODO:EVANDRO
                                         WalletId = request?.WalletId,
                                         WalletHash = request?.WalletHash,
                                         ClassWallet = request?.ClassWallet?.Description,
-                                        TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
+                                        TypeOperationId = null, ///TODO:EVANDRO
+                                        //TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                     });
                                     await this._transactionsRepository.DetachedItem(transactionDB!);
                                 }
@@ -112,7 +94,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         Signature = transaction.Signature,
                                         WalletId = request?.WalletId,
                                         Link = "https://solscan.io/tx/" + transaction.Signature,
-                                        Error = ETransactionType.INDEFINED.ToString(),
+                                        Error = "INDEFINED",
                                         StackTrace = null,
                                         DateTimeRunner = DateTime.Now
                                     });
@@ -138,7 +120,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     await this._transactionsOldForMappingRepository.DetachedItem(transaction);
                 }
             }
-            return new RecoverySaveTransactionsOldForMappingCommandResponse { };
+            return new RecoverySaveTransactionOldForMappingCommandResponse { };
         }
 
         private decimal? CalculatedAmoutValue(decimal? value, int? divisor)

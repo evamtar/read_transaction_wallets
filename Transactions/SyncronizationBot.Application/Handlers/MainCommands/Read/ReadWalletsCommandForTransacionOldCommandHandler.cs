@@ -12,21 +12,21 @@ using SyncronizationBot.Domain.Repository;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 {
-    public class ReadWalletsCommandForTransacionsOldCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>
+    public class ReadWalletsCommandForTransacionOldCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsCommandForTransacionOldCommand, ReadWalletsCommandForTransacionOldCommandResponse>
     {
-        private readonly ITransactionsOldForMappingRepository _transactionsOldForMappingRepository;
+        private readonly ITransactionOldForMappingRepository _transactionOldForMappingRepository;
         private readonly IClassWalletRepository _classWalletRepository;
 
-        public ReadWalletsCommandForTransacionsOldCommandHandler(IMediator mediator,
+        public ReadWalletsCommandForTransacionOldCommandHandler(IMediator mediator,
                                                                  IWalletRepository walletRepository,
                                                                  IClassWalletRepository classWalletRepository,
-                                                                 ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
+                                                                 ITransactionOldForMappingRepository transactionOldForMappingRepository,
                                                                  IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
         {
-            this._transactionsOldForMappingRepository = transactionsOldForMappingRepository;
+            this._transactionOldForMappingRepository = transactionOldForMappingRepository;
             this._classWalletRepository = classWalletRepository;
         }
-        public async Task<ReadWalletsCommandForTransacionsOldCommandResponse> Handle(ReadWalletsCommandForTransacionsOldCommand request, CancellationToken cancellationToken)
+        public async Task<ReadWalletsCommandForTransacionOldCommandResponse> Handle(ReadWalletsCommandForTransacionOldCommand request, CancellationToken cancellationToken)
         {
             var walletsTracked = await GetWallets(x => x.IsActive == true, x => x.IsLoadBalance!);
             if (walletsTracked != null) 
@@ -34,12 +34,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 foreach (var walletTracked in walletsTracked)
                 {
                     var classWallet = await this._classWalletRepository.FindFirstOrDefault(x => x.ID == walletTracked.ClassWalletId);
-                    var saveTransactionsOldForMappingResponse = await this._mediator.Send(new RecoverySaveTransactionsOldForMappingCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, ClassWallet = classWallet, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now });
-                    var transactionsOldForMapping = await this._mediator.Send(new RecoveryTransactionsSignatureForAddressCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now, Limit = (walletTracked?.IsLoadBalance ?? false)? 50: 1000 });
+                    var saveTransactionOldForMappingResponse = await this._mediator.Send(new RecoverySaveTransactionOldForMappingCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, ClassWallet = classWallet, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now });
+                    var transactionOldForMapping = await this._mediator.Send(new RecoveryTransactionsSignatureForAddressCommand { WalletId = walletTracked.ID!, WalletHash = walletTracked.Hash!, DateLoadBalance = walletTracked?.DateLoadBalance ?? DateTime.Now, Limit = (walletTracked?.IsLoadBalance ?? false)? 50: 1000 });
                 }
             }
             
-            return new ReadWalletsCommandForTransacionsOldCommandResponse {};
+            return new ReadWalletsCommandForTransacionOldCommandResponse {};
         }
     }
 }

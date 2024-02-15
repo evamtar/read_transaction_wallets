@@ -5,6 +5,6 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Read
 {
     public class ReadWalletsForTransactionCommand : IRequest<ReadWalletsForTransactionCommandResponse>
     {
-        public bool? IsContingecyTransactions { get; set; }
+        public bool? IsContingecyTransaction { get; set; }
     }
 }

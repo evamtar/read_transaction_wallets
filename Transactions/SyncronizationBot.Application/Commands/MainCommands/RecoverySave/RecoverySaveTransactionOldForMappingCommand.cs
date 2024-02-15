@@ -5,11 +5,11 @@ using SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Application.Commands.MainCommands.RecoverySave
 {
-    public class RecoverySaveTransactionsOldForMappingCommand : SearchCommand, IRequest<RecoverySaveTransactionsOldForMappingCommandResponse>
+    public class RecoverySaveTransactionOldForMappingCommand : SearchCommand, IRequest<RecoverySaveTransactionOldForMappingCommandResponse>
     {
         public Guid? WalletId { get; set; }
         public string? WalletHash { get; set; }
         public ClassWallet? ClassWallet { get; set; }
-        public bool? IsContingecyTransactions { get; set; }
+        public bool? IsContingecyTransaction { get; set; }
     }
 }

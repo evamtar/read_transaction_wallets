@@ -46,7 +46,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         {
             var totalValidTransactions = 0;
             var listTransactions = (List<TransactionsResponse>?)null!;
-            if (request.IsContingecyTransactions ?? false)
+            if (request.IsContingecyTransaction ?? false)
             {
                 var responseContingency = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
                 {
@@ -105,33 +105,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 var transactionDB = await _transactionsRepository.Add(new Transactions
                                 {
                                     Signature = transaction?.Signature,
-                                    DateOfTransaction = transaction?.DateOfTransaction,
-                                    AmountValueSource = this.CalculatedAmoutValue(transferInfo?.TokenSended?.Amount, tokenSended?.Divisor),
-                                    AmountValueSourcePool = this.CalculatedAmoutValue(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Divisor),
-                                    AmountValueDestination = this.CalculatedAmoutValue(transferInfo?.TokenReceived?.Amount, tokenReceived?.Divisor),
-                                    AmountValueDestinationPool = this.CalculatedAmoutValue(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Divisor),
-                                    MtkcapTokenSource = this.CalculatedMarketcap(tokenSended?.MarketCap, tokenSended?.Supply, tokenSended?.Price),
-                                    MtkcapTokenSourcePool = this.CalculatedMarketcap(tokenSendedPool?.MarketCap, tokenSendedPool?.Supply, tokenSendedPool?.Price),
-                                    MtkcapTokenDestination = this.CalculatedMarketcap(tokenReceived?.MarketCap, tokenReceived?.Supply, tokenReceived?.Price),
-                                    MtkcapTokenDestinationPool = this.CalculatedMarketcap(tokenReceivedPool?.MarketCap, tokenReceivedPool?.Supply, tokenReceivedPool?.Price),
+                                    DateTransactionUTC = transaction?.DateOfTransaction,
                                     FeeTransaction = this.CalculatedFeeTransaction(transferInfo?.PaymentFee, tokenSolForPrice.Divisor),
-                                    PriceTokenSourceUSD = tokenSended?.Price,
-                                    PriceTokenSourcePoolUSD = tokenSendedPool?.Price,
-                                    PriceTokenDestinationUSD = tokenReceived?.Price,
-                                    PriceTokenDestinationPoolUSD = tokenReceivedPool?.Price,
                                     PriceSol = tokenSolForPrice.Price,
-                                    TotalTokenSource = this.CalculatedTotal(transferInfo?.TokenSended?.Amount, tokenSended?.Price, tokenSended?.Divisor),
-                                    TotalTokenSourcePool = this.CalculatedTotal(transferInfo?.TokenSendedPool?.Amount, tokenSendedPool?.Price, tokenSendedPool?.Divisor),
-                                    TotalTokenDestination = this.CalculatedTotal(transferInfo?.TokenReceived?.Amount, tokenReceived?.Price, tokenReceived?.Divisor),
-                                    TotalTokenDestinationPool = this.CalculatedTotal(transferInfo?.TokenReceivedPool?.Amount, tokenReceivedPool?.Price, tokenReceivedPool?.Divisor),
-                                    TokenSourceId = tokenSended?.TokenId,
-                                    TokenSourcePoolId = tokenSendedPool?.TokenId,
-                                    TokenDestinationId = tokenReceived?.TokenId,
-                                    TokenDestinationPoolId = tokenReceivedPool?.TokenId,
+                                    TotalOperationSol = null,  ///TODO-EVANDRO
                                     WalletId = request?.WalletId,
                                     WalletHash = request?.WalletHash,
                                     ClassWallet = request?.ClassWallet?.Description,
-                                    TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
+                                    TypeOperationId = null, ///TODO-EVANDRO
                                 });
                                 await this._transactionsRepository.DetachedItem(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
@@ -142,41 +123,44 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokenReceivedPoolHash = tokenReceivedPool?.Hash
                                 });
-                                if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
+                                //if (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
+                                if(true)
                                 {
                                     await this._mediator.Send(new VerifyAddTokenAlphaCommand
                                     {
                                         WalletId = request?.WalletId,
                                         WalletHash = request?.WalletHash,
                                         ClassWalletDescription = request?.ClassWallet?.Description,
-                                        TokenId = transactionDB?.TokenDestinationId,
-                                        TokenHash = tokenReceived?.Hash,
-                                        TokenName = tokenReceived?.Name,
-                                        TokenSymbol = tokenReceived?.Symbol,
-                                        ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        QuantityTokenReceived = Math.Abs(transactionDB?.AmountValueDestination ?? 0),
-                                        Signature = transactionDB?.Signature,
-                                        MarketCap = transactionDB?.MtkcapTokenDestination ?? tokenReceived?.Supply * tokenReceived?.Price,
+                                        ///TODO:Evandro
+                                        //TokenId = transactionDB?.TokenDestinationId,
+                                        //TokenHash = tokenReceived?.Hash,
+                                        //TokenName = tokenReceived?.Name,
+                                        //TokenSymbol = tokenReceived?.Symbol,
+                                        //ValueBuySol = this.CalculatedTotalSol(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        //ValueBuyUSDC = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        //ValueBuyUSDT = this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                        //QuantityTokenReceived = Math.Abs(transactionDB?.AmountValueDestination ?? 0),
+                                        //Signature = transactionDB?.Signature,
+                                        //MarketCap = transactionDB?.MtkcapTokenDestination ?? tokenReceived?.Supply * tokenReceived?.Price,
                                         Price = tokenReceived?.Price,
                                         LaunchDate = tokenReceived?.DateCreation ?? DateTime.Now,
                                     });
                                 }
-                                else if (transactionDB?.TypeOperation == ETypeOperation.SELL || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
-                                {
-                                    await this._mediator.Send(new UpdateTokenAlphaCommand
-                                    {
-                                        WalletId = request?.WalletId,
-                                        TokenId = transactionDB?.TokenSourceId,
-                                        AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
-                                        AmountTokenSell = Math.Abs(transactionDB?.AmountValueSource ?? 0),
-                                        MarketCap = transactionDB?.MtkcapTokenSource ?? tokenSended?.Supply * tokenSended?.Price,
-                                        Price = tokenSended?.Price
-                                    });
-                                }
+                                ///TODO:Evandro
+                                //else if (transactionDB?.TypeOperation == ETypeOperation.SELL || transactionDB?.TypeOperation == ETypeOperation.SWAP) 
+                                //{
+                                //    await this._mediator.Send(new UpdateTokenAlphaCommand
+                                //    {
+                                //        WalletId = request?.WalletId,
+                                //        TokenId = transactionDB?.TokenSourceId,
+                                //        AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                //        AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                //        AmountTokenUSDT = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
+                                //        AmountTokenSell = Math.Abs(transactionDB?.AmountValueSource ?? 0),
+                                //        MarketCap = transactionDB?.MtkcapTokenSource ?? tokenSended?.Supply * tokenSended?.Price,
+                                //        Price = tokenSended?.Price
+                                //    });
+                                //}
                                 await this._mediator.Send(new SendTransactionAlertsCommand
                                 {
                                     EntityId = transactionDB?.ID,

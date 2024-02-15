@@ -21,7 +21,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         public RecoveryTransactionsSignatureForAddressCommandHandler(IMediator mediator,
                                                                      ITransactionsSignatureForAddressService transactionsSignatureForAddressService,
                                                                      ITransactionsRepository transactionsRepository,
-                                                                     ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
+                                                                     ITransactionOldForMappingRepository transactionsOldForMappingRepository,
                                                                      ITransactionsRPCRecoveryRepository transactionsContingencyRepository,
                                                                      IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {

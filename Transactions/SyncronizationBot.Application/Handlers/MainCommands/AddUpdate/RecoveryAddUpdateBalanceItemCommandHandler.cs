@@ -31,35 +31,36 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 var solTokenForFee = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = "So11111111111111111111111111111111111111112" });
                 await this.UpdateBalance(request?.Transactions?.WalletId, solTokenForFee?.TokenId, request?.Transactions.Signature, solTokenForFee?.Hash, request?.Transactions?.FeeTransaction);
             }
-            switch (request?.Transactions?.TypeOperation)
-            {
-                case ETypeOperation.BUY:
-                case ETypeOperation.SWAP:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                    return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                case ETypeOperation.SELL:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                    return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                case ETypeOperation.SEND:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                    break;
-                case ETypeOperation.RECEIVED:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                    break;
-                case ETypeOperation.POOLCREATE:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourcePoolId, request?.Transactions?.Signature, request?.TokenSendedPoolHash, request?.Transactions?.AmountValueSourcePool);
-                    break;
-                case ETypeOperation.POOLFINALIZED:
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
-                    await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationPoolId, request?.Transactions?.Signature, request?.TokenReceivedPoolHash, request?.Transactions?.AmountValueDestinationPool);
-                    break;
-                case ETypeOperation.NONE:
-                case ETypeOperation.BURN:
-                    break;
-                default:
-                    break;
-            }
+            ///TODO:EVANDRO
+            //switch (request?.Transactions?.TypeOperation)
+            //{
+            //    case ETypeOperation.BUY:
+            //    case ETypeOperation.SWAP:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+            //        return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+            //    case ETypeOperation.SELL:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+            //        return await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+            //    case ETypeOperation.SEND:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+            //        break;
+            //    case ETypeOperation.RECEIVED:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+            //        break;
+            //    case ETypeOperation.POOLCREATE:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourceId, request?.Transactions?.Signature, request?.TokenSendedHash, request?.Transactions?.AmountValueSource);
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenSourcePoolId, request?.Transactions?.Signature, request?.TokenSendedPoolHash, request?.Transactions?.AmountValueSourcePool);
+            //        break;
+            //    case ETypeOperation.POOLFINALIZED:
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationId, request?.Transactions?.Signature, request?.TokenReceivedHash, request?.Transactions?.AmountValueDestination);
+            //        await this.UpdateBalance(request?.Transactions?.WalletId, request?.Transactions?.TokenDestinationPoolId, request?.Transactions?.Signature, request?.TokenReceivedPoolHash, request?.Transactions?.AmountValueDestinationPool);
+            //        break;
+            //    case ETypeOperation.NONE:
+            //    case ETypeOperation.BURN:
+            //        break;
+            //    default:
+            //        break;
+            //}
             return null!;
         }
 

@@ -18,7 +18,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         [DescriptionAttribute("Alerta de Token Alpha")]
         AlertTokenAlpha,
         [DescriptionAttribute("Transacões Antigas para Mapear")]
-        TransactionsOldForMapping,
+        TransactionOldForMapping,
         [DescriptionAttribute("Carregar Listagem de Novos Tokens")]
         NewTokensBetAwards
     }

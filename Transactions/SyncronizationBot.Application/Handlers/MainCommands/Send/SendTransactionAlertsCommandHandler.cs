@@ -34,24 +34,26 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         private async Task<ETypeAlert> TransalateTypeOperationInTypeAlert(SendTransactionAlertsCommand? request)
         {
-            switch (request!.Transactions!.TypeOperation)
-            {
-                case ETypeOperation.BUY:
-                    if ((request?.TokensMapped?.Contains(request?.TokenSendedHash!) ?? false) && (request?.TokensMapped?.Contains(request?.TokenReceivedHash!) ?? false))
-                        return ETypeAlert.NONE;
-                    var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash == request!.TokenReceivedHash && x.WalletId == request!.WalletId && x.Signature != request!.Transactions!.Signature);
-                    return existsTokenWallet == null ? ETypeAlert.BUY : ETypeAlert.REBUY;
-                case ETypeOperation.SELL:
-                    return ETypeAlert.SELL;
-                case ETypeOperation.SWAP:
-                    return ETypeAlert.SWAP;
-                case ETypeOperation.POOLCREATE:
-                    return ETypeAlert.POOL_CREATE;
-                case ETypeOperation.POOLFINALIZED:
-                    return ETypeAlert.POOL_FINISH;
-                default:
-                    return ETypeAlert.NONE;
-            }
+            ///TODO:Evandro
+            //switch (request!.Transactions!.TypeOperation)
+            //{
+            //    case ETypeOperation.BUY:
+            //        if ((request?.TokensMapped?.Contains(request?.TokenSendedHash!) ?? false) && (request?.TokensMapped?.Contains(request?.TokenReceivedHash!) ?? false))
+            //            return ETypeAlert.NONE;
+            //        var existsTokenWallet = await _walletBalanceHistoryRepository.FindFirstOrDefault(x => x.TokenHash == request!.TokenReceivedHash && x.WalletId == request!.WalletId && x.Signature != request!.Transactions!.Signature);
+            //        return existsTokenWallet == null ? ETypeAlert.BUY : ETypeAlert.REBUY;
+            //    case ETypeOperation.SELL:
+            //        return ETypeAlert.SELL;
+            //    case ETypeOperation.SWAP:
+            //        return ETypeAlert.SWAP;
+            //    case ETypeOperation.POOLCREATE:
+            //        return ETypeAlert.POOL_CREATE;
+            //    case ETypeOperation.POOLFINALIZED:
+            //        return ETypeAlert.POOL_FINISH;
+            //    default:
+            //        return ETypeAlert.NONE;
+            //}
+            return ETypeAlert.NONE;
         }
 
     }

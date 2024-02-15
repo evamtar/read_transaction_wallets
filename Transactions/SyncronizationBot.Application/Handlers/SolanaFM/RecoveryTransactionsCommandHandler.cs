@@ -20,7 +20,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         public RecoveryTransactionsCommandHandler(IMediator mediator, 
                                                   ITransactionsService transactionsService,
                                                   ITransactionsRepository transactionsRepository,
-                                                  ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
+                                                  ITransactionOldForMappingRepository transactionsOldForMappingRepository,
                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {
             this._mediator = mediator;

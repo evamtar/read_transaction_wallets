@@ -14,7 +14,7 @@ namespace SyncronizationBot.Service
     {
         public ReadTransactionsOldForMapping(IMediator mediator,
                                              IRunTimeControllerRepository runTimeControllerRepository,
-                                             IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.TransactionsOldForMapping, syncronizationBotConfig)
+                                             IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.TransactionOldForMapping, syncronizationBotConfig)
         {
             base.LogMessage("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
         }
@@ -27,7 +27,7 @@ namespace SyncronizationBot.Service
                 try
                 {
                     await base.SetRuntimeControllerAsync(true, false);
-                    var response = await this._mediator.Send(new ReadWalletsCommandForTransacionsOldCommand{ });
+                    var response = await this._mediator.Send(new ReadWalletsCommandForTransacionOldCommand{ });
                     await SetRuntimeControllerAsync(false, true);
                     base.LogMessage($"End Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     await base.SendAlertExecute(timer);

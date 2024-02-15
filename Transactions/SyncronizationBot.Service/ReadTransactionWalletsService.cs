@@ -26,7 +26,7 @@ namespace SyncronizationBot.Service
                 try
                 {
                     await base.SetRuntimeControllerAsync(true, false);
-                    var response = await this._mediator.Send(new ReadWalletsForTransactionCommand { IsContingecyTransactions = base.IsContingecyTransactions });
+                    var response = await this._mediator.Send(new ReadWalletsForTransactionCommand { IsContingecyTransaction = base.IsContingecyTransaction });
                     if (response.HasWalletsWithBalanceLoad)
                         base.EndTransactionsContingencySum(response.TotalValidTransactions);
                     await SetRuntimeControllerAsync(false, true);

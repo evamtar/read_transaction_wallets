@@ -76,7 +76,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                             WalletHash = walletTracked?.Hash,
                             ClassWallet = classWallet,
                             DateLoadBalance = walletTracked?.DateLoadBalance,
-                            IsContingecyTransactions = request?.IsContingecyTransactions,
+                            IsContingecyTransaction = request?.IsContingecyTransaction,
                             InitialTicks = initialTicks,
                             FinalTicks = finalTicks
                         });
