@@ -69,9 +69,9 @@ BEGIN
 	DROP TABLE [WalletBalanceHistory]
 END
 GO
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionTokens')
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionToken')
 BEGIN
-	DROP TABLE [TransactionTokens]
+	DROP TABLE [TransactionToken]
 END
 GO
 
@@ -300,12 +300,12 @@ CREATE TABLE Transactions
 );
 GO
 
-CREATE TABLE TransactionTokens(
+CREATE TABLE TransactionToken(
 	ID                           UNIQUEIDENTIFIER,
 	AmountValue				     VARCHAR(150),
 	MtkcapToken                  VARCHAR(150),
 	TotalToken					 VARCHAR(150),
-	TypeTokenTransaction		 INT, --SEND, RECEIVED
+	TypeTokenTransaction		 INT, --SENDED (1), RECEIVED(2)
 	IsArbitrationOperation       BIT,
 	IsPoolOperation				 BIT,
 	IsSwapOperation              BIT,

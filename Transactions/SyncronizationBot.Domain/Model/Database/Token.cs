@@ -25,5 +25,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public virtual List<WalletBalanceSFMCompare>? BalancesSFMCompare { get; set; }
         public virtual List<TokenSecurity>? TokenSecurities { get; set; }
         public virtual List<TokenAlpha>? TokenAlphas { get; set; }
+        public virtual List<TransactionToken>? TransactionTokens { get; set; }
     }
 }

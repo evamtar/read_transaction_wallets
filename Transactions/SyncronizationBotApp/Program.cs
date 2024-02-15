@@ -72,20 +72,20 @@ using SyncronizationBot.Infra.Data.Context;
 using SyncronizationBot.Infra.Data.Repository;
 using SyncronizationBot.Service;
 using System.Reflection;
-
+using SyncronizationBotApp.Extensions;
+using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Infra.Data.Repository.Base;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-//(builder.Services, builder.Configuration);
+ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
-
 host.Run();
 
 static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
     #region MediatR
-
 
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
@@ -100,12 +100,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #endregion
 
-    #region Context
-    #if DEBUG
-        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringDev")), ServiceLifetime.Transient);
-    #else
-        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
-    #endif
+    #region Context / Repositories / Handlers / HostedService (NOT NOW THE EXTENSION)
+
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
+    services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
 
     #endregion
 
@@ -124,91 +123,6 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     //services.AddHostedService<TestService>();
 
     #endregion
-
-    #endregion
-
-    #region Handlers
-
-    #region Birdeye
-
-    services.AddTransient<IRequestHandler<RecoverySaveBalanceBirdeyeCommand, RecoverySaveBalanceBirdeyeCommandResponse>, RecoverySaveBalanceBirdeyeCommandHandler>();
-
-    #endregion
-
-    #region SolanaFM
-
-    services.AddTransient<IRequestHandler<RecoverySaveBalanceSFMCommand, RecoverySaveBalanceSFMCommandResponse>, RecoverySaveBalanceSFMCommandHandler>();
-
-    services.AddTransient<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>, RecoveryTransactionsCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoveryTransactionsSignatureForAddressCommand, RecoveryTransactionsSignatureForAddressCommandResponse>, RecoveryTransactionsSignatureForAddressCommandHandler>();
-    
-    #endregion
-
-    #region Telegram
-
-    services.AddTransient<IRequestHandler<SendTelegramMessageCommand, SendTelegramMessageCommandResponse>, SendTelegramMessageCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTelegramChannel, RecoverySaveTelegramChannelResponse>, RecoverySaveTelegramChannelHandler>();
-    services.AddTransient<IRequestHandler<DeleteTelegramMessageCommand, DeleteTelegramMessageCommandResponse>, DeleteTelegramMessageCommandHandler>();
-
-    #endregion
-
-    #region Globais
-
-    services.AddTransient<IRequestHandler<VerifyAddTokenAlphaCommand, VerifyAddTokenAlphaCommandResponse>, VerifyAddTokenAlphaCommandHandler>();
-    
-    services.AddTransient<IRequestHandler<RecoveryAddUpdateBalanceItemCommand, RecoveryAddUpdateBalanceItemCommandResponse>, RecoveryAddUpdateBalanceItemCommandHandler>();
-    services.AddTransient<IRequestHandler<UpdateWalletsBalanceCommand, UpdateWalletsBalanceCommandResponse>, UpdateWalletsBalanceCommandHandler>();
-    services.AddTransient<IRequestHandler<UpdateTokenAlphaCommand, UpdateTokenAlphaCommandResponse>, UpdateTokenAlphaCommandHandler>();
-
-    services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
-
-    services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
-    services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
-    services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionOldCommand, ReadWalletsCommandForTransacionOldCommandResponse>, ReadWalletsCommandForTransacionOldCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTransactionOldForMappingCommand, RecoverySaveTransactionOldForMappingCommandResponse>, RecoverySaveTransactionOldForMappingCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveTokenCommand, RecoverySaveTokenCommandResponse>, RecoverySaveTokenCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoveryPriceCommand, RecoveryPriceCommandResponse>, RecoveryPriceCommandHandler>();
-    services.AddTransient<IRequestHandler<RecoverySaveNewsTokensCommand, RecoverySaveNewsTokensCommandResponse>, RecoverySaveNewsTokensCommandHandler>();
-
-    services.AddTransient<IRequestHandler<SendAlertMessageCommand, SendAlertMessageCommandResponse>, SendAlertMessageCommandHandler>();
-    services.AddTransient<IRequestHandler<SendAlertPriceCommand, SendAlertPriceCommandResponse>, SendAlertPriceCommandHandler>();
-    services.AddTransient<IRequestHandler<SendTransactionAlertsCommand, SendTransactionAlertsCommandResponse>, SendTransactionAlertsCommandHandler>();
-    services.AddTransient<IRequestHandler<SendAlertTokenAlphaCommand, SendAlertTokenAlphaCommandResponse>, SendAlertTokenAlphaCommandHandler>();
-
-    services.AddTransient<IRequestHandler<CalculatedProfitCommand, CalculatedProfitCommandResponse>, CalculatedProfitCommandHandler>();
-    services.AddTransient<IRequestHandler<CalculatedProfitOperationCommand, CalculatedProfitOperationCommandResponse>, CalculatedProfitOperationCommandHandler>();
-
-    #endregion
-
-    #endregion
-
-    #region Repositories
-
-    services.AddTransient<IRunTimeControllerRepository, RunTimeControllerRepository>();
-    services.AddTransient<IClassWalletRepository, ClassWalletRepository>();
-    services.AddTransient<IWalletRepository, WalletRepository>();
-    services.AddTransient<ITokenRepository, TokenRepository>();
-    services.AddTransient<ITokenSecurityRepository, TokenSecurityRepository>();
-    services.AddTransient<ITokenAlphaRepository, TokenAlphaRepository>();
-    services.AddTransient<ITokenAlphaHistoryRepository, TokenAlphaHistoryRepository>();
-    services.AddTransient<ITokenAlphaWalletRepository, TokenAlphaWalletRepository>();
-    services.AddTransient<ITokenAlphaWalletHistoryRepository, TokenAlphaWalletHistoryRepository>();
-    services.AddTransient<ITokenAlphaConfigurationRepository, TokenAlphaConfigurationRepository>();
-    services.AddTransient<ITransactionsRepository, TransactionsRepository>();
-    services.AddTransient<ITransactionNotMappedRepository, TransactionNotMappedRepository>();
-    services.AddTransient<ITransactionOldForMappingRepository, TransactionOldForMappingRepository>();
-    services.AddTransient<ITransactionsRPCRecoveryRepository, TransactionsRPCRecoveryRepository>(); 
-    services.AddTransient<IWalletBalanceRepository, WalletBalanceRepository>();
-    services.AddTransient<IWalletBalanceSFMCompareRepository, WalletBalanceSFMCompareRepository>();
-    services.AddTransient<IWalletBalanceHistoryRepository, WalletBalanceHistoryRepository>();
-    services.AddTransient<ITelegramChannelRepository, TelegramChannelRepository>();
-    services.AddTransient<ITelegramMessageRepository, TelegramMessageRepository>();
-    services.AddTransient<IAlertPriceRepository, AlertPriceRepository>();
-    services.AddTransient<IAlertConfigurationRepository, AlertConfigurationRepository>();
-    services.AddTransient<IAlertInformationRepository, AlertInformationRepository>();
-    services.AddTransient<IAlertParameterRepository, AlertParameterRepository>();
-    services.AddTransient<IPublishMessageRepository, PublishMessageRepository>();
 
     #endregion
 

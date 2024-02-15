@@ -16,5 +16,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public virtual TypeOperation? TypeOperation { get; set; }
         public virtual string? WalletHash { get; set; }
         public virtual string? ClassWallet { get; set; }
+        public List<TransactionToken>? TransactionTokens { get; set; }
     }
 }

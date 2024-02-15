@@ -40,6 +40,8 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<AlertParameter> AlertsParameters { get; set; }
         public DbSet<TelegramMessage> TelegramMessages { get; set; }
         public DbSet<PublishMessage> PublishMessages { get; set; }
+        public DbSet<TransactionToken> TransactionTokens { get; set; }
+        public DbSet<TypeOperation> TypeOperations { get; set; }
 
         #endregion
 
@@ -56,9 +58,11 @@ namespace SyncronizationBot.Infra.Data.Context
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
+            modelBuilder.ApplyConfiguration(new TypeOperationMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
+            modelBuilder.ApplyConfiguration(new TransactionTokenMap());
             modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());
-            modelBuilder.ApplyConfiguration(new TransactionsRPCRecoveryMap());
+            modelBuilder.ApplyConfiguration(new TransactionRPCRecoveryMap());
             modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());

@@ -5,11 +5,11 @@ using SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Infra.Data.Mapper
 {
-    public class TransactionsRPCRecoveryMap : IEntityTypeConfiguration<TransactionsRPCRecovery>
+    public class TransactionRPCRecoveryMap : IEntityTypeConfiguration<TransactionsRPCRecovery>
     {
         public void Configure(EntityTypeBuilder<TransactionsRPCRecovery> builder)
         {
-            builder.ToTable("TransactionsRPCRecovery");
+            builder.ToTable("TransactionRPCRecovery");
             builder.Property(tc => tc.ID);
             builder.Property(tc => tc.Signature);
             builder.Property(tc => tc.DateOfTransaction);
