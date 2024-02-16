@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using SyncronizationBot.Domain.Repository.Base;
 using SyncronizationBotApp.Extensions.Enum;
 using System.Reflection;
 

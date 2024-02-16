@@ -9,6 +9,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? EntityId { get; set; }
         public DateTime? DateSended { get; set; }
         public bool? IsDeleted { get; set; }
+        public int? TryDeleted { get; set; }
         public TelegramChannel? TelegramChannel { get; set; }
     }
 }

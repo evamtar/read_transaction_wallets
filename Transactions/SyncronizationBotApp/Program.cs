@@ -69,12 +69,9 @@ using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
-using SyncronizationBot.Infra.Data.Repository;
 using SyncronizationBot.Service;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
-using SyncronizationBot.Domain.Repository.Base;
-using SyncronizationBot.Infra.Data.Repository.Base;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -102,19 +99,19 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context / Repositories / Handlers / HostedService (NOT NOW THE EXTENSION)
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Singleton);
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
 
     #endregion
 
     #region Hosted Service
+    services.AddHostedService<BalanceWalletsService>();
 
-    services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<LoadBalanceWalletsService>();
-    services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<DeleteOldsMessagesLogService>();
-    services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
     //services.AddHostedService<ReadTransactionsOldForMapping>();
     //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 

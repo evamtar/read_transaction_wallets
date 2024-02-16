@@ -17,6 +17,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tm => tm.EntityId);
             builder.Property(tm => tm.DateSended);
             builder.Property(tm => tm.IsDeleted);
+            builder.Property(tm => tm.TryDeleted);
             builder.HasOne(tm => tm.TelegramChannel).WithMany(tc => tc.TelegramMessages).HasForeignKey(tm => tm.TelegramChannelId);
             builder.HasKey(tm => tm.ID);
         }

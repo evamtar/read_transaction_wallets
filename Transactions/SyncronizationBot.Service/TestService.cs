@@ -28,42 +28,35 @@ namespace SyncronizationBot.Service
 {
     public class TestService : BaseService
     {
-        private readonly ITransactionsRepository _transactionsRepository;
-        private readonly IWalletBalanceHistoryRepository _walletBalanceHistory;
-        private readonly ITransfersService _transfersService;
-        private readonly ITokenRepository _tokenRepository;
-        private readonly ITokenAlphaRepository _tokenAlphaRepository;
-        private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
-        private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
-        private readonly IPublishMessageRepository _publishMessageRepository;
-        private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
+        //private readonly ITransactionsRepository _transactionsRepository;
+        //private readonly IWalletBalanceHistoryRepository _walletBalanceHistory;
+        //private readonly ITransfersService _transfersService;
+        //private readonly ITokenRepository _tokenRepository;
+        //private readonly ITokenAlphaRepository _tokenAlphaRepository;
+        //private readonly ITokenAlphaConfigurationRepository _tokenAlphaConfigurationRepository;
+        //private readonly ITokenAlphaWalletRepository _tokenAlphaWalletRepository;
+        //private readonly IPublishMessageRepository _publishMessageRepository;
+        //private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
 
         public TestService(IMediator mediator,
-                                         IRunTimeControllerRepository runTimeControllerRepository,
-                                         IOptions<SyncronizationBotConfig> syncronizationBotConfig,
-                                         ITransfersService transfersService,
-                                         ITransactionsRepository transactionsRepository,
-                                         IWalletBalanceHistoryRepository walletBalanceHistory,
-                                         ITokenAlphaRepository tokenAlphaRepository,
-                                         ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
-                                         ITokenAlphaWalletRepository tokenAlphaWalletRepository,
-                                         IPublishMessageRepository publishMessageRepositor,
-                                         IOptions<MappedTokensConfig> mappedTokensConfig) : base(mediator, runTimeControllerRepository, ETypeService.NONE, syncronizationBotConfig)
+                           IRunTimeControllerRepository runTimeControllerRepository,
+                           ITypeOperationRepository typeOperationRepository,
+                           IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, typeOperationRepository, ETypeService.NONE, syncronizationBotConfig)
         {
-            this._transfersService = transfersService;
-            this._transactionsRepository = transactionsRepository;
-            this._walletBalanceHistory = walletBalanceHistory;
-            this._mappedTokensConfig = mappedTokensConfig;
-            this._tokenAlphaRepository = tokenAlphaRepository;
-            this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
-            this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
-            this._publishMessageRepository = publishMessageRepositor;
-            base.LogMessage("Iniciando o serviço de teste de alertas");
+            //this._transfersService = transfersService;
+            //this._transactionsRepository = transactionsRepository;
+            //this._walletBalanceHistory = walletBalanceHistory;
+            //this._mappedTokensConfig = mappedTokensConfig;
+            //this._tokenAlphaRepository = tokenAlphaRepository;
+            //this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
+            //this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
+            //this._publishMessageRepository = publishMessageRepositor;
+            //base.LogMessage("Iniciando o serviço de teste de alertas");
         }
 
-        protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
+        protected override async Task DoExecute(CancellationToken cancellationToken)
         {
-            await this._mediator.Send(new RecoverySaveNewsTokensCommand { });
+            await this._mediator.Send(new RecoverySaveNewsTokensCommand { }, cancellationToken);
             //await this.TestePublicMessage();
             //await this.TesteAdicionarAlpha();
             //await this.RepublishTokenAlpha();

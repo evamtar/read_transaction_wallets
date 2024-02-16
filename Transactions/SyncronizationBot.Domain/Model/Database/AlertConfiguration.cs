@@ -6,7 +6,7 @@ namespace SyncronizationBot.Domain.Model.Database
     public class AlertConfiguration : Entity
     {
         public string? Name { get; set; }
-        public ETypeAlert? TypeAlert { get; set; }
+        public Guid? TypeOperationId { get; set; }
         public Guid? TelegramChannelId { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? CreateDate { get; set; }
@@ -14,5 +14,6 @@ namespace SyncronizationBot.Domain.Model.Database
 
         public virtual TelegramChannel? TelegramChannel { get; set; }
         public virtual List<AlertInformation>? AlertsInformations { get; set; }
+        public virtual TypeOperation? TypeOperation { get; set; }
     }
 }

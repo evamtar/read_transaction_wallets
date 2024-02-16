@@ -16,18 +16,22 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private readonly IMediator _mediator;
         private readonly IAlertPriceRepository _alertPriceRepository;
         private readonly IJupiterPriceService _jupiterPriceService;
+        private readonly ITypeOperationRepository _typeOperationRepository;
 
         public SendAlertPriceCommandHandler(IMediator mediator,
-                                              IAlertPriceRepository alertPriceRepository,
-                                              IJupiterPriceService jupiterPriceService)
+                                            IAlertPriceRepository alertPriceRepository,
+                                            IJupiterPriceService jupiterPriceService,
+                                            ITypeOperationRepository _typeOperationRepository)
         {
-            _mediator = mediator;
-            _alertPriceRepository = alertPriceRepository;
-            _jupiterPriceService = jupiterPriceService;
+            this._mediator = mediator;
+            this._alertPriceRepository = alertPriceRepository;
+            this._jupiterPriceService = jupiterPriceService;
+            this._typeOperationRepository = _typeOperationRepository;
         }
 
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
+            var typeOperation = await this._typeOperationRepository.FindFirstOrDefault(x => x.IdTypeOperation == (int)EFixedTypeOperation.AlertPrice);
             var alerts = await this._alertPriceRepository.Get(x => (x.EndDate >= DateTime.Now || x.EndDate == null));
             if (alerts?.Count > 0)
             {
@@ -40,14 +44,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         case ETypeAlertPrice.UP:
                             if (token.Price >= alert.PriceValue || token.Price >= alert.PriceValue + alert.PriceBase * alert.PriceBase)
                             {
-                                await SendAlertMessage(alert, token, EClassifictionMessage.PRICE_UP);
+                                await SendAlertMessage(alert, token, EClassifictionMessage.PRICE_UP, typeOperation);
                                 isSendAlert = true;
                             }
                             break;
                         case ETypeAlertPrice.DOWN:
                             if (token.Price <= alert.PriceValue || token.Price <= alert.PriceBase + alert.PriceBase * alert.PricePercent)
                             {
-                                await SendAlertMessage(alert, token, EClassifictionMessage.PRICE_DOWN);
+                                await SendAlertMessage(alert, token, EClassifictionMessage.PRICE_DOWN, typeOperation);
                                 isSendAlert = true;
                             }
                             break;
@@ -76,12 +80,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             return new SendAlertPriceCommandResponse();
         }
 
-        private async Task SendAlertMessage(AlertPrice alert, RecoverySaveTokenCommandResponse token, EClassifictionMessage type)
+        private async Task SendAlertMessage(AlertPrice alert, RecoverySaveTokenCommandResponse token, EClassifictionMessage type, TypeOperation? typeOperation)
         {
             await this._mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { alert, token }),
-                TypeAlert = ETypeAlert.ALERT_PRICE,
+                TypeOperationId = typeOperation?.ID,
                 IdClassification = (int?)type
             });
         }

@@ -34,10 +34,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     var tokenAlphaConfiguration = await this.GetPublicMessage<TokenAlphaConfiguration>(publicMessage!.ID);
                     var tokensAlphaWalletsToAlert = await this.GetListOfPublicMessage<TokenAlphaWallet>(publicMessage!.ID);
                     //Limpar mensagens de calls anteriores do mesmo token
-                    await this._mediator.Send(new DeleteOldCallsCommand
-                    {
-                        EntityId = publicMessage!.EntityId
-                    });
+                    ///TODO-EVANDRO
+                    //await this._mediator.Send(new DeleteOldCallsCommand
+                    //{
+                    //    EntityId = publicMessage!.EntityId
+                    //});
                     await this._mediator.Send(new SendAlertMessageCommand
                     {
                         IdClassification = this.GetClassificationAlert(tokensAlphaWalletsToAlert!),
@@ -48,7 +49,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         tokenAlphaConfiguration!,
                         tokensAlphaWalletsToAlert
                         }),
-                        TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
+                        TypeOperationId = Guid.NewGuid()//ETypeAlert.ALERT_TOKEN_ALPHA
                     });
                     publicMessage!.ItWasPublished = true;
                     await this._publishMessageRepository.Edit(publicMessage!);

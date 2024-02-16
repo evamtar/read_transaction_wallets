@@ -10,14 +10,8 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
-using System.Xml.Linq;
-using System;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Asn1.Ocsp;
-using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Tokens.Response;
 
 
 

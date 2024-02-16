@@ -74,6 +74,23 @@ BEGIN
 	DROP TABLE [TransactionToken]
 END
 GO
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
+BEGIN
+	DROP TABLE [AlertParameter]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
+BEGIN
+	DROP TABLE [AlertInformation]
+END
+GO
+
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
+BEGIN
+	DROP TABLE [AlertConfiguration]
+END
+GO
 
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Transactions')
 BEGIN
@@ -122,69 +139,59 @@ BEGIN
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertParameter')
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramMessage')
 BEGIN
-	DROP TABLE [AlertParameter]
+	DROP TABLE [TelegramMessage]
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertInformation')
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
 BEGIN
-	DROP TABLE [AlertInformation]
+	DROP TABLE [TelegramChannel]
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertConfiguration')
-BEGIN
-	DROP TABLE [AlertConfiguration]
-END
-GO
 
-IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TelegramChannel')
-BEGIN
-	CREATE TABLE TelegramChannel(
-		ID           UNIQUEIDENTIFIER,
-		ChannelId    DECIMAL(30,0),
-		ChannelName  VARCHAR(50),
-		PRIMARY KEY (ID)
-	);
-END
+CREATE TABLE TelegramChannel(
+	ID               UNIQUEIDENTIFIER,
+	ChannelId        DECIMAL(30,0),
+	ChannelName      VARCHAR(50),
+	TimeBeforeDelete INT,
+	PRIMARY KEY (ID)
+);
 GO 
 
-
-IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'AlertPrice')
-BEGIN
-	CREATE TABLE AlertPrice(
-		ID                UNIQUEIDENTIFIER,
-		CreateDate        DATETIME2,
-		EndDate           DATETIME2,
-		PriceBase         VARCHAR(100),
-		TokenHash         VARCHAR(100),
-		PriceValue        VARCHAR(100),
-		PricePercent      DECIMAL(5,2),
-		TypeAlert         INT,
-		IsRecurrence      BIT,
-		TelegramChannelId UNIQUEIDENTIFIER,   
-		PRIMARY KEY(ID),
-		FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
-	);
-END
+CREATE TABLE AlertPrice(
+	ID                UNIQUEIDENTIFIER,
+	CreateDate        DATETIME2,
+	EndDate           DATETIME2,
+	PriceBase         VARCHAR(100),
+	TokenHash         VARCHAR(100),
+	PriceValue        VARCHAR(100),
+	PricePercent      DECIMAL(5,2),
+	TypeAlert         INT,
+	IsRecurrence      BIT,
+	TelegramChannelId UNIQUEIDENTIFIER,   
+	PRIMARY KEY(ID),
+	FOREIGN KEY (TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
 GO
 
-IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'RunTimeController')
-BEGIN
-	CREATE TABLE RunTimeController
-	(	
-		IdRuntime				 INT,
-		ConfigurationTimer		 VARCHAR(100),
-		TypeService				 INT,
-		IsRunning				 BIT,
-		IsContingecyTransaction BIT,
-		TimesWithoutTransaction INT,
-		JobName                  VARCHAR(200),
-		PRIMARY KEY(IdRuntime)
-	);
-END
+CREATE TABLE RunTimeController
+(	
+	RuntimeId				 INT,
+	ConfigurationTimer		 VARCHAR(100),
+	JobName                  VARCHAR(200),
+	JobDescription		     VARCHAR(500),
+	FullClassName		     VARCHAR(1000),
+	TypeService				 INT,
+	TimesWithoutTransaction  INT,
+	IsRunning				 BIT,
+	IsContingecyTransaction  BIT,
+	IsActive		         BIT,
+	RuntimeParentId			 BIT,
+	PRIMARY KEY(RuntimeId)
+);
 GO 
 
 IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionNotMapped')
@@ -210,9 +217,6 @@ CREATE TABLE ClassWallet(
 );
 GO
 
-
-GO
-
 CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
 	[Hash]               VARCHAR(50),
@@ -228,52 +232,47 @@ CREATE TABLE Wallet(
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ClassWalletId) REFERENCES ClassWallet(ID)
 );
-IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'Token')
-BEGIN
-	CREATE TABLE Token(
-		ID                     UNIQUEIDENTIFIER,
-		[Hash]                 VARCHAR(50),
-		Symbol                 VARCHAR(500),
-		[Name]			       VARCHAR(200),
-		Supply                 VARCHAR(150),
-		MarketCap              VARCHAR(150),
-		Liquidity              VARCHAR(150),
-		UniqueWallet24h        INT,
-		UniqueWalletHistory24h INT,
-		Decimals               INT,
-		NumberMarkets          INT,
-		CreateDate             DATETIME,
-		LastUpdate             DATETIME,
-		PRIMARY KEY (ID)
-	);
-END
+
+CREATE TABLE Token(
+	ID                     UNIQUEIDENTIFIER,
+	[Hash]                 VARCHAR(50),
+	Symbol                 VARCHAR(500),
+	[Name]			       VARCHAR(200),
+	Supply                 VARCHAR(150),
+	MarketCap              VARCHAR(150),
+	Liquidity              VARCHAR(150),
+	UniqueWallet24h        INT,
+	UniqueWalletHistory24h INT,
+	Decimals               INT,
+	NumberMarkets          INT,
+	CreateDate             DATETIME,
+	LastUpdate             DATETIME,
+	PRIMARY KEY (ID)
+);
 GO
 
-IF NOT EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenSecurity')
-BEGIN
-	CREATE TABLE TokenSecurity(
-		ID                 UNIQUEIDENTIFIER,
-		TokenId            UNIQUEIDENTIFIER,
-		CreatorAddress     VARCHAR(100),
-		CreationTime       BIGINT,
-		Top10HolderBalance VARCHAR(150),
-		Top10HolderPercent VARCHAR(150),
-		Top10UserBalance   VARCHAR(150),
-		Top10UserPercent   VARCHAR(150),
-		IsTrueToken        BIT,
-		LockInfo		   NVARCHAR(MAX),
-		Freezeable		   BIT,
-		FreezeAuthority    VARCHAR(100),
-		TransferFeeEnable  VARCHAR(100),
-		TransferFeeData    NVARCHAR(MAX),
-		IsToken2022        BIT,
-		NonTransferable    VARCHAR(100),
-		MintAuthority      VARCHAR(100),
-		IsMutable          BIT,
-		PRIMARY KEY (ID),
-		FOREIGN KEY (TokenId) REFERENCES Token(ID)
-	);
-END
+CREATE TABLE TokenSecurity(
+	ID                 UNIQUEIDENTIFIER,
+	TokenId            UNIQUEIDENTIFIER,
+	CreatorAddress     VARCHAR(100),
+	CreationTime       BIGINT,
+	Top10HolderBalance VARCHAR(150),
+	Top10HolderPercent VARCHAR(150),
+	Top10UserBalance   VARCHAR(150),
+	Top10UserPercent   VARCHAR(150),
+	IsTrueToken        BIT,
+	LockInfo		   NVARCHAR(MAX),
+	Freezeable		   BIT,
+	FreezeAuthority    VARCHAR(100),
+	TransferFeeEnable  VARCHAR(100),
+	TransferFeeData    NVARCHAR(MAX),
+	IsToken2022        BIT,
+	NonTransferable    VARCHAR(100),
+	MintAuthority      VARCHAR(100),
+	IsMutable          BIT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TokenId) REFERENCES Token(ID)
+);
 GO
 
 CREATE TABLE TypeOperation(
@@ -315,8 +314,6 @@ CREATE TABLE TransactionToken(
 	FOREIGN KEY (TokenId) REFERENCES Token(ID),
 	FOREIGN KEY (TransactionsId) REFERENCES Transactions(ID),
 );
-
-
 
 CREATE TABLE TransactionOldForMapping
 (
@@ -397,21 +394,18 @@ CREATE TABLE WalletBalanceHistory
 );
 GO
 
-IF NOT EXISTS (SELECT 1 FROM sys.TABLES WHERE NAME = 'TelegramMessage')
-BEGIN
-	-- Telegram Messages
-	CREATE TABLE TelegramMessage
-	(
-		ID                 UNIQUEIDENTIFIER,
-		MessageId          BIGINT,
-		TelegramChannelId  UNIQUEIDENTIFIER,
-		EntityId		   UNIQUEIDENTIFIER,
-		DateSended         DATETIME2,
-		IsDeleted		   BIT
-		PRIMARY KEY (ID),
-		FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
-	);
-END
+CREATE TABLE TelegramMessage
+(
+	ID                 UNIQUEIDENTIFIER,
+	MessageId          BIGINT,
+	TelegramChannelId  UNIQUEIDENTIFIER,
+	EntityId		   UNIQUEIDENTIFIER,
+	DateSended         DATETIME2,
+	IsDeleted		   BIT,
+	TryDeleted         INT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY(TelegramChannelId) REFERENCES TelegramChannel(ID)
+);
 GO
 
 

@@ -32,7 +32,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertMessageCommandResponse> Handle(SendAlertMessageCommand request, CancellationToken cancellationToken)
         {
-            var configuration = await _alertConfigurationRepository.FindFirstOrDefault(x => x.TypeAlert == request.TypeAlert);
+            var configuration = await _alertConfigurationRepository.FindFirstOrDefault(x => x.TypeOperationId == request.TypeOperationId);
             if (configuration != null)
             {
                 var informations = await _alertInformationRepository.Get(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == null || x.IdClassification == request.IdClassification));

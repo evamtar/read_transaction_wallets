@@ -6,6 +6,7 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public decimal? ChannelId { get; set; }
         public string? ChannelName { get; set; }
+        public int? TimeBeforeDelete { get; set; }
         public virtual List<AlertPrice>? AlertPrices { get; set; }
         public virtual List<AlertConfiguration>? AlertsConfigurations { get; set; }
         public virtual List<TelegramMessage>? TelegramMessages { get; set; }

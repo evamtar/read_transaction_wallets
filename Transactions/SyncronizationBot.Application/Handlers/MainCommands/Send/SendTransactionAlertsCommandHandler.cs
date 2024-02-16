@@ -27,12 +27,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             {
                 EntityId = request?.EntityId,
                 Parameters = request?.Parameters,
-                TypeAlert = await this.TransalateTypeOperationInTypeAlert(request)
+                TypeOperationId = await this.TransalateTypeOperationInTypeAlert(request)
             });
             return new SendTransactionAlertsCommandResponse { };
         }
 
-        private async Task<ETypeAlert> TransalateTypeOperationInTypeAlert(SendTransactionAlertsCommand? request)
+        private async Task<Guid?> TransalateTypeOperationInTypeAlert(SendTransactionAlertsCommand? request)
         {
             ///TODO:Evandro
             //switch (request!.Transactions!.TypeOperation)
@@ -53,7 +53,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             //    default:
             //        return ETypeAlert.NONE;
             //}
-            return ETypeAlert.NONE;
+            return Guid.NewGuid();
         }
 
     }

@@ -76,9 +76,7 @@ namespace SyncronizationBot.Application.Handlers.Base
             switch (this._fontType)
             {
                 case EFontType.BIRDEYE:
-                    return this._config.Value.SaveBalance == ESaveBalance.Byrdeye;
                 case EFontType.SOLANA_FM:
-                    return this._config.Value.SaveBalance == ESaveBalance.SolanaFM;
                 case EFontType.SOLANA_BEACH:
                 case EFontType.DEXSCREENER:
                 case EFontType.JUPITER:
