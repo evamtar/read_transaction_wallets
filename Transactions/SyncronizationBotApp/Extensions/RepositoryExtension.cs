@@ -17,8 +17,6 @@ namespace SyncronizationBotApp.Extensions
             {
                 foreach (var repositoryType in nonBaseRepos)
                 {
-                    var repositoryTypeInfo = (TypeInfo)repositoryType;
-
                     var interfaces = repositoryType.GetInterfaces()
                         .Where(@interface => !@interface.IsGenericType)
                         .ToList();

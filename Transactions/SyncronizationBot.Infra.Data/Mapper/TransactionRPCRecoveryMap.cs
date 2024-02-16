@@ -5,9 +5,9 @@ using SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Infra.Data.Mapper
 {
-    public class TransactionRPCRecoveryMap : IEntityTypeConfiguration<TransactionsRPCRecovery>
+    public class TransactionRPCRecoveryMap : IEntityTypeConfiguration<TransactionRPCRecovery>
     {
-        public void Configure(EntityTypeBuilder<TransactionsRPCRecovery> builder)
+        public void Configure(EntityTypeBuilder<TransactionRPCRecovery> builder)
         {
             builder.ToTable("TransactionRPCRecovery");
             builder.Property(tc => tc.ID);
@@ -17,7 +17,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tc => tc.WalletId);
             builder.Property(tc => tc.CreateDate);
             builder.Property(tc => tc.IsIntegrated);
-            builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsContingencies).HasForeignKey(tc => tc.WalletId);
+            builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsRPCRecovery).HasForeignKey(tc => tc.WalletId);
             builder.HasKey(tc => tc.ID);
         }
     }

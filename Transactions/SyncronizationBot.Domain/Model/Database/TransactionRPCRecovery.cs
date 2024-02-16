@@ -3,7 +3,7 @@
 
 namespace SyncronizationBot.Domain.Model.Database
 {
-    public class TransactionsRPCRecovery : Entity
+    public class TransactionRPCRecovery : Entity
     {
         public string? Signature { get; set; }
         public DateTime? DateOfTransaction { get; set; }

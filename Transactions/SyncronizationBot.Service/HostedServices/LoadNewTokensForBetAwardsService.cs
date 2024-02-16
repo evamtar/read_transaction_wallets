@@ -9,7 +9,7 @@ using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class LoadNewTokensForBetAwardsService : BaseService
+    public class LoadNewTokensForBetAwardsService : BaseHostedService
     {
         public LoadNewTokensForBetAwardsService(IMediator mediator,
                                  IRunTimeControllerRepository runTimeControllerRepository,

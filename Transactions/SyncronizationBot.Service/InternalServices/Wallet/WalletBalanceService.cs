@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository;
 
 namespace SyncronizationBot.Service.InternalServices.Wallet
 {
-    public class WalletBalanceService : BaseService<Entity.WalletBalance>, IWalletBalanceService
+    public class WalletBalanceService : ServiceBase<Entity.WalletBalance>, IWalletBalanceService
     {
         public WalletBalanceService(IWalletBalanceRepository repository) : base(repository)
         {

@@ -8,7 +8,7 @@ using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class AlertTokenAlphaService : BaseService
+    public class AlertTokenAlphaService : BaseHostedService
     {
         public AlertTokenAlphaService(IMediator mediator,
                                       IRunTimeControllerRepository runTimeControllerRepository,

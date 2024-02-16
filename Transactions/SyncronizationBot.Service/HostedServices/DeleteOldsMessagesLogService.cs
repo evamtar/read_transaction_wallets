@@ -8,7 +8,7 @@ using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class DeleteOldsMessagesLogService : BaseService
+    public class DeleteOldsMessagesLogService : BaseHostedService
     {
         public DeleteOldsMessagesLogService(IMediator mediator,
                                             IRunTimeControllerRepository runTimeControllerRepository,

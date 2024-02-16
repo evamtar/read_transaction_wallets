@@ -54,13 +54,12 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
-            wallet.UnixTimeSeconds = finalTicks;
             await _walletRepository.Edit(wallet);
             await _walletRepository.DetachedItem(wallet);
         }
         protected async Task UpdateUnixTimeSeconds(Wallet wallet) 
         {
-            await this.UpdateUnixTimeSeconds((long?)wallet.UnixTimeSeconds, wallet);
+            await this.UpdateUnixTimeSeconds((long?)null, wallet);
         }
 
         protected decimal? GetDivisor(int? decimals)

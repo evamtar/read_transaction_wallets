@@ -49,7 +49,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         {
                             var existsContingency = await this._transactionsContingencyRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
                             if (existsContingency == null)
-                                await this._transactionsContingencyRepository.Add(new TransactionsRPCRecovery 
+                                await this._transactionsContingencyRepository.Add(new TransactionRPCRecovery 
                                 {
                                     Signature = transaction?.Signature,
                                     DateOfTransaction = transaction?.DateOfTransaction,
@@ -67,7 +67,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     }
                 }
                 var listsTransactionsContingency = await this._transactionsContingencyRepository.Get(x => x.WalletId == request.WalletId && x.DateOfTransaction < DateTime.Now.AddMinutes(-10) && x.IsIntegrated == false);
-                listsTransactionsContingency.ForEach(delegate (TransactionsRPCRecovery transaction) { listTransactions.Add(new TransactionsResponse 
+                listsTransactionsContingency.ForEach(delegate (TransactionRPCRecovery transaction) { listTransactions.Add(new TransactionsResponse 
                                                                                                                            { 
                                                                                                                                Signature = transaction.Signature, 
                                                                                                                                BlockTime = transaction.BlockTime 

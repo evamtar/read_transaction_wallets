@@ -97,11 +97,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #endregion
 
-    #region Context / Repositories / Handlers / HostedService (NOT NOW THE EXTENSION)
+    #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
 
     services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Singleton);
-    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
-    services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Transient);
+    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
+    services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
+    services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
 
     #endregion
 

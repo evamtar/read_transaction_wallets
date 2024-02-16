@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace SyncronizationBot.Domain.Service.RecoveryService.Base
 {
-    public interface IServiceBase<T> where T : Entity
+    public interface IServiceBase<T> : IDisposable where T : Entity
     {
         Task<List<T>> GetAll();
         Task<T?> Get(Guid id);

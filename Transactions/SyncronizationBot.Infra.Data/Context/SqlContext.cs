@@ -21,8 +21,8 @@ namespace SyncronizationBot.Infra.Data.Context
         public DbSet<RunTimeController> RunTimeControllers { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<TransactionNotMapped> TransactionsNotMapped { get; set; }
-        public DbSet<TransactionsOldForMapping> TransactionsOldForMappings { get; set; }
-        public DbSet<TransactionsRPCRecovery> TransactionsContingencies { get; set; }
+        public DbSet<TransactionOldForMapping> TransactionsOldForMappings { get; set; }
+        public DbSet<TransactionRPCRecovery> TransactionsContingencies { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
         public DbSet<TokenAlpha> TokenAlphas { get; set; }

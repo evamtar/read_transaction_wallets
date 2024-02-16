@@ -35,7 +35,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     var balanceSFM = await _mediator.Send(new RecoverySaveBalanceSFMCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
                     var balanceByrdeye = await _mediator.Send(new RecoverySaveBalanceBirdeyeCommand { WalletId = wallet?.ID, WalletHash = wallet?.Hash });
                     wallet!.DateLoadBalance = balanceByrdeye.DateLoadBalance ?? balanceSFM.DateLoadBalance ?? DateTime.Now;
-                    wallet!.OldTransactionStared = wallet!.DateLoadBalance;
                     wallet!.IsLoadBalance = true;
                     await UpdateUnixTimeSeconds(finalTicks, wallet);
                 }                

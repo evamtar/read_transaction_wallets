@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 
 namespace SyncronizationBot.Service.InternalServices.Base
 {
-    public class BaseService<T> : IServiceBase<T>, IDisposable where T : Entity
+    public class ServiceBase<T> : IServiceBase<T> where T : Entity
     {
         private readonly IReadCommandRepository<T> _repository;
-        public BaseService(IRepository<T> repository)
+        public ServiceBase(IRepository<T> repository)
         {
             this._repository = repository;
         }

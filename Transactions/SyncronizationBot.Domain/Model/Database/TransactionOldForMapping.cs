@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Model.Enum;
 
 namespace SyncronizationBot.Domain.Model.Database
 {
-    public class TransactionsOldForMapping : Entity
+    public class TransactionOldForMapping : Entity
     {
         public string? Signature { get; set; }
         public DateTime? DateOfTransaction { get; set; }

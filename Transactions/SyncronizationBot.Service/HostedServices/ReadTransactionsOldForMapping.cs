@@ -10,7 +10,7 @@ using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class ReadTransactionsOldForMapping : BaseService
+    public class ReadTransactionsOldForMapping : BaseHostedService
     {
         public ReadTransactionsOldForMapping(IMediator mediator,
                                              IRunTimeControllerRepository runTimeControllerRepository,

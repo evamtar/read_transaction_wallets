@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Repository.Base;
 
 namespace SyncronizationBot.Domain.Repository
 {
-    public interface ITransactionsRPCRecoveryRepository : IRepository<TransactionsRPCRecovery>
+    public interface ITransactionsRPCRecoveryRepository : IRepository<TransactionRPCRecovery>
     {
     }
 }

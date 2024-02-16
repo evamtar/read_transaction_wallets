@@ -9,7 +9,7 @@ using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class ReadTransactionWalletsService : BaseService
+    public class ReadTransactionWalletsService : BaseHostedService
     {
         public ReadTransactionWalletsService(IMediator mediator,
                                              IRunTimeControllerRepository runTimeControllerRepository,

@@ -22,7 +22,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             var exists = await this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
-                await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping
+                await this._transactionsOldForMappingRepository.Add(new TransactionOldForMapping
                 {
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
@@ -38,7 +38,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
-                await this._transactionsOldForMappingRepository.Add(new TransactionsOldForMapping
+                await this._transactionsOldForMappingRepository.Add(new TransactionOldForMapping
                 {
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,

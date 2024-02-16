@@ -10,7 +10,7 @@ namespace SyncronizationBotApp.Extensions
         public static void AddHandlers(this IServiceCollection services, Assembly? assembly, ETypeService typeService)
         {
             var handlerTypes = assembly?.GetTypes()
-                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)));
+                .Where(type => !type.Name.ToUpper().StartsWith("BASE") && !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)));
             if (handlerTypes?.Count() > 0)
             {
                 foreach (var handlerType in handlerTypes)

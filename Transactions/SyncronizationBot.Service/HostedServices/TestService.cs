@@ -26,7 +26,7 @@ using System.Transactions;
 
 namespace SyncronizationBot.Service.HostedServices
 {
-    public class TestService : BaseService
+    public class TestService : BaseHostedService
     {
         //private readonly ITransactionsRepository _transactionsRepository;
         //private readonly IWalletBalanceHistoryRepository _walletBalanceHistory;

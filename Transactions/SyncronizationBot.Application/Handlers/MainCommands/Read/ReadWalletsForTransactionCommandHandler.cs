@@ -8,6 +8,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Utils;
 using System.Collections.Concurrent;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Read
@@ -30,7 +31,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         public async Task<ReadWalletsForTransactionCommandResponse> Handle(ReadWalletsForTransactionCommand request, CancellationToken cancellationToken)
         {
             var hasWalletsWithBalanceLoad = false;
-            var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
+            var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.Hash!);
             await this.LoadClassWallets();
             if (walletsTracked?.Count() > 0) 
             {
@@ -63,7 +64,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     try
                     {
                         HasWalletsWithBalanceLoad = true;
-                        var initialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds);
+                        var initialTicks = base.GetInitialTicks(DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddHours(-1)));
                         var finalTicks = base.GetFinalTicks();
                         if (initialTicks > finalTicks)
                             initialTicks -= (initialTicks - finalTicks) * 2;
@@ -80,7 +81,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                         });
                         this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
                         walletTracked!.LastUpdate = DateTime.Now;
-                        walletTracked.UnixTimeSeconds = finalTicks;
                         WalletsUpdated.Add(walletTracked!);
                     }
                     catch

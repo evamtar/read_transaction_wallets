@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Repository.Base;
 
 namespace SyncronizationBot.Domain.Repository
 {
-    public interface ITransactionOldForMappingRepository : IRepository<TransactionsOldForMapping>
+    public interface ITransactionOldForMappingRepository : IRepository<TransactionOldForMapping>
     {
     }
 }

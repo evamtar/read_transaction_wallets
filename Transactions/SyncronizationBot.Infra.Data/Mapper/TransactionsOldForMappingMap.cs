@@ -5,9 +5,9 @@ using SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Infra.Data.Mapper
 {
-    public class TransactionsOldForMappingMap : IEntityTypeConfiguration<TransactionsOldForMapping>
+    public class TransactionsOldForMappingMap : IEntityTypeConfiguration<TransactionOldForMapping>
     {
-        public void Configure(EntityTypeBuilder<TransactionsOldForMapping> builder)
+        public void Configure(EntityTypeBuilder<TransactionOldForMapping> builder)
         {
             builder.ToTable("TransactionsOldForMapping");
             builder.Property(tofm => tofm.ID);

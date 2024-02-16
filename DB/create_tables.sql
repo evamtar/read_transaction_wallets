@@ -221,14 +221,10 @@ CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
 	[Hash]               VARCHAR(50),
 	ClassWalletId        UNIQUEIDENTIFIER,
-	UnixTimeSeconds      DECIMAL(20,0),
 	IsLoadBalance        BIT,
 	DateLoadBalance      DATETIME2,
-	OldTransactionStared DATETIME2,
-	OldTransactionHours  INT,
 	IsActive             BIT,
-	LastUpdate           DATETIME2, 
-	IsRunningProcess     BIT
+	LastUpdate           DATETIME2
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ClassWalletId) REFERENCES ClassWallet(ID)
 );

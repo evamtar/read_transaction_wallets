@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.Repository
 {
-    public class TransactionOldForMappingRepository : Repository<TransactionsOldForMapping>, ITransactionOldForMappingRepository
+    public class TransactionOldForMappingRepository : Repository<TransactionOldForMapping>, ITransactionOldForMappingRepository
     {
         public TransactionOldForMappingRepository(SqlContext context) : base(context)
         {

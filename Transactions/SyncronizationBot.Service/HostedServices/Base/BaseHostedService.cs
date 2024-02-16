@@ -7,12 +7,12 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Service.HostedServices;
+
 
 
 namespace SyncronizationBot.Service.HostedServices.Base
 {
-    public abstract class BaseService : BackgroundService
+    public abstract class BaseHostedService : BackgroundService
 
     {
         protected readonly IMediator _mediator;
@@ -79,7 +79,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             }
         }
 
-        public BaseService(IMediator mediator,
+        public BaseHostedService(IMediator mediator,
                            IRunTimeControllerRepository runTimeControllerRepository,
                            ITypeOperationRepository typeOperationRepository,
                            ETypeService typeService,
@@ -106,12 +106,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
             await SetPeriodicTimer();
             var hasNextExecute = Timer != null;
             if (hasNextExecute)
-                LogMessage($"Inicialização do serviço: {RunTimeController?.JobName}");
-            while (hasNextExecute)
+                LogMessage($"Inicialização do serviço: {this.RunTimeController?.JobName}");
+            while (!stoppingToken.IsCancellationRequested && hasNextExecute)
             {
                 try
                 {
-                    if (RunTimeController != null && (!RunTimeController!.IsRunning ?? true))
+                    if (this.RunTimeController != null && (!this.RunTimeController!.IsRunning ?? true))
                     {
                         using var timer = Timer;
                         {
@@ -120,12 +120,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
                                 await SetRuntimeControllerAsync(true, false);
                                 if (await timer!.WaitForNextTickAsync(stoppingToken))
                                 {
-                                    LogMessage($"Running --> {RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                    LogMessage($"Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                                     await DoExecute(stoppingToken);
                                     await SetRuntimeControllerAsync(false, true);
-                                    LogMessage($"End --> {RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                    LogMessage($"End --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                                     await SendAlertExecute(timer!);
-                                    LogMessage($"Waiting for service {RunTimeController?.JobName} next tick in {timer!.Period}");
+                                    LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {timer!.Period}");
                                 }
                             }
                             catch (Exception ex)
@@ -133,23 +133,23 @@ namespace SyncronizationBot.Service.HostedServices.Base
                                 await SendAlertServiceError(ex, timer!);
                                 await DetachedRuntimeControllerAsync();
                                 await SetRuntimeControllerAsync(false, true);
-                                LogMessage($"SERVICE -------------> : {RunTimeController?.JobName}");
+                                LogMessage($"SERVICE -------------> : {this.RunTimeController?.JobName}");
                                 LogMessage($"Exceção: {ex.Message}");
                                 LogMessage($"StackTrace: {ex.StackTrace}");
                                 LogMessage($"InnerException: {ex.InnerException}");
                                 LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
                                 LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
-                                LogMessage($"Waiting for service {RunTimeController?.JobName} tick in {timer!.Period}");
+                                LogMessage($"Waiting for service {this.RunTimeController?.JobName} tick in {timer!.Period}");
                             }
                         }
                     }
                     else
                     {
-                        LogMessage($"Is Running --> {RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                        LogMessage($"Is Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                         await SendAlertServiceRunning();
                         await SetRuntimeControllerAsync(false, true);
                         await DetachedRuntimeControllerAsync();
-                        LogMessage($"Recovery Service {RunTimeController?.JobName} ---> Waiting for next execute 00:30:00");
+                        LogMessage($"Recovery Service {this.RunTimeController?.JobName} ---> Waiting for next execute 00:30:00");
                         await Task.Delay(500);
                     }
                 }
@@ -160,9 +160,18 @@ namespace SyncronizationBot.Service.HostedServices.Base
                 await SetPeriodicTimer();
                 hasNextExecute = Timer != null;
             }
-            await SendAlertTimerIsNull();
-            LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-            LogMessage("Finalizado");
+            if (!stoppingToken.IsCancellationRequested)
+            {
+                await SendAlertTimerIsNull();
+                LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            }
+            else 
+            {
+                await SetRuntimeControllerAsync(false, true);
+                await DetachedRuntimeControllerAsync();
+                LogMessage($"Ended --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            }
+                
         }
         protected void EndTransactionsContingencySum(int? totalValidTransactions)
         {
