@@ -17,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ExternalServiceCommands\ExternalServiceExecute\" />
-    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Command\" />
-    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Handler\" />
-    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Response\" />
+    <Folder Include="ExternalServiceCommand\ExternalServiceExecute\" />
+    <Folder Include="ExternalServiceCommand\ExternalServiceRead\SolnetRpc\Balance\Command\" />
+    <Folder Include="ExternalServiceCommand\ExternalServiceRead\SolnetRpc\Balance\Handler\" />
+    <Folder Include="ExternalServiceCommand\ExternalServiceRead\SolnetRpc\Balance\Response\" />
   </ItemGroup>
 
 </Project>
