@@ -5,9 +5,9 @@ using SyncronizationBot.Domain.Model.Database.Base;
 
 namespace SyncronizationBot.Application.DeleteCommands.Base.Commands
 {
-    public class BaseDeleteCommand<T, W> : IRequest<W>
+    public class BaseDeleteCommand<W, T> : IRequest<W>
+                                 where W : BaseDeleteCommandResponse
                                  where T : Entity
-                                 where W : BaseDeleteCommandResponse<T>
     {
         public T? Entity { get; set; }
 

@@ -6,9 +6,10 @@ using SyncronizationBot.Domain.Repository.Base;
 
 namespace SyncronizationBot.Application.InsertCommands.Base.Handlers
 {
-    public class BaseInsertCommandHandler<T, W> : IRequestHandler<BaseInsertCommand<T, W>, BaseInsertCommandResponse<T>>
-                                        where T : Entity
-                                        where W : BaseInsertCommandResponse<T>
+    public class BaseInsertCommandHandler<X, W, T> : IRequestHandler<X, W>
+                                           where X : BaseInsertCommand<W, T>
+                                           where W : BaseInsertCommandResponse<T>
+                                           where T : Entity
     {
         private readonly IWriteCommandRepository<T> _repository;
 
@@ -17,12 +18,14 @@ namespace SyncronizationBot.Application.InsertCommands.Base.Handlers
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }
 
-        public async Task<BaseInsertCommandResponse<T>> Handle(BaseInsertCommand<T, W> request, CancellationToken cancellationToken)
+        public async Task<W> Handle(X request, CancellationToken cancellationToken)
         {
             if (request.Entity != null)
             {
                 var entity = await _repository.Add(request.Entity);
-                return new BaseInsertCommandResponse<T> { Entity = entity };
+                var response = Activator.CreateInstance<W>();
+                response.Entity = entity;
+                return response;
             }
             throw new ArgumentException($"Entity --> {typeof(T)} is null here.");
         }

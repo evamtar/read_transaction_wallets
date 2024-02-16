@@ -5,9 +5,9 @@ using SyncronizationBot.Domain.Model.Database.Base;
 
 namespace SyncronizationBot.Application.UpdateCommands.Base.Commands
 {
-    public class BaseUpdateCommand<T, W> : IRequest<W>
-                                 where T : Entity
+    public class BaseUpdateCommand<W, T> : IRequest<W>
                                  where W : BaseUpdateCommandResponse<T>
+                                 where T : Entity
     {
         public T? Entity { get; set; }
 

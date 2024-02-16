@@ -1,9 +1,9 @@
 ﻿using SyncronizationBot.Application.InsertCommands.Base.Response;
-using Model = SyncronizationBot.Domain.Model.Database;
+using Entity = SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Application.InsertCommands.WalletBalance.Response
 {
-    public class WalletBalanceInsertCommandResponse : BaseInsertCommandResponse<Model.WalletBalance>
+    public class WalletBalanceInsertCommandResponse : BaseInsertCommandResponse<Entity.WalletBalance>
     {
     }
 }

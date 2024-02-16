@@ -3,17 +3,17 @@ using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices
 {
     public class DeleteOldsMessagesLogService : BaseHostedService
     {
-        public DeleteOldsMessagesLogService(IMediator mediator,
-                                            IRunTimeControllerRepository runTimeControllerRepository,
-                                            ITypeOperationRepository typeOperationRepository,
-                                            IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, typeOperationRepository, ETypeService.DeleteOldMessages, syncronizationBotConfig)
+        protected override IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
+        protected override ETypeService? TypeService => ETypeService.DeleteOldMessages;
+
+
+        public DeleteOldsMessagesLogService(IMediator mediator) : base(mediator)
         {
         }
 

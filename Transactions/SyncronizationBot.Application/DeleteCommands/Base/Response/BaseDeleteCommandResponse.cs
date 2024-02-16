@@ -2,8 +2,8 @@
 
 namespace SyncronizationBot.Application.DeleteCommands.Base.Response
 {
-    public class BaseDeleteCommandResponse<T> where T : Entity
+    public class BaseDeleteCommandResponse
     {
-        
+        public bool? IsDeleted {get; set;}
     }
 }

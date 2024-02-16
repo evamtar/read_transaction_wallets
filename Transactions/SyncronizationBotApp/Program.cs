@@ -72,12 +72,15 @@ using SyncronizationBot.Infra.Data.Context;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
 using SyncronizationBot.Service.HostedServices;
+using SyncronizationBot.Domain.Model.PreLoaded;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
+PreLoadedEntities.ServiceProvider = host.Services;
+
 host.Run();
 
 static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
