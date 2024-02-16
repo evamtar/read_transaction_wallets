@@ -16,4 +16,11 @@
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ExternalServiceCommands\ExternalServiceExecute\" />
+    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Command\" />
+    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Handler\" />
+    <Folder Include="ExternalServiceCommands\ExternalServiceRead\SolnetRpc\Balance\Response\" />
+  </ItemGroup>
+
 </Project>

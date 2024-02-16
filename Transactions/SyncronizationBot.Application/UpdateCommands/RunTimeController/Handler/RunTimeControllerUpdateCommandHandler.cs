@@ -1,10 +1,10 @@
-﻿using SyncronizationBot.Application.UpdateCommands.Base.Handlers;
-using SyncronizationBot.Application.UpdateCommands.RunTimeController.Commands;
-using SyncronizationBot.Application.UpdateCommands.RunTimeController.Response;
+﻿using SyncronizationBot.Application.UpdateCommand.Base.Handler;
+using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
+using SyncronizationBot.Application.UpdateCommand.RunTimeController.Response;
 using SyncronizationBot.Domain.Repository;
 using Entity = SyncronizationBot.Domain.Model.Database;
 
-namespace SyncronizationBot.Application.UpdateCommands.RunTimeController.Handlers
+namespace SyncronizationBot.Application.UpdateCommand.RunTimeController.Handler
 {
     public class RunTimeControllerUpdateCommandHandler : BaseUpdateCommandHandler<RunTimeControllerUpdateCommand, RunTimeControllerUpdateCommandResponse, Entity.RunTimeController>
     {

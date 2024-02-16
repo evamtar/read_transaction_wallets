@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.InsertCommands.Base.Commands;
-using SyncronizationBot.Application.InsertCommands.Base.Response;
+using SyncronizationBot.Application.InsertCommand.Base.Command;
+using SyncronizationBot.Application.InsertCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.Base;
 
-namespace SyncronizationBot.Application.InsertCommands.Base.Handlers
+namespace SyncronizationBot.Application.InsertCommand.Base.Handler
 {
     public class BaseInsertCommandHandler<X, W, T> : IRequestHandler<X, W>
                                            where X : BaseInsertCommand<W, T>

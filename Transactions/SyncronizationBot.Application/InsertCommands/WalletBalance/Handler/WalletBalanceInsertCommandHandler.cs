@@ -1,10 +1,10 @@
-﻿using SyncronizationBot.Application.InsertCommands.Base.Handlers;
-using SyncronizationBot.Application.InsertCommands.WalletBalance.Commands;
-using SyncronizationBot.Application.InsertCommands.WalletBalance.Response;
+﻿using SyncronizationBot.Application.InsertCommand.Base.Handler;
+using SyncronizationBot.Application.InsertCommand.WalletBalance.Command;
+using SyncronizationBot.Application.InsertCommand.WalletBalance.Response;
 using SyncronizationBot.Domain.Repository;
 using Entity = SyncronizationBot.Domain.Model.Database;
 
-namespace SyncronizationBot.Application.InsertCommands.WalletBalance.Handlers
+namespace SyncronizationBot.Application.InsertCommand.WalletBalance.Handler
 {
     public class WalletBalanceInsertCommandHandler : BaseInsertCommandHandler<WalletBalanceInsertCommand, WalletBalanceInsertCommandResponse, Entity.WalletBalance>
     {

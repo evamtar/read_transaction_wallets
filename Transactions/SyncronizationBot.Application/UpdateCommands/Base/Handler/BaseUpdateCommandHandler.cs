@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.UpdateCommands.Base.Commands;
-using SyncronizationBot.Application.UpdateCommands.Base.Response;
+using SyncronizationBot.Application.UpdateCommand.Base.Command;
+using SyncronizationBot.Application.UpdateCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.Base;
 
-namespace SyncronizationBot.Application.UpdateCommands.Base.Handlers
+namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
 {
     public class BaseUpdateCommandHandler<X, W, T> : IRequestHandler<X, W>
                                            where X : BaseUpdateCommand<W, T>

@@ -1,6 +1,6 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
 
-namespace SyncronizationBot.Application.UpdateCommands.Base.Response
+namespace SyncronizationBot.Application.UpdateCommand.Base.Response
 {
     public class BaseUpdateCommandResponse<T> where T : Entity
     {

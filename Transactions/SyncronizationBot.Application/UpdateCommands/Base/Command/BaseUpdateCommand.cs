@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using SyncronizationBot.Application.UpdateCommands.Base.Response;
+using SyncronizationBot.Application.UpdateCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
 
 
-namespace SyncronizationBot.Application.UpdateCommands.Base.Commands
+namespace SyncronizationBot.Application.UpdateCommand.Base.Command
 {
     public class BaseUpdateCommand<W, T> : IRequest<W>
                                  where W : BaseUpdateCommandResponse<T>
