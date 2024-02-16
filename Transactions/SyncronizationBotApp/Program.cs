@@ -69,9 +69,9 @@ using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using SyncronizationBot.Infra.Data.Context;
-using SyncronizationBot.Service;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
+using SyncronizationBot.Service.HostedServices;
 
 var builder = Host.CreateApplicationBuilder(args);
 

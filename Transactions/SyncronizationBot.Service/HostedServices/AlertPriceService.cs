@@ -4,13 +4,13 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Service.Base;
+using SyncronizationBot.Service.HostedServices.Base;
 
-namespace SyncronizationBot.Service
+namespace SyncronizationBot.Service.HostedServices
 {
     public class AlertPriceService : BaseService
     {
-        public AlertPriceService(IMediator mediator, 
+        public AlertPriceService(IMediator mediator,
                                  IRunTimeControllerRepository runTimeControllerRepository,
                                  ITypeOperationRepository typeOperationRepository,
                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, typeOperationRepository, ETypeService.Price, syncronizationBotConfig)
@@ -19,8 +19,8 @@ namespace SyncronizationBot.Service
 
         protected override async Task DoExecute(CancellationToken cancellationToken)
         {
-            await this._mediator.Send(new SendAlertPriceCommand { }, cancellationToken);
+            await _mediator.Send(new SendAlertPriceCommand { }, cancellationToken);
         }
-        
+
     }
 }

@@ -18,13 +18,13 @@ using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
-using SyncronizationBot.Service.Base;
+using SyncronizationBot.Service.HostedServices.Base;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Transactions;
 
 
-namespace SyncronizationBot.Service
+namespace SyncronizationBot.Service.HostedServices
 {
     public class TestService : BaseService
     {
@@ -56,7 +56,7 @@ namespace SyncronizationBot.Service
 
         protected override async Task DoExecute(CancellationToken cancellationToken)
         {
-            await this._mediator.Send(new RecoverySaveNewsTokensCommand { }, cancellationToken);
+            await _mediator.Send(new RecoverySaveNewsTokensCommand { }, cancellationToken);
             //await this.TestePublicMessage();
             //await this.TesteAdicionarAlpha();
             //await this.RepublishTokenAlpha();

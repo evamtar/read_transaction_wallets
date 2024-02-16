@@ -4,9 +4,9 @@ using SyncronizationBot.Application.Commands.MainCommands.Delete;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Service.Base;
+using SyncronizationBot.Service.HostedServices.Base;
 
-namespace SyncronizationBot.Service
+namespace SyncronizationBot.Service.HostedServices
 {
     public class DeleteOldsMessagesLogService : BaseService
     {
@@ -19,7 +19,7 @@ namespace SyncronizationBot.Service
 
         protected override async Task DoExecute(CancellationToken cancellationToken)
         {
-            await this._mediator.Send(new DeleteTelegramMessageCommand { }, cancellationToken);
+            await _mediator.Send(new DeleteTelegramMessageCommand { }, cancellationToken);
         }
     }
 }

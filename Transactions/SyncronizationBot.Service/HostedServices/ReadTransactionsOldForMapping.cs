@@ -6,9 +6,9 @@ using SyncronizationBot.Application.Commands.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Service.Base;
+using SyncronizationBot.Service.HostedServices.Base;
 
-namespace SyncronizationBot.Service
+namespace SyncronizationBot.Service.HostedServices
 {
     public class ReadTransactionsOldForMapping : BaseService
     {
@@ -21,7 +21,7 @@ namespace SyncronizationBot.Service
 
         protected override async Task DoExecute(CancellationToken cancellationToken)
         {
-            var response = await this._mediator.Send(new ReadWalletsCommandForTransacionOldCommand { }, cancellationToken);
+            var response = await _mediator.Send(new ReadWalletsCommandForTransacionOldCommand { }, cancellationToken);
         }
     }
 }
