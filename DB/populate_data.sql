@@ -1,4 +1,5 @@
 ﻿UPDATE RunTimeController SET IsRunning = 0
+SELECT * FROM RunTimeController WHERE TypeService = 2
 /*********** RUNTIME CONTROLLER ***********/ 
 --INSERT INTO RunTimeController VALUES(1, '1', 'Main Job Controller', 'Serviço de controle de job''s', '', 1, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Alerta de Transações', 'Serviço de alerta de transações', '', 2, 0, 0, 0, 1, null);
