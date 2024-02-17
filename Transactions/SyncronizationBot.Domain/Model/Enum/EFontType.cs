@@ -5,7 +5,8 @@ namespace SyncronizationBot.Domain.Model.Enum
     public enum EFontType
     {
         ALL = 0,
-        BIRDEYE = 1,
+        SOLANA_RPC = 1,
+        BIRDEYE,
         SOLANA_FM,
         SOLANA_BEACH,
         DEXSCREENER,

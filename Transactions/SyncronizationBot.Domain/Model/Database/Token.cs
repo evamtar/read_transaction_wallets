@@ -16,7 +16,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? NumberMarkets { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
-
+        public bool? IsLazyLoad {get;set;}
         public virtual List<WalletBalance>? Balances { get; set; }
         public virtual List<WalletBalanceSFMCompare>? BalancesSFMCompare { get; set; }
         public virtual List<TokenSecurity>? TokenSecurities { get; set; }

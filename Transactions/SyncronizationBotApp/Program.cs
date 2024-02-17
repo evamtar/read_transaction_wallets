@@ -6,35 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
 using Polly.Extensions.Http;
-using SyncronizationBot.Application.Commands.Birdeye;
-using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
-using SyncronizationBot.Application.Commands.MainCommands.Calculated;
-using SyncronizationBot.Application.Commands.MainCommands.Delete;
-using SyncronizationBot.Application.Commands.MainCommands.Read;
-using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Commands.MainCommands.Send;
-using SyncronizationBot.Application.Commands.MainCommands.Triggers;
-using SyncronizationBot.Application.Commands.SolanaFM;
-using SyncronizationBot.Application.Handlers.Birdeye;
-using SyncronizationBot.Application.Handlers.MainCommands.AddUpdate;
-using SyncronizationBot.Application.Handlers.MainCommands.Calculated;
-using SyncronizationBot.Application.Handlers.MainCommands.Delete;
-using SyncronizationBot.Application.Handlers.MainCommands.Read;
-using SyncronizationBot.Application.Handlers.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Handlers.MainCommands.Send;
-using SyncronizationBot.Application.Handlers.MainCommands.Triggers;
-using SyncronizationBot.Application.Handlers.SolanaFM;
-using SyncronizationBot.Application.Response.Birdeye;
-using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
-using SyncronizationBot.Application.Response.MainCommands.Calculated;
-using SyncronizationBot.Application.Response.MainCommands.Delete;
-using SyncronizationBot.Application.Response.MainCommands.Read;
-using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response.MainCommands.Send;
-using SyncronizationBot.Application.Response.MainCommands.Triggers;
-using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
@@ -72,15 +44,18 @@ using SyncronizationBot.Infra.Data.Context;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
 using SyncronizationBot.Service.HostedServices;
-using SyncronizationBot.Domain.Model.PreLoaded;
+using SyncronizationBot.Domain.Service.InternalService.Utils;
+using SyncronizationBot.Service.InternalServices.Utils;
+using SyncronizationBot.Service.HostedWork;
+using SyncronizationBot.Domain.Service.InternalService.HostedWork;
+using SyncronizationBot.Application.AutoMapper.Profiles;
+
 
 var builder = Host.CreateApplicationBuilder(args);
 
 ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
-PreLoadedEntities.ServiceProvider = host.Services;
-
 host.Run();
 
 static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -102,15 +77,20 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Singleton);
-    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
-    services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
-    services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Singleton);
-
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    #region Special Service
+    services.AddScoped<IPreLoadedEntitiesService, PreLoadedEntitiesService>();
+    #endregion
+    services.AddScoped<IBalanceWalletsWork, BalanceWalletsWork>(); 
+    services.AddAutoMapper(typeof(ServiceMediatorProfile));
+    
     #endregion
 
     #region Hosted Service
-    services.AddHostedService<BalanceWalletsService>();
+    services.AddHostedService<BalanceWalletsHostedService>();
 
     //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<AlertPriceService>();

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
@@ -7,19 +8,17 @@ using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Model.PreLoaded;
-using SyncronizationBot.Domain.Repository;
-
-
+using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
+using SyncronizationBot.Domain.Service.InternalService.Utils;
 
 namespace SyncronizationBot.Service.HostedServices.Base
 {
-    public abstract class BaseHostedService : BackgroundService
+    public class BaseHostedService<T> : BackgroundService where T : IHostWorkService
 
     {
         #region Readonly Variables
 
-        protected readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
         
         #endregion
 
@@ -31,7 +30,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             get
             {
                 if (_typeOperationLogExecute == null)
-                    _typeOperationLogExecute = PreLoadedEntities.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogExecute).GetAwaiter().GetResult();
+                    _typeOperationLogExecute = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogExecute).GetAwaiter().GetResult();
                 return _typeOperationLogExecute;
             }
         }
@@ -42,8 +41,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
             get
             {
                 if (_typeOperationLogError == null)
-                    _typeOperationLogError = PreLoadedEntities.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogError).GetAwaiter().GetResult();
-                return _typeOperationLogError;
+                    this._typeOperationLogError = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogError).GetAwaiter().GetResult();
+                return this._typeOperationLogError;
             }
         }
 
@@ -53,7 +52,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             get
             {
                 if (_typeOperationLogRunning == null)
-                    _typeOperationLogRunning = PreLoadedEntities.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppRunning).GetAwaiter().GetResult();
+                    _typeOperationLogRunning = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppRunning).GetAwaiter().GetResult();
                 return _typeOperationLogRunning;
             }
         }
@@ -64,7 +63,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             get
             {
                 if (_typeOperationLogLostConfiguration == null)
-                    _typeOperationLogLostConfiguration = PreLoadedEntities.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppLostConfiguration).GetAwaiter().GetResult();
+                    _typeOperationLogLostConfiguration = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppLostConfiguration).GetAwaiter().GetResult();
                 return _typeOperationLogLostConfiguration;
             }
         }
@@ -73,6 +72,10 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         #region Properties
 
+        protected IMediator Mediator { get; set; }
+        protected T? Work { get; set; }
+        protected IPreLoadedEntitiesService? PreLoadedEntitiesService { get; set; }
+        protected IOptions<SyncronizationBotConfig>? Options { get; set; }
         protected RunTimeController? RunTimeController { get; set; }
         protected PeriodicTimer Timer { get; set; }
         private int? TimesWithoutTransaction { get; set; }
@@ -90,106 +93,100 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         #endregion
 
-        #region Abstract Properties
-
-        protected abstract IOptions<SyncronizationBotConfig>? Options { get; }
-        protected abstract ETypeService? TypeService { get; }
-
-        #endregion
-
         #region Constructors
 
-        public BaseHostedService(IMediator mediator)
+        public BaseHostedService(IServiceProvider serviceProvider)
         {
-            this._mediator = mediator;
+            this._serviceProvider = serviceProvider;
+            this.PreLoadedEntitiesService = null!;
+            this.Options = null!;
             this.Timer = null!;
+            this.Mediator = null!;
+            this.Work = default;
         }
 
         #endregion
 
-        #region Abstract Methods
-
-        protected abstract Task DoExecute(CancellationToken cancellationToken);
-
-        #endregion
-
+        
         #region ExecuteAsync Override
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-#if DEBUG
-            if (GetType() == typeof(TestService))
+            using (var scope = this._serviceProvider.CreateScope()) 
             {
-                await DoExecute(stoppingToken);
-                return;
-            }
-#endif
-            await SetPeriodicTimer();
-            var hasNextExecute = Timer != null;
-            if (hasNextExecute)
-                LogMessage($"Inicialização do serviço: {this.RunTimeController?.JobName}");
-            while (!stoppingToken.IsCancellationRequested && hasNextExecute)
-            {
-                try
+                this.PreLoadedEntitiesService = scope.ServiceProvider.GetRequiredService<IPreLoadedEntitiesService>();
+                this.Work = scope.ServiceProvider.GetRequiredService<T>();
+                this.Mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                //Init Service
+                await SetPeriodicTimer();
+                var hasNextExecute = Timer != null;
+                if (hasNextExecute)
+                    LogMessage($"Inicialização do serviço: {this.RunTimeController?.JobName}");
+                while (!stoppingToken.IsCancellationRequested && hasNextExecute)
                 {
-                    if (this.RunTimeController != null && (!this.RunTimeController!.IsRunning ?? true))
+                    try
                     {
-                        using var timer = Timer;
+                        if (this.RunTimeController != null && (!this.RunTimeController!.IsRunning ?? true))
                         {
-                            try
+                            using var timer = Timer;
                             {
-                                await SetRuntimeControllerAsync(true);
-                                if (await timer!.WaitForNextTickAsync(stoppingToken))
+                                try
                                 {
-                                    LogMessage($"Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                                    await DoExecute(stoppingToken);
+                                    await SetRuntimeControllerAsync(true);
+                                    if (await timer!.WaitForNextTickAsync(stoppingToken))
+                                    {
+                                        LogMessage($"Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                        await this.Work.DoExecute(stoppingToken);
+                                        await SetRuntimeControllerAsync(false);
+                                        LogMessage($"End --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                        await SendAlertExecute(timer!);
+                                        LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {timer!.Period}");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    await SendAlertServiceError(ex, timer!);
                                     await SetRuntimeControllerAsync(false);
-                                    LogMessage($"End --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                                    await SendAlertExecute(timer!);
-                                    LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {timer!.Period}");
+                                    LogMessage($"SERVICE -------------> : {this.RunTimeController?.JobName}");
+                                    LogMessage($"Exceção: {ex.Message}");
+                                    LogMessage($"StackTrace: {ex.StackTrace}");
+                                    LogMessage($"InnerException: {ex.InnerException}");
+                                    LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
+                                    LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
+                                    LogMessage($"Waiting for service {this.RunTimeController?.JobName} tick in {timer!.Period}");
                                 }
                             }
-                            catch (Exception ex)
+                        }
+                        else
+                        {
+                            if (this.RunTimeController != null)
                             {
-                                await SendAlertServiceError(ex, timer!);
+                                LogMessage($"Is Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                await SendAlertServiceRunning();
                                 await SetRuntimeControllerAsync(false);
-                                LogMessage($"SERVICE -------------> : {this.RunTimeController?.JobName}");
-                                LogMessage($"Exceção: {ex.Message}");
-                                LogMessage($"StackTrace: {ex.StackTrace}");
-                                LogMessage($"InnerException: {ex.InnerException}");
-                                LogMessage($"InnerException---> Message: {ex.InnerException?.Message}");
-                                LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
-                                LogMessage($"Waiting for service {this.RunTimeController?.JobName} tick in {timer!.Period}");
+                                LogMessage($"Recovery Service {this.RunTimeController?.JobName} ---> Waiting for next execute 00:30:00");
+                                await Task.Delay(500);
+                            }
+                            else
+                            {
+                                await SendAlertTimerIsNull();
+                                LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                                hasNextExecute = false;
+                                break;
                             }
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        LogMessage($"Is Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                        await SendAlertServiceRunning();
-                        await SetRuntimeControllerAsync(false);
-                        LogMessage($"Recovery Service {this.RunTimeController?.JobName} ---> Waiting for next execute 00:30:00");
-                        await Task.Delay(500);
+                        LogMessage(ex.Message);
                     }
+                    await SetPeriodicTimer();
+                    hasNextExecute = Timer != null;
                 }
-                catch (Exception ex)
-                {
-                    LogMessage(ex.Message);
-                }
-                await SetPeriodicTimer();
-                hasNextExecute = Timer != null;
-            }
-            if (!stoppingToken.IsCancellationRequested)
-            {
-                await SendAlertTimerIsNull();
-                LogMessage($"Timer está nulo ou não configurado: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-            }
-            else 
-            {
                 await SetRuntimeControllerAsync(false);
-                LogMessage($"Ended --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                this.LogMessage($"Ended --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
-                
+            
         }
 
         #endregion
@@ -202,7 +199,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task<RunTimeController?> GetRunTimeControllerAsync()
         {
-            return await PreLoadedEntities.FirstOrDefaulRunTimeControllerAsync(x => x.IsRunning == false && x.TypeService == this.TypeService);
+            return await this.PreLoadedEntitiesService!.FirstOrDefaulRunTimeControllerAsync(x => x.TypeService == this.Work!.TypeService);
         }
         protected void EndTransactionsContingencySum(int? totalValidTransactions)
         {
@@ -221,7 +218,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         private async Task SetRuntimeControllerAsync(bool isRunning)
         {
             RunTimeController!.IsRunning = isRunning;
-            var response = await _mediator.Send(new RunTimeControllerUpdateCommand { Entity = RunTimeController });
+            var response = await this.Mediator.Send(new RunTimeControllerUpdateCommand { Entity = RunTimeController });
             RunTimeController = response?.Entity;
         }
         private async Task SetPeriodicTimer()
@@ -241,7 +238,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         private async Task SendAlertExecute(PeriodicTimer timer)
         {
-            await _mediator.Send(new SendAlertMessageCommand
+            await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
@@ -255,7 +252,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         private async Task SendAlertServiceRunning()
         {
             RunTimeController = await GetRunTimeControllerAsync();
-            await _mediator.Send(new SendAlertMessageCommand
+            await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
@@ -267,7 +264,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertTimerIsNull()
         {
-            await _mediator.Send(new SendAlertMessageCommand
+            await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {
@@ -279,7 +276,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertServiceError(Exception ex, PeriodicTimer timer)
         {
-            await _mediator.Send(new SendAlertMessageCommand
+            await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
                 {

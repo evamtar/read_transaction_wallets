@@ -1,4 +1,5 @@
-﻿using Solnet.Extensions;
+﻿using Org.BouncyCastle.Asn1.Ocsp;
+using Solnet.Extensions;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
@@ -10,9 +11,10 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
 {
     public class SolnetBalanceService : ISolnetBalanceService
     {
+        private DateTime? ExecuteDateTime { get; set; }
+
         private readonly IRpcClient _client;
         private readonly ITokenMintResolver _tokens;
-
         public SolnetBalanceService()
         {
             this._client = ClientFactory.GetClient(Cluster.MainNet);
@@ -22,31 +24,52 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
         public async Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
         {
             var listBalances = new List<BalanceResponse>();
-            
+            //GetSolValue
+            listBalances.Add(await this.GetAmountBalanceInSol(request));
+            //GetAnotherTokens
+            listBalances.AddRange(await this.GetBalanceResult(request));
+            return new SolnetBalanceResponse { IsSuccess = true, DateLoadBalance = this.ExecuteDateTime, Result = listBalances };
+        }
+
+        private async Task<BalanceResponse> GetAmountBalanceInSol(SolnetBalanceRequest request) 
+        {
             var balance = await this._client.GetBalanceAsync(request?.WalletHash ?? string.Empty);
-            var accountInfo = await this._client.GetAccountInfoAsync(request?.WalletHash ?? string.Empty);
-            listBalances.Add(await this.GetBalanceResult(balance, accountInfo));
+            return new BalanceResponse
+            {
+                Amount = balance.Result.Value,
+                Token = new TokenResponse
+                {
+                    Hash = "So11111111111111111111111111111111111111112",
+                    Decimals = 9,
+                    Name = "Solana",
+                    Symbol = "SOL"
+                }
+            };
+        }
 
+        private async Task<List<BalanceResponse>> GetBalanceResult(SolnetBalanceRequest request)
+        {
+            var listBalances = new List<BalanceResponse>();
             TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+            this.ExecuteDateTime = DateTime.Now;
             var balances = tokenWallet.Balances();
-            foreach (var tokenBalance in balances)
-                listBalances.Add(await this.GetBalanceResult(tokenBalance));
-
-            return new SolnetBalanceResponse { IsSuccess = true, ExecutionDate = DateTime.Now, Result = listBalances };
-        }
-
-        private Task<BalanceResponse> GetBalanceResult(RequestResult<ResponseValue<ulong>> balance, RequestResult<ResponseValue<Solnet.Rpc.Models.AccountInfo>> accountInfo) 
-        {
-            //TODO
-            //balance - {"jsonrpc":"2.0","result":{"context":{"apiVersion":"1.17.21","slot":247983600},"value":1082851562},"id":1}
-            //accountInfo - {"jsonrpc":"2.0","result":{"context":{"apiVersion":"1.17.21","slot":247983635},"value":{"data":["","base64"],"executable":false,"lamports":1082851562,"owner":"11111111111111111111111111111111","rentEpoch":18446744073709551615,"space":0}},"id":2}
-            return null!;
-        }
-
-        private Task<BalanceResponse> GetBalanceResult(TokenWalletBalance tokenBalance)
-        {
-            //TODO
-            return null!;
+            foreach (var balance in balances)
+            {
+                if ((request?.IgnoreAmountValueZero ?? false) && balance.QuantityDecimal == 0)
+                    continue;
+                listBalances.Add(new BalanceResponse
+                {
+                    Amount = balance.QuantityDecimal,
+                    Token = new TokenResponse
+                    {
+                        Hash = balance.TokenMint,
+                        Symbol = balance.Symbol,
+                        Name = balance.TokenName,
+                        Decimals = balance.DecimalPlaces
+                    }
+                });
+            }
+            return listBalances;
         }
     }
 }
