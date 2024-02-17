@@ -95,7 +95,6 @@ namespace SyncronizationBot.Service.HostedWork
                         wallet!.IsLoadBalance = true;
                         await this._mediator.Send(new WalletUpdateCommand { Entity = wallet });
                     }
-
                 }
             }
         }

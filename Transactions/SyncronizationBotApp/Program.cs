@@ -81,11 +81,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    services.AddWorkers(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    services.AddAutoMapper(typeof(ServiceMediatorProfile));
     #region Special Service
     services.AddScoped<IPreLoadedEntitiesService, PreLoadedEntitiesService>();
     #endregion
-    services.AddScoped<IBalanceWalletsWork, BalanceWalletsWork>(); 
-    services.AddAutoMapper(typeof(ServiceMediatorProfile));
     
     #endregion
 

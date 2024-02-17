@@ -3,6 +3,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
 using SyncronizationBot.Domain.Service.RecoveryService.Base;
 using SyncronizationBot.Infra.Data.Repository.Base;
 using SyncronizationBot.Service.InternalServices.Base;
@@ -38,6 +39,37 @@ namespace SyncronizationBotApp.Extensions
                             break;
                         case ETypeService.Singleton:
                             services.AddSingleton(interfaces[0], serviceType);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        public static void AddWorkers(this IServiceCollection services, Assembly? assembly, ETypeService typeService) 
+        {
+            var workersTypes = assembly?.GetTypes()
+                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsInterface && x.GetInterface("IHostWorkService") != null));
+            if (workersTypes?.Count() > 0)
+            {
+                foreach (var workType in workersTypes)
+                {
+                    var interfaces = workType.GetInterfaces()
+                        .Where(@interface => !@interface.IsGenericType && !@interface.Name.Contains("IHostWorkService"))
+                        .ToList();
+
+                    if (interfaces.Count != 1)
+                        throw new InvalidOperationException($"Worker '{workType.Name}' must implement only one interface that implements IHostWorkService.");
+                    switch (typeService)
+                    {
+                        case ETypeService.Scoped:
+                            services.AddScoped(interfaces[0], workType);
+                            break;
+                        case ETypeService.Transient:
+                            services.AddTransient(interfaces[0], workType);
+                            break;
+                        case ETypeService.Singleton:
+                            services.AddSingleton(interfaces[0], workType);
                             break;
                         default:
                             break;
