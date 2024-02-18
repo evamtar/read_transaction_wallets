@@ -66,13 +66,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 
         private async Task<RecoveryAddUpdateBalanceItemCommandResponse> UpdateBalance(Guid? walleId, Guid? tokenId, string? signature, string? tokenHash, decimal? quantity) 
         {
-            var balance = await _walletBalanceRepository.FindFirstOrDefault(x => x.TokenId == tokenId && x.WalletId == walleId);
+            var balance = await _walletBalanceRepository.FindFirstOrDefaultAsync(x => x.TokenId == tokenId && x.WalletId == walleId);
             var percentage = (decimal?)100;
             var oldQuantity = (decimal?)0;
             if (balance == null)
             {
                 var price = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { tokenHash! } });
-                balance = await this._walletBalanceRepository.Add(new WalletBalance
+                balance = await this._walletBalanceRepository.AddAsync(new WalletBalance
                 {
                     WalletId = walleId,
                     TokenId = tokenId,
@@ -83,7 +83,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     IsActive = quantity > 0,
                     LastUpdate = DateTime.Now
                 });
-                await this._walletBalanceRepository.DetachedItem(balance);
+                await this._walletBalanceRepository.DetachedItemAsync(balance);
             }
             else
             {
@@ -98,11 +98,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance.TotalValueUSD = balance.Quantity * price?.Data?[tokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
-                balance = await this._walletBalanceRepository.Edit(balance);
-                await this._walletBalanceRepository.DetachedItem(balance);
+                balance = await this._walletBalanceRepository.UpdateAsync(balance);
+                await this._walletBalanceRepository.DetachedItemAsync(balance);
             }
 
-            var walletBalanceHistory = await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+            var walletBalanceHistory = await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
             {
                 WalletBalanceId = balance.ID,
                 WalletId = balance.WalletId,
@@ -118,7 +118,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 CreateDate = DateTime.Now,
                 LastUpdate = balance.LastUpdate
             });
-            await this._walletBalanceHistoryRepository.DetachedItem(walletBalanceHistory);
+            await this._walletBalanceHistoryRepository.DetachedItemAsync(walletBalanceHistory);
             return new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = balance.Quantity,

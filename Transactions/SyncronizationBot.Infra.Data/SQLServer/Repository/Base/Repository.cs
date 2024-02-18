@@ -14,14 +14,14 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             _context = context;
         }
 
-        public async Task<T> Add(T item)
+        public async Task<T> AddAsync(T item)
         {
             await _context.Set<T>().AddAsync(item);
             await _context.SaveChangesAsync();
             return item;
         }
 
-        public async Task<T> DetachedItem(T item)
+        public async Task<T> DetachedItemAsync(T item)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             return item;
         }
 
-        public async Task<T> AddSingleItem(T item)
+        public async Task<T> AddSingleItemAsync(T item)
         {
             _context.Entry(item).State = EntityState.Detached;
             await _context.Set<T>().AddAsync(item);
@@ -40,22 +40,22 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             return item;
         }
 
-        public async Task Delete(Guid id)
+        public async Task DeleteByIdAsync(Guid id)
         {
-            var entity = await Get(id);
+            var entity = await GetAsync(id);
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Truncate(string tableName)
+        public async Task TruncateAsync(string tableName)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             await _context.SaveChangesAsync();
         }
 
-        public async Task<T> Edit(T item)
+        public async Task<T> UpdateAsync(T item)
         {
             _context.Entry(item).State = EntityState.Detached;
             _context.Set<T>().Update(item);
@@ -76,12 +76,12 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             return item;
         }
 
-        public async Task<T?> Get(Guid id)
+        public async Task<T?> GetAsync(Guid id)
         {
-            return await FindFirstOrDefault(e => e.ID == id);
+            return await FindFirstOrDefaultAsync(e => e.ID == id);
         }
 
-        public async Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
+        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
                 return await _context.Set<T>().Where(predicate).OrderBy(keySelector).ToListAsync();
@@ -89,7 +89,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
                 return await _context.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
+        public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
                 return await _context.Set<T>().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
@@ -97,7 +97,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
                 return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }

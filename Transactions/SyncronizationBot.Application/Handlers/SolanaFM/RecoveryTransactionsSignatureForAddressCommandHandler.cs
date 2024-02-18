@@ -40,16 +40,16 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 var responseDataOrdened = response.Result!.OrderBy(x => x.BlockTime).ThenBy(x => x.DateOfTransaction);
                 foreach (var transaction in responseDataOrdened)
                 {
-                    var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                    var exists = await this._transactionsRepository.FindFirstOrDefaultAsync(x => x.Signature == transaction.Signature);
                     if (exists == null)
                     {
                         if (DateTime.Now.AddMinutes(-10) > base.AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
                             await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                         else 
                         {
-                            var existsContingency = await this._transactionsContingencyRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                            var existsContingency = await this._transactionsContingencyRepository.FindFirstOrDefaultAsync(x => x.Signature == transaction.Signature);
                             if (existsContingency == null)
-                                await this._transactionsContingencyRepository.Add(new TransactionRPCRecovery 
+                                await this._transactionsContingencyRepository.AddAsync(new TransactionRPCRecovery 
                                 {
                                     Signature = transaction?.Signature,
                                     DateOfTransaction = transaction?.DateOfTransaction,
@@ -62,11 +62,11 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     }
                     else 
                     {
-                        await this._transactionsRepository.DetachedItem(exists);
+                        await this._transactionsRepository.DetachedItemAsync(exists);
                         await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                     }
                 }
-                var listsTransactionsContingency = await this._transactionsContingencyRepository.Get(x => x.WalletId == request.WalletId && x.DateOfTransaction < DateTime.Now.AddMinutes(-10) && x.IsIntegrated == false);
+                var listsTransactionsContingency = await this._transactionsContingencyRepository.GetAsync(x => x.WalletId == request.WalletId && x.DateOfTransaction < DateTime.Now.AddMinutes(-10) && x.IsIntegrated == false);
                 listsTransactionsContingency.ForEach(delegate (TransactionRPCRecovery transaction) { listTransactions.Add(new TransactionsResponse 
                                                                                                                            { 
                                                                                                                                Signature = transaction.Signature, 

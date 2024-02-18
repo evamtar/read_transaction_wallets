@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SyncronizationBot.Domain.Service.InternalService.Base;
 using SyncronizationBot.Domain.Service.RecoveryService.Base;
 using SyncronizationBot.Service.InternalServices.Base;
 using SyncronizationBotApp.Extensions.Enum;
@@ -10,6 +11,7 @@ namespace SyncronizationBotApp.Extensions
     {
         public static void AddServices(this IServiceCollection services, Assembly? assembly, ETypeService typeService)
         {
+            // Services (NOT CACHED)
             var servicesTypes = assembly?.GetTypes()
                 .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IServiceBase<>)));
             var nonBaseRepos = servicesTypes?.Where(t => t != typeof(ServiceBase<>));
@@ -23,6 +25,36 @@ namespace SyncronizationBotApp.Extensions
 
                     if (interfaces.Count != 1)
                         throw new InvalidOperationException($"Service '{serviceType.Name}' must implement only one interface that implements IServiceBase<T>.");
+                    switch (typeService)
+                    {
+                        case ETypeService.Scoped:
+                            services.AddScoped(interfaces[0], serviceType);
+                            break;
+                        case ETypeService.Transient:
+                            services.AddTransient(interfaces[0], serviceType);
+                            break;
+                        case ETypeService.Singleton:
+                            services.AddSingleton(interfaces[0], serviceType);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            // SERVICES Cached
+            servicesTypes = assembly?.GetTypes()
+                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICachedServiceBase<>)));
+            nonBaseRepos = servicesTypes?.Where(t => t != typeof(CachedServiceBase<>));
+            if (nonBaseRepos?.Count() > 0)
+            {
+                foreach (var serviceType in nonBaseRepos)
+                {
+                    var interfaces = serviceType.GetInterfaces()
+                        .Where(@interface => !@interface.IsGenericType && !@interface.Name.Contains("IDisposable"))
+                        .ToList();
+
+                    if (interfaces.Count != 1)
+                        throw new InvalidOperationException($"Service '{serviceType.Name}' must implement only one interface that implements ICachedServiceBase<T>.");
                     switch (typeService)
                     {
                         case ETypeService.Scoped:

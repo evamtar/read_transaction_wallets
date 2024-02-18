@@ -32,15 +32,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertMessageCommandResponse> Handle(SendAlertMessageCommand request, CancellationToken cancellationToken)
         {
-            var configuration = await _alertConfigurationRepository.FindFirstOrDefault(x => x.TypeOperationId == request.TypeOperationId);
+            var configuration = await _alertConfigurationRepository.FindFirstOrDefaultAsync(x => x.TypeOperationId == request.TypeOperationId);
             if (configuration != null)
             {
-                var informations = await _alertInformationRepository.Get(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == null || x.IdClassification == request.IdClassification));
+                var informations = await _alertInformationRepository.GetAsync(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == null || x.IdClassification == request.IdClassification));
                 if (informations != null && informations.Any())
                 {
                     foreach (var information in informations)
                     {
-                        var parameters = await _alertParameterRepository.Get(x => x.AlertInformationId == information.ID);
+                        var parameters = await _alertParameterRepository.GetAsync(x => x.AlertInformationId == information.ID);
                         var message = ReplaceParametersInformation(request?.Parameters, information, parameters);
                         message = message?.Replace("{{NEWLINE}}", Environment.NewLine);
                         await _mediator.Send(new SendTelegramMessageCommand

@@ -1,4 +1,5 @@
-﻿using SyncronizationBot.Domain.Model.Database;
+﻿using MongoDB.Driver;
+using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.MongoDB;
 using SyncronizationBot.Infra.Data.MongoDB.Context;
 using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;

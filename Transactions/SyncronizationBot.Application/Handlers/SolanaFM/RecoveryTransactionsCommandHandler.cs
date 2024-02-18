@@ -49,7 +49,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         var responseDataOrdened = transactionResponse.Result!.Data.OrderBy(x => x.BlockTime).ThenBy(x => x.DateOfTransaction);
                         foreach (var transaction in responseDataOrdened)
                         {
-                            var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                            var exists = await this._transactionsRepository.FindFirstOrDefaultAsync(x => x.Signature == transaction.Signature);
                             if (exists == null)
                             {
                                 if (request.DateLoadBalance < AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
@@ -66,7 +66,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                             }
                             else
                             {
-                                await this._transactionsRepository.DetachedItem(exists);
+                                await this._transactionsRepository.DetachedItemAsync(exists);
                                 await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                             }
                         }

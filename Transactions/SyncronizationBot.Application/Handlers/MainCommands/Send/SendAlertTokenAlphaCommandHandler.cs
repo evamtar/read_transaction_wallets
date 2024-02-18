@@ -25,7 +25,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertTokenAlphaCommandResponse> Handle(SendAlertTokenAlphaCommand request, CancellationToken cancellationToken)
         {
-            var publicsMessages = await this._publishMessageRepository.Get(x => x.ItWasPublished == false && x.EntityParent == null);
+            var publicsMessages = await this._publishMessageRepository.GetAsync(x => x.ItWasPublished == false && x.EntityParent == null);
             if(publicsMessages?.Count > 0) 
             { 
                 foreach(var publicMessage in publicsMessages) 
@@ -52,8 +52,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         TypeOperationId = Guid.NewGuid()//ETypeAlert.ALERT_TOKEN_ALPHA
                     });
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.Edit(publicMessage!);
-                    await this._publishMessageRepository.DetachedItem(publicMessage!);
+                    await this._publishMessageRepository.UpdateAsync(publicMessage!);
+                    await this._publishMessageRepository.DetachedItemAsync(publicMessage!);
                 }
             }
             return new SendAlertTokenAlphaCommandResponse{ };
@@ -62,15 +62,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private async Task<List<T?>> GetListOfPublicMessage<T>(Guid? publicMessageParentId) where T : Entity 
         {
             var listOfEntity = new List<T?>();
-            var publicsMessages = await this._publishMessageRepository.Get(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == false && x.Entity == typeof(T).ToString());
+            var publicsMessages = await this._publishMessageRepository.GetAsync(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == false && x.Entity == typeof(T).ToString());
             if (publicsMessages?.Count > 0) 
             {
                 foreach (var publicMessage in publicsMessages)
                 {
                     listOfEntity.Add(JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty));
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.Edit(publicMessage);
-                    await this._publishMessageRepository.DetachedItem(publicMessage);
+                    await this._publishMessageRepository.UpdateAsync(publicMessage);
+                    await this._publishMessageRepository.DetachedItemAsync(publicMessage);
                 }
             }
             return listOfEntity;
@@ -78,12 +78,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         private async Task<T?> GetPublicMessage<T>(Guid? publicMessageParentId) where T: Entity
         {
-            var publicMessage = await this._publishMessageRepository.FindFirstOrDefault(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == false && x.Entity == typeof(T).ToString());
+            var publicMessage = await this._publishMessageRepository.FindFirstOrDefaultAsync(x => x.EntityParentId == publicMessageParentId && x.ItWasPublished == false && x.Entity == typeof(T).ToString());
             if (publicMessage != null) 
             {
                 publicMessage.ItWasPublished = true;
-                await this._publishMessageRepository.Edit(publicMessage);
-                await this._publishMessageRepository.DetachedItem(publicMessage);
+                await this._publishMessageRepository.UpdateAsync(publicMessage);
+                await this._publishMessageRepository.DetachedItemAsync(publicMessage);
                 return JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty);
             }
             return null!;

@@ -31,8 +31,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
-            var typeOperation = await this._typeOperationRepository.FindFirstOrDefault(x => x.IdTypeOperation == (int)EFixedTypeOperation.AlertPrice);
-            var alerts = await this._alertPriceRepository.Get(x => (x.EndDate >= DateTime.Now || x.EndDate == null));
+            var typeOperation = await this._typeOperationRepository.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.AlertPrice);
+            var alerts = await this._alertPriceRepository.GetAsync(x => (x.EndDate >= DateTime.Now || x.EndDate == null));
             if (alerts?.Count > 0)
             {
                 foreach (var alert in alerts)
@@ -65,14 +65,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if (alert.PricePercent == null)
                                 alert.PriceValue += alert.PriceValue - alert.PriceBase;
                             alert.PriceBase = token?.Price;
-                            await this._alertPriceRepository.Edit(alert);
-                            await this._alertPriceRepository.DetachedItem(alert);
+                            await this._alertPriceRepository.UpdateAsync(alert);
+                            await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                         else
                         {
                             alert.EndDate = DateTime.Now;
-                            await this._alertPriceRepository.Edit(alert);
-                            await this._alertPriceRepository.DetachedItem(alert);
+                            await this._alertPriceRepository.UpdateAsync(alert);
+                            await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                     }
                 }

@@ -8,16 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.23.1" />
-	<PackageReference Include="MongoDB.EntityFrameworkCore" Version="7.0.0-preview.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MongoDB.EntityFrameworkCore">
+      <HintPath>..\mongolib\MongoDB.EntityFrameworkCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

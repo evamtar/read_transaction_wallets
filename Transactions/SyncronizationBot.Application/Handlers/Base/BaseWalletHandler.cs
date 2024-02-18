@@ -32,12 +32,12 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected async Task<List<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
         {
-            return await _walletRepository.Get(predicate);
+            return await _walletRepository.GetAsync(predicate);
         }
 
         protected async Task<List<Wallet>?> GetWallets(Expression<Func<Wallet, bool>> predicate, Expression<Func<Wallet, object>> keySelector = null!)
         {
-            return await _walletRepository.Get(predicate, keySelector);
+            return await _walletRepository.GetAsync(predicate, keySelector);
         }
 
 
@@ -54,8 +54,8 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
-            await _walletRepository.Edit(wallet);
-            await _walletRepository.DetachedItem(wallet);
+            await _walletRepository.UpdateAsync(wallet);
+            await _walletRepository.DetachedItemAsync(wallet);
         }
         protected async Task UpdateUnixTimeSeconds(Wallet wallet) 
         {

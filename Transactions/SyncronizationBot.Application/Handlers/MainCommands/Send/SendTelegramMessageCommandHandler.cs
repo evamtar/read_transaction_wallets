@@ -32,7 +32,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         {
             var channel = await _mediator.Send(new RecoverySaveTelegramChannel { TelegramChannelId = request.TelegramChannelId });
             var response = await _telegramBotService.ExecuteSendMessageAsync(new TelegramBotMessageSendRequest { ChatId = channel.ChannelId, Message = request.Message });
-            await this._telegramMessageRepository.Add(new TelegramMessage 
+            await this._telegramMessageRepository.AddAsync(new TelegramMessage 
             { 
                 EntityId = request?.EntityId,
                 MessageId = response.Result?.MessageId ?? 0,

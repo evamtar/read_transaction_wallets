@@ -102,7 +102,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 
         private async Task LoadClassWallets() 
         {
-            var classWallets = await _classWalletRepository.GetAll();
+            var classWallets = await _classWalletRepository.GetAllAsync();
             foreach (var classWallet in classWallets) 
                 this.ClassWallets.Add(classWallet);
         }

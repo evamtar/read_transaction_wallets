@@ -16,22 +16,22 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         public async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
         {
-            return await this._repository.FindFirstOrDefault(predicate, keySelector);
+            return await this._repository.FindFirstOrDefaultAsync(predicate, keySelector);
         }
 
         public async Task<T?> Get(Guid id)
         {
-            return await this._repository.Get(id);
+            return await this._repository.GetAsync(id);
         }
 
         public async Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
         {
-            return await this._repository.Get(predicate, keySelector);
+            return await this._repository.GetAsync(predicate, keySelector);
         }
 
         public async Task<List<T>> GetAll()
         {
-            return await this._repository.GetAll();
+            return await this._repository.GetAllAsync();
         }
 
         public void Dispose()

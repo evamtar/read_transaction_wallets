@@ -70,7 +70,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             {
                 if (base.IsSaveBalance() ?? false)
                 {
-                    balance = await this._walletBalanceRepository.Add(new WalletBalance
+                    balance = await this._walletBalanceRepository.AddAsync(new WalletBalance
                     {
                         WalletId = request.WalletId,
                         TokenId = token?.TokenId,
@@ -81,7 +81,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         IsActive = accountInfo.Result?.Value?.Lamports > 0,
                         LastUpdate = dateLoadBalance
                     });
-                    await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                    await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                     {
                         WalletBalanceId = balance?.ID,
                         WalletId = balance?.WalletId,
@@ -101,7 +101,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 }
                 else
                 {
-                    await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                    await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                     {
                         WalletBalanceId = null,
                         WalletId = request.WalletId,
@@ -130,7 +130,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             {
                 if (base.IsSaveBalance() ?? false)
                 {
-                    balance = await this._walletBalanceRepository.Add(new WalletBalance
+                    balance = await this._walletBalanceRepository.AddAsync(new WalletBalance
                     {
                         WalletId = request.WalletId,
                         TokenId = token?.TokenId,
@@ -141,7 +141,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         IsActive = tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Amount > 0,
                         LastUpdate = dateLoadBalance
                     });
-                    await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                    await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                     {
                         WalletBalanceId = balance?.ID,
                         WalletId = balance?.WalletId,
@@ -162,7 +162,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                 else
                 {
                     var quantity = tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Amount / this.GetDivisor(tokenAccount.Account?.Data?.Parsed?.Info?.TokenAmount?.Decimals ?? token?.Decimals);
-                    await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                    await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                     {
                         WalletBalanceId = null,
                         WalletId = request.WalletId,

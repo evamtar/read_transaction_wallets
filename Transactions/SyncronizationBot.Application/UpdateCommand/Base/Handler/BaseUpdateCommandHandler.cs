@@ -22,7 +22,7 @@ namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
         {
             if (request.Entity != null)
             {
-                var entity = await _repository.Edit(request.Entity);
+                var entity = await _repository.UpdateAsync(request.Entity);
                 var response = Activator.CreateInstance<W>();
                 response.Entity = entity;
                 return response;

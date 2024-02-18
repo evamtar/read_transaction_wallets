@@ -40,12 +40,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         public async Task<RecoverySaveTransactionOldForMappingCommandResponse> Handle(RecoverySaveTransactionOldForMappingCommand request, CancellationToken cancellationToken)
         {
-            var listTransactions = await this._transactionsOldForMappingRepository.Get(x => x.WalletId == request.WalletId && x.IsIntegrated == false, x => x.DateOfTransaction!);
+            var listTransactions = await this._transactionsOldForMappingRepository.GetAsync(x => x.WalletId == request.WalletId && x.IsIntegrated == false, x => x.DateOfTransaction!);
             if (listTransactions != null)
             {
                 foreach (var transaction in listTransactions)
                 {
-                    var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                    var exists = await this._transactionsRepository.FindFirstOrDefaultAsync(x => x.Signature == transaction.Signature);
                     if (exists == null) 
                     {
                         var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
@@ -72,7 +72,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     if (transferInfo?.TokenReceivedPool != null)
                                         tokenReceivedPool = await _mediator.Send(new RecoverySaveTokenCommand { TokenHash = transferInfo.TokenReceivedPool?.Token });
 
-                                    var transactionDB = await _transactionsRepository.Add(new Transactions
+                                    var transactionDB = await _transactionsRepository.AddAsync(new Transactions
                                     {
                                         Signature = transaction?.Signature,
                                         DateTransactionUTC = transaction?.DateOfTransaction,
@@ -85,11 +85,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         TypeOperationId = null, ///TODO:EVANDRO
                                         //TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                     });
-                                    await this._transactionsRepository.DetachedItem(transactionDB!);
+                                    await this._transactionsRepository.DetachedItemAsync(transactionDB!);
                                 }
                                 else
                                 {
-                                    var transactionNotMapped = await _transactionNotMappedRepository.Add(new TransactionNotMapped
+                                    var transactionNotMapped = await _transactionNotMappedRepository.AddAsync(new TransactionNotMapped
                                     {
                                         Signature = transaction.Signature,
                                         WalletId = request?.WalletId,
@@ -98,12 +98,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         StackTrace = null,
                                         DateTimeRunner = DateTime.Now
                                     });
-                                    await this._transactionNotMappedRepository.DetachedItem(transactionNotMapped!);
+                                    await this._transactionNotMappedRepository.DetachedItemAsync(transactionNotMapped!);
                                 }
                             }
                             catch (Exception ex)
                             {
-                                await _transactionNotMappedRepository.Add(new TransactionNotMapped
+                                await _transactionNotMappedRepository.AddAsync(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
                                     WalletId = request?.WalletId,
@@ -116,8 +116,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         }
                     }
                     transaction!.IsIntegrated = true;
-                    await this._transactionsOldForMappingRepository.Edit(transaction);
-                    await this._transactionsOldForMappingRepository.DetachedItem(transaction);
+                    await this._transactionsOldForMappingRepository.UpdateAsync(transaction);
+                    await this._transactionsOldForMappingRepository.DetachedItemAsync(transaction);
                 }
             }
             return new RecoverySaveTransactionOldForMappingCommandResponse { };

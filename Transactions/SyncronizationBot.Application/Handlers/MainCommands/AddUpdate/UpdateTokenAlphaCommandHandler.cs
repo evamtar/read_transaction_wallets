@@ -31,10 +31,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
         }
         public async Task<UpdateTokenAlphaCommandResponse> Handle(UpdateTokenAlphaCommand request, CancellationToken cancellationToken)
         {
-            var tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefault(x => x.TokenId == request.TokenId);
+            var tokenAlpha = await this._tokenAlphaRepository.FindFirstOrDefaultAsync(x => x.TokenId == request.TokenId);
             if (tokenAlpha != null)
             {
-                var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefault(x => x.TokenAlphaId == tokenAlpha.ID && x.WalletId == request.WalletId);
+                var tokenAlphaWallet = await this._tokenAlphaWalletRepository.FindFirstOrDefaultAsync(x => x.TokenAlphaId == tokenAlpha.ID && x.WalletId == request.WalletId);
                 if (tokenAlphaWallet != null)
                 {
                     //UpdateValues
@@ -43,8 +43,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     tokenAlphaWallet.ValueReceivedUSDC = tokenAlphaWallet.ValueReceivedUSDC ?? 0 + request?.AmountTokenUSDC;
                     tokenAlphaWallet.ValueReceivedUSDT = tokenAlphaWallet.ValueReceivedUSDT ?? 0 + request?.AmountTokenUSDT;
                     tokenAlphaWallet.QuantityTokenSell = tokenAlphaWallet.QuantityTokenSell?? 0 + request?.AmountTokenSell;
-                    await this._tokenAlphaWalletRepository.Edit(tokenAlphaWallet);
-                    await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaWallet);
+                    await this._tokenAlphaWalletRepository.UpdateAsync(tokenAlphaWallet);
+                    await this._tokenAlphaWalletRepository.DetachedItemAsync(tokenAlphaWallet);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
 
                 }
@@ -52,15 +52,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 tokenAlpha.ActualPrice = request?.Price;
                 tokenAlpha.LastUpdate = DateTime.Now;
                 await SaveTokenAlphaHistory(request, tokenAlpha);
-                await this._tokenAlphaRepository.Edit(tokenAlpha!);
-                await this._tokenAlphaRepository.DetachedItem(tokenAlpha!);
+                await this._tokenAlphaRepository.UpdateAsync(tokenAlpha!);
+                await this._tokenAlphaRepository.DetachedItemAsync(tokenAlpha!);
             }
             return new UpdateTokenAlphaCommandResponse { };
         }
 
         private async Task SaveTokenAlphaHistory(UpdateTokenAlphaCommand? request, TokenAlpha tokenAlpha)
         {
-            var tokenAlphaHistory = await this._tokenAlphaHistoryRepository.Add(new TokenAlphaHistory
+            var tokenAlphaHistory = await this._tokenAlphaHistoryRepository.AddAsync(new TokenAlphaHistory
             {
                 TokenAlphaId = tokenAlpha?.ID,
                 CallNumber = tokenAlpha?.CallNumber,
@@ -78,12 +78,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 TokenSymbol = tokenAlpha?.TokenSymbol,
                 TokenAlphaConfigurationId = tokenAlpha?.TokenAlphaConfigurationId
             });
-            await this._tokenAlphaHistoryRepository.DetachedItem(tokenAlphaHistory);
+            await this._tokenAlphaHistoryRepository.DetachedItemAsync(tokenAlphaHistory);
         }
 
         private async Task SaveTokenAlphaWalletsHistory(UpdateTokenAlphaCommand? request, TokenAlphaWallet? tokenAlphaWallet)
         {
-            var tokenAlphaWalletHistory = await this._tokenAlphaWalletHistoryRepository.Add(new TokenAlphaWalletHistory
+            var tokenAlphaWalletHistory = await this._tokenAlphaWalletHistoryRepository.AddAsync(new TokenAlphaWalletHistory
             {
                 TokenAlphaWalletId = tokenAlphaWallet?.ID,
                 TokenAlphaId = tokenAlphaWallet?.TokenAlphaId,
@@ -105,7 +105,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 RequestValueInUSDT = request?.AmountTokenUSDC,
                 RequestQuantityToken = request?.AmountTokenSell
             });
-            await this._tokenAlphaWalletHistoryRepository.DetachedItem(tokenAlphaWalletHistory);
+            await this._tokenAlphaWalletHistoryRepository.DetachedItemAsync(tokenAlphaWalletHistory);
         }
     }
 }

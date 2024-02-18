@@ -3,8 +3,8 @@
 namespace SyncronizationBot.Domain.Repository.SQLServer.Base
 {
     public interface IRepository<T> : IReadCommandRepository<T>,
-                                     IWriteCommandRepository<T>
-                           where T : Entity
+                                      IWriteCommandRepository<T>
+                            where T : Entity
     {
 
     }

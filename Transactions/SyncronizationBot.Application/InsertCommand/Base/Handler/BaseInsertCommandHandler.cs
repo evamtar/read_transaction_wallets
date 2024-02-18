@@ -22,7 +22,7 @@ namespace SyncronizationBot.Application.InsertCommand.Base.Handler
         {
             if (request.Entity != null)
             {
-                var entity = await _repository.Add(request.Entity);
+                var entity = await _repository.AddAsync(request.Entity);
                 var response = Activator.CreateInstance<W>();
                 response.Entity = entity;
                 return response;

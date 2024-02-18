@@ -28,13 +28,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         public async Task<RecoverySaveTelegramChannelResponse> Handle(RecoverySaveTelegramChannel request, CancellationToken cancellationToken)
         {
-            var channel = await _telegramChannelRepository.FindFirstOrDefault(x => x.ID == request.TelegramChannelId);
+            var channel = await _telegramChannelRepository.FindFirstOrDefaultAsync(x => x.ID == request.TelegramChannelId);
             if (channel == null)
             {
                 var channels = await _telegramBotService.ExecuteRecoveryChannelUpdatesAsync(new TelegramBotChannelUpdateRequest { });
                 var telegramChannel = channels.Result?.FirstOrDefault(x => x.MyChatMember?.Chat?.Title == request.ChannelName);
                 long? chatId = telegramChannel?.MyChatMember?.Chat?.Id;
-                channel = await _telegramChannelRepository.Add(new TelegramChannel
+                channel = await _telegramChannelRepository.AddAsync(new TelegramChannel
                 {
                     ChannelName = request?.ChannelName,
                     ChannelId = chatId,

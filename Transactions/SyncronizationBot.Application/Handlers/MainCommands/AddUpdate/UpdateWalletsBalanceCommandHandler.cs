@@ -35,7 +35,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
             {
                 foreach (var walletTracked in walletsTracked)
                 {
-                    var balances = await this._walletBalanceRepository.Get(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < dateTimeLimit) ;
+                    var balances = await this._walletBalanceRepository.GetAsync(x => x.WalletId == walletTracked!.ID && x.TokenId != null && x.IsActive == true && x.LastUpdate!.Value.AddHours(1) < dateTimeLimit) ;
                     if (balances?.Count() > 0) 
                     {
                         var prices = await this._mediator.Send(new RecoveryPriceCommand { Ids = this.GetIdsTokens(balances) });
@@ -52,8 +52,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                                 balance.Price = token?.Price ?? 0;
                             }
                             balance.LastUpdate = DateTime.Now;
-                            await this._walletBalanceRepository.Edit(balance);
-                            await this._walletBalanceRepository.DetachedItem(balance);
+                            await this._walletBalanceRepository.UpdateAsync(balance);
+                            await this._walletBalanceRepository.DetachedItemAsync(balance);
                             await UpdateBalancesWithSameToken(balance.ID, balance.TokenId, balance.Price);
                         }
                     }
@@ -64,7 +64,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 
         private async Task UpdateBalancesWithSameToken(Guid? balanceId, Guid? tokenId, decimal? price)
         {
-            var balancesWithSameToken = await this._walletBalanceRepository.Get(x => x.ID != balanceId && x.TokenId == tokenId && x.IsActive == true);
+            var balancesWithSameToken = await this._walletBalanceRepository.GetAsync(x => x.ID != balanceId && x.TokenId == tokenId && x.IsActive == true);
             if(balancesWithSameToken?.Count > 0) 
             { 
                 foreach (var balance in balancesWithSameToken) 
@@ -72,8 +72,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance.TotalValueUSD = balance.Quantity * (price ?? 0);
                     balance.Price = (price ?? 0);
                     balance.LastUpdate = DateTime.Now;
-                    await this._walletBalanceRepository.Edit(balance);
-                    await this._walletBalanceRepository.DetachedItem(balance);
+                    await this._walletBalanceRepository.UpdateAsync(balance);
+                    await this._walletBalanceRepository.DetachedItemAsync(balance);
                 }
             }
         }

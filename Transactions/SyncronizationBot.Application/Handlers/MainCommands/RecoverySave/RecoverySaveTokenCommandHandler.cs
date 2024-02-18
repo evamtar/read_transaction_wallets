@@ -42,12 +42,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         }
         public async Task<RecoverySaveTokenCommandResponse> Handle(RecoverySaveTokenCommand request, CancellationToken cancellationToken)
         {
-            var token = await this._tokenRepository.FindFirstOrDefault(x => x.Hash == request.TokenHash);
+            var token = await this._tokenRepository.FindFirstOrDefaultAsync(x => x.Hash == request.TokenHash);
             if(request.LazyLoad ?? false) 
             {
                 if (token == null) 
                 {
-                    token = await _tokenRepository.Add(new Token
+                    token = await _tokenRepository.AddAsync(new Token
                     {
                         Hash = request.TokenHash,
                         Symbol = LAZY_LOAD,
@@ -62,7 +62,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         CreateDate = DateTime.Now,
                         LastUpdate = DateTime.Now
                     });
-                    await _tokenRepository.DetachedItem(token);
+                    await _tokenRepository.DetachedItemAsync(token);
                 }
                 return new RecoverySaveTokenCommandResponse
                 {
@@ -98,7 +98,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 }
                 else
                 {
-                    tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
+                    tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
                     if (tokenSecurity == null && (token.Symbol == LAZY_LOAD && !(request.LazyLoad ?? false)))
                     {
                         var response = await UpdateTokenAsync(request, token!);
@@ -113,8 +113,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         if (token?.LastUpdate > DateTime.Now.AddMinutes(-3))
                         {
                             //Se atualizou a menos de 3 minutos não bate na API
-                            tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
-                            await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+                            tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
+                            await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
                         }
                         else
                         {
@@ -164,7 +164,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         private async Task<(Token Token, TokenSecurity TokenSecurity)> AddTokenFromBirdeyeExternalFontAsync(RecoverySaveTokenCommand request, TokenOverviewResponse tokenResponse) 
         {
-            var token = await _tokenRepository.Add(new Token
+            var token = await _tokenRepository.AddAsync(new Token
             {
                 Hash = tokenResponse?.Data?.Address,
                 Symbol = tokenResponse?.Data?.Symbol,
@@ -179,7 +179,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 CreateDate = DateTime.Now,
                 LastUpdate = DateTime.Now
             });
-            await _tokenRepository.DetachedItem(token);
+            await _tokenRepository.DetachedItemAsync(token);
             var tokenSecurity = await AddTokenSecurityAsync(request, token, false);
             return (token, tokenSecurity);
         }
@@ -190,7 +190,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             if (!tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
                 return (null!, null!);
             var tokenResult = await this._dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
-            var token = await _tokenRepository.Add(new Token
+            var token = await _tokenRepository.AddAsync(new Token
             {
                 Hash = request.TokenHash,
                 Symbol = tokenSymbol?.Data?[request!.TokenHash!]?.VsTokenSymbol ?? tokenResult?.Pairs?.FirstOrDefault()?.BaseToken?.Symbol,
@@ -205,7 +205,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 CreateDate = DateTime.Now,
                 LastUpdate = DateTime.Now
             });
-            await _tokenRepository.DetachedItem(token);
+            await _tokenRepository.DetachedItemAsync(token);
             var tokenSecurity = await AddTokenSecurityAsync(request, token, true);
             return (token, tokenSecurity);
         }
@@ -215,7 +215,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             var tokenSecurity = (TokenSecurity?)null;
             if (forceContingency)
             {
-                tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
+                tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                 {
                     TokenId = token.ID,
                     CreatorAddress = null,
@@ -235,14 +235,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     MintAuthority = null,
                     IsMutable = null
                 });
-                await _tokenSecurityRepository.DetachedItem(tokenSecurity);
+                await _tokenSecurityRepository.DetachedItemAsync(tokenSecurity);
             }
             else 
             {
                 var tokenSecurityResponse = await _tokenSecurityService.ExecuteRecoveryTokenCreationAsync(new TokenSecurityRequest { TokenHash = request.TokenHash! });
                 if (tokenSecurityResponse.Data != null || (tokenSecurityResponse.Data?.CreationTime != null || tokenSecurityResponse.Data?.TotalSupply != null))
                 {
-                    tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
+                    tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                     {
                         TokenId = token.ID,
                         CreatorAddress = tokenSecurityResponse?.Data?.CreatorAddress,
@@ -262,11 +262,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         MintAuthority = tokenSecurityResponse?.Data?.MintTx,
                         IsMutable = tokenSecurityResponse?.Data?.MutableMetadata
                     });
-                    await _tokenSecurityRepository.DetachedItem(tokenSecurity);
+                    await _tokenSecurityRepository.DetachedItemAsync(tokenSecurity);
                 }
                 else
                 {
-                    tokenSecurity = await _tokenSecurityRepository.Add(new TokenSecurity
+                    tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                     {
                         TokenId = token.ID,
                         CreatorAddress = null,
@@ -286,7 +286,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         MintAuthority = null,
                         IsMutable = null
                     });
-                    await _tokenSecurityRepository.DetachedItem(tokenSecurity);
+                    await _tokenSecurityRepository.DetachedItemAsync(tokenSecurity);
                 }
             }
             return tokenSecurity;
@@ -318,10 +318,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             token!.Decimals = (int?)tokenResponse?.Data?.Decimals;
             token!.NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets;
             token!.LastUpdate = DateTime.Now;
-            await this._tokenRepository.Edit(token);
-            await this._tokenRepository.DetachedItem(token);
-            var tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
-            await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+            await this._tokenRepository.UpdateAsync(token);
+            await this._tokenRepository.DetachedItemAsync(token);
+            var tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
+            await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
             return (token, tokenSecurity);
         }
 
@@ -334,10 +334,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             {
                 token!.MarketCap = tokenSymbol?.Data?[request!.TokenHash!].Price * token.Supply;
                 token!.LastUpdate = DateTime.Now;
-                await this._tokenRepository.Edit(token);
-                await this._tokenRepository.DetachedItem(token);
-                tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
-                await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+                await this._tokenRepository.UpdateAsync(token);
+                await this._tokenRepository.DetachedItemAsync(token);
+                tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
+                await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
             }
             else
             {
@@ -348,10 +348,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     token!.MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv;
                     token!.Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd);
                     token!.LastUpdate = DateTime.Now;
-                    await this._tokenRepository.Edit(token);
-                    await this._tokenRepository.DetachedItem(token);
-                    tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefault(x => x.TokenId == token.ID);
-                    await this._tokenSecurityRepository.DetachedItem(tokenSecurity!);
+                    await this._tokenRepository.UpdateAsync(token);
+                    await this._tokenRepository.DetachedItemAsync(token);
+                    tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
+                    await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
                 }
             }
             return (token, tokenSecurity);

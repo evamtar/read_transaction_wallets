@@ -32,13 +32,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
         }
         public async Task<DeleteTelegramMessageCommandResponse> Handle(DeleteTelegramMessageCommand request, CancellationToken cancellationToken)
         {
-            var telegramChannels = await this._telegramChannelRepository.GetAll();
+            var telegramChannels = await this._telegramChannelRepository.GetAllAsync();
             if (telegramChannels?.Count > 0) 
             {
                 foreach (var telegramChannel in telegramChannels)
                 {
                     var dateTimeToDelete = this.GetDateOfSendedToDelete(telegramChannel);
-                    var messages = await this._telegramMessageRepository.Get(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < dateTimeToDelete, x => x.MessageId!);
+                    var messages = await this._telegramMessageRepository.GetAsync(x => x.TelegramChannelId == telegramChannel!.ID && x.IsDeleted == false && x.DateSended < dateTimeToDelete, x => x.MessageId!);
                     if (messages?.Count > 0) 
                     {
                         foreach (var message in messages)
@@ -53,8 +53,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                             }
                             else
                                 message.IsDeleted = true;
-                            await this._telegramMessageRepository.Edit(message);
-                            await this._telegramMessageRepository.DetachedItem(message);
+                            await this._telegramMessageRepository.UpdateAsync(message);
+                            await this._telegramMessageRepository.DetachedItemAsync(message);
                         }
                     }
                 }

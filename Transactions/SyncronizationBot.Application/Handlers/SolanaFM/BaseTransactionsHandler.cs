@@ -19,10 +19,10 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
 
         protected async Task SaveTransactionsOldForMapping(TransactionInfoResponse? transactions, Guid? walletId)
         {
-            var exists = await this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
+            var exists = await this._transactionsOldForMappingRepository.FindFirstOrDefaultAsync(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
-                await this._transactionsOldForMappingRepository.Add(new TransactionOldForMapping
+                await this._transactionsOldForMappingRepository.AddAsync(new TransactionOldForMapping
                 {
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,
@@ -35,10 +35,10 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
 
         protected async Task SaveTransactionsOldForMapping(TransactionResponse? transactions, Guid? walletId)
         {
-            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefault(x => x.Signature == transactions!.Signature);
+            var exists = this._transactionsOldForMappingRepository.FindFirstOrDefaultAsync(x => x.Signature == transactions!.Signature);
             if (exists == null)
             {
-                await this._transactionsOldForMappingRepository.Add(new TransactionOldForMapping
+                await this._transactionsOldForMappingRepository.AddAsync(new TransactionOldForMapping
                 {
                     Signature = transactions?.Signature,
                     DateOfTransaction = transactions?.DateOfTransaction,

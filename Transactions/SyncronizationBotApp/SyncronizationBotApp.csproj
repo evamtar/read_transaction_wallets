@@ -49,4 +49,10 @@
 		<DependentUpon>appsettings.json</DependentUpon>
 	</Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MongoDB.EntityFrameworkCore">
+      <HintPath>..\mongolib\MongoDB.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

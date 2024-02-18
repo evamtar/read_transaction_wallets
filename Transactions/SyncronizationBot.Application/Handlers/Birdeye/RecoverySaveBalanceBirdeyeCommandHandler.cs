@@ -63,7 +63,7 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
             var balance = (WalletBalance)null!;
             if (base.IsSaveBalance() ?? false)
             {
-                balance = await this._walletBalanceRepository.Add(new WalletBalance
+                balance = await this._walletBalanceRepository.AddAsync(new WalletBalance
                 {
                     WalletId = request.WalletId,
                     TokenId = token?.TokenId,
@@ -74,7 +74,7 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
                     IsActive = item.UiAmount > 0,
                     LastUpdate = dateLoadBalance
                 });
-                await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                 {
                     WalletBalanceId = balance?.ID,
                     WalletId = balance?.WalletId,
@@ -94,7 +94,7 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
             }
             else
             {
-                await this._walletBalanceHistoryRepository.Add(new WalletBalanceHistory
+                await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
                 {
                     WalletBalanceId = null,
                     WalletId = request.WalletId,

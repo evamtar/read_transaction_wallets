@@ -197,7 +197,7 @@ namespace SyncronizationBot.Service.InternalServices.Utils
                         Wallets?.Clear();
                         using (var instanceService = this._walletService)
                         {
-                            var list = await instanceService?.GetAll();
+                            var list = await instanceService?.GetAllAsync();
                             list.ForEach(x => { Wallets?.Add(x); });
                             return Task.CompletedTask;
                         };
