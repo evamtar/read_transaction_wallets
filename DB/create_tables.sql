@@ -243,6 +243,7 @@ CREATE TABLE Token(
 	NumberMarkets          INT,
 	CreateDate             DATETIME,
 	LastUpdate             DATETIME,
+	IsLazyLoad             BIT,
 	PRIMARY KEY (ID)
 );
 GO

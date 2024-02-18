@@ -36,7 +36,7 @@ namespace SyncronizationBot.Service.HostedWork
 
         public async Task DoExecute(CancellationToken cancellationToken)
         {
-            var wallets = await this._preLoadedEntitiesService.GetAllWalletAsync();
+            var wallets = await this._preLoadedEntitiesService.GetFilteredWalletAsync(x => x.IsActive == true && x.IsLoadBalance == false);
             if (wallets?.Count() > 0)
             {
                 foreach (var wallet in wallets)
@@ -44,53 +44,57 @@ namespace SyncronizationBot.Service.HostedWork
                     var balanceResponse = await this._mediator.Send(new SolnetBalanceReadCommand { WalletHash = wallet.Hash, IgnoreAmountValueZero = true });
                     if (balanceResponse.IsSuccess ?? false) 
                     {
-                        balanceResponse?.Result?.ForEach(async balance => 
+                        if (balanceResponse?.Result?.Count > 0) 
                         {
-                            var token = await _tokenService.FindFirstOrDefault(x => x.Hash == balance.Token!.Hash);
-                            if (token == null) 
+                            foreach (var balance in balanceResponse?.Result!)
                             {
-                                token = new Token
+                                var token = await _tokenService.FindFirstOrDefault(x => x.Hash == balance.Token!.Hash);
+                                if (token == null)
                                 {
-                                    Decimals = balance.Token?.Decimals,
-                                    Hash = balance.Token?.Hash,
-                                    Symbol = balance.Token?.Symbol,
-                                    Name = balance.Token?.Name,
-                                    IsLazyLoad = true
+                                    token = new Token
+                                    {
+                                        Decimals = balance.Token?.Decimals,
+                                        Hash = balance.Token?.Hash,
+                                        Symbol = balance.Token?.Symbol,
+                                        Name = balance.Token?.Name,
+                                        IsLazyLoad = true
+                                    };
+                                    var response = await this._mediator.Send(new TokenInsertCommand { Entity = token });
+                                    token = response.Entity;
+                                }
+                                var walletBalance = new WalletBalance
+                                {
+                                    WalletId = wallet?.ID,
+                                    TokenId = token?.ID,
+                                    TokenHash = token?.Hash,
+                                    Quantity = balance?.Amount,
+                                    Price = null,
+                                    TotalValueUSD = null,
+                                    IsActive = true,
+                                    LastUpdate = DateTime.Now
                                 };
-                                var response = await this._mediator.Send(new TokenInsertCommand { Entity = token });
-                                token = response.Entity;
+                                await this._mediator.Send(new WalletBalanceInsertCommand { Entity = walletBalance });
+                                var walletBalanceHistory = new WalletBalanceHistory
+                                {
+                                    WalletBalanceId = walletBalance?.ID,
+                                    WalletId = walletBalance?.WalletId,
+                                    TokenId = walletBalance?.TokenId,
+                                    TokenHash = walletBalance?.TokenHash,
+                                    OldQuantity = (decimal?)0,
+                                    NewQuantity = walletBalance?.Quantity,
+                                    RequestQuantity = walletBalance?.Quantity,
+                                    PercentageCalculated = 100,
+                                    Price = walletBalance?.Price,
+                                    TotalValueUSD = walletBalance?.TotalValueUSD,
+                                    Signature = "CREATE BALANCE",
+                                    FontType = EFontType.SOLANA_RPC,
+                                    CreateDate = DateTime.Now,
+                                    LastUpdate = walletBalance?.LastUpdate
+                                };
+                                await this._mediator.Send(new WalletBalanceHistoryInsertCommand { Entity = walletBalanceHistory });
                             }
-                            var walletBalance = new WalletBalance
-                            {
-                                WalletId = wallet?.ID,
-                                TokenId = token?.ID,
-                                TokenHash = token?.Hash,
-                                Quantity = balance?.Amount,
-                                Price = null,
-                                TotalValueUSD = null,
-                                IsActive = true,
-                                LastUpdate = DateTime.Now
-                            };
-                            await this._mediator.Send(new WalletBalanceInsertCommand { Entity = walletBalance });
-                            var walletBalanceHistory = new WalletBalanceHistory
-                            {
-                                WalletBalanceId = walletBalance?.ID,
-                                WalletId = walletBalance?.WalletId,
-                                TokenId = walletBalance?.TokenId,
-                                TokenHash = walletBalance?.TokenHash,
-                                OldQuantity = (decimal?)0,
-                                NewQuantity = walletBalance?.Quantity,
-                                RequestQuantity = walletBalance?.Quantity,
-                                PercentageCalculated = 100,
-                                Price = walletBalance?.Price,
-                                TotalValueUSD = walletBalance?.TotalValueUSD,
-                                Signature = "CREATE BALANCE",
-                                FontType = EFontType.SOLANA_RPC,
-                                CreateDate = DateTime.Now,
-                                LastUpdate = walletBalance?.LastUpdate
-                            };
-                            await this._mediator.Send(new WalletBalanceHistoryInsertCommand { Entity = walletBalanceHistory });
-                        });
+
+                        }
                         wallet!.DateLoadBalance = balanceResponse?.DateLoadBalance;
                         wallet!.IsLoadBalance = true;
                         await this._mediator.Send(new WalletUpdateCommand { Entity = wallet });

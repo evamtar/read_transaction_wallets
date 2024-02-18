@@ -72,12 +72,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.Configure<MappedTokensConfig>(configuration.GetSection("MappedTokens"));
     services.Configure<SolnetRpcBalanceConfig>(configuration.GetSection("SolnetRpcBalance"));
     services.Configure<SolnetRpcTransactionConfig>(configuration.GetSection("SolnetRpcTransaction"));
-
     #endregion
 
     #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
 
     services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB") ?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Transient);
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);

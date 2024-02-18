@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Model.Database.Base;
 
 
-namespace SyncronizationBot.Infra.Data.Mapper
+
+namespace SyncronizationBot.Infra.Data.Mapper.SqlServer
 {
     public class TelegramMessageMap : IEntityTypeConfiguration<TelegramMessage>
     {

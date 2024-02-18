@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
 
-namespace SyncronizationBot.Infra.Data.Mapper
+namespace SyncronizationBot.Infra.Data.Mapper.SqlServer
 {
     public class PublishMessageMap : IEntityTypeConfiguration<PublishMessage>
     {

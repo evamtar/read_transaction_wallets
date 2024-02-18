@@ -1,8 +1,5 @@
-﻿using Org.BouncyCastle.Asn1.Ocsp;
-using Solnet.Extensions;
+﻿using Solnet.Extensions;
 using Solnet.Rpc;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Messages;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
@@ -51,6 +48,7 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
         {
             var listBalances = new List<BalanceResponse>();
             TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+            var tokens = tokenWallet.TokenAccounts();
             this.ExecuteDateTime = DateTime.Now;
             var balances = tokenWallet.Balances();
             foreach (var balance in balances)

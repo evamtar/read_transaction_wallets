@@ -1,5 +1,6 @@
-﻿UPDATE RunTimeController SET IsRunning = 0
-SELECT * FROM RunTimeController WHERE TypeService = 2
+﻿--SELECT * FROM TypeOperation
+--UPDATE RunTimeController SET IsRunning = 0
+--SELECT * FROM RunTimeController WHERE TypeService = 2
 /*********** RUNTIME CONTROLLER ***********/ 
 --INSERT INTO RunTimeController VALUES(1, '1', 'Main Job Controller', 'Serviço de controle de job''s', '', 1, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Alerta de Transações', 'Serviço de alerta de transações', '', 2, 0, 0, 0, 1, null);
@@ -375,15 +376,39 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{ValueSpentSymbol}}', @IdAlertInfo
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Date}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Utils.Transfer.TransferInfo', 'DataOfTransfer', NULL, NULL, NULL, 1, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{PositionIncrease}}', @IdAlertInformation, 'SyncronizationBot.Application.Response.MainCommands.AddUpdate.RecoveryAddUpdateBalanceItemCommandResponse', 'PercentModify', NULL, NULL, NULL, 0, 0, 0);
 
+/************************** WALLETS FOR TEST *****************************/
+DECLARE @ClassWalletId UNIQUEIDENTIFIER = NEWID()
+INSERT INTO ClassWallet VALUES(@ClassWalletId, 1, 'TESTE WALLETS')
+INSERT INTO Wallet VALUES(NEWID(), '5niysgHXFoa8apmrgeBNRXJ6yPiz4WnMnVnAobUXoaMh', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '6r9xLdcMrYGKFnksQd752HBuvNDcb2ZeHMBwzjAyUqrL', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'Bo1d3W7F4Jk6yAxAtkCanZMTfBPVA13N1oC73XvPiAmT', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'HNkZxJUCAAcF1QbAi6nrughS4U6iTzbhwcqoo4pPBRNH', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'ATomG2gRJcB2jNvwcjo2zBMoyLsHZzLgwqy651zzYoCq', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '75RBnyF168q4txJcURgE3eVqyazPaoderqv18LWETvM6', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'ZG98FUCjb8mJ824Gbs6RsgVmr1FhXb2oNiJHa2dwmPd',  @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'DCAK8tuwzsNowVA6eSojLHhHSDQMyECuSbu7KovyvYbm', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'C2X8MT6MZfM2GMLeoaJvdnMCqbSQDJ2kHk3vsCHrZ2H5', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'EccxYg7rViwYfn9EMoNu7sUaV82QGyFt6ewiQaH1GYjv', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '3sf1qf2pGyL6uvz2bHFMo52wGhevCdF5XwBtwom4pQNA', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 's98WxZtDFKL7D1RtKnmJMavvvUQJ2ikDbkZ7XeFhAmz',  @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '7EcSiGfi21fSKhawxK4xWf5CLZX54W5Bk7UMuzX7N16P', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'DXgCVkmVC1PDfmbKGKi7rwVUzKfJ6BLpmXHhxoDX3fKp', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '2VeBttDPvHUaeFTSzsWLrSvdcqKkAZCu3PHVHJtdG5ch', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '9Ak6WuHsCcQeSvZ2XN43M2QddcLqkxZSosSbbUVzwYoj', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '48tnujTTbc4h7Wkr6FjubF1NvaETWGAFjUEPCFfqfk23', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '5tUJdqCfo812RSJHkLVvAQDm8xoRfqr2X8T7nxThuqe6', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '9NuRc1sG9MdCfqjTVmmEb9E2CvndeWSpaw52opk1zftz', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'EYy9PNdpJmB9FTYWdPGb7L9HoZUDJxVFSLphYXaMgLXo', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), '9NrSmuETVePLbcQNDeSwNxBFzpeyF6EfHv8YB2CgdWZM', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'AX3kwXuXTbmJYaS6CtezARDj7Kqht5dYx8JV4vLj6xBJ', @ClassWalletId, 0, NULL, 1, NULL);
+INSERT INTO Wallet VALUES(NEWID(), 'H7d3HRfSG6iAePUXX24gKQgHkiooaSvcPeDzXvmGvy6M', @ClassWalletId, 0, NULL, 1, NULL);
 
-  
-INSERT INTO Wallet
- SELECT ID,
-		Hash,
-		ClassWalletId,
-		IsLoadBalance,
-		DateLoadBalance,
-		IsActive,
-		LastUpdate
 
-  
+
+--DECLARE @SqlStatement NVARCHAR(MAX)
+--SELECT @SqlStatement = 
+--    COALESCE(@SqlStatement, N'') + N'DROP TABLE [DBO].' + QUOTENAME(TABLE_NAME) + N';' + CHAR(13)
+--FROM INFORMATION_SCHEMA.TABLES
+--WHERE TABLE_SCHEMA = 'DBO' and TABLE_TYPE = 'BASE TABLE'
+
+--PRINT @SqlStatement

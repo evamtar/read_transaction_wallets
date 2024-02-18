@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Infra.Data.Mapper;
+using SyncronizationBot.Infra.Data.Mapper.SqlServer;
 
 
 namespace SyncronizationBot.Infra.Data.Context
