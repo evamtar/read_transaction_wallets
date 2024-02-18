@@ -7,11 +7,11 @@ using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenSecurity.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using SyncronizationBot.Domain.Repository.SQLServer;
 
 
 

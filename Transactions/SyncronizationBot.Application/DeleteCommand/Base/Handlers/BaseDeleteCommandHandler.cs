@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.DeleteCommands.Base.Commands;
 using SyncronizationBot.Application.DeleteCommands.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
 {

@@ -13,7 +13,7 @@ using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Respo
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 

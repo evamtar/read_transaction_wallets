@@ -9,7 +9,7 @@ using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 {

@@ -2,7 +2,7 @@
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Response;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
 {

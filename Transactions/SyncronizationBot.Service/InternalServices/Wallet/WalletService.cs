@@ -1,4 +1,4 @@
-﻿using SyncronizationBot.Domain.Repository;
+﻿using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
 using SyncronizationBot.Service.InternalServices.Base;
 using Entity = SyncronizationBot.Domain.Model.Database;

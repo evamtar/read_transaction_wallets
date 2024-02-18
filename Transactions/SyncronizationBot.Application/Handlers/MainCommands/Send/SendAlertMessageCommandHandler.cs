@@ -4,7 +4,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using System.Collections;
 using System.Reflection;
 

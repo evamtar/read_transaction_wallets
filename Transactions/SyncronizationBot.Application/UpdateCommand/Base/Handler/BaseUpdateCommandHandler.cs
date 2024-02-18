@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.UpdateCommand.Base.Command;
 using SyncronizationBot.Application.UpdateCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
 {

@@ -1,5 +1,5 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Service.InternalServices.Base;
 

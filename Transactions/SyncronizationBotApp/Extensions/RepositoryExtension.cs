@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SyncronizationBot.Domain.Repository.Base;
-using SyncronizationBot.Infra.Data.Repository.Base;
+using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 using SyncronizationBotApp.Extensions.Enum;
 using System.Reflection;
 

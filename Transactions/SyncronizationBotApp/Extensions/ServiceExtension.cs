@@ -1,11 +1,5 @@
-﻿
-
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using SyncronizationBot.Domain.Repository.Base;
-using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SyncronizationBot.Domain.Service.RecoveryService.Base;
-using SyncronizationBot.Infra.Data.Repository.Base;
 using SyncronizationBot.Service.InternalServices.Base;
 using SyncronizationBotApp.Extensions.Enum;
 using System.Reflection;

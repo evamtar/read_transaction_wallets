@@ -5,7 +5,7 @@ using SyncronizationBot.Application.Response.MainCommands.Delete;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Utils;
 

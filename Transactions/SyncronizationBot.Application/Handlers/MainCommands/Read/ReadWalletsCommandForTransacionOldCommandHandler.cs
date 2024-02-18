@@ -8,7 +8,7 @@ using SyncronizationBot.Application.Handlers.Base;
 using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 {

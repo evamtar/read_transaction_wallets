@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.InsertCommand.Base.Command;
 using SyncronizationBot.Application.InsertCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Application.InsertCommand.Base.Handler
 {

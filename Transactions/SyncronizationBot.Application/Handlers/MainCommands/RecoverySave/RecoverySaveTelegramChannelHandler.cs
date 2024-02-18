@@ -6,7 +6,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave

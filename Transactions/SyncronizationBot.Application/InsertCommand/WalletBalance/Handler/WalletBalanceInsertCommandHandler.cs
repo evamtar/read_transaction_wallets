@@ -1,7 +1,7 @@
 ﻿using SyncronizationBot.Application.InsertCommand.Base.Handler;
 using SyncronizationBot.Application.InsertCommand.WalletBalance.Command;
 using SyncronizationBot.Application.InsertCommand.WalletBalance.Response;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using Entity = SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Application.InsertCommand.WalletBalance.Handler

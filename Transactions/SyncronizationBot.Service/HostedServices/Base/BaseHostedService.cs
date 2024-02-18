@@ -186,7 +186,6 @@ namespace SyncronizationBot.Service.HostedServices.Base
                 await SetRuntimeControllerAsync(false);
                 this.LogMessage($"Ended --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
-            
         }
 
         #endregion
@@ -251,7 +250,6 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertServiceRunning()
         {
-            RunTimeController = await GetRunTimeControllerAsync();
             await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute

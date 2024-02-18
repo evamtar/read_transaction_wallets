@@ -4,7 +4,7 @@ using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
-using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send

@@ -40,7 +40,6 @@ using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
-using SyncronizationBot.Infra.Data.Context;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
 using SyncronizationBot.Service.HostedServices;
@@ -49,6 +48,8 @@ using SyncronizationBot.Service.InternalServices.Utils;
 using SyncronizationBot.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.HostedWork;
 using SyncronizationBot.Application.AutoMapper.Profiles;
+using SyncronizationBot.Infra.Data.MongoDB.Context;
+using SyncronizationBot.Infra.Data.SQLServer.Context;
 
 
 var builder = Host.CreateApplicationBuilder(args);

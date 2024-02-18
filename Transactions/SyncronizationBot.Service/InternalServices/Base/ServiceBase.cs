@@ -1,5 +1,5 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.Base;
+using SyncronizationBot.Domain.Repository.SQLServer.Base;
 using SyncronizationBot.Domain.Service.RecoveryService.Base;
 using System;
 using System.Linq.Expressions;
