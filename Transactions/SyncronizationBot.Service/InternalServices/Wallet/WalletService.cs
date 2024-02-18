@@ -1,8 +1,9 @@
-﻿using SyncronizationBot.Domain.Repository.SQLServer;
-using CACHE = SyncronizationBot.Domain.Repository.MongoDB;
+﻿using CACHE = SyncronizationBot.Domain.Repository.MongoDB;
+using Entity = SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
 using SyncronizationBot.Service.InternalServices.Base;
-using Entity = SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Repository.SQLServer;
+
 namespace SyncronizationBot.Service.InternalServices.Wallet
 {
     public class WalletService : CachedServiceBase<Entity.Wallet>, IWalletService

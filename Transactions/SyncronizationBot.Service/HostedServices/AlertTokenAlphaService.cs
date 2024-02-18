@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Service.InternalService.Utils;
 using SyncronizationBot.Service.HostedServices.Base;
 
 namespace SyncronizationBot.Service.HostedServices

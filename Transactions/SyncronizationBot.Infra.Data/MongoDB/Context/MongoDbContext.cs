@@ -32,6 +32,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new WalletMap());
+            modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             base.OnModelCreating(modelBuilder);
         }
 

@@ -4,12 +4,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
+using SyncronizationBot.Application.UpdateCommand.Wallet.Command;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
-using SyncronizationBot.Domain.Service.InternalService.Utils;
+using SyncronizationBot.Domain.Service.InternalService.RunTime;
+using System.Threading;
 
 namespace SyncronizationBot.Service.HostedServices.Base
 {
@@ -22,59 +25,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
         
         #endregion
 
-        #region For Alerts
-
-        private TypeOperation? _typeOperationLogExecute;
-        private TypeOperation? TypeOperationLogExecute
-        {
-            get
-            {
-                if (_typeOperationLogExecute == null)
-                    _typeOperationLogExecute = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogExecute).GetAwaiter().GetResult();
-                return _typeOperationLogExecute;
-            }
-        }
-
-        private TypeOperation? _typeOperationLogError;
-        private TypeOperation? TypeOperationLogError
-        {
-            get
-            {
-                if (_typeOperationLogError == null)
-                    this._typeOperationLogError = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogError).GetAwaiter().GetResult();
-                return this._typeOperationLogError;
-            }
-        }
-
-        private TypeOperation? _typeOperationLogRunning;
-        private TypeOperation? TypeOperationLogRunning
-        {
-            get
-            {
-                if (_typeOperationLogRunning == null)
-                    _typeOperationLogRunning = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppRunning).GetAwaiter().GetResult();
-                return _typeOperationLogRunning;
-            }
-        }
-
-        private TypeOperation? _typeOperationLogLostConfiguration;
-        private TypeOperation? TypeOperationLogLostConfiguration
-        {
-            get
-            {
-                if (_typeOperationLogLostConfiguration == null)
-                    _typeOperationLogLostConfiguration = this.PreLoadedEntitiesService?.FirstOrDefaulTypeOperationAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppLostConfiguration).GetAwaiter().GetResult();
-                return _typeOperationLogLostConfiguration;
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         protected IMediator Mediator { get; set; }
         protected T? Work { get; set; }
-        protected IPreLoadedEntitiesService? PreLoadedEntitiesService { get; set; }
+        protected ITypeOperationService TypeOperationService { get; private set; }
+        protected IRunTimeControllerService RunTimeControllerService { get; private set; }
         protected IOptions<SyncronizationBotConfig>? Options { get; set; }
         protected RunTimeController? RunTimeController { get; set; }
         protected PeriodicTimer Timer { get; set; }
@@ -98,7 +54,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
         public BaseHostedService(IServiceProvider serviceProvider)
         {
             this._serviceProvider = serviceProvider;
-            this.PreLoadedEntitiesService = null!;
+            this.TypeOperationService = null!;
+            this.RunTimeControllerService = null!;
             this.Options = null!;
             this.Timer = null!;
             this.Mediator = null!;
@@ -114,7 +71,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
         {
             using (var scope = this._serviceProvider.CreateScope()) 
             {
-                this.PreLoadedEntitiesService = scope.ServiceProvider.GetRequiredService<IPreLoadedEntitiesService>();
+                this.TypeOperationService = scope.ServiceProvider.GetRequiredService<ITypeOperationService>();
+                this.RunTimeControllerService = scope.ServiceProvider.GetRequiredService<IRunTimeControllerService>();
                 this.Work = scope.ServiceProvider.GetRequiredService<T>();
                 this.Mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                 //Init Service
@@ -198,7 +156,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task<RunTimeController?> GetRunTimeControllerAsync()
         {
-            return await this.PreLoadedEntitiesService!.FirstOrDefaulRunTimeControllerAsync(x => x.TypeService == this.Work!.TypeService);
+            return await this.RunTimeControllerService!.FindFirstOrDefaultAsync(x => x.TypeService == this.Work!.TypeService);
         }
         protected void EndTransactionsContingencySum(int? totalValidTransactions)
         {
@@ -217,8 +175,11 @@ namespace SyncronizationBot.Service.HostedServices.Base
         private async Task SetRuntimeControllerAsync(bool isRunning)
         {
             RunTimeController!.IsRunning = isRunning;
-            var response = await this.Mediator.Send(new RunTimeControllerUpdateCommand { Entity = RunTimeController });
-            RunTimeController = response?.Entity;
+            await this.RunTimeControllerService.UpdateAsync(RunTimeController!);
+#pragma warning disable CS4014 ///TODO-FILA
+            this.Mediator.Send(new RunTimeControllerUpdateCommand { Entity = RunTimeController });
+#pragma warning restore CS4014
+
         }
         private async Task SetPeriodicTimer()
         {
@@ -237,6 +198,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         private async Task SendAlertExecute(PeriodicTimer timer)
         {
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogExecute);
             await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
@@ -245,11 +207,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
                     DateExecuted = DateTime.Now,
                     Timer = timer.Period
                 }}),
-                TypeOperationId = TypeOperationLogExecute?.ID
+                TypeOperationId = typeOperation?.ID
             });
         }
         private async Task SendAlertServiceRunning()
         {
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppRunning);
             await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
@@ -257,11 +220,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now
                 }}),
-                TypeOperationId = TypeOperationLogRunning?.ID
+                TypeOperationId = typeOperation?.ID
             });
         }
         private async Task SendAlertTimerIsNull()
         {
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppLostConfiguration);
             await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
@@ -269,11 +233,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now
                 }}),
-                TypeOperationId = TypeOperationLogLostConfiguration?.ID
+                TypeOperationId = typeOperation?.ID
             });
         }
         private async Task SendAlertServiceError(Exception ex, PeriodicTimer timer)
         {
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogError);
             await this.Mediator.Send(new SendAlertMessageCommand
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
@@ -283,7 +248,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                     Timer = timer.Period,
                     Exception = ex,
                 }}),
-                TypeOperationId = TypeOperationLogError?.ID
+                TypeOperationId = typeOperation?.ID
             });
         }
 

@@ -9,34 +9,31 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Service.InternalService.HostedWork;
-using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.Token;
-using SyncronizationBot.Domain.Service.InternalService.Utils;
-using System.Diagnostics;
-using System.Xml.Linq;
+using SyncronizationBot.Domain.Service.InternalService.Wallet;
 
 namespace SyncronizationBot.Service.HostedWork
 {
     public class BalanceWalletsWork : IBalanceWalletsWork
     {
         private readonly IMediator _mediator;
-        private readonly IPreLoadedEntitiesService _preLoadedEntitiesService;
+        private readonly IWalletService _walletService;
         private readonly ITokenService _tokenService;
         public IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
         public ETypeService? TypeService => ETypeService.Balance;
         
         public BalanceWalletsWork(IMediator mediator,
-                                  IPreLoadedEntitiesService preLoadedEntitiesService,
+                                  IWalletService walletService,
                                   ITokenService tokenService)
         {
             this._mediator = mediator;
-            this._preLoadedEntitiesService = preLoadedEntitiesService;
+            this._walletService = walletService;
             this._tokenService = tokenService;
         }
 
         public async Task DoExecute(CancellationToken cancellationToken)
         {
-            var wallets = await this._preLoadedEntitiesService.GetFilteredWalletAsync(x => x.IsActive == true && x.IsLoadBalance == false);
+            var wallets = await this._walletService.GetAsync(x => x.IsActive == true && x.IsLoadBalance == false);
             if (wallets?.Count() > 0)
             {
                 foreach (var wallet in wallets)
@@ -48,7 +45,7 @@ namespace SyncronizationBot.Service.HostedWork
                         {
                             foreach (var balance in balanceResponse?.Result!)
                             {
-                                var token = await _tokenService.FindFirstOrDefault(x => x.Hash == balance.Token!.Hash);
+                                var token = await this._tokenService.FindFirstOrDefault(x => x.Hash == balance.Token!.Hash);
                                 if (token == null)
                                 {
                                     token = new Token
@@ -97,7 +94,11 @@ namespace SyncronizationBot.Service.HostedWork
                         }
                         wallet!.DateLoadBalance = balanceResponse?.DateLoadBalance;
                         wallet!.IsLoadBalance = true;
-                        await this._mediator.Send(new WalletUpdateCommand { Entity = wallet });
+                        await this._walletService.UpdateAsync(wallet);
+                        //Atualização assincrona
+#pragma warning disable CS4014 ///TODO-FILA
+                        this._mediator.Send(new WalletUpdateCommand { Entity = wallet }, cancellationToken);
+#pragma warning restore CS4014 
                     }
                 }
             }

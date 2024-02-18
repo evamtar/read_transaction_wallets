@@ -1,9 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Service.RecoveryService.Base;
+using SyncronizationBot.Domain.Service.InternalService.Base;
 
 namespace SyncronizationBot.Domain.Service.InternalService.Domains
 {
-    public interface IClassWalletService : IServiceBase<ClassWallet>
+    public interface IClassWalletService : ICachedServiceBase<ClassWallet>
     {
     }
 }

@@ -2,18 +2,22 @@
 using SyncronizationBot.Domain.Repository.MongoDB.Base;
 using SyncronizationBot.Domain.Repository.SQLServer.Base;
 using SyncronizationBot.Domain.Service.InternalService.Base;
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 
 namespace SyncronizationBot.Service.InternalServices.Base
 {
     public class CachedServiceBase<T> : ICachedServiceBase<T> where T : Entity
     {
+        private static ConcurrentDictionary<string, bool> Pairs = new ConcurrentDictionary<string, bool>();
         private readonly IReadCommandRepository<T> _readRepository;
         private readonly ICachedRepository<T> _cachedRepository;
         public CachedServiceBase(IRepository<T> readRepository, ICachedRepository<T> cachedRepository)
         {
             this._readRepository = readRepository;
             this._cachedRepository = cachedRepository;
+            //Esquentar cache
+            this.GetAllAsync().GetAwaiter();
         }
 
         #region Add Update Delete Methods
@@ -47,7 +51,7 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         #region Rollback cachedMethods
 
-        public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
+        public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             return await _cachedRepository.FindFirstOrDefaultAsync(predicate, keySelector);
         }
@@ -57,15 +61,28 @@ namespace SyncronizationBot.Service.InternalServices.Base
             return await _cachedRepository.GetAsync(id);
         }
 
-        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
+        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             return await this._cachedRepository.GetAsync(predicate, keySelector);
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            await this._cachedRepository.CreateColletcionAsync();
-            return await this._cachedRepository.GetAllAsync();
+            var listCached = await this._cachedRepository.GetAllAsync();
+            if (!(listCached?.Any() ?? false)) 
+            {
+                if (!IsLoaded())
+                {
+                    var listRelational = await this._readRepository.GetAllAsync();
+                    if (listRelational?.Count > 0)
+                    {
+                        await this._cachedRepository.BulkWrite(listRelational);
+                        listCached = listRelational;
+                    }
+                    Pairs.TryAdd(typeof(T).Name, true);
+                }
+            }
+            return listCached ?? new List<T>();
         }
 
         #endregion
@@ -75,6 +92,15 @@ namespace SyncronizationBot.Service.InternalServices.Base
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private bool IsLoaded() 
+        {
+            return !Pairs.ContainsKey(typeof(T).Name) || Pairs[typeof(T).Name] == true;
         }
 
         #endregion

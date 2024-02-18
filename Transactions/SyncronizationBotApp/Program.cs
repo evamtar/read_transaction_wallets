@@ -43,24 +43,23 @@ using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
 using System.Reflection;
 using SyncronizationBotApp.Extensions;
 using SyncronizationBot.Service.HostedServices;
-using SyncronizationBot.Domain.Service.InternalService.Utils;
-using SyncronizationBot.Service.InternalServices.Utils;
 using SyncronizationBot.Application.AutoMapper.Profiles;
 using SyncronizationBot.Infra.Data.MongoDB.Context;
 using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 
 
 var builder = Host.CreateApplicationBuilder(args);
 
-ConfigureServices(builder.Services, builder.Configuration);
+await ConfigureServices(builder.Services, builder.Configuration);
 
 using IHost host = builder.Build();
 host.Run();
 
-static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+static async Task ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
+    await CleanUpCacheDB(configuration);
+
     #region MediatR
 
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -76,19 +75,15 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
+
     services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
-    services.AddSingleton<IMongoClient>(svc => { return new MongoClient(configuration.GetConnectionString("CacheMongoDB")); });
-    services.AddScoped<IMongoDatabase>(svc => { return new MongoClient(configuration.GetConnectionString("CacheMongoDB")).GetDatabase(configuration.GetSection("Mongo:Database").Value); });
     services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB")?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Scoped);
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddWorkers(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddAutoMapper(typeof(ServiceMediatorProfile));
-    #region Special Service
-    services.AddScoped<IPreLoadedEntitiesService, PreLoadedEntitiesService>();
-    #endregion
-    
+
     #endregion
 
     #region Hosted Service
@@ -220,4 +215,10 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #endregion
 
+}
+
+static async Task CleanUpCacheDB(IConfiguration configuration) 
+{
+    var client = new MongoClient(configuration.GetConnectionString("CacheMongoDB"));
+    await client.DropDatabaseAsync(configuration.GetSection("Mongo:Database").Value);
 }
