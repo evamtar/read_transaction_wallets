@@ -65,13 +65,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if (alert.PricePercent == null)
                                 alert.PriceValue += alert.PriceValue - alert.PriceBase;
                             alert.PriceBase = token?.Price;
-                            await this._alertPriceRepository.UpdateAsync(alert);
+                            this._alertPriceRepository.Update(alert);
                             await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                         else
                         {
                             alert.EndDate = DateTime.Now;
-                            await this._alertPriceRepository.UpdateAsync(alert);
+                            this._alertPriceRepository.Update(alert);
                             await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                     }
@@ -86,7 +86,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             {
                 Parameters = SendAlertMessageCommand.GetParameters(new object[] { alert, token }),
                 TypeOperationId = typeOperation?.ID,
-                IdClassification = (int?)type
+                IdSubLevel = (int?)type
             });
         }
 

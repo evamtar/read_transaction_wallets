@@ -3,11 +3,7 @@ using MongoDB.Driver;
 using System.Linq.Expressions;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.MongoDB.Base;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Infra.Data.MongoDB.Context;
-using System.Numerics;
-using MongoDB.EntityFrameworkCore.Storage;
-
 
 
 
@@ -27,71 +23,68 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
 
         #region Manage Collections
 
-        public async Task CreateColletcionAsync()
+        public void CreateColletcionAsync()
         {
             
-            await DropCollectionAsync();
+            DropCollectionAsync();
             _database.CreateCollection(typeof(T).Name);
         }
 
-        public Task DropCollectionAsync()
+        public void DropCollectionAsync()
         {
             if (_database.GetCollection<T>(typeof(T).Name) != null)
                 _database.DropCollection(typeof(T).Name);
-            return Task.CompletedTask;
         }
 
-        public Task BulkWrite(List<T> listData) 
+        public void BulkWrite(List<T> listData) 
         {
             _database.GetCollection<T>(typeof(T).Name).BulkWrite(listData.Select(entity => new InsertOneModel<T>(entity)));
-            return Task.CompletedTask;
         }
 
         #endregion
 
         #region Add / Update / Delete Methods
 
-        public async Task<List<T>> AddRange(List<T> listItems) 
+        public List<T> AddRange(List<T> listItems) 
         {
-            await _context.Set<T>().AddRangeAsync(listItems);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().AddRange(listItems);
+            _context.SaveChanges();
             return listItems;
         }
 
-        public async Task<T> AddAsync(T item)
+        public T Add(T item)
         {
-            await _context.Set<T>().AddAsync(item);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().Add(item);
+            _context.SaveChanges();
             return item;
         }
 
-        public async Task DeleteByIdAsync(Guid id)
+        public void DeleteById(Guid id)
         {
-            var entity = await GetAsync(id);
+            var entity = GetAsync(id).GetAwaiter().GetResult();
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task<T> UpdateAsync(T item)
+        public T Update(T item)
         {
             _context.Entry(item).State = EntityState.Detached;
             _context.Set<T>().Update(item);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return item;
         }
 
         #endregion
 
         #region Rollback Methods
-
 
 
         public async Task<T?> GetAsync(Guid id)

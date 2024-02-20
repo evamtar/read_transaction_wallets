@@ -54,7 +54,7 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
-            await _walletRepository.UpdateAsync(wallet);
+            _walletRepository.Update(wallet);
             await _walletRepository.DetachedItemAsync(wallet);
         }
         protected async Task UpdateUnixTimeSeconds(Wallet wallet) 

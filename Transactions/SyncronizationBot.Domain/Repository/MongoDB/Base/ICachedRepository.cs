@@ -7,19 +7,19 @@ namespace SyncronizationBot.Domain.Repository.MongoDB.Base
     {
         #region Manage Collections
 
-        Task CreateColletcionAsync();
-        Task DropCollectionAsync();
+        void CreateColletcionAsync();
+        void DropCollectionAsync();
 
         #endregion
 
         #region Add / Update / Delete Methods
 
-        Task BulkWrite(List<T> listData);
-        Task<T> AddAsync(T item);
-        Task<List<T>> AddRange(List<T> listItems);
-        Task<T> UpdateAsync(T item);
-        Task DeleteByIdAsync(Guid id);
-        Task DeleteAsync(T entity);
+        void BulkWrite(List<T> listData);
+        T Add(T item);
+        List<T> AddRange(List<T> listItems);
+        T Update(T item);
+        void DeleteById(Guid id);
+        void Delete(T entity);
 
         #endregion
 

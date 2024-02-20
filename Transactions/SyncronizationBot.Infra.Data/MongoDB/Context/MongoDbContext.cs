@@ -18,11 +18,13 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
             this._connectionString = extension?.ConnectionString;
             this._databaseName = extension?.DatabaseName;
         }
-        
+
         #endregion
 
         #region DbSetConfiguration
 
+        public DbSet<AlertConfiguration> AlertsConfigurations { get; set; }
+        public DbSet<AlertInformation> AlertsInformations { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
         public DbSet<ClassWallet> ClassWallets { get; set; }
@@ -34,6 +36,8 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
+            modelBuilder.ApplyConfiguration(new AlertInformationMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             modelBuilder.ApplyConfiguration(new ClassWalletMap());

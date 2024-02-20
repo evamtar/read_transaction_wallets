@@ -1,5 +1,4 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Model.Enum;
 
 namespace SyncronizationBot.Domain.Model.Database
 {

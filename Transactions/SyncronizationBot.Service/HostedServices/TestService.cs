@@ -1,30 +1,64 @@
-﻿//using MediatR;
-//using Microsoft.Extensions.Options;
-//using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
-//using SyncronizationBot.Domain.Model.Configs;
-//using SyncronizationBot.Domain.Model.Enum;
-//using SyncronizationBot.Domain.Service.InternalService.Utils;
-//using SyncronizationBot.Service.HostedServices.Base;
+﻿
 
 
 
-//namespace SyncronizationBot.Service.HostedServices
-//{
-//    public class TestService : BaseHostedService
-//    {
-//        protected override IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
+using Microsoft.Extensions.Hosting;
+using System.Timers;
 
-//        protected override ETypeService? TypeService => ETypeService.NONE;
+namespace SyncronizationBot.Service.HostedServices
+{
+    public class TestService : BackgroundService
+    {
+        protected System.Timers.Timer? Timer { get; set; }
+
+        public TestService() { }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            Console.WriteLine($"DateTime --> {DateTime.Now}");
+            Timer = new System.Timers.Timer();
+            Timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            Timer.Interval = 10000;
+            Timer.Enabled = true;
+            Timer.AutoReset = true;
+            Timer?.Start();
+            return Task.CompletedTask;
+        }
+        private async void OnTimedEvent(object? sender, ElapsedEventArgs e)
+        {
+            TryStop();
+            Console.WriteLine($"DateTime Elapsed --> {DateTime.Now}");
+            Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime);
+            await Task.Delay(12000);
+            TryStart();
+        }
         
-//        public TestService(IMediator mediator) : base(mediator)
-//        {
-//            Console.WriteLine("Iniciando o serviço de teste de alertas");
-//        }
+        public override void Dispose()
+        {
+            try 
+            {
+                TryStop();
+                Timer?.Dispose();
+            }
+            finally 
+            {
+                
+            }
+            base.Dispose();
+        }
 
-//        protected override async Task DoExecute(CancellationToken cancellationToken)
-//        {
-//            await _mediator.Send(new RecoverySaveNewsTokensCommand { }, cancellationToken);
-//        }
-
-//    }
-//}
+        private void TryStop() 
+        {
+            try
+            {
+                Timer?.Stop();
+            }
+            finally{ }
+        }
+        private void TryStart() 
+        {
+            try { Timer?.Start(); }
+            finally{ }
+        }
+    }
+}

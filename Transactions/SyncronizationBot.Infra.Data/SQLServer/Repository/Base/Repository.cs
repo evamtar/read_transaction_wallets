@@ -21,6 +21,13 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             return item;
         }
 
+        public async Task<List<T>> AddRangeAsync(List<T> items)
+        {
+            await _context.Set<T>().AddRangeAsync(items);
+            await _context.SaveChangesAsync();
+            return items;
+        }
+
         public async Task<T> DetachedItemAsync(T item)
         {
             try
@@ -68,11 +75,11 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
             await _context.SaveChangesAsync();
         }
 
-        public async Task<T> UpdateAsync(T item)
+        public T Update(T item)
         {
             _context.Entry(item).State = EntityState.Detached;
             _context.Set<T>().Update(item);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return item;
         }
 

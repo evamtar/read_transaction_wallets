@@ -94,11 +94,9 @@ namespace SyncronizationBot.Service.HostedWork
                         }
                         wallet!.DateLoadBalance = balanceResponse?.DateLoadBalance;
                         wallet!.IsLoadBalance = true;
-                        await this._walletService.UpdateAsync(wallet);
+                        this._walletService.Update(wallet);
                         //Atualização assincrona
-#pragma warning disable CS4014 ///TODO-FILA
-                        this._mediator.Send(new WalletUpdateCommand { Entity = wallet }, cancellationToken);
-#pragma warning restore CS4014 
+                        await this._mediator.Send(new WalletUpdateCommand { Entity = wallet }, cancellationToken);
                     }
                 }
             }

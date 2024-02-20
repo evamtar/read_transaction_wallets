@@ -1,25 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class AlertConfigurationMap : IEntityTypeConfiguration<AlertConfiguration>
+    public class AlertConfigurationMap : BaseMapper<AlertConfiguration>
     {
-        public void Configure(EntityTypeBuilder<AlertConfiguration> builder)
+        public AlertConfigurationMap() : base(EDatabase.SqlServer) 
+        { 
+        }
+        
+        protected override void RelationsShips(EntityTypeBuilder<AlertConfiguration> builder)
         {
-            builder.ToTable("AlertConfiguration");
-            builder.Property(ac => ac.ID);
-            builder.Property(ac => ac.Name);
-            builder.Property(ac => ac.TypeOperationId);
-            builder.Property(ac => ac.TelegramChannelId);
-            builder.Property(ac => ac.IsActive);
-            builder.Property(ac => ac.CreateDate);
-            builder.Property(ac => ac.LastUpdate);
             builder.HasOne(ac => ac.TelegramChannel).WithMany(tc => tc.AlertsConfigurations).HasForeignKey(ac => ac.TelegramChannelId);
             builder.HasOne(ac => ac.TypeOperation).WithMany(tc => tc.AlertConfigurations).HasForeignKey(ac => ac.TypeOperationId);
-            builder.HasKey(ac => ac.ID);
         }
     }
 }

@@ -24,7 +24,6 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         public override void Configure(EntityTypeBuilder<RunTimeController> builder)
         {
             base.Configure(builder);
-            builder.Ignore(rt => rt.Parent);
         }
 
         protected override void PropertiesWithConversion(EntityTypeBuilder<RunTimeController> builder)

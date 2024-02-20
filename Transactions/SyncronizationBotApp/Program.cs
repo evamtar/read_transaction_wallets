@@ -91,7 +91,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     #endregion
 
-    #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
+    #region Context / Repositories / Handlers / Services / Auto Mapper / RabbitMq
 
     services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
     services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB")?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Scoped);
@@ -100,45 +100,25 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddWorkers(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddAutoMapper(typeof(ServiceMediatorProfile));
-
-    #endregion
-
-    #region rabbitMQ
-    
     services.AddRabitMqConnection(configuration);
-    services.Configure<AlertPriceQueueConfiguration>(configuration.GetSection("AlertPriceQueue"));
-    services.Configure<LogMessageQueueConfig>(configuration.GetSection("LogMessageQueue"));
-    services.Configure<TokenAlhaQueueConfig>(configuration.GetSection("TokenAlhaQueue"));
-    services.Configure<TransactionsQueueConfig>(configuration.GetSection("TransactionsQueue"));
-    services.Configure<TrasanctionQueueConfig>(configuration.GetSection("TrasanctionQueue"));
-    services.Configure<UpdateQueueConfiguration>(configuration.GetSection("UpdateQueue"));
-
-
-    services.AddScoped<IPublishAlertPriceService, PublishAlertPriceService>();
-    services.AddScoped<IPublishLogService, PublishLogService>();
-    services.AddScoped<IPublishTokenAlphaService, PublishTokenAlphaService>();
-    services.AddScoped<IPublishTransactionsService, PublishTransactionsService>();
-    services.AddScoped<IPublishTransactionService, PublishTransactionService>();
-    services.AddScoped<IPublishUpdateService, PublishUpdateService>();
+    services.AddRabbitMqServices(configuration);
     #endregion
 
     #region Hosted Service
-    //services.AddHostedService<BalanceWalletsHostedService>();
-    services.AddHostedService<UpdateQueueConsumerService>();
-        //services.AddHostedService<ReadTransactionWalletsService>();
-        //services.AddHostedService<AlertPriceService>();
-        //services.AddHostedService<DeleteOldsMessagesLogService>();
-        //services.AddHostedService<AlertTokenAlphaService>();
-        //services.AddHostedService<ReadTransactionsOldForMapping>();
-        //services.AddHostedService<LoadNewTokensForBetAwardsService>();
+    services.AddHostedService<BalanceWalletsHostedService>();
+    //services.AddHostedService<TestService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
+    //services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<ReadTransactionsOldForMapping>();
+    //services.AddHostedService<LoadNewTokensForBetAwardsService>();
+    #region Only For Test
 
-        #region Only For Test
+    //services.AddHostedService<TestService>();
 
-        //services.AddHostedService<TestService>();
-
-        #endregion
-
-        #endregion
+    #endregion
+    #endregion
 
     #region External Services
 

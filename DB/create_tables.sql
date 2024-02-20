@@ -189,11 +189,8 @@ CREATE TABLE RunTimeController
 	ConfigurationTimer		 VARCHAR(100),
 	JobName                  VARCHAR(200),
 	JobDescription		     VARCHAR(500),
-	FullClassName		     VARCHAR(1000),
 	TypeService				 INT,
-	TimesWithoutTransaction  INT,
 	IsRunning				 BIT,
-	IsContingecyTransaction  BIT,
 	IsActive		         BIT,
 	PRIMARY KEY(RuntimeId)
 );
@@ -560,7 +557,7 @@ CREATE TABLE AlertConfiguration(
 CREATE TABLE AlertInformation(
 	ID                    UNIQUEIDENTIFIER,
 	[Message]             VARCHAR(4000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-	IdClassification      INT,
+	IdSubLevel		      INT,
 	AlertConfigurationId  UNIQUEIDENTIFIER,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (AlertConfigurationId) REFERENCES AlertConfiguration(ID),

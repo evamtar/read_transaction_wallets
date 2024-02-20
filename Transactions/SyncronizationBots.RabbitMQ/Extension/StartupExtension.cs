@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
 using SyncronizationBots.RabbitMQ.Configuration;
 using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Connection;
-using Microsoft.Extensions.Options;
+
 
 
 namespace SyncronizationBots.RabbitMQ.Extension

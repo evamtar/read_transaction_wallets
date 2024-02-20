@@ -41,7 +41,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     //});
                     await this._mediator.Send(new SendAlertMessageCommand
                     {
-                        IdClassification = this.GetClassificationAlert(tokensAlphaWalletsToAlert!),
+                        IdSubLevel = this.GetClassificationAlert(tokensAlphaWalletsToAlert!),
                         EntityId = publicMessage!.EntityId,
                         Parameters = SendAlertMessageCommand.GetParameters(new object[]
                         {
@@ -52,7 +52,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         TypeOperationId = Guid.NewGuid()//ETypeAlert.ALERT_TOKEN_ALPHA
                     });
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.UpdateAsync(publicMessage!);
+                    this._publishMessageRepository.Update(publicMessage!);
                     await this._publishMessageRepository.DetachedItemAsync(publicMessage!);
                 }
             }
@@ -69,7 +69,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 {
                     listOfEntity.Add(JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty));
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.UpdateAsync(publicMessage);
+                    this._publishMessageRepository.Update(publicMessage);
                     await this._publishMessageRepository.DetachedItemAsync(publicMessage);
                 }
             }
@@ -82,7 +82,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             if (publicMessage != null) 
             {
                 publicMessage.ItWasPublished = true;
-                await this._publishMessageRepository.UpdateAsync(publicMessage);
+                this._publishMessageRepository.Update(publicMessage);
                 await this._publishMessageRepository.DetachedItemAsync(publicMessage);
                 return JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty);
             }

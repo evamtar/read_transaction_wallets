@@ -35,7 +35,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             var configuration = await _alertConfigurationRepository.FindFirstOrDefaultAsync(x => x.TypeOperationId == request.TypeOperationId);
             if (configuration != null)
             {
-                var informations = await _alertInformationRepository.GetAsync(x => x.AlertConfigurationId == configuration.ID && (request.IdClassification == null || x.IdClassification == null || x.IdClassification == request.IdClassification));
+                var informations = await _alertInformationRepository.GetAsync(x => x.AlertConfigurationId == configuration.ID && (request.IdSubLevel == null || x.IdSubLevel == null || x.IdSubLevel == request.IdSubLevel));
                 if (informations != null && informations.Any())
                 {
                     foreach (var information in informations)

@@ -22,29 +22,29 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         #region Add Update Delete Methods
 
-        public Task<List<T>> AddRange(List<T> listItems)
+        public void AddRange(List<T> listItems)
         {
-            throw new NotImplementedException();
+            this._cachedRepository.BulkWrite(listItems);
         }
 
-        public async Task<T> AddAsync(T entity)
+        public T Add(T entity)
         {
-            return await this._cachedRepository.AddAsync(entity);
+            return this._cachedRepository.Add(entity);
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public T Update(T entity)
         {
-            return await this._cachedRepository.UpdateAsync(entity);
+            return this._cachedRepository.Update(entity);
         }
 
-        public async Task DeleteByIdAsync(Guid id)
+        public void DeleteById(Guid id)
         {
-            await this._cachedRepository.DeleteByIdAsync(id);
+            this._cachedRepository.DeleteById(id);
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
-            await this._cachedRepository.DeleteAsync(entity);
+            this._cachedRepository.Delete(entity);
         }
 
         #endregion
@@ -76,7 +76,7 @@ namespace SyncronizationBot.Service.InternalServices.Base
                     var listRelational = await this._readRepository.GetAllAsync();
                     if (listRelational?.Count > 0)
                     {
-                        await this._cachedRepository.BulkWrite(listRelational);
+                        this._cachedRepository.BulkWrite(listRelational);
                         listCached = listRelational;
                     }
                     Pairs.TryAdd(typeof(T).Name, true);

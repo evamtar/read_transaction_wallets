@@ -8,7 +8,7 @@ namespace SyncronizationBot.Application.Commands.MainCommands.Send
     {
         public Guid? TypeOperationId { get; set; }
         public Guid? EntityId { get; set; }
-        public int? IdClassification { get; set; }
+        public int? IdSubLevel { get; set; }
         public Dictionary<string, object>? Parameters { get; set; }
 
         #region Helpers

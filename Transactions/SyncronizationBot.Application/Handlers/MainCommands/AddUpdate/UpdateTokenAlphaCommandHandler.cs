@@ -43,7 +43,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     tokenAlphaWallet.ValueReceivedUSDC = tokenAlphaWallet.ValueReceivedUSDC ?? 0 + request?.AmountTokenUSDC;
                     tokenAlphaWallet.ValueReceivedUSDT = tokenAlphaWallet.ValueReceivedUSDT ?? 0 + request?.AmountTokenUSDT;
                     tokenAlphaWallet.QuantityTokenSell = tokenAlphaWallet.QuantityTokenSell?? 0 + request?.AmountTokenSell;
-                    await this._tokenAlphaWalletRepository.UpdateAsync(tokenAlphaWallet);
+                    this._tokenAlphaWalletRepository.Update(tokenAlphaWallet);
                     await this._tokenAlphaWalletRepository.DetachedItemAsync(tokenAlphaWallet);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
 
@@ -52,7 +52,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 tokenAlpha.ActualPrice = request?.Price;
                 tokenAlpha.LastUpdate = DateTime.Now;
                 await SaveTokenAlphaHistory(request, tokenAlpha);
-                await this._tokenAlphaRepository.UpdateAsync(tokenAlpha!);
+                this._tokenAlphaRepository.Update(tokenAlpha!);
                 await this._tokenAlphaRepository.DetachedItemAsync(tokenAlpha!);
             }
             return new UpdateTokenAlphaCommandResponse { };

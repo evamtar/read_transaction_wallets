@@ -42,12 +42,12 @@ namespace SyncronizationBots.RabbitMQ.Consumer
             this.StartBasicConsumer();
             while (!stoppingToken.IsCancellationRequested) 
             {
-                await LogInfo($" Active --> {nameof(this._consumerChannel)}");
+                await LogInfo($" Active --> Exchange: {this.QueueConfiguration.Exchange} | QueueName: {this.QueueConfiguration.QueueName}");
                 await Task.Delay(30000);
             }
         }
 
-        private async void ConsumerReceived(object sender, BasicDeliverEventArgs @event)
+        private async void ConsumerReceived(object? sender, BasicDeliverEventArgs @event)
         {
             try
             {

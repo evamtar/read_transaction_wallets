@@ -52,7 +52,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                                 balance.Price = token?.Price ?? 0;
                             }
                             balance.LastUpdate = DateTime.Now;
-                            await this._walletBalanceRepository.UpdateAsync(balance);
+                            this._walletBalanceRepository.Update(balance);
                             await this._walletBalanceRepository.DetachedItemAsync(balance);
                             await UpdateBalancesWithSameToken(balance.ID, balance.TokenId, balance.Price);
                         }
@@ -72,7 +72,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance.TotalValueUSD = balance.Quantity * (price ?? 0);
                     balance.Price = (price ?? 0);
                     balance.LastUpdate = DateTime.Now;
-                    await this._walletBalanceRepository.UpdateAsync(balance);
+                    this._walletBalanceRepository.Update(balance);
                     await this._walletBalanceRepository.DetachedItemAsync(balance);
                 }
             }

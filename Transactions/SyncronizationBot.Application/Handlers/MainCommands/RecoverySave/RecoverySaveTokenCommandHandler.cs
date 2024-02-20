@@ -318,7 +318,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             token!.Decimals = (int?)tokenResponse?.Data?.Decimals;
             token!.NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets;
             token!.LastUpdate = DateTime.Now;
-            await this._tokenRepository.UpdateAsync(token);
+            this._tokenRepository.Update(token);
             await this._tokenRepository.DetachedItemAsync(token);
             var tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
             await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
@@ -334,7 +334,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             {
                 token!.MarketCap = tokenSymbol?.Data?[request!.TokenHash!].Price * token.Supply;
                 token!.LastUpdate = DateTime.Now;
-                await this._tokenRepository.UpdateAsync(token);
+                this._tokenRepository.Update(token);
                 await this._tokenRepository.DetachedItemAsync(token);
                 tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
                 await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);
@@ -348,7 +348,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     token!.MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv;
                     token!.Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd);
                     token!.LastUpdate = DateTime.Now;
-                    await this._tokenRepository.UpdateAsync(token);
+                    this._tokenRepository.Update(token);
                     await this._tokenRepository.DetachedItemAsync(token);
                     tokenSecurity = await this._tokenSecurityRepository.FindFirstOrDefaultAsync(x => x.TokenId == token.ID);
                     await this._tokenSecurityRepository.DetachedItemAsync(tokenSecurity!);

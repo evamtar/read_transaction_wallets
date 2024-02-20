@@ -98,7 +98,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     balance.TotalValueUSD = balance.Quantity * price?.Data?[tokenHash!].Price;
                 }
                 balance.LastUpdate = DateTime.Now;
-                balance = await this._walletBalanceRepository.UpdateAsync(balance);
+                balance = this._walletBalanceRepository.Update(balance);
                 await this._walletBalanceRepository.DetachedItemAsync(balance);
             }
 

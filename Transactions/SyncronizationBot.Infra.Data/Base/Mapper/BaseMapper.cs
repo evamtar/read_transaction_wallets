@@ -99,7 +99,12 @@ namespace SyncronizationBot.Infra.Data.Base.Mapper
                     }
                 }
             }
+            this.RelationsShips(builder);
+            this.IgnoreRelationsShips(builder);
             this.AddKeys(builder);
         }
+
+        protected virtual void RelationsShips(EntityTypeBuilder<T> builder) { }
+        protected virtual void IgnoreRelationsShips(EntityTypeBuilder<T> builder) { }
     }
 }
