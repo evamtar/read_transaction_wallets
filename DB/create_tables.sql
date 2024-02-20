@@ -189,7 +189,6 @@ CREATE TABLE RunTimeController
 	IsRunning				 BIT,
 	IsContingecyTransaction  BIT,
 	IsActive		         BIT,
-	RuntimeParentId			 BIT,
 	PRIMARY KEY(RuntimeId)
 );
 GO 

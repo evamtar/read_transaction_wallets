@@ -8,7 +8,7 @@ using SyncronizationBot.Application.UpdateCommand.Wallet.Command;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Service.InternalService.HostedWork;
+using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.Token;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
 

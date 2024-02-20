@@ -34,9 +34,7 @@ using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Service;
-using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Configs;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service;
-using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Configs;
 using SyncronizationBot.Infra.CrossCutting.Telegram.TelegramBot.Service;
@@ -47,6 +45,10 @@ using SyncronizationBot.Application.AutoMapper.Profiles;
 using SyncronizationBot.Infra.Data.MongoDB.Context;
 using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
+using SyncronizationBots.RabbitMQ.Extension;
+using SyncronizationBot.Service.RabbitMQ.UpdatesQueue.Configs;
+using SyncronizationBot.Domain.Service.RabbitMQ.UpdatesQueue;
+using SyncronizationBot.Service.RabbitMQ.UpdatesQueue;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -70,8 +72,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     services.Configure<SyncronizationBotConfig>(configuration.GetSection("SyncronizationBot"));
     services.Configure<MappedTokensConfig>(configuration.GetSection("MappedTokens"));
-    services.Configure<SolnetRpcBalanceConfig>(configuration.GetSection("SolnetRpcBalance"));
-    services.Configure<SolnetRpcTransactionConfig>(configuration.GetSection("SolnetRpcTransaction"));
+
     #endregion
 
     #region Context / Repositories / Handlers / Services / HostedService (NOT NOW THE EXTENSION)
@@ -86,23 +87,30 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     #endregion
 
+    #region rabbitMQ
+    
+    services.AddRabitMqConnection(configuration);
+    services.Configure<UpdateQueueConfiguration>(configuration.GetSection("UpdateQueue"));
+    services.AddScoped<IPublishUpdateService, PublishUpdateService>();
+    #endregion
+
     #region Hosted Service
     services.AddHostedService<BalanceWalletsHostedService>();
 
-    //services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
-    //services.AddHostedService<DeleteOldsMessagesLogService>();
-    //services.AddHostedService<AlertTokenAlphaService>();
-    //services.AddHostedService<ReadTransactionsOldForMapping>();
-    //services.AddHostedService<LoadNewTokensForBetAwardsService>();
+        //services.AddHostedService<ReadTransactionWalletsService>();
+        //services.AddHostedService<AlertPriceService>();
+        //services.AddHostedService<DeleteOldsMessagesLogService>();
+        //services.AddHostedService<AlertTokenAlphaService>();
+        //services.AddHostedService<ReadTransactionsOldForMapping>();
+        //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 
-    #region Only For Test
+        #region Only For Test
 
-    //services.AddHostedService<TestService>();
+        //services.AddHostedService<TestService>();
 
-    #endregion
+        #endregion
 
-    #endregion
+        #endregion
 
     #region External Services
 

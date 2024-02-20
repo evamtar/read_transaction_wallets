@@ -1,24 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MongoDB.EntityFrameworkCore.Extensions;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
-    public class WalletMap : IEntityTypeConfiguration<Wallet>
+    public class WalletMap : BaseMapper<Wallet>
     {
-        public void Configure(EntityTypeBuilder<Wallet> builder)
+        public WalletMap() : base(EDatabase.Mongodb)
         {
-            builder.ToCollection(typeof(Wallet).Name);
-            builder.Property(w => w.ID);
-            builder.Property(w => w.Hash);
-            builder.Property(w => w.ClassWalletId);
-            builder.Property(w => w.IsLoadBalance);
-            builder.Property(w => w.DateLoadBalance);
-            builder.Property(w => w.IsActive);
-            builder.Property(w => w.LastUpdate);
-            builder.HasKey(w => w.ID);
+        }
+
+        public override void Configure(EntityTypeBuilder<Wallet> builder)
+        {
+            base.Configure(builder);
             builder.Ignore(w => w.ClassWallet);
             builder.Ignore(w => w.Transactions);
             builder.Ignore(w => w.TransactionsOldForMapping);

@@ -2,7 +2,7 @@
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 
-namespace SyncronizationBot.Domain.Service.InternalService.HostedWork.Base
+namespace SyncronizationBot.Domain.Service.HostedWork.Base
 {
     public interface IHostWorkService
     {

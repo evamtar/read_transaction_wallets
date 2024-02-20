@@ -1,19 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MongoDB.EntityFrameworkCore.Extensions;
-using SyncronizationBot.Domain.Model.Database;
+﻿using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
-    public class TypeOperationMap : IEntityTypeConfiguration<TypeOperation>
+    public class TypeOperationMap : BaseMapper<TypeOperation>
     {
-        public void Configure(EntityTypeBuilder<TypeOperation> builder)
+        public TypeOperationMap() : base(EDatabase.Mongodb)
         {
-            builder.ToCollection(typeof(TypeOperation).Name);
-            builder.Property(to => to.ID);
-            builder.Property(to => to.Name);
-            builder.Property(to => to.IdTypeOperation);
-            builder.HasKey(to => to.ID);
         }
+        
     }
 }

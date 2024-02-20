@@ -24,6 +24,9 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         #region DbSetConfiguration
 
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<TypeOperation> TypeOperations { get; set; }
+        public DbSet<ClassWallet> ClassWallets { get; set; }
+        public DbSet<RunTimeController> RunTimeControllers  { get; set; }
 
         #endregion
 
@@ -33,6 +36,8 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         {
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
+            modelBuilder.ApplyConfiguration(new ClassWalletMap());
+            modelBuilder.ApplyConfiguration(new TypeOperationMap());
             base.OnModelCreating(modelBuilder);
         }
 

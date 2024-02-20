@@ -7,5 +7,20 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "Miguel2020"
+      SA_PASSWORD: "M@ni@co2024"
       ACCEPT_EULA: "Y"
+      
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rabbitmq_go_net
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge   
+
+

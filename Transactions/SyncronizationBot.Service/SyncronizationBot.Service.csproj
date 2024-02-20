@@ -14,6 +14,7 @@
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
     <ProjectReference Include="..\SyncronizationBot.Utils\SyncronizationBot.Utils.csproj" />
     <ProjectReference Include="..\SyncronizationBot.Application\SyncronizationBot.Application.csproj" />
+    <ProjectReference Include="..\SyncronizationBots.RabbitMQ\SyncronizationBots.RabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

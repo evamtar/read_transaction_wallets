@@ -2,17 +2,19 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
-using SyncronizationBot.Application.UpdateCommand.Wallet.Command;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Domain.Model.RabbitMQ;
+using SyncronizationBot.Domain.Service.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.Domains;
-using SyncronizationBot.Domain.Service.InternalService.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.RunTime;
-using System.Threading;
+using SyncronizationBot.Domain.Service.RabbitMQ.UpdatesQueue;
+using System.Text.Json.Serialization;
 
 namespace SyncronizationBot.Service.HostedServices.Base
 {
