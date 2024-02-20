@@ -1,8 +1,8 @@
 ﻿using SyncronizationBots.RabbitMQ.Queue.Interface;
 
-namespace SyncronizationBot.Service.RabbitMQ.UpdatesQueue.Configs
+namespace SyncronizationBot.Service.RabbitMQ.LogMessageQueue.Configs
 {
-    public class UpdateQueueConfiguration : IQueueConfiguration
+    public class LogMessageQueueConfig : IQueueConfiguration
     {
         public string? Exchange { get; set; }
         public string? QueueName { get; set; }
@@ -11,5 +11,5 @@ namespace SyncronizationBot.Service.RabbitMQ.UpdatesQueue.Configs
         public bool? AutoDelete { get; set; }
         public bool? Mandatory { get; set; }
         public Dictionary<string, object>? Arguments { get; set; }
-}
+    }
 }

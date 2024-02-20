@@ -104,6 +104,12 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenPriceHistory')
+BEGIN
+	DROP TABLE [TokenPriceHistory]
+END
+GO
+
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenSecurity')
 BEGIN
 	DROP TABLE [TokenSecurity]
@@ -234,16 +240,25 @@ CREATE TABLE Token(
 	Symbol                 VARCHAR(500),
 	[Name]			       VARCHAR(200),
 	Supply                 VARCHAR(150),
-	MarketCap              VARCHAR(150),
-	Liquidity              VARCHAR(150),
-	UniqueWallet24h        INT,
-	UniqueWalletHistory24h INT,
 	Decimals               INT,
-	NumberMarkets          INT,
 	CreateDate             DATETIME,
 	LastUpdate             DATETIME,
 	IsLazyLoad             BIT,
 	PRIMARY KEY (ID)
+);
+GO
+
+CREATE TABLE TokenPriceHistory(
+	ID                     UNIQUEIDENTIFIER,
+	TokenId                UNIQUEIDENTIFIER,
+	MarketCap              VARCHAR(150),
+	Liquidity              VARCHAR(150),
+	UniqueWallet24h        INT,
+	UniqueWalletHistory24h INT,
+	NumberMarkets          INT,
+	CreateDate             DATETIME,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (TokenId) REFERENCES Token(ID)
 );
 GO
 
