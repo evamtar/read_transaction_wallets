@@ -94,3 +94,5 @@ dkms.conf
 /Transactions/SyncronizationBot.Test/bin/Release/net8.0
 /Transactions/SyncronizationBot.Utils/bin/Release/net8.0
 /Transactions/SyncronizationBotApp/bin/Release/net8.0
+/Transactions/SyncronizationBots.RabbitMQ/bin/Debug/net8.0
+/Transactions/SyncronizationBots.RabbitMQ/obj
