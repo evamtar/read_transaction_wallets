@@ -49,8 +49,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 if (tokenAlphaBuyBefore != null)
                 {
                     tokenAlphaBuyBefore.ValueSpentSol += request?.ValueBuySol;
-                    tokenAlphaBuyBefore.ValueSpentUSD += request?.ValueBuyUSDC;
-                    tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
+                    tokenAlphaBuyBefore.ValueSpentUSD += request?.ValueBuyUSD;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
                     this._tokenAlphaWalletRepository.Update(tokenAlphaBuyBefore);
                     await this._tokenAlphaWalletRepository.DetachedItemAsync(tokenAlphaBuyBefore);
@@ -66,8 +65,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         ClassWalletDescription = request?.ClassWalletDescription,
                         NumberOfBuys = 1,
                         ValueSpentSol = request?.ValueBuySol,
-                        ValueSpentUSD = request?.ValueBuyUSDC,
-                        ValueSpentUSDT = request?.ValueBuyUSDT,
+                        ValueSpentUSD = request?.ValueBuyUSD,
                         QuantityToken = request?.QuantityTokenReceived
                     });
                     await this._tokenAlphaWalletRepository.DetachedItemAsync(tokekAlphaWallet);
@@ -124,8 +122,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             ClassWalletDescription = request?.ClassWalletDescription,
                             NumberOfBuys = 1,
                             ValueSpentSol = request?.ValueBuySol,
-                            ValueSpentUSD = request?.ValueBuyUSDC,
-                            ValueSpentUSDT = request?.ValueBuyUSDT,
+                            ValueSpentUSD = request?.ValueBuyUSD,
                             QuantityToken = request?.QuantityTokenReceived
                         });
                         await SaveTokenAlphaWalletsHistory(request, tokenAlphaWallet);
@@ -172,16 +169,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 NumberOfBuys = tokenAlphaWallet?.NumberOfBuys,
                 ValueSpentSol = tokenAlphaWallet?.ValueSpentSol,
                 ValueSpentUSD = tokenAlphaWallet?.ValueSpentUSD,
-                ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT,
                 QuantityToken = tokenAlphaWallet?.QuantityToken,
                 NumberOfSells = tokenAlphaWallet?.NumberOfSells,
                 ValueReceivedSol = tokenAlphaWallet?.ValueReceivedSol,
                 ValueReceivedUSD = tokenAlphaWallet?.ValueReceivedUSD,
-                ValueReceivedUSDT = tokenAlphaWallet?.ValueReceivedUSDT,
                 QuantityTokenSell = tokenAlphaWallet?.QuantityTokenSell,
                 RequestValueInSol = request?.ValueBuySol,
-                RequestValueInUSD = request?.ValueBuyUSDC,
-                RequestValueInUSDT = request?.ValueBuyUSDT,
+                RequestValueInUSD = request?.ValueBuyUSD,
                 RequestQuantityToken = request?.QuantityTokenReceived
             });
             await this._tokenAlphaWalletHistoryRepository.DetachedItemAsync(tokenAlphaWalletHistory);
