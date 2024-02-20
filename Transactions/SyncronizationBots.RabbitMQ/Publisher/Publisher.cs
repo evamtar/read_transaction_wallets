@@ -25,7 +25,7 @@ namespace SyncronizationBots.RabbitMQ.Publisher
             this._queueConfiguration = queueConfiguration ?? throw new ArgumentNullException(nameof(this._queueConfiguration)); 
         }
 
-        public Task Publish<W>(MessageEvent<W> @event) where W : Entity
+        public Task Publish<T>(MessageEvent<T> @event) where T : Entity
         {
             using var channel = this._rabbitMQConnection.CreateModel();
             try
@@ -57,15 +57,15 @@ namespace SyncronizationBots.RabbitMQ.Publisher
                                      autoDelete: this._queueConfiguration?.AutoDelete ?? false,
                                      arguments: this._queueConfiguration?.Arguments);
 
-                //policy.Execute(() =>
-                //{
+                policy.Execute(() =>
+                {
                     //PublishMessage
                     channel.BasicPublish(exchange: this._queueConfiguration?.Exchange,
                                          routingKey: this._queueConfiguration?.QueueName,
                                          basicProperties: properties,
                                          mandatory: this._queueConfiguration?.Mandatory ?? false,
                                          body: Encoding.UTF8.GetBytes(@event.JsonSerialize()));
-                //});
+                });
             }
             finally 
             {
