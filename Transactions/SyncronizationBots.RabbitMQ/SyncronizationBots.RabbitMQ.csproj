@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Consumer\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
   </ItemGroup>
 
