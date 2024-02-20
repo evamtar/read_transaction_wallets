@@ -25,6 +25,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
 
         public DbSet<AlertConfiguration> AlertsConfigurations { get; set; }
         public DbSet<AlertInformation> AlertsInformations { get; set; }
+        public DbSet<AlertPrice> AlertPrices { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
         public DbSet<ClassWallet> ClassWallets { get; set; }
@@ -38,6 +39,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         {
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
+            modelBuilder.ApplyConfiguration(new AlertPriceMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             modelBuilder.ApplyConfiguration(new ClassWalletMap());

@@ -1,25 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class AlertPriceMap : IEntityTypeConfiguration<AlertPrice>
+    public class AlertPriceMap : BaseMapper<AlertPrice>
     {
-        public void Configure(EntityTypeBuilder<AlertPrice> builder)
+        public AlertPriceMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("AlertPrice");
-            builder.Property(ap => ap.ID);
-            builder.Property(ap => ap.CreateDate);
-            builder.Property(ap => ap.EndDate);
+        }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<AlertPrice> builder)
+        {
             builder.Property(ap => ap.PriceBase).HasConversion<string?>();
-            builder.Property(ap => ap.TokenHash);
             builder.Property(ap => ap.PriceValue).HasConversion<string?>();
             builder.Property(ap => ap.PricePercent).HasPrecision(5, 2);
-            builder.Property(ap => ap.TelegramChannelId);
+        }
+
+        protected override void RelationsShips(EntityTypeBuilder<AlertPrice> builder)
+        {
             builder.HasOne(ap => ap.TelegramChannel).WithMany(tc => tc.AlertPrices).HasForeignKey(ap => ap.TelegramChannelId);
-            builder.HasKey(ap => ap.ID);
         }
     }
 }

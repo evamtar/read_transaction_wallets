@@ -1,19 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SyncronizationBot.Domain.Model.Database;
+﻿using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class ClassWalletMap : IEntityTypeConfiguration<ClassWallet>
+    public class ClassWalletMap : BaseMapper<ClassWallet>
     {
-        public void Configure(EntityTypeBuilder<ClassWallet> builder)
+        public ClassWalletMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("ClassWallet");
-            builder.Property(cw => cw.ID);
-            builder.Property(cw => cw.IdClassification);
-            builder.Property(cw => cw.Description);
-            builder.HasKey(cw => cw.ID);
         }
+        
     }
 }

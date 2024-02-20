@@ -19,7 +19,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly ITokenAlphaWalletHistoryRepository _tokenAlphaWalletHistoryRepository;
         private readonly ITransactionsRepository _transactionsRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
-        private readonly IPublishMessageRepository _publishMessageRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
                                                  ITokenAlphaRepository tokenAlphaRepository,
@@ -29,7 +28,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                                                  ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository,
                                                  IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                  ITransactionsRepository transactionsRepository,
-                                                 IPublishMessageRepository publishMessageRepository,
                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
@@ -40,7 +38,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
             this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
             this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
             this._transactionsRepository = transactionsRepository;
-            this._publishMessageRepository = publishMessageRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
         public async Task<VerifyAddTokenAlphaCommandResponse> Handle(VerifyAddTokenAlphaCommand request, CancellationToken cancellationToken)
@@ -219,36 +216,36 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
 
         private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaConfiguration tokenAlphaConfiguration) 
         { 
-            var tokenAlphaWallets = await this._tokenAlphaWalletRepository.GetAsync(x => x.TokenAlphaId == tokenAlpha.ID);
-            var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
-            await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
-            if (tokenAlphaWallets?.Count > 0) 
-            {
-                foreach (var tokenAlphaWallet in tokenAlphaWallets)
-                    await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
-            }
+            //var tokenAlphaWallets = await this._tokenAlphaWalletRepository.GetAsync(x => x.TokenAlphaId == tokenAlpha.ID);
+            //var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
+            //await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
+            //if (tokenAlphaWallets?.Count > 0) 
+            //{
+            //    foreach (var tokenAlphaWallet in tokenAlphaWallets)
+            //        await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+            //}
         }
 
         private async Task PublishMessage(TokenAlpha tokenAlpha, TokenAlphaWallet tokenAlphaWallet, TokenAlphaConfiguration tokenAlphaConfiguration)
         {
-            var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
-            await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
-            await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
+            //var publishMessageAlpha = await this.SavePublishMessage(tokenAlpha, null);
+            //await this.SavePublishMessage(tokenAlphaConfiguration, publishMessageAlpha.ID);
+            //await this.SavePublishMessage(tokenAlphaWallet, publishMessageAlpha.ID);
         }
 
-        private async Task<PublishMessage> SavePublishMessage<T>(T entity, Guid? parentId) where T : Entity 
-        {
-            var publishMessage = await this._publishMessageRepository.AddAsync(new PublishMessage
-            {
-                EntityId = entity.ID,
-                Entity = typeof(T).ToString(),
-                JsonValue = entity.JsonSerialize(),
-                ItWasPublished = false,
-                EntityParentId = parentId,
-            });
-            await this._publishMessageRepository.DetachedItemAsync(publishMessage);
-            return publishMessage;
-        }
+        //private async Task<PublishMessage> SavePublishMessage<T>(T entity, Guid? parentId) where T : Entity 
+        //{
+        //    var publishMessage = await this._publishMessageRepository.AddAsync(new PublishMessage
+        //    {
+        //        EntityId = entity.ID,
+        //        Entity = typeof(T).ToString(),
+        //        JsonValue = entity.JsonSerialize(),
+        //        ItWasPublished = false,
+        //        EntityParentId = parentId,
+        //    });
+        //    await this._publishMessageRepository.DetachedItemAsync(publishMessage);
+        //    return publishMessage;
+        //}
 
     }
 }

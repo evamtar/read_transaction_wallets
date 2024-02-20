@@ -4,12 +4,6 @@ BEGIN
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'PublishMessage')
-BEGIN
-	DROP TABLE [PublishMessage]
-END
-GO
-
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TokenAlphaProfit')
 BEGIN
 	DROP TABLE [TokenAlphaProfit]
@@ -529,17 +523,6 @@ CREATE TABLE TokenAlphaProfit
 );
 GO
 
-CREATE TABLE PublishMessage(
-	ID                  UNIQUEIDENTIFIER,
-	EntityId			UNIQUEIDENTIFIER,
-	Entity				VARCHAR(500),
-	JsonValue           NVARCHAR(MAX),
-	ItWasPublished      BIT,
-	EntityParentId      UNIQUEIDENTIFIER,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (EntityParentId) REFERENCES PublishMessage(ID)
-);
-GO
 -- ALERTS
 CREATE TABLE AlertConfiguration(
 	ID                    UNIQUEIDENTIFIER,

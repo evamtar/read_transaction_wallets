@@ -38,7 +38,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Context
         public DbSet<AlertInformation> AlertsInformations { get; set; }
         public DbSet<AlertParameter> AlertsParameters { get; set; }
         public DbSet<TelegramMessage> TelegramMessages { get; set; }
-        public DbSet<PublishMessage> PublishMessages { get; set; }
         public DbSet<TransactionToken> TransactionTokens { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
 
@@ -73,7 +72,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Context
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
             modelBuilder.ApplyConfiguration(new AlertParameterMap());
-            modelBuilder.ApplyConfiguration(new PublishMessageMap());
             base.OnModelCreating(modelBuilder);
         }
 
