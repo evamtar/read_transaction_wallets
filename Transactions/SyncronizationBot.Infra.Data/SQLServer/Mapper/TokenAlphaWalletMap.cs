@@ -1,32 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TokenAlphaWalletMap : IEntityTypeConfiguration<TokenAlphaWallet>
+    public class TokenAlphaWalletMap : BaseMapper<TokenAlphaWallet>
     {
-        public void Configure(EntityTypeBuilder<TokenAlphaWallet> builder)
+        public TokenAlphaWalletMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TokenAlphaWallet");
-            builder.Property(taw => taw.ID);
-            builder.Property(taw => taw.NumberOfBuys);
+        }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlphaWallet> builder)
+        {
             builder.Property(taw => taw.ValueSpentSol).HasConversion<string?>();
-            builder.Property(taw => taw.ValueSpentUSDC).HasConversion<string?>();
-            builder.Property(taw => taw.ValueSpentUSDT).HasConversion<string?>();
+            builder.Property(taw => taw.ValueSpentUSD).HasConversion<string?>();
             builder.Property(taw => taw.QuantityToken).HasConversion<string?>();
-            builder.Property(taw => taw.NumberOfSells);
             builder.Property(taw => taw.ValueReceivedSol).HasConversion<string?>();
-            builder.Property(taw => taw.ValueReceivedUSDC).HasConversion<string?>();
-            builder.Property(taw => taw.ValueReceivedUSDT).HasConversion<string?>();
+            builder.Property(taw => taw.ValueReceivedUSD).HasConversion<string?>();
             builder.Property(taw => taw.QuantityTokenSell).HasConversion<string?>();
-            builder.Property(taw => taw.TokenAlphaId);
-            builder.Property(taw => taw.WalletId);
-            builder.Property(taw => taw.WalletHash);
-            builder.Property(taw => taw.ClassWalletDescription);
+        }
+
+        protected override void RelationsShips(EntityTypeBuilder<TokenAlphaWallet> builder)
+        {
             builder.HasOne(taw => taw.TokenAlpha).WithMany(t => t.TokenAlphas).HasForeignKey(ta => ta.TokenAlphaId);
             builder.HasOne(taw => taw.Wallet).WithMany(t => t.TokenAlphas).HasForeignKey(ta => ta.WalletId);
-            builder.HasKey(taw => taw.ID);
+
         }
+        
     }
 }

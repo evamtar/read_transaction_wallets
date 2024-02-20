@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MongoDB.EntityFrameworkCore.Extensions;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Infra.Data.Base.Mapper;
@@ -21,11 +19,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
             builder.Ignore(rt => rt.CachedId);
             builder.HasKey(rt => rt.RuntimeId);
         }
-        public override void Configure(EntityTypeBuilder<RunTimeController> builder)
-        {
-            base.Configure(builder);
-        }
-
+        
         protected override void PropertiesWithConversion(EntityTypeBuilder<RunTimeController> builder)
         {
             builder.Property(rt => rt.ConfigurationTimer).HasConversion<string>();

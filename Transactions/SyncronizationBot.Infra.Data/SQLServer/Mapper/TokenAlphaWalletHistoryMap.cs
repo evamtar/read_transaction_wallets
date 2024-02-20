@@ -1,35 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TokenAlphaWalletHistoryMap : IEntityTypeConfiguration<TokenAlphaWalletHistory>
+    public class TokenAlphaWalletHistoryMap : BaseMapper<TokenAlphaWalletHistory>
     {
-        public void Configure(EntityTypeBuilder<TokenAlphaWalletHistory> builder)
+        public TokenAlphaWalletHistoryMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TokenAlphaWalletHistory");
-            builder.Property(tawh => tawh.ID);
-            builder.Property(tawh => tawh.TokenAlphaWalletId);
-            builder.Property(tawh => tawh.NumberOfBuys);
+        }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlphaWalletHistory> builder)
+        {
             builder.Property(tawh => tawh.ValueSpentSol).HasConversion<string?>();
-            builder.Property(tawh => tawh.ValueSpentUSDC).HasConversion<string?>();
-            builder.Property(tawh => tawh.ValueSpentUSDT).HasConversion<string?>();
+            builder.Property(tawh => tawh.ValueSpentUSD).HasConversion<string?>();
             builder.Property(tawh => tawh.QuantityToken).HasConversion<string?>();
-            builder.Property(tawh => tawh.NumberOfSells);
             builder.Property(tawh => tawh.ValueReceivedSol).HasConversion<string?>();
-            builder.Property(tawh => tawh.ValueReceivedUSDC).HasConversion<string?>();
-            builder.Property(tawh => tawh.ValueReceivedUSDT).HasConversion<string?>();
+            builder.Property(tawh => tawh.ValueReceivedUSD).HasConversion<string?>();
             builder.Property(tawh => tawh.QuantityTokenSell).HasConversion<string?>();
             builder.Property(tawh => tawh.RequestValueInSol).HasConversion<string?>();
-            builder.Property(tawh => tawh.RequestValueInUSDC).HasConversion<string?>();
-            builder.Property(tawh => tawh.RequestValueInUSDT).HasConversion<string?>();
+            builder.Property(tawh => tawh.RequestValueInUSD).HasConversion<string?>();
             builder.Property(tawh => tawh.RequestQuantityToken).HasConversion<string?>();
-            builder.Property(tawh => tawh.TokenAlphaId);
-            builder.Property(tawh => tawh.WalletId);
-            builder.Property(tawh => tawh.WalletHash);
-            builder.Property(tawh => tawh.ClassWalletDescription);
-            builder.HasKey(tawh => tawh.ID);
         }
     }
 }

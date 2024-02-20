@@ -40,7 +40,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     //UpdateValues
                     tokenAlphaWallet.NumberOfSells = tokenAlphaWallet.NumberOfSells ?? 0 + 1;
                     tokenAlphaWallet.ValueReceivedSol = tokenAlphaWallet.ValueReceivedSol ?? 0 + request?.AmountTokenSol;
-                    tokenAlphaWallet.ValueReceivedUSDC = tokenAlphaWallet.ValueReceivedUSDC ?? 0 + request?.AmountTokenUSDC;
+                    tokenAlphaWallet.ValueReceivedUSD = tokenAlphaWallet.ValueReceivedUSD ?? 0 + request?.AmountTokenUSDC;
                     tokenAlphaWallet.ValueReceivedUSDT = tokenAlphaWallet.ValueReceivedUSDT ?? 0 + request?.AmountTokenUSDT;
                     tokenAlphaWallet.QuantityTokenSell = tokenAlphaWallet.QuantityTokenSell?? 0 + request?.AmountTokenSell;
                     this._tokenAlphaWalletRepository.Update(tokenAlphaWallet);
@@ -92,16 +92,16 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 ClassWalletDescription = tokenAlphaWallet?.ClassWalletDescription,
                 NumberOfBuys = tokenAlphaWallet?.NumberOfBuys,
                 ValueSpentSol = tokenAlphaWallet?.ValueSpentSol,
-                ValueSpentUSDC = tokenAlphaWallet?.ValueSpentUSDC,
+                ValueSpentUSD = tokenAlphaWallet?.ValueSpentUSD,
                 ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT,
                 QuantityToken = tokenAlphaWallet?.QuantityToken,
                 NumberOfSells = tokenAlphaWallet?.NumberOfSells,
                 ValueReceivedSol = tokenAlphaWallet?.ValueReceivedSol,
-                ValueReceivedUSDC = tokenAlphaWallet?.ValueReceivedUSDC,
+                ValueReceivedUSD = tokenAlphaWallet?.ValueReceivedUSD,
                 ValueReceivedUSDT = tokenAlphaWallet?.ValueReceivedUSDT,
                 QuantityTokenSell = tokenAlphaWallet?.QuantityTokenSell,
                 RequestValueInSol = request?.AmountTokenSol,
-                RequestValueInUSDC = request?.AmountTokenUSDC,
+                RequestValueInUSD = request?.AmountTokenUSDC,
                 RequestValueInUSDT = request?.AmountTokenUSDC,
                 RequestQuantityToken = request?.AmountTokenSell
             });

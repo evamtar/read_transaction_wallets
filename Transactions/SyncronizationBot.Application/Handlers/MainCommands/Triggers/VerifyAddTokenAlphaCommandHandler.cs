@@ -49,7 +49,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 if (tokenAlphaBuyBefore != null)
                 {
                     tokenAlphaBuyBefore.ValueSpentSol += request?.ValueBuySol;
-                    tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
+                    tokenAlphaBuyBefore.ValueSpentUSD += request?.ValueBuyUSDC;
                     tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
                     this._tokenAlphaWalletRepository.Update(tokenAlphaBuyBefore);
@@ -66,7 +66,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         ClassWalletDescription = request?.ClassWalletDescription,
                         NumberOfBuys = 1,
                         ValueSpentSol = request?.ValueBuySol,
-                        ValueSpentUSDC = request?.ValueBuyUSDC,
+                        ValueSpentUSD = request?.ValueBuyUSDC,
                         ValueSpentUSDT = request?.ValueBuyUSDT,
                         QuantityToken = request?.QuantityTokenReceived
                     });
@@ -124,7 +124,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             ClassWalletDescription = request?.ClassWalletDescription,
                             NumberOfBuys = 1,
                             ValueSpentSol = request?.ValueBuySol,
-                            ValueSpentUSDC = request?.ValueBuyUSDC,
+                            ValueSpentUSD = request?.ValueBuyUSDC,
                             ValueSpentUSDT = request?.ValueBuyUSDT,
                             QuantityToken = request?.QuantityTokenReceived
                         });
@@ -171,16 +171,16 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 ClassWalletDescription = tokenAlphaWallet?.ClassWalletDescription,
                 NumberOfBuys = tokenAlphaWallet?.NumberOfBuys,
                 ValueSpentSol = tokenAlphaWallet?.ValueSpentSol,
-                ValueSpentUSDC = tokenAlphaWallet?.ValueSpentUSDC,
+                ValueSpentUSD = tokenAlphaWallet?.ValueSpentUSD,
                 ValueSpentUSDT = tokenAlphaWallet?.ValueSpentUSDT,
                 QuantityToken = tokenAlphaWallet?.QuantityToken,
                 NumberOfSells = tokenAlphaWallet?.NumberOfSells,
                 ValueReceivedSol = tokenAlphaWallet?.ValueReceivedSol,
-                ValueReceivedUSDC = tokenAlphaWallet?.ValueReceivedUSDC,
+                ValueReceivedUSD = tokenAlphaWallet?.ValueReceivedUSD,
                 ValueReceivedUSDT = tokenAlphaWallet?.ValueReceivedUSDT,
                 QuantityTokenSell = tokenAlphaWallet?.QuantityTokenSell,
                 RequestValueInSol = request?.ValueBuySol,
-                RequestValueInUSDC = request?.ValueBuyUSDC,
+                RequestValueInUSD = request?.ValueBuyUSDC,
                 RequestValueInUSDT = request?.ValueBuyUSDT,
                 RequestQuantityToken = request?.QuantityTokenReceived
             });

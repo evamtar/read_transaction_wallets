@@ -3,20 +3,17 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Infra.Data.Base.Mapper;
 
-
-
-namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
+namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
     public class TelegramMessageMap : BaseMapper<TelegramMessage>
     {
-        public TelegramMessageMap() : base(EDatabase.SqlServer)
+        public TelegramMessageMap() : base(EDatabase.Mongodb)
         {
         }
 
         protected override void RelationsShips(EntityTypeBuilder<TelegramMessage> builder)
         {
-            builder.HasOne(tm => tm.TelegramChannel).WithMany(tc => tc.TelegramMessages).HasForeignKey(tm => tm.TelegramChannelId);
+            builder.Ignore(tm => tm.TelegramChannel);
         }
-        
     }
 }

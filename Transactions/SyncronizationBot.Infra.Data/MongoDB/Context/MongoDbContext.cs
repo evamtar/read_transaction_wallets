@@ -26,11 +26,18 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         public DbSet<AlertConfiguration> AlertsConfigurations { get; set; }
         public DbSet<AlertInformation> AlertsInformations { get; set; }
         public DbSet<AlertPrice> AlertPrices { get; set; }
+        public DbSet<ClassWallet> ClassWallets { get; set; }
+        public DbSet<RunTimeController> RunTimeControllers { get; set; }
+        public DbSet<TelegramChannel> TelegramChannels { get; set; }
+        public DbSet<TelegramMessage> TelegramMessages { get; set; }
+        public DbSet<TokenAlphaConfiguration> TokenAlphaConfigurations { get; set; }
+        public DbSet<TokenAlphaHistory> TokenAlphaHistories { get; set; }
+        public DbSet<TokenAlpha> TokenAlphas { get; set; }
+        public DbSet<TokenAlphaWalletHistory> TokenAlphaWalletHistories { get; set; }
+        public DbSet<TokenAlphaWallet> TokenAlphaWallets { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
-        public DbSet<ClassWallet> ClassWallets { get; set; }
-        public DbSet<RunTimeController> RunTimeControllers  { get; set; }
-
+        
         #endregion
 
         #region Mapper Override
@@ -40,10 +47,21 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
             modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
             modelBuilder.ApplyConfiguration(new AlertPriceMap());
-            modelBuilder.ApplyConfiguration(new WalletMap());
-            modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
             modelBuilder.ApplyConfiguration(new ClassWalletMap());
+            modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
+            modelBuilder.ApplyConfiguration(new TelegramChannelMap());
+            modelBuilder.ApplyConfiguration(new TelegramMessageMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaHistoryMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
+            modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
+
+
+
+
             modelBuilder.ApplyConfiguration(new TypeOperationMap());
+            modelBuilder.ApplyConfiguration(new WalletMap());
             base.OnModelCreating(modelBuilder);
         }
 

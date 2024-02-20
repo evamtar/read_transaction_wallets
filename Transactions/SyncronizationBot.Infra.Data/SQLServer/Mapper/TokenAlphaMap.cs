@@ -1,31 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    internal class TokenAlphaMap : IEntityTypeConfiguration<TokenAlpha>
+    public class TokenAlphaMap : BaseMapper<TokenAlpha>
     {
-        public void Configure(EntityTypeBuilder<TokenAlpha> builder)
+        public TokenAlphaMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TokenAlpha");
-            builder.Property(ta => ta.ID);
-            builder.Property(ta => ta.CallNumber);
+        }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlpha> builder)
+        {
             builder.Property(ta => ta.InitialMarketcap).HasConversion<string?>();
             builder.Property(ta => ta.ActualMarketcap).HasConversion<string?>();
             builder.Property(ta => ta.InitialPrice).HasConversion<string?>();
             builder.Property(ta => ta.ActualPrice).HasConversion<string?>();
-            builder.Property(ta => ta.CreateDate);
-            builder.Property(ta => ta.LastUpdate);
-            builder.Property(ta => ta.TokenId);
-            builder.Property(ta => ta.TokenHash);
-            builder.Property(ta => ta.TokenSymbol);
-            builder.Property(ta => ta.TokenName);
-            builder.Property(ta => ta.TokenAlphaConfigurationId);
+        }
+
+        protected override void RelationsShips(EntityTypeBuilder<TokenAlpha> builder)
+        {
             builder.HasOne(ta => ta.Token).WithMany(t => t.TokenAlphas).HasForeignKey(ta => ta.TokenId);
             builder.HasOne(ta => ta.TokenAlphaConfiguration).WithMany(tac => tac.TokenAlphas).HasForeignKey(ta => ta.TokenAlphaConfigurationId);
-            builder.HasKey(ta => ta.ID);
         }
+        
     }
 }
