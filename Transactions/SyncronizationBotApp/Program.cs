@@ -64,6 +64,7 @@ using SyncronizationBot.Domain.Service.RabbitMQ.TransactionsQueue;
 using SyncronizationBot.Service.RabbitMQ.TransactionsQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.TrasanctionQueue;
 using SyncronizationBot.Service.RabbitMQ.TrasanctionQueue;
+using SyncronizationBot.Service.RabbitMQ.Consumers;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -122,8 +123,8 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     #endregion
 
     #region Hosted Service
-    services.AddHostedService<BalanceWalletsHostedService>();
-
+    //services.AddHostedService<BalanceWalletsHostedService>();
+    services.AddHostedService<UpdateQueueConsumerService>();
         //services.AddHostedService<ReadTransactionWalletsService>();
         //services.AddHostedService<AlertPriceService>();
         //services.AddHostedService<DeleteOldsMessagesLogService>();
