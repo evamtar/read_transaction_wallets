@@ -5,7 +5,6 @@ using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.SQLServer;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
@@ -20,8 +19,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         public RecoveryTransactionsCommandHandler(IMediator mediator, 
                                                   ITransactionsService transactionsService,
                                                   ITransactionsRepository transactionsRepository,
-                                                  ITransactionOldForMappingRepository transactionsOldForMappingRepository,
-                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
+                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;

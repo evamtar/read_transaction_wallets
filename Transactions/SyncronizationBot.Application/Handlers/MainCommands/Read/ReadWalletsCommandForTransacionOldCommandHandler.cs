@@ -14,16 +14,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 {
     public class ReadWalletsCommandForTransacionOldCommandHandler : BaseWalletHandler, IRequestHandler<ReadWalletsCommandForTransacionOldCommand, ReadWalletsCommandForTransacionOldCommandResponse>
     {
-        private readonly ITransactionOldForMappingRepository _transactionOldForMappingRepository;
         private readonly IClassWalletRepository _classWalletRepository;
 
         public ReadWalletsCommandForTransacionOldCommandHandler(IMediator mediator,
                                                                  IWalletRepository walletRepository,
                                                                  IClassWalletRepository classWalletRepository,
-                                                                 ITransactionOldForMappingRepository transactionOldForMappingRepository,
                                                                  IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
         {
-            this._transactionOldForMappingRepository = transactionOldForMappingRepository;
             this._classWalletRepository = classWalletRepository;
         }
         public async Task<ReadWalletsCommandForTransacionOldCommandResponse> Handle(ReadWalletsCommandForTransacionOldCommand request, CancellationToken cancellationToken)

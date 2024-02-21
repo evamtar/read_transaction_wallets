@@ -16,7 +16,6 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
             builder.Ignore(w => w.ClassWallet);
             builder.Ignore(w => w.Transactions);
-            builder.Ignore(w => w.TransactionsOldForMapping);
             builder.Ignore(w => w.TransactionsRPCRecovery);
             builder.Ignore(w => w.Balances);
             builder.Ignore(w => w.TokenAlphas);

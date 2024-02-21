@@ -5,11 +5,10 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TransactionOldForMappingRepository : Repository<TransactionOldForMapping>, ITransactionOldForMappingRepository
+    public class TokenPriceHistoryRepository : Repository<TokenPriceHistory>, ITokenPriceHistoryRepository
     {
-        public TransactionOldForMappingRepository(SqlContext context) : base(context)
+        public TokenPriceHistoryRepository(SqlContext context) : base(context)
         {
-
         }
     }
 }
