@@ -11,13 +11,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<WalletBalance> builder)
-        {
-            builder.Property(wb => wb.Quantity).HasConversion<string?>();
-            builder.Property(wb => wb.Price).HasConversion<string?>();
-            builder.Property(wb => wb.TotalValueUSD).HasConversion<string?>();
-        }
-
         protected override void RelationsShips(EntityTypeBuilder<WalletBalance> builder)
         {
             builder.HasOne(wb => wb.Wallet).WithMany(w => w.Balances).HasForeignKey(wb => wb.WalletId);

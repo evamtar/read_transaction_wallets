@@ -1,4 +1,5 @@
-﻿using SyncronizationBot.Domain.Model.Database.Base;
+﻿using SyncronizationBot.Domain.Model.CustomAttributes;
+using SyncronizationBot.Domain.Model.Database.Base;
 
 namespace SyncronizationBot.Domain.Model.Database
 {
@@ -15,6 +16,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public bool? IsIcon { get; set; }
         public bool? IsImage { get; set; }
 
+        [DbMapper(MongoTarget.Ignore)]
         public virtual AlertInformation? AlertInformation { get; set; }
 
     }

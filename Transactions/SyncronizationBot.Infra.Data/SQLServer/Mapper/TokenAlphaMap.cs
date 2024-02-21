@@ -12,14 +12,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlpha> builder)
-        {
-            builder.Property(ta => ta.InitialMarketcap).HasConversion<string?>();
-            builder.Property(ta => ta.ActualMarketcap).HasConversion<string?>();
-            builder.Property(ta => ta.InitialPrice).HasConversion<string?>();
-            builder.Property(ta => ta.ActualPrice).HasConversion<string?>();
-        }
-
         protected override void RelationsShips(EntityTypeBuilder<TokenAlpha> builder)
         {
             builder.HasOne(ta => ta.Token).WithMany(t => t.TokenAlphas).HasForeignKey(ta => ta.TokenId);

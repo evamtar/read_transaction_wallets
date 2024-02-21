@@ -1,4 +1,5 @@
-﻿using SyncronizationBot.Domain.Model.Database.Base;
+﻿using SyncronizationBot.Domain.Model.CustomAttributes;
+using SyncronizationBot.Domain.Model.Database.Base;
 
 namespace SyncronizationBot.Domain.Model.Database
 {
@@ -10,6 +11,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public DateTime? DateSended { get; set; }
         public bool? IsDeleted { get; set; }
         public int? TryDeleted { get; set; }
+        [DbMapper(MongoTarget.Ignore)]
         public TelegramChannel? TelegramChannel { get; set; }
     }
 }

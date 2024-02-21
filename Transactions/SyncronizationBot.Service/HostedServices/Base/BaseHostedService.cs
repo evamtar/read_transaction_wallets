@@ -7,13 +7,15 @@ using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Domain.Service.InternalService.RunTime;
-using SyncronizationBot.Domain.Service.RabbitMQ.LogMessageQueue;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.LogMessageQueue;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
 using System.Timers;
-using static System.Formats.Asn1.AsnWriter;
 
 
 namespace SyncronizationBot.Service.HostedServices.Base
@@ -40,9 +42,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         protected IOptions<SyncronizationBotConfig>? Options { get; set; }
         protected RunTimeController? RunTimeController { get; set; }
         private IPublishLogService PublishLogService { get; set; }
-        /// <summary>
-        /// TODO-EVANDRO
-        /// </summary>
+        private IPublishUpdateService PublishUpdateService { get; set; }
         
         #endregion
 
@@ -61,22 +61,18 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         #endregion
 
-        
         #region ExecuteAsync Override
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             this.CancellationToken = stoppingToken;
-            
-                //Init Service
-                await TrySetPeriodicTimer();
-                Timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-                Timer.Interval = 10000;
-                Timer.Enabled = true;
-                Timer.AutoReset = true;
-                LogMessage($"Inicialização do serviço: {this.RunTimeController?.JobName}");
-                Timer?.Start();
-            
+            //Init Service
+            await TrySetPeriodicTimer();
+            Timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            Timer.Enabled = true;
+            Timer.AutoReset = true;
+            LogMessage($"***** Init Of Service --> ({typeof(T)}) --> Start in: {Interval} *****");
+            Timer?.Start();
         }
 
         #endregion
@@ -158,6 +154,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             this.Work = scope.ServiceProvider.GetRequiredService<T>();
             this.Mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             this.PublishLogService = scope.ServiceProvider.GetRequiredService<IPublishLogService>();
+            this.PublishUpdateService = scope.ServiceProvider.GetRequiredService<IPublishUpdateService>();
         }
 
         private async Task<RunTimeController?> GetRunTimeControllerAsync()
@@ -169,13 +166,19 @@ namespace SyncronizationBot.Service.HostedServices.Base
         {
             RunTimeController!.IsRunning = isRunning;
             this.RunTimeControllerService.Update(RunTimeController!);
-            await this.Mediator.Send(new RunTimeControllerUpdateCommand { Entity = RunTimeController });
+            await this.PublishUpdateService.Publish(new MessageEvent<RunTimeController>
+            {
+                CreateDate = DateTime.Now,
+                Entity = this.RunTimeController,
+                EventName = nameof(RunTimeController) + "_" + "UPDATE",
+                Parameters = null
+            });
         }
         private async Task TrySetPeriodicTimer()
         {
             if (this.RunTimeControllerService == null)
             {
-                Interval = TimeSpan.FromMinutes((double)0.2);
+                Interval = TimeSpan.FromMinutes((double)0.05);
                 Timer = new System.Timers.Timer(Interval!);
                 return;
             }
@@ -307,6 +310,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             }
             finally { }
         }
+
         private void TryStart()
         {
             try { if(!this.CancellationToken.IsCancellationRequested) Timer?.Start(); }

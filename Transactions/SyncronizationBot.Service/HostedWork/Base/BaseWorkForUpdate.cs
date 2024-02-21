@@ -1,13 +1,14 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
-using SyncronizationBot.Domain.Service.RabbitMQ.UpdateQueue;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
 
 namespace SyncronizationBot.Service.HostedWork.Base
 {
     public class BaseWorkForUpdate
     {
         protected const string? INSTRUCTION_UPDATE = "UPDATE";
-        protected const string? INSTRUCTION_INSERT = "UPDATE";
+        protected const string? INSTRUCTION_INSERT = "INSERT";
+        protected const string? INSTRUCTION_DELETE = "DELETE";
         private readonly IPublishUpdateService _publishUpdateService;
         public BaseWorkForUpdate(IPublishUpdateService publishUpdateService)
         {

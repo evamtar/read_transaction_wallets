@@ -46,25 +46,6 @@ using SyncronizationBot.Infra.Data.MongoDB.Context;
 using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
 using SyncronizationBots.RabbitMQ.Extension;
-using SyncronizationBot.Service.RabbitMQ.AlertPriceQueue.Configs;
-using SyncronizationBot.Service.RabbitMQ.UpdateQueue.Configs;
-using SyncronizationBot.Domain.Service.RabbitMQ.UpdateQueue;
-using SyncronizationBot.Service.RabbitMQ.UpdateQueue;
-using SyncronizationBot.Service.RabbitMQ.LogMessageQueue.Configs;
-using SyncronizationBot.Service.RabbitMQ.TokenAlhaQueue.Configs;
-using SyncronizationBot.Service.RabbitMQ.TransactionsQueue.Configs;
-using SyncronizationBot.Service.RabbitMQ.TrasanctionQueue.Configs;
-using SyncronizationBot.Domain.Service.RabbitMQ.LogMessageQueue;
-using SyncronizationBot.Service.RabbitMQ.LogMessageQueue;
-using SyncronizationBot.Domain.Service.RabbitMQ.TokenAlhaQueue;
-using SyncronizationBot.Service.RabbitMQ.TokenAlhaQueue;
-using SyncronizationBot.Domain.Service.RabbitMQ.AlertPriceQueue;
-using SyncronizationBot.Service.RabbitMQ.AlertPriceQueue;
-using SyncronizationBot.Domain.Service.RabbitMQ.TransactionsQueue;
-using SyncronizationBot.Service.RabbitMQ.TransactionsQueue;
-using SyncronizationBot.Domain.Service.RabbitMQ.TrasanctionQueue;
-using SyncronizationBot.Service.RabbitMQ.TrasanctionQueue;
-using SyncronizationBot.Service.RabbitMQ.Consumers;
 
 
 var builder = Host.CreateApplicationBuilder(args);

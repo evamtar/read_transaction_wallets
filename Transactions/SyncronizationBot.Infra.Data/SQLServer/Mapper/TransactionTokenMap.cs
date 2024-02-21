@@ -11,12 +11,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
         public TransactionTokenMap() : base(EDatabase.SqlServer)
         {
         }
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TransactionToken> builder)
-        {
-            builder.Property(tt => tt.AmountValue).HasConversion<string?>();
-            builder.Property(tt => tt.MtkcapToken).HasConversion<string?>();
-            builder.Property(tt => tt.TotalToken).HasConversion<string?>();
-        }
+        
         protected override void RelationsShips(EntityTypeBuilder<TransactionToken> builder)
         {
             builder.HasOne(tt => tt.Token).WithMany(t => t.TransactionTokens).HasForeignKey(tt => tt.TokenId);

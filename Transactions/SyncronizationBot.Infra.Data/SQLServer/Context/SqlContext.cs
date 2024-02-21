@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 using SyncronizationBot.Infra.Data.SQLServer.Mapper;
 
 
@@ -50,25 +52,24 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Context
             modelBuilder.ApplyConfiguration(new AlertInformationMap());
             modelBuilder.ApplyConfiguration(new AlertParameterMap());
             modelBuilder.ApplyConfiguration(new AlertPriceMap());
-            modelBuilder.ApplyConfiguration(new ClassWalletMap());
-            modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
-            modelBuilder.ApplyConfiguration(new TelegramChannelMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<ClassWallet>(EDatabase.SqlServer));
+            modelBuilder.ApplyConfiguration(new BaseMapper<RunTimeController>(EDatabase.SqlServer));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TelegramChannel>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new TelegramMessageMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaHistoryMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaConfiguration>(EDatabase.SqlServer));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaHistory>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new TokenAlphaMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaWalletHistory>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
-            
-            modelBuilder.ApplyConfiguration(new TokenMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<Token>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new TokenPriceHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenSecurityMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
-            modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<TransactionNotMapped>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new TransactionRPCRecoveryMap());
             modelBuilder.ApplyConfiguration(new TransactionTokenMap());
             modelBuilder.ApplyConfiguration(new TypeOperationMap());
-            modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<WalletBalanceHistory>(EDatabase.SqlServer));
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             base.OnModelCreating(modelBuilder);

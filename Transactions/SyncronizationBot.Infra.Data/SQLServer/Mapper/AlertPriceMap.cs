@@ -13,13 +13,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<AlertPrice> builder)
-        {
-            builder.Property(ap => ap.PriceBase).HasConversion<string?>();
-            builder.Property(ap => ap.PriceValue).HasConversion<string?>();
-            builder.Property(ap => ap.PricePercent).HasPrecision(5, 2);
-        }
-
         protected override void RelationsShips(EntityTypeBuilder<AlertPrice> builder)
         {
             builder.HasOne(ap => ap.TelegramChannel).WithMany(tc => tc.AlertPrices).HasForeignKey(ap => ap.TelegramChannelId);

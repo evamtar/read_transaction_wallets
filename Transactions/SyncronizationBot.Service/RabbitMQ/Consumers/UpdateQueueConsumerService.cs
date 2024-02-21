@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using SyncronizationBot.Service.BatchMessageConsumer.Base;
-using SyncronizationBot.Service.RabbitMQ.UpdateQueue.Configs;
+using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
+using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {

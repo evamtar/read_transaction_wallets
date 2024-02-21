@@ -10,7 +10,7 @@ using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.Token;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
-using SyncronizationBot.Domain.Service.RabbitMQ.UpdateQueue;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
 using SyncronizationBot.Domain.Service.RecoveryService.Wallet;
 using SyncronizationBot.Service.HostedWork.Base;
 

@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using SyncronizationBot.Domain.Model.CustomAttributes;
 
 namespace SyncronizationBot.Domain.Model.Database.Base
 {
@@ -8,8 +9,11 @@ namespace SyncronizationBot.Domain.Model.Database.Base
     {
         [BsonId]
 
-        public ObjectId CachedId { get; set; } = ObjectId.GenerateNewId();
-        public Guid? ID { get; set; }
+        [DbMapper(MongoTarget.Key, SqlServerTarget.Ignore)]
+        public ObjectId _id { get; set; } = ObjectId.GenerateNewId();
+
+        [DbMapper(SqlServerTarget.Key)]
+        public virtual Guid? ID { get; set; }
 
         public string JsonSerialize() 
         {

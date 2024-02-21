@@ -1,39 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MongoDB.EntityFrameworkCore.Extensions;
+using SyncronizationBot.Domain.Model.CustomAttributes;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using System.Reflection;
 
 namespace SyncronizationBot.Infra.Data.Base.Mapper
 {
-    public abstract class BaseMapper<T> : IEntityTypeConfiguration<T> where T : Entity
+    public class BaseMapper<T> : IEntityTypeConfiguration<T> where T : Entity
     {
         private readonly EDatabase _database;
         public BaseMapper(EDatabase database)
         {
             this._database = database;
-        }
-
-        /// <summary>
-        /// For override to person keys
-        /// </summary>
-        /// <param name="builder"></param>
-        protected virtual void AddKeys(EntityTypeBuilder<T> builder) 
-        {
-            switch (_database)
-            {
-                case EDatabase.SqlServer:
-                    builder.Ignore(g => g.CachedId);
-                    builder.HasKey(g => g.ID);
-                    break;
-                case EDatabase.Mongodb:
-                    builder.Property(g => g.CachedId);
-                    builder.HasKey(g => g.CachedId);
-                    break;
-                default:
-                    break;
-            }
         }
 
         /// <summary>
@@ -48,63 +28,121 @@ namespace SyncronizationBot.Infra.Data.Base.Mapper
                     builder.ToTable(typeof(T).Name);
                     break;
                 case EDatabase.Mongodb:
-                    builder.ToTable(typeof(T).Name);
+                    builder.ToCollection(typeof(T).Name);
                     break;
                 default:
                     break;
             }
         }
-        protected virtual void PropertiesWithConversion(EntityTypeBuilder<T> builder) { }
+
+        protected virtual void RelationsShips(EntityTypeBuilder<T> builder) { }
+
         public virtual void Configure(EntityTypeBuilder<T> builder)
         {
             this.AddSchema(builder);
-            this.PropertiesWithConversion(builder);
             var properties = Activator.CreateInstance<T>().GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties) 
             {
-                var propertyType = property.PropertyType;
-                if (Nullable.GetUnderlyingType(property.PropertyType) != null)
-                    propertyType = Nullable.GetUnderlyingType(property.PropertyType);
-                var exists = builder.Metadata.GetProperties().FirstOrDefault(p => p.Name == property.Name);
-                if (exists!=null)
+                var customAttribute = (DbMapperAttribute?) property.GetCustomAttribute(typeof(DbMapperAttribute));
+                if (customAttribute != null)
                 {
-                    switch (Type.GetTypeCode(propertyType))
+                    if (_database == EDatabase.Mongodb)
+                        this.PropertyActionDo(builder, property, customAttribute.GetMongoTarget());
+                    else if (_database == EDatabase.SqlServer)
+                        this.PropertyActionDo(builder, property, customAttribute.GetSqlServerTarget(), customAttribute.GetTypeConvertion(), customAttribute.GetPrecision(), customAttribute.GetScale());
+                }
+                else 
+                {
+                    var propertyType = property.PropertyType;
+                    if (Nullable.GetUnderlyingType(property.PropertyType) != null)
+                        propertyType = Nullable.GetUnderlyingType(property.PropertyType);
+                    var exists = builder.Metadata.GetProperties().FirstOrDefault(p => p.Name == property.Name);
+                    if (exists != null)
                     {
-                        case TypeCode.Boolean:
-                        case TypeCode.Char:
-                        case TypeCode.SByte:
-                        case TypeCode.Byte:
-                        case TypeCode.Int16:
-                        case TypeCode.UInt16:
-                        case TypeCode.Int32:
-                        case TypeCode.UInt32:
-                        case TypeCode.Int64:
-                        case TypeCode.UInt64:
-                        case TypeCode.Single:
-                        case TypeCode.Double:
-                        case TypeCode.Decimal:
-                        case TypeCode.DateTime:
-                        case TypeCode.String:
-                            builder.Property(property.Name);
-                            break;
-                        case TypeCode.Empty:
-                        case TypeCode.Object:
-                        case TypeCode.DBNull:
-                        default:
-                            if (property.PropertyType.IsPrimitive == true ||
-                                (property.PropertyType.IsGenericType && property.PropertyType == typeof(Guid?))
-                                || (property.PropertyType.IsGenericType && property.PropertyType == typeof(Guid)))
+                        switch (Type.GetTypeCode(propertyType))
+                        {
+                            case TypeCode.Boolean:
+                            case TypeCode.Char:
+                            case TypeCode.SByte:
+                            case TypeCode.Byte:
+                            case TypeCode.Int16:
+                            case TypeCode.UInt16:
+                            case TypeCode.Int32:
+                            case TypeCode.UInt32:
+                            case TypeCode.Int64:
+                            case TypeCode.UInt64:
+                            case TypeCode.Single:
+                            case TypeCode.Double:
+                            case TypeCode.Decimal:
+                            case TypeCode.DateTime:
+                            case TypeCode.String:
                                 builder.Property(property.Name);
-                            break;
+                                break;
+                            case TypeCode.Empty:
+                            case TypeCode.Object:
+                            case TypeCode.DBNull:
+                            default:
+                                if (property.PropertyType.IsPrimitive == true ||
+                                    (property.PropertyType.IsGenericType && property.PropertyType == typeof(Guid?))
+                                    || (property.PropertyType.IsGenericType && property.PropertyType == typeof(Guid)))
+                                    builder.Property(property.Name);
+                                break;
+                        }
                     }
                 }
+                
             }
             this.RelationsShips(builder);
-            this.IgnoreProperties(builder);
-            this.AddKeys(builder);
         }
 
-        protected virtual void RelationsShips(EntityTypeBuilder<T> builder) { }
-        protected virtual void IgnoreProperties(EntityTypeBuilder<T> builder) { }
+        private void PropertyActionDo(EntityTypeBuilder<T> builder, PropertyInfo property, MongoTarget? target)
+        {
+            if (target != null) 
+            {
+                switch (target)
+                {
+                    case MongoTarget.Ignore:
+                        builder.Ignore(property.Name);
+                        break;
+                    case MongoTarget.Key:
+                        builder.Property(property.Name);
+                        builder.HasKey(property.Name);
+                        break;
+                    default:
+                        throw new ArgumentException("Not implemented MongoTarget");
+                }
+            }
+        }
+
+        private void PropertyActionDo(EntityTypeBuilder<T> builder, PropertyInfo property, SqlServerTarget? target, Type? convertionType, int precision = 0, int scale = 0) 
+        {
+            if (target != null)
+            {
+                switch (target)
+                {
+                    case SqlServerTarget.Ignore:
+                        builder.Ignore(property.Name);
+                        break;
+                    case SqlServerTarget.Key:
+                        builder.Property(property.Name);
+                        builder.HasKey(property.Name);
+                        break;
+                    case SqlServerTarget.HasConvertion:
+                        if (convertionType == typeof(string)) 
+                        {
+                            if (Nullable.GetUnderlyingType(property.PropertyType) != null)
+                                builder.Property(property.Name).HasConversion<string?>();
+                            else
+                                builder.Property(property.Name).HasConversion<string>();
+                        }
+                        break;
+                    case SqlServerTarget.HasPrecision:
+                        builder.Property(property.Name).HasPrecision(precision, scale);
+                        break;
+                    default:
+                        throw new ArgumentException("Not implemented MongoTarget");
+                }
+            }
+        }
     }
 }

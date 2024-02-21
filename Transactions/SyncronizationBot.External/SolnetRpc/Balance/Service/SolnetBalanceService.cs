@@ -20,11 +20,11 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
 
         public async Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
         {
-            var listBalances = await this.GetBalanceResult(request);
+            var listBalances = this.GetBalanceResult(request);
             return new SolnetBalanceResponse { IsSuccess = true, DateLoadBalance = this.ExecuteDateTime, Result = listBalances };
         }
 
-        private async Task<List<BalanceResponse>> GetBalanceResult(SolnetBalanceRequest request)
+        private List<BalanceResponse> GetBalanceResult(SolnetBalanceRequest request)
         {
             var listBalances = new List<BalanceResponse>();
             TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
@@ -43,23 +43,22 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
                 }
             });
             this.ExecuteDateTime = DateTime.Now;
-            var balances = tokenWallet.Balances();
-            foreach (var balance in balances)
+            var balances = tokenWallet.Balances().ToList();
+            balances.ForEach(balance => 
             {
-                if ((request?.IgnoreAmountValueZero ?? false) && balance.QuantityDecimal == 0)
-                    continue;
-                listBalances.Add(new BalanceResponse
-                {
-                    Amount = balance.QuantityDecimal,
-                    Token = new TokenResponse
+                if ((balance.QuantityDecimal == 0 && request?.IgnoreAmountValueZero == false) || balance.QuantityDecimal > 0)
+                    listBalances.Add(new BalanceResponse
                     {
-                        Hash = balance.TokenMint,
-                        Symbol = balance.Symbol,
-                        Name = balance.TokenName,
-                        Decimals = balance.DecimalPlaces
-                    }
-                });
-            }
+                        Amount = balance.QuantityDecimal,
+                        Token = new TokenResponse
+                        {
+                            Hash = balance.TokenMint,
+                            Symbol = balance.Symbol,
+                            Name = balance.TokenName,
+                            Decimals = balance.DecimalPlaces
+                        }
+                    });
+            });
             return listBalances;
         }
     }

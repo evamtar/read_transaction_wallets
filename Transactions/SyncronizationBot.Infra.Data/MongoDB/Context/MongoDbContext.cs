@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Infra.Data.MongoDB.Mapper;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 
@@ -55,30 +56,30 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new AlertConfigurationMap());
-            modelBuilder.ApplyConfiguration(new AlertInformationMap());
-            modelBuilder.ApplyConfiguration(new AlertParameterMap());
-            modelBuilder.ApplyConfiguration(new AlertPriceMap());
-            modelBuilder.ApplyConfiguration(new ClassWalletMap());
-            modelBuilder.ApplyConfiguration(new RunTimeControllerMap());
-            modelBuilder.ApplyConfiguration(new TelegramChannelMap());
-            modelBuilder.ApplyConfiguration(new TelegramMessageMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaConfigurationMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaHistoryMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
-            modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
-            modelBuilder.ApplyConfiguration(new TokenMap());
-            modelBuilder.ApplyConfiguration(new TokenPriceHistoryMap());
-            modelBuilder.ApplyConfiguration(new TokenSecurityMap());
-            modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
-            modelBuilder.ApplyConfiguration(new TransactionRPCRecoveryMap());
-            modelBuilder.ApplyConfiguration(new TransactionsMap());
-            modelBuilder.ApplyConfiguration(new TransactionTokenMap());
-            modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
-            modelBuilder.ApplyConfiguration(new TypeOperationMap());
-            modelBuilder.ApplyConfiguration(new WalletBalanceMap());
-            modelBuilder.ApplyConfiguration(new WalletMap());
+            modelBuilder.ApplyConfiguration(new BaseMapper<AlertConfiguration>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<AlertInformation>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<AlertParameter>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<AlertPrice>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<ClassWallet>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<RunTimeController>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TelegramChannel>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TelegramMessage>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaConfiguration>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaHistory>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlpha>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaWalletHistory>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenAlphaWallet>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<Token>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenPriceHistory>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TokenSecurity>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TransactionNotMapped>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TransactionRPCRecovery>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<Transactions>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TransactionToken>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<WalletBalanceHistory>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<TypeOperation>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<WalletBalance>(EDatabase.Mongodb));
+            modelBuilder.ApplyConfiguration(new BaseMapper<Wallet>(EDatabase.Mongodb));
             base.OnModelCreating(modelBuilder);
         }
 

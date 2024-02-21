@@ -12,10 +12,6 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TransactionRPCRecovery> builder)
-        {
-            builder.Property(tc => tc.BlockTime).HasConversion<string?>();
-        }
         protected override void RelationsShips(EntityTypeBuilder<TransactionRPCRecovery> builder)
         {
             builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsRPCRecovery).HasForeignKey(tc => tc.WalletId);
