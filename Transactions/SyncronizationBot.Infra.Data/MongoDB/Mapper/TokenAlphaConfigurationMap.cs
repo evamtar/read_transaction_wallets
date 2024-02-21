@@ -14,7 +14,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 
         protected override void IgnoreProperties(EntityTypeBuilder<TokenAlphaConfiguration> builder)
         {
-            builder.Ignore(tac => tac.TokenAlphas)
+            builder.Ignore(tac => tac.TokenAlphas);
         }
     }
 }
