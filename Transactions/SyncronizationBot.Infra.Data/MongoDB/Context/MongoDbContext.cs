@@ -32,14 +32,21 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         public DbSet<TelegramMessage> TelegramMessages { get; set; }
         public DbSet<TokenAlphaConfiguration> TokenAlphaConfigurations { get; set; }
         public DbSet<TokenAlphaHistory> TokenAlphaHistories { get; set; }
-        public DbSet<TokenAlpha> TokenAlphas { get; set; }
+        public DbSet<TokenAlpha> TokensAlphas { get; set; }
         public DbSet<TokenAlphaWalletHistory> TokenAlphaWalletHistories { get; set; }
         public DbSet<TokenAlphaWallet> TokenAlphaWallets { get; set; }
+        public DbSet<Token> Tokens { get; set; }
         public DbSet<TokenPriceHistory> TokenPriceHistories { get; set; }
         public DbSet<TokenSecurity> TokenSecurities { get; set; }
-        public DbSet<Token> Tokens { get; set; }
-        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<TransactionNotMapped> TransactionNotMappeds { get; set; }
+        public DbSet<TransactionRPCRecovery> TransactionRPCs { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<TransactionToken> TransactionsToken { get; set; }
+        public DbSet<WalletBalanceHistory> WalletBalanceHistories { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
+        public DbSet<WalletBalance> WalletBalances{ get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        
         
         #endregion
 
@@ -62,9 +69,13 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
             modelBuilder.ApplyConfiguration(new TokenMap());
             modelBuilder.ApplyConfiguration(new TokenPriceHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenSecurityMap());
-
-
+            modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
+            modelBuilder.ApplyConfiguration(new TransactionRPCRecoveryMap());
+            modelBuilder.ApplyConfiguration(new TransactionsMap());
+            modelBuilder.ApplyConfiguration(new TransactionTokenMap());
+            modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
             modelBuilder.ApplyConfiguration(new TypeOperationMap());
+            modelBuilder.ApplyConfiguration(new WalletBalanceMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             base.OnModelCreating(modelBuilder);
         }
