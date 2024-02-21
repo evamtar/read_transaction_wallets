@@ -1,9 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Service.RecoveryService.Base;
+using SyncronizationBot.Domain.Service.InternalService.Base;
 
 namespace SyncronizationBot.Domain.Service.RecoveryService.Wallet
 {
-    public interface IWalletBalanceService : IServiceBase<WalletBalance>
+    public interface IWalletBalanceService : ICachedServiceBase<WalletBalance>
     {
     }
 }

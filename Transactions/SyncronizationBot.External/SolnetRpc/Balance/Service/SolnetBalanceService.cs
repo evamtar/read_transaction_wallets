@@ -20,20 +20,20 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
 
         public async Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
         {
-            var listBalances = new List<BalanceResponse>();
-            //GetSolValue
-            listBalances.Add(await this.GetAmountBalanceInSol(request));
-            //GetAnotherTokens
-            listBalances.AddRange(await this.GetBalanceResult(request));
+            var listBalances = await this.GetBalanceResult(request);
             return new SolnetBalanceResponse { IsSuccess = true, DateLoadBalance = this.ExecuteDateTime, Result = listBalances };
         }
 
-        private async Task<BalanceResponse> GetAmountBalanceInSol(SolnetBalanceRequest request) 
+        private async Task<List<BalanceResponse>> GetBalanceResult(SolnetBalanceRequest request)
         {
-            var balance = await this._client.GetBalanceAsync(request?.WalletHash ?? string.Empty);
-            return new BalanceResponse
+            var listBalances = new List<BalanceResponse>();
+            TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+            /****PRECISO TESTAR ISSO AINDA OU uma forma de trazer pelo menos o supply do tokens via RPC****/
+            var tokens = tokenWallet.TokenAccounts();
+            /**********************/
+            listBalances.Add(new BalanceResponse
             {
-                Amount = balance.Result.Value,
+                Amount = tokenWallet.Sol,
                 Token = new TokenResponse
                 {
                     Hash = "So11111111111111111111111111111111111111112",
@@ -41,14 +41,7 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
                     Name = "Solana",
                     Symbol = "SOL"
                 }
-            };
-        }
-
-        private async Task<List<BalanceResponse>> GetBalanceResult(SolnetBalanceRequest request)
-        {
-            var listBalances = new List<BalanceResponse>();
-            TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
-            var tokens = tokenWallet.TokenAccounts();
+            });
             this.ExecuteDateTime = DateTime.Now;
             var balances = tokenWallet.Balances();
             foreach (var balance in balances)
