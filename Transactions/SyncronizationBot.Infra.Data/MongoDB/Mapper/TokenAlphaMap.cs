@@ -12,19 +12,12 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlpha> builder)
-        {
-            //builder.Property(ta => ta.InitialMarketcap).HasConversion<string?>();
-            //builder.Property(ta => ta.ActualMarketcap).HasConversion<string?>();
-            //builder.Property(ta => ta.InitialPrice).HasConversion<string?>();
-            //builder.Property(ta => ta.ActualPrice).HasConversion<string?>();
-        }
-
-        protected override void RelationsShips(EntityTypeBuilder<TokenAlpha> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TokenAlpha> builder)
         {
             builder.Ignore(ta => ta.Token);
             builder.Ignore(ta => ta.TokenAlphaConfiguration);
+            builder.Ignore(ta => ta.TokenAlphas);
         }
-        
+
     }
 }

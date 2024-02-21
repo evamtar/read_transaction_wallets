@@ -14,15 +14,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenSecurity> builder)
-        {
-            //builder.Property(ts => ts.Top10HolderBalance).HasConversion<string?>();
-            //builder.Property(ts => ts.Top10HolderPercent).HasConversion<string?>();
-            //builder.Property(ts => ts.Top10UserBalance).HasConversion<string?>();
-            //builder.Property(ts => ts.Top10UserPercent).HasConversion<string?>();
-        }
-
-        protected override void RelationsShips(EntityTypeBuilder<TokenSecurity> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TokenSecurity> builder)
         {
             builder.Ignore(ts => ts.Token);
         }

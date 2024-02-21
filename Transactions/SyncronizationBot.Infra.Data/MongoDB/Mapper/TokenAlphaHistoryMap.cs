@@ -12,15 +12,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlphaHistory> builder)
-        {
-            builder.Property(tah => tah.InitialMarketcap).HasConversion<string?>();
-            builder.Property(tah => tah.ActualMarketcap).HasConversion<string?>();
-            builder.Property(tah => tah.InitialPrice).HasConversion<string?>();
-            builder.Property(tah => tah.ActualPrice).HasConversion<string?>();
-            builder.Property(tah => tah.RequestMarketCap).HasConversion<string?>();
-            builder.Property(tah => tah.RequestPrice).HasConversion<string?>();
-        }
+        
         
     }
 }

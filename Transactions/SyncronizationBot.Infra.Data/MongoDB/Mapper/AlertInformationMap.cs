@@ -14,6 +14,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         protected override void IgnoreProperties(EntityTypeBuilder<AlertInformation> builder)
         {
             builder.Ignore(ai => ai.AlertConfiguration);
+            builder.Ignore(ai => ai.AlertsParameters);
         }
     }
 }

@@ -87,7 +87,6 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
                     Price = balance?.Price,
                     TotalValueUSD = balance?.TotalValueUSD,
                     Signature = "CREATE BALANCE",
-                    FontType = base._fontType,
                     CreateDate = DateTime.Now,
                     LastUpdate = balance?.LastUpdate
                 });
@@ -107,7 +106,6 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
                     Price = item.PriceUsd,
                     TotalValueUSD = item.ValueUsd,
                     Signature = "CREATE BALANCE",
-                    FontType = base._fontType,
                     CreateDate = DateTime.Now,
                     LastUpdate = dateLoadBalance
                 });

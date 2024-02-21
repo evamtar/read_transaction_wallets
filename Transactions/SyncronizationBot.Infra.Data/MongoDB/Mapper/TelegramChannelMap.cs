@@ -12,9 +12,11 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TelegramChannel> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TelegramChannel> builder)
         {
-            //builder.Property(cw => cw.ChannelId).HasPrecision(30, 0);
+            builder.Ignore(tc => tc.AlertPrices);
+            builder.Ignore(tc => tc.AlertsConfigurations);
+            builder.Ignore(tc => tc.TelegramMessages);
         }
     }
 }

@@ -66,12 +66,10 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Context
             modelBuilder.ApplyConfiguration(new TokenSecurityMap());
             modelBuilder.ApplyConfiguration(new TransactionsMap());
             modelBuilder.ApplyConfiguration(new TransactionRPCRecoveryMap());
-            modelBuilder.ApplyConfiguration(new TransactionsOldForMappingMap());
             modelBuilder.ApplyConfiguration(new TransactionTokenMap());
             modelBuilder.ApplyConfiguration(new TransactionNotMappedMap());
             modelBuilder.ApplyConfiguration(new TypeOperationMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceMap());
-            modelBuilder.ApplyConfiguration(new WalletBalanceSFMCompareMap());
             modelBuilder.ApplyConfiguration(new WalletBalanceHistoryMap());
             modelBuilder.ApplyConfiguration(new WalletMap());
             base.OnModelCreating(modelBuilder);

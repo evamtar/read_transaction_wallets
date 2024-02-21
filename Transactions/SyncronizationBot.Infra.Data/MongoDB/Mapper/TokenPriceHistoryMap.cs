@@ -12,15 +12,9 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void RelationsShips(EntityTypeBuilder<TokenPriceHistory> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TokenPriceHistory> builder)
         {
             builder.Ignore(tph => tph.Token);
-        }
-
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenPriceHistory> builder)
-        {
-            //builder.Property(tph => tph.MarketCap).HasConversion<string?>();
-            //builder.Property(tph => tph.Liquidity).HasConversion<string?>();
         }
 
     }

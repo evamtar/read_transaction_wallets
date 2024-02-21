@@ -8,7 +8,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
     public class TransactionTokenMap : BaseMapper<TransactionToken>
     {
-        public TransactionTokenMap(EDatabase database) : base(EDatabase.SqlServer)
+        public TransactionTokenMap() : base(EDatabase.SqlServer)
         {
         }
         protected override void PropertiesWithConversion(EntityTypeBuilder<TransactionToken> builder)

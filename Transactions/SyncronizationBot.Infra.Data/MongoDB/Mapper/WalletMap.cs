@@ -12,15 +12,13 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        public override void Configure(EntityTypeBuilder<Wallet> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<Wallet> builder)
         {
-            base.Configure(builder);
             builder.Ignore(w => w.ClassWallet);
             builder.Ignore(w => w.Transactions);
             builder.Ignore(w => w.TransactionsOldForMapping);
             builder.Ignore(w => w.TransactionsRPCRecovery);
             builder.Ignore(w => w.Balances);
-            builder.Ignore(w => w.BalancesSFMCompare);
             builder.Ignore(w => w.TokenAlphas);
         }
     }

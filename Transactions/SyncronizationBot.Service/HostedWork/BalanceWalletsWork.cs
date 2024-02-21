@@ -84,7 +84,6 @@ namespace SyncronizationBot.Service.HostedWork
                                     Price = walletBalance?.Price,
                                     TotalValueUSD = walletBalance?.TotalValueUSD,
                                     Signature = "CREATE BALANCE",
-                                    FontType = EFontType.SOLANA_RPC,
                                     CreateDate = DateTime.Now,
                                     LastUpdate = walletBalance?.LastUpdate
                                 };

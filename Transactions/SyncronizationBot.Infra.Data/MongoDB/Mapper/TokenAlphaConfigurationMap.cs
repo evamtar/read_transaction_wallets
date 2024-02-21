@@ -12,9 +12,9 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void PropertiesWithConversion(EntityTypeBuilder<TokenAlphaConfiguration> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TokenAlphaConfiguration> builder)
         {
-            //builder.Property(tac => tac.MaxMarketcap).HasConversion<string?>();
+            builder.Ignore(tac => tac.TokenAlphas)
         }
     }
 }

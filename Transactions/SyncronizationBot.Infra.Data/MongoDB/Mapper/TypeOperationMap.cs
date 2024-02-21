@@ -11,11 +11,12 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void RelationsShips(EntityTypeBuilder<TypeOperation> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TypeOperation> builder)
         {
             builder.Ignore(to => to.Transactions);
             builder.Ignore(to => to.AlertConfigurations);
         }
+        
 
     }
 }

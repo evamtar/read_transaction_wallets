@@ -4,12 +4,11 @@ using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
-    public class TokenAlphaWalletHistoryMap : BaseMapper<TokenAlphaWalletHistory>
+    [Obsolete]
+    public class TransactionNotMappedMap : BaseMapper<TransactionNotMapped>
     {
-        public TokenAlphaWalletHistoryMap() : base(EDatabase.Mongodb)
+        public TransactionNotMappedMap() : base(EDatabase.Mongodb)
         {
         }
-
-        
     }
 }

@@ -16,7 +16,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? TokenSymbol { get; set; }
         public string? TokenName { get; set; }
         public Guid? TokenAlphaConfigurationId { get; set; }
-        public Token? Token { get; set; }
+        public virtual Token? Token { get; set; }
         public virtual TokenAlphaConfiguration? TokenAlphaConfiguration { get; set; }
         public virtual List<TokenAlphaWallet>? TokenAlphas { get; set; }
     }

@@ -19,11 +19,5 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
             builder.Ignore(rt => rt.CachedId);
             builder.HasKey(rt => rt.RuntimeId);
         }
-        
-        protected override void PropertiesWithConversion(EntityTypeBuilder<RunTimeController> builder)
-        {
-            builder.Property(rt => rt.ConfigurationTimer).HasConversion<string>();
-        }
-
     }
 }

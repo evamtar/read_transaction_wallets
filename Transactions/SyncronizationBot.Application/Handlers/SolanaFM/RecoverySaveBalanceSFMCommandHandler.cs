@@ -94,7 +94,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         Price = balance?.Price,
                         TotalValueUSD = balance?.TotalValueUSD,
                         Signature = "CREATE BALANCE",
-                        FontType = base._fontType,
                         CreateDate = DateTime.Now,
                         LastUpdate = balance?.LastUpdate
                     });
@@ -114,7 +113,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         Price = token?.MarketCap / token?.Supply,
                         TotalValueUSD = (accountInfo.Result?.Value?.Lamports / this.GetDivisor(token?.Decimals)) * (token?.MarketCap / token?.Supply),
                         Signature = "CREATE BALANCE",
-                        FontType = base._fontType,
                         CreateDate = DateTime.Now,
                         LastUpdate = dateLoadBalance
                     });
@@ -154,7 +152,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         Price = balance?.Price,
                         TotalValueUSD = balance?.TotalValueUSD,
                         Signature = "CREATE BALANCE",
-                        FontType = base._fontType,
                         CreateDate = DateTime.Now,
                         LastUpdate = balance?.LastUpdate
                     });
@@ -175,7 +172,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         Price = token?.MarketCap / token?.Supply,
                         TotalValueUSD = quantity * (token?.MarketCap / token?.Supply),
                         Signature = "CREATE BALANCE",
-                        FontType = base._fontType,
                         CreateDate = DateTime.Now,
                         LastUpdate = dateLoadBalance
                     });

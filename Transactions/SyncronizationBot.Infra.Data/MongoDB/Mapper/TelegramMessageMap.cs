@@ -11,7 +11,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
         {
         }
 
-        protected override void RelationsShips(EntityTypeBuilder<TelegramMessage> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<TelegramMessage> builder)
         {
             builder.Ignore(tm => tm.TelegramChannel);
         }
