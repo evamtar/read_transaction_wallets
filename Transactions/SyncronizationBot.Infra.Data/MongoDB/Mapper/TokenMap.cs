@@ -3,17 +3,19 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Infra.Data.Base.Mapper;
 
+
 namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
-    public class AlertInformationMap : BaseMapper<AlertInformation>
+    public class TokenMap : BaseMapper<Token>
     {
-        public AlertInformationMap() : base(EDatabase.Mongodb)
+        public TokenMap() : base(EDatabase.Mongodb)
         {
         }
 
-        protected override void IgnoreProperties(EntityTypeBuilder<AlertInformation> builder)
+        protected override void PropertiesWithConversion(EntityTypeBuilder<Token> builder)
         {
-            builder.Ignore(ai => ai.AlertConfiguration);
+            //builder.Property(t => t.Supply).HasConversion<string?>();
         }
+        
     }
 }

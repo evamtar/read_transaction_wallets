@@ -5,26 +5,26 @@ using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
-namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
+namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
 {
     public class TokenSecurityMap : BaseMapper<TokenSecurity>
     {
-        public TokenSecurityMap() : base(EDatabase.SqlServer)
+        public TokenSecurityMap() : base(EDatabase.Mongodb)
         {
 
         }
 
         protected override void PropertiesWithConversion(EntityTypeBuilder<TokenSecurity> builder)
         {
-            builder.Property(ts => ts.Top10HolderBalance).HasConversion<string?>();
-            builder.Property(ts => ts.Top10HolderPercent).HasConversion<string?>();
-            builder.Property(ts => ts.Top10UserBalance).HasConversion<string?>();
-            builder.Property(ts => ts.Top10UserPercent).HasConversion<string?>();
+            //builder.Property(ts => ts.Top10HolderBalance).HasConversion<string?>();
+            //builder.Property(ts => ts.Top10HolderPercent).HasConversion<string?>();
+            //builder.Property(ts => ts.Top10UserBalance).HasConversion<string?>();
+            //builder.Property(ts => ts.Top10UserPercent).HasConversion<string?>();
         }
 
         protected override void RelationsShips(EntityTypeBuilder<TokenSecurity> builder)
         {
-            builder.HasOne(ts => ts.Token).WithMany(t => t.TokenSecurities).HasForeignKey(ts => ts.TokenId);
+            builder.Ignore(ts => ts.Token);
         }
         
     }

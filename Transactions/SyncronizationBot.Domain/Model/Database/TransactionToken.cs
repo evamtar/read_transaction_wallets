@@ -9,7 +9,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? AmountValue { get; set; }
         public decimal? MtkcapToken { get; set; }
         public decimal? TotalToken { get; set; }
-        public ETypeTokenTransaction? TypeTokenTransaction { get; set; }
+        public ETypeTokenTransaction? TypeTokenTransactionId { get; set; }
         public bool? IsArbitrationOperation { get; set; }
         public bool? IsPoolOperation { get; set; }
         public bool? IsSwapOperation { get; set; }

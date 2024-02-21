@@ -35,6 +35,9 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
         public DbSet<TokenAlpha> TokenAlphas { get; set; }
         public DbSet<TokenAlphaWalletHistory> TokenAlphaWalletHistories { get; set; }
         public DbSet<TokenAlphaWallet> TokenAlphaWallets { get; set; }
+        public DbSet<TokenPriceHistory> TokenPriceHistories { get; set; }
+        public DbSet<TokenSecurity> TokenSecurities { get; set; }
+        public DbSet<Token> Tokens { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<TypeOperation> TypeOperations { get; set; }
         
@@ -56,8 +59,9 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Context
             modelBuilder.ApplyConfiguration(new TokenAlphaMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletHistoryMap());
             modelBuilder.ApplyConfiguration(new TokenAlphaWalletMap());
-
-
+            modelBuilder.ApplyConfiguration(new TokenMap());
+            modelBuilder.ApplyConfiguration(new TokenPriceHistoryMap());
+            modelBuilder.ApplyConfiguration(new TokenSecurityMap());
 
 
             modelBuilder.ApplyConfiguration(new TypeOperationMap());

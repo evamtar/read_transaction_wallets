@@ -1,24 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TransactionRPCRecoveryMap : IEntityTypeConfiguration<TransactionRPCRecovery>
+    public class TransactionRPCRecoveryMap : BaseMapper<TransactionRPCRecovery>
     {
-        public void Configure(EntityTypeBuilder<TransactionRPCRecovery> builder)
+        public TransactionRPCRecoveryMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TransactionRPCRecovery");
-            builder.Property(tc => tc.ID);
-            builder.Property(tc => tc.Signature);
-            builder.Property(tc => tc.DateOfTransaction);
-            builder.Property(tc => tc.BlockTime).HasConversion<string?>();
-            builder.Property(tc => tc.WalletId);
-            builder.Property(tc => tc.CreateDate);
-            builder.Property(tc => tc.IsIntegrated);
-            builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsRPCRecovery).HasForeignKey(tc => tc.WalletId);
-            builder.HasKey(tc => tc.ID);
         }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<TransactionRPCRecovery> builder)
+        {
+            builder.Property(tc => tc.BlockTime).HasConversion<string?>();
+        }
+        protected override void RelationsShips(EntityTypeBuilder<TransactionRPCRecovery> builder)
+        {
+            builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsRPCRecovery).HasForeignKey(tc => tc.WalletId);
+        }
+        
     }
 }

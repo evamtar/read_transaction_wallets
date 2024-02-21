@@ -13,7 +13,7 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Mapper
             
         }
 
-        protected override void IgnoreRelationsShips(EntityTypeBuilder<AlertConfiguration> builder)
+        protected override void IgnoreProperties(EntityTypeBuilder<AlertConfiguration> builder)
         {
             builder.Ignore(ac => ac.TelegramChannel);
             builder.Ignore(ac => ac.TypeOperation);

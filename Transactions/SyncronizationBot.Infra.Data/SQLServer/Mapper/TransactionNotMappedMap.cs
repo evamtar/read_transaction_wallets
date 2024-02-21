@@ -1,22 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SyncronizationBot.Domain.Model.Database;
+﻿using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TransactionNotMappedMap : IEntityTypeConfiguration<TransactionNotMapped>
+    [Obsolete]
+    public class TransactionNotMappedMap : BaseMapper<TransactionNotMapped>
     {
-        public void Configure(EntityTypeBuilder<TransactionNotMapped> builder)
+        public TransactionNotMappedMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TransactionNotMapped");
-            builder.Property(t => t.ID);
-            builder.Property(t => t.WalletId);
-            builder.Property(t => t.Signature);
-            builder.Property(t => t.Link);
-            builder.Property(t => t.Error);
-            builder.Property(t => t.StackTrace);
-            builder.Property(t => t.DateTimeRunner);
-            builder.HasKey(t => t.ID);
         }
     }
 }

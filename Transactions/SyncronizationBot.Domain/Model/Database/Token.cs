@@ -8,12 +8,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? Symbol { get; set; }
         public string? Name { get; set; }
         public decimal? Supply { get; set; }
-        public decimal? MarketCap { get; set; }
-        public decimal? Liquidity { get; set; }
-        public int? UniqueWallet24h { get; set; }
-        public int? UniqueWalletHistory24h { get; set; }
         public int? Decimals { get; set; }
-        public int? NumberMarkets { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
         public bool? IsLazyLoad {get;set;}
@@ -22,5 +17,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public virtual List<TokenSecurity>? TokenSecurities { get; set; }
         public virtual List<TokenAlpha>? TokenAlphas { get; set; }
         public virtual List<TransactionToken>? TransactionTokens { get; set; }
+        public virtual List<TokenPriceHistory>? TokenPriceHistories { get; set; }
     }
 }

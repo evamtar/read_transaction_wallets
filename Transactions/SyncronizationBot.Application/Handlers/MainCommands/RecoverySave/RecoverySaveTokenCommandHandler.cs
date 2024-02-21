@@ -53,12 +53,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         Symbol = LAZY_LOAD,
                         Name = LAZY_LOAD,
                         Supply = null,
-                        MarketCap = null,
-                        Liquidity = null,
-                        UniqueWallet24h = null,
-                        UniqueWalletHistory24h = null,
                         Decimals = 1,
-                        NumberMarkets = null,
                         CreateDate = DateTime.Now,
                         LastUpdate = DateTime.Now
                     });
@@ -132,13 +127,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     Symbol = token?.Symbol,
                     Name = token?.Name,
                     Supply = token?.Supply,
-                    MarketCap = GetMarketCap(request.TokenHash, price.Data, token?.Supply, token?.MarketCap),
-                    Price = GetPrice(request.TokenHash, price.Data, token?.Supply, token?.MarketCap),
-                    Liquidity = token?.Liquidity,
-                    UniqueWallet24h = token?.UniqueWallet24h,
-                    UniqueWalletHistory24h = token?.UniqueWalletHistory24h,
                     Decimals = token?.Decimals,
-                    NumberMarkets = token?.NumberMarkets,
                     DateCreation = tokenSecurity?.CreationTimeDate,
                     FreezeAuthority = tokenSecurity?.FreezeAuthority,
                     MintAuthority = tokenSecurity?.MintAuthority,
@@ -170,12 +159,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 Symbol = tokenResponse?.Data?.Symbol,
                 Name = tokenResponse?.Data?.Name,
                 Supply = tokenResponse?.Data?.Supply,
-                MarketCap = tokenResponse?.Data?.Mc,
-                Liquidity = tokenResponse?.Data?.Liquidity,
-                UniqueWallet24h = (int?)tokenResponse?.Data?.UniqueWallet24H,
-                UniqueWalletHistory24h = (int?)tokenResponse?.Data?.UniqueWalletHistory24H,
                 Decimals = (int?)tokenResponse?.Data?.Decimals,
-                NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets,
                 CreateDate = DateTime.Now,
                 LastUpdate = DateTime.Now
             });
@@ -196,12 +180,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 Symbol = tokenSymbol?.Data?[request!.TokenHash!]?.VsTokenSymbol ?? tokenResult?.Pairs?.FirstOrDefault()?.BaseToken?.Symbol,
                 Name = tokenSymbol?.Data?[request!.TokenHash!]?.VsTokenSymbol ?? tokenResult?.Pairs?.FirstOrDefault()?.BaseToken?.Name,
                 Supply = null,
-                MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv,
-                Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd),
-                UniqueWallet24h = null,
-                UniqueWalletHistory24h = null,
                 Decimals = 1,
-                NumberMarkets = null,
                 CreateDate = DateTime.Now,
                 LastUpdate = DateTime.Now
             });
@@ -311,12 +290,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             token!.Symbol = tokenResponse?.Data?.Symbol;
             token!.Name = tokenResponse?.Data?.Name;
             token!.Supply = tokenResponse?.Data?.Supply;
-            token!.MarketCap = tokenResponse?.Data?.Mc;
-            token!.Liquidity = tokenResponse?.Data?.Liquidity;
-            token!.UniqueWallet24h = (int?)tokenResponse?.Data?.UniqueWallet24H;
-            token!.UniqueWalletHistory24h = (int?)tokenResponse?.Data?.UniqueWalletHistory24H;
             token!.Decimals = (int?)tokenResponse?.Data?.Decimals;
-            token!.NumberMarkets = (int?)tokenResponse?.Data?.NumberMarkets;
             token!.LastUpdate = DateTime.Now;
             this._tokenRepository.Update(token);
             await this._tokenRepository.DetachedItemAsync(token);
@@ -332,7 +306,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             var tokenSymbol = await _mediator.Send(new RecoveryPriceCommand { Ids = new List<string> { request!.TokenHash! } });
             if (tokenSymbol?.Data?.ContainsKey(request!.TokenHash!) ?? false)
             {
-                token!.MarketCap = tokenSymbol?.Data?[request!.TokenHash!].Price * token.Supply;
                 token!.LastUpdate = DateTime.Now;
                 this._tokenRepository.Update(token);
                 await this._tokenRepository.DetachedItemAsync(token);
@@ -345,8 +318,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 var tokenResult = await this._dexScreenerTokenService.ExecuteRecoveryTokenAsync(new TokenRequest { TokenHash = request!.TokenHash! });
                 if (tokenResult != null)
                 {
-                    token!.MarketCap = tokenResult?.Pairs?.FirstOrDefault()?.Fdv;
-                    token!.Liquidity = (decimal?)(tokenResult?.Pairs?.FirstOrDefault()?.Liquidity?.Usd);
                     token!.LastUpdate = DateTime.Now;
                     this._tokenRepository.Update(token);
                     await this._tokenRepository.DetachedItemAsync(token);

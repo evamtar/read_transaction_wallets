@@ -1,29 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TokenMap : IEntityTypeConfiguration<Token>
+    public class TokenMap : BaseMapper<Token>
     {
-        public void Configure(EntityTypeBuilder<Token> builder)
+        public TokenMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("Token");
-            builder.Property(t => t.ID);
-            builder.Property(t => t.Hash);
-            builder.Property(t => t.Symbol);
-            builder.Property(t => t.Name);
-            builder.Property(t => t.Supply).HasConversion<string?>();
-            builder.Property(t => t.MarketCap).HasConversion<string?>();
-            builder.Property(t => t.Liquidity).HasConversion<string?>();
-            builder.Property(t => t.UniqueWallet24h);
-            builder.Property(t => t.UniqueWalletHistory24h);
-            builder.Property(t => t.Decimals);
-            builder.Property(t => t.NumberMarkets);
-            builder.Property(t => t.CreateDate);
-            builder.Property(t => t.LastUpdate);
-            builder.HasKey(t => t.ID);
         }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<Token> builder)
+        {
+            builder.Property(t => t.Supply).HasConversion<string?>();
+        }
+        
     }
 }

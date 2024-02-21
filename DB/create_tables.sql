@@ -46,18 +46,6 @@ BEGIN
 END
 GO
 
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalanceSFMCompare')
-BEGIN
-	DROP TABLE [WalletBalanceSFMCompare]
-END
-GO
-
-IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'TransactionOldForMapping')
-BEGIN
-	DROP TABLE [TransactionOldForMapping]
-END
-GO
-
 IF EXISTS(SELECT 1 FROM SYS.TABLES WHERE NAME = 'WalletBalanceHistory')
 BEGIN
 	DROP TABLE [WalletBalanceHistory]
@@ -307,7 +295,7 @@ CREATE TABLE TransactionToken(
 	AmountValue				     VARCHAR(150),
 	MtkcapToken                  VARCHAR(150),
 	TotalToken					 VARCHAR(150),
-	TypeTokenTransaction		 INT, --SENDED (1), RECEIVED(2)
+	TypeTokenTransactionId		 INT, --SENDED (1), RECEIVED(2)
 	IsArbitrationOperation       BIT,
 	IsPoolOperation				 BIT,
 	IsSwapOperation              BIT,
@@ -318,18 +306,6 @@ CREATE TABLE TransactionToken(
 	FOREIGN KEY (TransactionsId) REFERENCES Transactions(ID),
 );
 
-CREATE TABLE TransactionOldForMapping
-(
-	ID                           UNIQUEIDENTIFIER,
-	[Signature]                  VARCHAR(150),
-	DateOfTransaction            DATETIME2,
-	WalletId                     UNIQUEIDENTIFIER,
-	CreateDate				     DATETIME2,
-	IsIntegrated				 BIT,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
-);
-GO
 
 CREATE TABLE TransactionRPCRecovery
 (
@@ -361,21 +337,6 @@ CREATE TABLE WalletBalance
 	FOREIGN KEY(TokenId) REFERENCES Token(ID),
 );
 
-CREATE TABLE WalletBalanceSFMCompare(
-	ID            UNIQUEIDENTIFIER,
-	WalletId      UNIQUEIDENTIFIER,
-	TokenId       UNIQUEIDENTIFIER,
-	TokenHash     VARCHAR(100),
-	Quantity      VARCHAR(100),
-	Price         VARCHAR(100),
-	TotalValueUSD VARCHAR(100),
-	IsActive      BIT,
-	LastUpdate    DATETIME2,
-	PRIMARY KEY (ID),
-	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
-	FOREIGN KEY(TokenId) REFERENCES Token(ID),
-);
-
 CREATE TABLE WalletBalanceHistory
 (
 	ID                    UNIQUEIDENTIFIER,
@@ -390,7 +351,6 @@ CREATE TABLE WalletBalanceHistory
 	Price                 VARCHAR(100),
 	TotalValueUSD         VARCHAR(100),
 	[Signature]           VARCHAR(150),
-	FontType			  INT,
 	CreateDate            DATETIME2,
 	LastUpdate            DATETIME2,
 	PRIMARY KEY (ID)

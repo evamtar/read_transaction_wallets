@@ -1,27 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class TransactionTokenMap : IEntityTypeConfiguration<TransactionToken>
+    public class TransactionTokenMap : BaseMapper<TransactionToken>
     {
-        public void Configure(EntityTypeBuilder<TransactionToken> builder)
+        public TransactionTokenMap(EDatabase database) : base(EDatabase.SqlServer)
         {
-            builder.ToTable("TransactionToken");
-            builder.Property(tt => tt.ID);
+        }
+        protected override void PropertiesWithConversion(EntityTypeBuilder<TransactionToken> builder)
+        {
             builder.Property(tt => tt.AmountValue).HasConversion<string?>();
             builder.Property(tt => tt.MtkcapToken).HasConversion<string?>();
             builder.Property(tt => tt.TotalToken).HasConversion<string?>();
-            builder.Property(tt => tt.TypeTokenTransaction);
-            builder.Property(tt => tt.IsArbitrationOperation);
-            builder.Property(tt => tt.IsPoolOperation);
-            builder.Property(tt => tt.IsSwapOperation);
-            builder.Property(tt => tt.TokenId);
-            builder.Property(tt => tt.TransactionId);
+        }
+        protected override void RelationsShips(EntityTypeBuilder<TransactionToken> builder)
+        {
             builder.HasOne(tt => tt.Token).WithMany(t => t.TransactionTokens).HasForeignKey(tt => tt.TokenId);
             builder.HasOne(tt => tt.Transactions).WithMany(t => t.TransactionTokens).HasForeignKey(tt => tt.TokenId);
-            builder.HasKey(tt => tt.ID);
         }
     }
 }

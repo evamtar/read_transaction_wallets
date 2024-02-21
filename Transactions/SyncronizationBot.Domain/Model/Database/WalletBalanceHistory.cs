@@ -16,7 +16,6 @@ namespace SyncronizationBot.Domain.Model.Database
         public decimal? Price { get; set; }
         public decimal? TotalValueUSD { get; set; }
         public string? Signature { get; set; }
-        public EFontType FontType { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
     }

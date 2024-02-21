@@ -1,26 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Infra.Data.Base.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Mapper
 {
-    public class WalletBalanceMap : IEntityTypeConfiguration<WalletBalance>
+    public class WalletBalanceMap : BaseMapper<WalletBalance>
     {
-        public void Configure(EntityTypeBuilder<WalletBalance> builder)
+        public WalletBalanceMap() : base(EDatabase.SqlServer)
         {
-            builder.ToTable("WalletBalance");
-            builder.Property(wb => wb.ID);
-            builder.Property(wb => wb.WalletId);
-            builder.Property(wb => wb.TokenId);
-            builder.Property(wb => wb.TokenHash);
+        }
+
+        protected override void PropertiesWithConversion(EntityTypeBuilder<WalletBalance> builder)
+        {
             builder.Property(wb => wb.Quantity).HasConversion<string?>();
             builder.Property(wb => wb.Price).HasConversion<string?>();
             builder.Property(wb => wb.TotalValueUSD).HasConversion<string?>();
-            builder.Property(wb => wb.IsActive);
-            builder.Property(wb => wb.LastUpdate);
+        }
+
+        protected override void RelationsShips(EntityTypeBuilder<WalletBalance> builder)
+        {
             builder.HasOne(wb => wb.Wallet).WithMany(w => w.Balances).HasForeignKey(wb => wb.WalletId);
             builder.HasOne(wb => wb.Token).WithMany(t => t.Balances).HasForeignKey(wb => wb.TokenId);
-            builder.HasKey(cw => cw.ID);
         }
+
     }
 }
