@@ -81,7 +81,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
                                                                                 where W : IRepository<T>
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            var repository = scope.ServiceProvider.GetRequiredService<IRepository<T>>();
+            var repository = scope.ServiceProvider.GetRequiredService<W>();
             await repository.AddAsync(messageEvent!.Entity!);
         }
         private void DoUpdate<T, W>(IServiceScope scope, string? message) where T : Entity
