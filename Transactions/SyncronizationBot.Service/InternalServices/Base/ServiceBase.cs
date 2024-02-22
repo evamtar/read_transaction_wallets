@@ -14,22 +14,22 @@ namespace SyncronizationBot.Service.InternalServices.Base
             this._repository = repository;
         }
 
-        public async Task<T?> FindFirstOrDefault(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
+        public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
         {
             return await this._repository.FindFirstOrDefaultAsync(predicate, keySelector);
         }
 
-        public async Task<T?> Get(Guid id)
+        public async Task<T?> GetAsync(Guid id)
         {
             return await this._repository.GetAsync(id);
         }
 
-        public async Task<List<T>> Get(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
+        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null)
         {
             return await this._repository.GetAsync(predicate, keySelector);
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
             return await this._repository.GetAllAsync();
         }
