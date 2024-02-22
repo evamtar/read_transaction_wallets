@@ -8,7 +8,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? IdClassification { get; set; }
         public string? Description { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<Wallet>? Wallets { get; set; }
     }
 }

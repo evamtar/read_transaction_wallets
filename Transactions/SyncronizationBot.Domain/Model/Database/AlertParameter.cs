@@ -16,7 +16,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public bool? IsIcon { get; set; }
         public bool? IsImage { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual AlertInformation? AlertInformation { get; set; }
 
     }

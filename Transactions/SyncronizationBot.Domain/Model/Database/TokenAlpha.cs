@@ -7,16 +7,16 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public int? CallNumber { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? InitialMarketcap { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? ActualMarketcap { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? InitialPrice { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? ActualPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
@@ -26,13 +26,13 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? TokenName { get; set; }
         public Guid? TokenAlphaConfigurationId { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual Token? Token { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual TokenAlphaConfiguration? TokenAlphaConfiguration { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<TokenAlphaWallet>? TokenAlphas { get; set; }
     }
 }

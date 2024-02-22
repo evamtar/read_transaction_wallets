@@ -10,7 +10,6 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {
@@ -89,7 +88,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
                                                                           where W : IRepository<T>
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            var repository = scope.ServiceProvider.GetRequiredService<IRepository<T>>();
+            var repository = scope.ServiceProvider.GetRequiredService<W>();
             repository.Update(messageEvent!.Entity!);
         }
     }

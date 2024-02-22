@@ -11,7 +11,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public DateTime? DateSended { get; set; }
         public bool? IsDeleted { get; set; }
         public int? TryDeleted { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public TelegramChannel? TelegramChannel { get; set; }
     }
 }

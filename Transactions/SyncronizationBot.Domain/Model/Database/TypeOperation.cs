@@ -10,10 +10,10 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? IdTypeOperation { get; set; }
         public int? IdSubLevel { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<Transactions>? Transactions { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<AlertConfiguration>? AlertConfigurations { get; set; }
     }
 }

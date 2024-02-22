@@ -5,7 +5,7 @@
 --INSERT INTO RunTimeController VALUES(1, '1', 'Main Job Controller', 'Serviço de controle de job''s', '', 1, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Alerta de Transações', 'Serviço de alerta de transações', '', 2, 0, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Carregar Tokens das Wallets e Atualizar saldo', 'Serviço de balanço e saldos', '', 2, 0, 0, 0, 1, null);
-INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço e saldos', 'Carregar Tokens das Wallets e Atualizar saldo', '', 2, 0, 0, 0, 1, null);
+INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço e saldos', 'Carregar Tokens das Wallets e Atualizar saldo', 2, 0, 1);
 --INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null, 'Alerta de preços');
 --INSERT INTO RunTimeController VALUES(4, '4', 4, 0, 0, null, 'Excluir mensagens de log antigas');
 --INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null, 'Alerta de Token Alpha');
@@ -409,8 +409,6 @@ INSERT INTO Wallet VALUES(NEWID(), 'EYy9PNdpJmB9FTYWdPGb7L9HoZUDJxVFSLphYXaMgLXo
 INSERT INTO Wallet VALUES(NEWID(), '9NrSmuETVePLbcQNDeSwNxBFzpeyF6EfHv8YB2CgdWZM', @ClassWalletId, 0, NULL, 1, NULL);
 INSERT INTO Wallet VALUES(NEWID(), 'AX3kwXuXTbmJYaS6CtezARDj7Kqht5dYx8JV4vLj6xBJ', @ClassWalletId, 0, NULL, 1, NULL);
 INSERT INTO Wallet VALUES(NEWID(), 'H7d3HRfSG6iAePUXX24gKQgHkiooaSvcPeDzXvmGvy6M', @ClassWalletId, 0, NULL, 1, NULL);
-
-
 
 --DECLARE @SqlStatement NVARCHAR(MAX)
 --SELECT @SqlStatement = 

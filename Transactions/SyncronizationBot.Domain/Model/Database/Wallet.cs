@@ -13,15 +13,15 @@ namespace SyncronizationBot.Domain.Model.Database
         public bool? IsActive { get; set; }
         public DateTime? LastUpdate { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual ClassWallet? ClassWallet { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<Transactions>? Transactions { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<TransactionRPCRecovery>? TransactionsRPCRecovery { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<WalletBalance>? Balances { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<TokenAlphaWallet>? TokenAlphas { get; set; }
     }
 }

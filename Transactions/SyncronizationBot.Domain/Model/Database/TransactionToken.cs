@@ -7,13 +7,13 @@ namespace SyncronizationBot.Domain.Model.Database
 {
     public class TransactionToken : Entity
     {
-        [DbMapper(MongoTarget.Ignore, SqlServerTarget.Ignore)]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? AmountValue { get; set; }
 
-        [DbMapper(MongoTarget.Ignore, SqlServerTarget.Ignore)]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? MtkcapToken { get; set; }
 
-        [DbMapper(MongoTarget.Ignore, SqlServerTarget.Ignore)]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? TotalToken { get; set; }
         public ETypeTokenTransaction? TypeTokenTransactionId { get; set; }
         public bool? IsArbitrationOperation { get; set; }
@@ -22,10 +22,10 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? TokenId { get; set; }
         public Guid? TransactionId { get; set;}
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual Token? Token { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual Transactions? Transactions { get; set; }
     }
 }

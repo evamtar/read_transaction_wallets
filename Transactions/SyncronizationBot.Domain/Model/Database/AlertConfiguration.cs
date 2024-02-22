@@ -12,11 +12,11 @@ namespace SyncronizationBot.Domain.Model.Database
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual TelegramChannel? TelegramChannel { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<AlertInformation>? AlertsInformations { get; set; }
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual TypeOperation? TypeOperation { get; set; }
     }
 }

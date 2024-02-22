@@ -19,16 +19,16 @@ namespace SyncronizationBot.Domain.Model.Database
             } 
         }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? Top10HolderBalance { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? Top10HolderPercent { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? Top10UserBalance { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? Top10UserPercent { get; set; }
         public bool? IsTrueToken { get; set; }
         public string? LockInfo { get; set; }
@@ -41,7 +41,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public string? MintAuthority { get; set; }
         public bool? IsMutable { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual Token? Token { get; set; }
     }
 }

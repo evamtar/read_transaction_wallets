@@ -8,22 +8,22 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? TokenAlphaId { get; set; }
         public int? CallNumber { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? InitialMarketcap { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? ActualMarketcap { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? InitialPrice { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? ActualPrice { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? RequestMarketCap { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? RequestPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastUpdate { get; set; }

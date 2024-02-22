@@ -15,7 +15,6 @@ namespace SyncronizationBot.Domain.Model.RabbitMQ
         public string JsonSerialize()
         {
             return JsonConvert.SerializeObject(this);
-
         }
     }
 }

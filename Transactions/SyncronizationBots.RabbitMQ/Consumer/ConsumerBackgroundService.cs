@@ -4,7 +4,6 @@ using RabbitMQ.Client.Events;
 using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Queue.Interface;
 using System.Text;
-using System.Threading;
 
 namespace SyncronizationBots.RabbitMQ.Consumer
 {

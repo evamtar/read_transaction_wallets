@@ -8,14 +8,14 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public string? Signature { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? BlockTime { get; set; }
         public DateTime? DateOfTransaction { get; set; }
         public Guid? WalletId { get; set; }
         public DateTime? CreateDate { get; set; }
         public bool IsIntegrated { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual Wallet? Wallet { get; set; }
     }
 }

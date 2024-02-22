@@ -9,20 +9,20 @@ namespace SyncronizationBot.Domain.Model.Database
     {
         public DateTime? CreateDate { get; set; }
         public DateTime? EndDate { get; set; }
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? PriceBase { get; set; }
         public string? TokenHash { get; set; }
 
-        [DbMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
         public decimal? PriceValue { get; set; }
 
-        [DbMapper(SqlServerTarget.HasPrecision, precision:5, scale:2)]
+        [DbSqlServerMapper(SqlServerTarget.HasPrecision, precision:5, scale:2)]
         public decimal? PricePercent { get; set; }
         public ETypeAlertPrice TypeAlert { get; set; }
         public bool? IsRecurrence { get; set; }
         public Guid? TelegramChannelId { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual TelegramChannel? TelegramChannel { get; set; }
     }
 }

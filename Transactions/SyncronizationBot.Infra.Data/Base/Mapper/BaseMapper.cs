@@ -43,13 +43,13 @@ namespace SyncronizationBot.Infra.Data.Base.Mapper
             var properties = Activator.CreateInstance<T>().GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties) 
             {
-                var customAttribute = (DbMapperAttribute?) property.GetCustomAttribute(typeof(DbMapperAttribute));
+                var customAttribute = this.GetCustomAttribute(property);
                 if (customAttribute != null)
                 {
-                    if (_database == EDatabase.Mongodb)
-                        this.PropertyActionDo(builder, property, customAttribute.GetMongoTarget());
+                    if (_database == EDatabase.Mongodb) 
+                        this.PropertyActionDo(builder, property, ((DbMongoMapperAttribute)customAttribute).GetMongoTarget());
                     else if (_database == EDatabase.SqlServer)
-                        this.PropertyActionDo(builder, property, customAttribute.GetSqlServerTarget(), customAttribute.GetTypeConvertion(), customAttribute.GetPrecision(), customAttribute.GetScale());
+                        this.PropertyActionDo(builder, property, ((DbSqlServerMapperAttribute)customAttribute).GetSqlServerTarget(), ((DbSqlServerMapperAttribute)customAttribute).GetTypeConvertion(), ((DbSqlServerMapperAttribute)customAttribute).GetPrecision(), ((DbSqlServerMapperAttribute)customAttribute).GetScale());
                 }
                 else 
                 {
@@ -143,6 +143,15 @@ namespace SyncronizationBot.Infra.Data.Base.Mapper
                         throw new ArgumentException("Not implemented MongoTarget");
                 }
             }
+        }
+
+        private Attribute? GetCustomAttribute(PropertyInfo propertyInfo)
+        {
+            if (_database == EDatabase.Mongodb)
+                return propertyInfo.GetCustomAttribute(typeof(DbMongoMapperAttribute));
+            else if (_database == EDatabase.SqlServer)
+                return propertyInfo.GetCustomAttribute(typeof(DbSqlServerMapperAttribute));
+            return null;
         }
     }
 }

@@ -9,10 +9,10 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? IdSubLevel { get; set; }
         public Guid? AlertConfigurationId { get; set; }
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual AlertConfiguration? AlertConfiguration { get; set;}
 
-        [DbMapper(MongoTarget.Ignore)]
+        [DbMongoMapper(MongoTarget.Ignore)]
         public virtual List<AlertParameter>? AlertsParameters { get; set; }
     }
 }

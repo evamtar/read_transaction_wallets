@@ -46,6 +46,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Context;
 using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
 using SyncronizationBots.RabbitMQ.Extension;
+using SyncronizationBot.Service.RabbitMQ.Consumers;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -86,8 +87,8 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     #endregion
 
     #region Hosted Service
+    services.AddHostedService<UpdateQueueConsumerService>();
     services.AddHostedService<BalanceWalletsHostedService>();
-    //services.AddHostedService<TestService>();
     //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<AlertPriceService>();
     //services.AddHostedService<DeleteOldsMessagesLogService>();
@@ -99,6 +100,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     //services.AddHostedService<TestService>();
 
     #endregion
+
     #endregion
 
     #region External Services
