@@ -22,7 +22,12 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
             RabbitMQConnection = _scope.ServiceProvider.GetRequiredService<IRabbitMQConnection>();
             QueueConfiguration = queueConfiguration;
         }
+        public abstract Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken);
 
+        public override async Task HandlerAsync(string? message, CancellationToken stoppingToken)
+        {
+            await HandlerAsync(_scope, message, stoppingToken);
+        }
         public override Task LogInfo(string? info)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;

@@ -13,6 +13,7 @@ using SyncronizationBot.Domain.Service.InternalService.Wallet;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
 using SyncronizationBot.Domain.Service.RecoveryService.Wallet;
 using SyncronizationBot.Service.HostedWork.Base;
+using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Service.HostedWork
 {
@@ -67,7 +68,7 @@ namespace SyncronizationBot.Service.HostedWork
                                         IsLazyLoad = true
                                     };
                                     this._tokenService.Add(token);
-                                    await base.PublishMessage(token, INSTRUCTION_INSERT);
+                                    await base.PublishMessage(token, Constants.INSTRUCTION_INSERT);
                                 }
                                 var walletBalance = new WalletBalance
                                 {
@@ -82,7 +83,7 @@ namespace SyncronizationBot.Service.HostedWork
                                     LastUpdate = DateTime.Now
                                 };
                                 this._walletBalanceService.Add(walletBalance);
-                                await base.PublishMessage(walletBalance, INSTRUCTION_INSERT);
+                                await base.PublishMessage(walletBalance, Constants.INSTRUCTION_INSERT);
                                 var walletBalanceHistory = new WalletBalanceHistory
                                 {
                                     ID = Guid.NewGuid(),
@@ -101,13 +102,13 @@ namespace SyncronizationBot.Service.HostedWork
                                     LastUpdate = walletBalance?.LastUpdate
                                 };
                                 this._walletBalanceHistoryService.Add(walletBalanceHistory);
-                                await base.PublishMessage(walletBalanceHistory, INSTRUCTION_INSERT);
+                                await base.PublishMessage(walletBalanceHistory, Constants.INSTRUCTION_INSERT);
                             }
                         }
                         wallet!.DateLoadBalance = balanceResponse?.DateLoadBalance;
                         wallet!.IsLoadBalance = true;
                         this._walletService.Update(wallet);
-                        await base.PublishMessage(wallet, INSTRUCTION_UPDATE);
+                        await base.PublishMessage(wallet, Constants.INSTRUCTION_UPDATE);
                     }
                 }
             }

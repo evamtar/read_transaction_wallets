@@ -6,9 +6,7 @@ namespace SyncronizationBot.Service.HostedWork.Base
 {
     public class BaseWorkForUpdate
     {
-        protected const string? INSTRUCTION_UPDATE = "UPDATE";
-        protected const string? INSTRUCTION_INSERT = "INSERT";
-        protected const string? INSTRUCTION_DELETE = "DELETE";
+        
         private readonly IPublishUpdateService _publishUpdateService;
         public BaseWorkForUpdate(IPublishUpdateService publishUpdateService)
         {
