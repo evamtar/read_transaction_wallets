@@ -1,15 +1,7 @@
-version: "3.2"
+version: "3.9"
+name: monitoring-services
 services:
 
-  sql-server-db:
-    container_name: sql-server-db
-    image: mcr.microsoft.com/mssql/server:2017-latest
-    ports:
-      - "1433:1433"
-    environment:
-      SA_PASSWORD: "M@ni@co2024"
-      ACCEPT_EULA: "Y"
-      
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
@@ -23,4 +15,5 @@ networks:
   rabbitmq_go_net:
     driver: bridge   
 
-
+#docker run --name sql-server -e "ACCEPT_EULA=Y" -e "MSSQL_PID=Enterprise" -e "MSSQL_AGENT_ENABLED=True" -e "MSSQL_SA_PASSWORD=M@ni@co2024" -p 1402:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+#docker run --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=M@ni@co2024 -d mongo:latest
