@@ -10,6 +10,8 @@ namespace SyncronizationBot.Domain.Model.Enum
         SOLANA_FM,
         SOLANA_BEACH,
         DEXSCREENER,
-        JUPITER
+        JUPITER,
+        COIN_GECKO,
+        COIN_MARKETCAP
     }
 }

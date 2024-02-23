@@ -7,6 +7,6 @@ namespace SyncronizationBot.Domain.Model.Alerts
         public string? ServiceName { get; set; }
         public DateTime? DateExecuted { get; set; }
         public TimeSpan? Timer { get; set; }
-        public Exception Exception { get; set; }
+        public Exception? Exception { get; set; }
     }
 }

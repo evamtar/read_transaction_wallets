@@ -47,6 +47,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
 using SyncronizationBots.RabbitMQ.Extension;
 using SyncronizationBot.Service.RabbitMQ.Consumers;
+using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Configs;
+using SyncronizationBot.Domain.Service.CrossCutting.Coingecko;
+using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Service;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -75,7 +78,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     #region Context / Repositories / Handlers / Services / Auto Mapper / RabbitMq
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
     services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB")?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Scoped);
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
@@ -84,6 +87,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.AddAutoMapper(typeof(ServiceMediatorProfile));
     services.AddRabitMqConnection(configuration);
     services.AddRabbitMqServices(configuration);
+
     #endregion
 
     #region Hosted Service
@@ -110,7 +114,10 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<DexScreenerTokenConfig>(configuration.GetSection("DexScreenerToken"));
     services.AddHttpClient<IDexScreenerTokenService, DexScreenerTokenService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     #endregion
 
@@ -119,25 +126,59 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<TokenOverviewConfig>(configuration.GetSection("TokenOverview"));
     services.AddHttpClient<ITokenOverviewService, TokenOverviewService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokenSecurityConfig>(configuration.GetSection("TokenSecurity"));
     services.AddHttpClient<ITokenSecurityService, TokenSecurityService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokenCreationConfig>(configuration.GetSection("TokenCreation"));
     services.AddHttpClient<ITokenCreationService, TokenCreationService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<WalletPortifolioConfig>(configuration.GetSection("WalletPortifolio"));
     services.AddHttpClient<IWalletPortifolioService, WalletPortifolioService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+    #endregion
+
+    #region Coingecko
+
+    services.Configure<CoingeckoTokenConfig>(configuration.GetSection("CoingeckoToken"));
+    services.AddHttpClient<ICoingeckoTokenService, CoingeckoTokenService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .Or<Exception>()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     #endregion
@@ -149,7 +190,13 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<TransactionsSignatureForAddressConfig>(configuration.GetSection("TransactionsSignatureForAddress"));
     services.AddHttpClient<ITransactionsSignatureForAddressService, TransactionsSignatureForAddressService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     #endregion
@@ -157,31 +204,61 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<TransactionsConfig>(configuration.GetSection("Transactions"));
     services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TransfersConfig>(configuration.GetSection("Transfers"));
     services.AddHttpClient<ITransfersService, TransfersService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokensConfig>(configuration.GetSection("Tokens"));
     services.AddHttpClient<ITokensService, TokensService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     
     services.Configure<TokensAccountsByOwnerConfig>(configuration.GetSection("TokensAccountByOwner"));
     services.AddHttpClient<ITokensAccountsByOwnerService, TokensAccountsByOwnerService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<AccountInfoConfig>(configuration.GetSection("AccountInfo"));
     services.AddHttpClient<IAccountInfoService, AccountInfoService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     #endregion
 
@@ -190,7 +267,12 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<JupiterPriceConfig>(configuration.GetSection("JupiterPrice"));
     services.AddHttpClient<IJupiterPriceService, JupiterPriceService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     #endregion
@@ -200,7 +282,12 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.Configure<TelegramBotConfig>(configuration.GetSection("TelegramBot"));
     services.AddHttpClient<ITelegramBotService, TelegramBotService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
+                .Or<Exception>()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.GatewayTimeout)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     #endregion

@@ -31,7 +31,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
 
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)
         {
-            var typeOperation = await this._typeOperationRepository.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.AlertPrice);
+            var typeOperation = await this._typeOperationRepository.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)ESubLeveTypeOperation.AlertPrice);
             var alerts = await this._alertPriceRepository.GetAsync(x => (x.EndDate >= DateTime.Now || x.EndDate == null));
             if (alerts?.Count > 0)
             {

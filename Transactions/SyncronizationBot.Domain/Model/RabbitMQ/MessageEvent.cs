@@ -11,6 +11,8 @@ namespace SyncronizationBot.Domain.Model.RabbitMQ
         public DateTime? CreateDate { get; set; } = DateTime.Now;
         public T? Entity { get; set; }
         public object? Parameters { get; set; }
+        public Guid? EntityId { get; set; }
+        public Guid? TypeOperationId { get; set; }
 
         public string JsonSerialize()
         {

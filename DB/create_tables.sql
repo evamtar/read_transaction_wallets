@@ -235,6 +235,13 @@ CREATE TABLE TokenPriceHistory(
 	UniqueWallet24h        INT,
 	UniqueWalletHistory24h INT,
 	NumberMarkets          INT,
+	PriceChangePercent5m   VARCHAR(100),
+	PriceChangePercent30m  VARCHAR(100),
+	PriceChangePercent1h   VARCHAR(100),
+	PriceChangePercent4h   VARCHAR(100),
+	PriceChangePercent6h   VARCHAR(100),
+	PriceChangePercent24h  VARCHAR(100),
+	FontPrice			   INT,
 	CreateDate             DATETIME,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (TokenId) REFERENCES Token(ID)

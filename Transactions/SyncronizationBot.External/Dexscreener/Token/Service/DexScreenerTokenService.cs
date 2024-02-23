@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Infra.CrossCutting.Dexscreener.Token.Configs;
 

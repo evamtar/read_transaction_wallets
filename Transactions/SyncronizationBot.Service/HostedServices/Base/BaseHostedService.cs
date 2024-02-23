@@ -6,6 +6,7 @@ using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
+using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork.Base;
@@ -13,6 +14,7 @@ using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Domain.Service.InternalService.RunTime;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.LogMessageQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
+using SyncronizationBot.Utils;
 using System.Timers;
 
 
@@ -21,19 +23,17 @@ namespace SyncronizationBot.Service.HostedServices.Base
     public class BaseHostedService<T> : BackgroundService where T : IHostWorkService
 
     {
-        protected System.Timers.Timer? Timer { get; set; }
-        protected TimeSpan Interval { get; set; }
-        protected CancellationToken CancellationToken { get; set; }
-
+        
         #region Readonly Variables
 
         private readonly IServiceProvider _serviceProvider;
-        
+
         #endregion
 
         #region Properties
-
-        protected IMediator Mediator { get; set; }
+        protected System.Timers.Timer? Timer { get; set; }
+        protected TimeSpan Interval { get; set; }
+        protected CancellationToken CancellationToken { get; set; }
         protected T? Work { get; set; }
         protected ITypeOperationService TypeOperationService { get; private set; }
         protected IRunTimeControllerService RunTimeControllerService { get; private set; }
@@ -51,9 +51,10 @@ namespace SyncronizationBot.Service.HostedServices.Base
             this._serviceProvider = serviceProvider;
             this.TypeOperationService = null!;
             this.RunTimeControllerService = null!;
+            this.PublishLogService = null!;
+            this.PublishUpdateService = null!;
             this.Options = null!;
             this.Timer = null!;
-            this.Mediator = null!;
             this.Work = default;
         }
 
@@ -154,7 +155,6 @@ namespace SyncronizationBot.Service.HostedServices.Base
             this.TypeOperationService = scope.ServiceProvider.GetRequiredService<ITypeOperationService>();
             this.RunTimeControllerService = scope.ServiceProvider.GetRequiredService<IRunTimeControllerService>();
             this.Work = scope.ServiceProvider.GetRequiredService<T>();
-            this.Mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             this.PublishLogService = scope.ServiceProvider.GetRequiredService<IPublishLogService>();
             this.PublishUpdateService = scope.ServiceProvider.GetRequiredService<IPublishUpdateService>();
         }
@@ -199,10 +199,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         private async Task SendAlertExecute()
         {
-            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogExecute);
-            await this.Mediator.Send(new SendAlertMessageCommand
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == 0 && x.IdSubLevel == (int)ESubLeveTypeOperation.LogExecute);
+            await this.PublishLogService.Publish(new MessageEvent<Entity>
             {
-                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
+                CreateDate = DateTime.Now,
+                EventName = Constants.LOG_EXECUTE,
+                Parameters = Converters.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now,
@@ -213,10 +215,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertServiceRunning()
         {
-            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppRunning);
-            await this.Mediator.Send(new SendAlertMessageCommand
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == 0 && x.IdSubLevel == (int)ESubLeveTypeOperation.LogAppRunning);
+            await this.PublishLogService.Publish(new MessageEvent<Entity>
             {
-                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
+                CreateDate = DateTime.Now,
+                EventName = Constants.LOG_APP_RUNNING,
+                Parameters = Converters.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now
@@ -226,10 +230,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertTimerIsNull()
         {
-            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogAppLostConfiguration);
-            await this.Mediator.Send(new SendAlertMessageCommand
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == 0 && x.IdSubLevel == (int)ESubLeveTypeOperation.LogAppLostConfiguration);
+            await this.PublishLogService.Publish(new MessageEvent<Entity>
             {
-                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
+                CreateDate = DateTime.Now,
+                EventName = Constants.LOG_LOST_CONFIGURATIO,
+                Parameters = Converters.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now
@@ -239,10 +245,12 @@ namespace SyncronizationBot.Service.HostedServices.Base
         }
         private async Task SendAlertServiceError(Exception ex)
         {
-            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == (int)EFixedTypeOperation.LogError);
-            await this.Mediator.Send(new SendAlertMessageCommand
+            var typeOperation = await TypeOperationService.FindFirstOrDefaultAsync(x => x.IdTypeOperation == 0 && x.IdSubLevel == (int)ESubLeveTypeOperation.LogError);
+            await this.PublishLogService.Publish(new MessageEvent<Entity>
             {
-                Parameters = SendAlertMessageCommand.GetParameters(new object[] { new LogExecute
+                CreateDate = DateTime.Now,
+                EventName = Constants.LOG_ERROR,
+                Parameters = Converters.GetParameters(new object[] { new LogExecute
                 {
                     ServiceName = RunTimeController?.JobName ?? string.Empty,
                     DateExecuted = DateTime.Now,
@@ -290,6 +298,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
 
         #endregion
 
+        #region Disposable
+
         public override void Dispose()
         {
             try
@@ -303,6 +313,10 @@ namespace SyncronizationBot.Service.HostedServices.Base
             }
             base.Dispose();
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void TryStop()
         {
@@ -318,5 +332,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             try { if(!this.CancellationToken.IsCancellationRequested) Timer?.Start(); }
             finally { }
         }
+
+        #endregion
     }
 }
