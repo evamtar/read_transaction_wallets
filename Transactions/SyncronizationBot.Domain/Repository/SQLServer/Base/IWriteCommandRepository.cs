@@ -7,11 +7,11 @@ namespace SyncronizationBot.Domain.Repository.SQLServer.Base
     {
         Task<List<T>> AddRangeAsync(List<T> items);
         Task<T> AddAsync(T item);
-        Task<T> DetachedItemAsync(T item);
-        Task<T> AddSingleItemAsync(T item);
         T Update(T item);
         Task DeleteByIdAsync(Guid id);
-        Task DeleteAsync(T entity);
-        Task TruncateAsync(string tableName);
+        void Delete(T entity);
+        Task SaveChangesAsync();
+        void SaveChanges();
+        void ChangeTrackerClear();
     }
 }

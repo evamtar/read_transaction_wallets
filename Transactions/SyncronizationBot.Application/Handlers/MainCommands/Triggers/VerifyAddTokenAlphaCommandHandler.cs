@@ -52,7 +52,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     tokenAlphaBuyBefore.ValueSpentUSD += request?.ValueBuyUSD;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
                     this._tokenAlphaWalletRepository.Update(tokenAlphaBuyBefore);
-                    await this._tokenAlphaWalletRepository.DetachedItemAsync(tokenAlphaBuyBefore);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaBuyBefore);
                 }
                 else 
@@ -68,7 +67,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                         ValueSpentUSD = request?.ValueBuyUSD,
                         QuantityToken = request?.QuantityTokenReceived
                     });
-                    await this._tokenAlphaWalletRepository.DetachedItemAsync(tokekAlphaWallet);
                     await SaveTokenAlphaWalletsHistory(request, tokekAlphaWallet);
                 }
                 tokenAlphaCalled.CallNumber += 1;
@@ -79,11 +77,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 tokenAlphaCalled.TokenSymbol = request?.TokenSymbol;
                 tokenAlphaCalled.LastUpdate = DateTime.Now;
                 this._tokenAlphaRepository.Update(tokenAlphaCalled);
-                await this._tokenAlphaRepository.DetachedItemAsync(tokenAlphaCalled);
                 await SaveTokenAlphaHistory(request, tokenAlphaCalled);
                 var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefaultAsync(x => x.ID == tokenAlphaCalled.TokenAlphaConfigurationId);
                 await PublishMessage(tokenAlphaCalled, tokenAlphaConfiguration!);
-                await this._tokenAlphaConfigurationRepository.DetachedItemAsync(tokenAlphaConfiguration!);
             }
             else 
             {
@@ -111,7 +107,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                             TokenSymbol = request?.TokenSymbol,
                             TokenAlphaConfigurationId = tokenAlphaConfiguration.ID
                         });
-                        await this._tokenAlphaRepository.DetachedItemAsync(tokenAlpha);
                         await SaveTokenAlphaHistory(request, tokenAlpha);
 
                         var tokenAlphaWallet = await this._tokenAlphaWalletRepository.AddAsync(new TokenAlphaWallet
@@ -154,7 +149,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 TokenSymbol = tokenAlpha?.TokenSymbol,
                 TokenAlphaConfigurationId = tokenAlpha?.TokenAlphaConfigurationId
             });
-            await this._tokenAlphaHistoryRepository.DetachedItemAsync(tokenAlphaHistory);
         }
 
         private async Task SaveTokenAlphaWalletsHistory(VerifyAddTokenAlphaCommand? request, TokenAlphaWallet? tokenAlphaWallet)
@@ -178,7 +172,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 RequestValueInUSD = request?.ValueBuyUSD,
                 RequestQuantityToken = request?.QuantityTokenReceived
             });
-            await this._tokenAlphaWalletHistoryRepository.DetachedItemAsync(tokenAlphaWalletHistory);
         }
 
         private decimal? CalculatedMaxDaysOfLaunch(DateTime? launchDate) 

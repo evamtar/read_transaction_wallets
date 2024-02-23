@@ -94,11 +94,13 @@ namespace SyncronizationBot.Service.HostedServices.Base
                         {
                             await SetRuntimeControllerAsync(true);
                             LogMessage($"Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await this.Work!.DoExecute(this.CancellationToken);
+                            await Task.Delay(10000);
+                            //await this.Work!.DoExecute(this.CancellationToken);
                             await SetRuntimeControllerAsync(false);
                             LogMessage($"End --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await SendAlertExecute();
                             LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {Interval}");
+                            this.RunTimeControllerService.SaveChanges();
                             TryStart();
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
@@ -187,7 +189,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                 RunTimeController = await GetRunTimeControllerAsync();
                 var minutesForTimeSpan = RunTimeController?.ConfigurationTimer ?? (decimal)1.00;
                 Interval = TimeSpan.FromMinutes((double)minutesForTimeSpan);
-                Timer = new System.Timers.Timer(Interval);
+                Timer.Interval = Interval.TotalMilliseconds;
             }
         }
 

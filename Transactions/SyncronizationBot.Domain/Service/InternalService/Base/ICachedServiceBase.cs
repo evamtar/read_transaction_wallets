@@ -14,5 +14,6 @@ namespace SyncronizationBot.Domain.Service.InternalService.Base
         T Update(T item);
         void DeleteById(Guid id);
         void Delete(T entity);
+        void SaveChanges();
     }
 }

@@ -114,7 +114,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperationId = null, ///TODO-EVANDRO
                                 });
-                                await this._transactionsRepository.DetachedItemAsync(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                                 {
                                     Transactions = transactionDB,
@@ -190,7 +189,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     StackTrace = null,
                                     DateTimeRunner = DateTime.Now
                                 });
-                                await this._transactionNotMappedRepository.DetachedItemAsync(transactionNotMapped!);
                             }
                         }
                         catch (Exception ex)

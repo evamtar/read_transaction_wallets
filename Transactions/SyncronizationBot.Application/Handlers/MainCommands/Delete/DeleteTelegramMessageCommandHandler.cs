@@ -54,7 +54,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                             else
                                 message.IsDeleted = true;
                             this._telegramMessageRepository.Update(message);
-                            await this._telegramMessageRepository.DetachedItemAsync(message);
                         }
                     }
                 }

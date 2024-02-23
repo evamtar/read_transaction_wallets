@@ -14,9 +14,12 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
         private readonly IMongoDatabase _database;
         private readonly IMongoClient _client;
         private readonly MongoDbContext _context;
+        private DbSet<T> DbSet { get; set; }
         public CachedRepository(MongoDbContext context)
         {
             _context = context;
+            this.DbSet = null!;
+            this.DbSetEntity();
             _client = new MongoClient(_context._connectionString);
             _database = _client.GetDatabase(_context._databaseName);
         }
@@ -47,39 +50,39 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
 
         public List<T> AddRange(List<T> listItems) 
         {
-            _context.Set<T>().AddRange(listItems);
-            _context.SaveChanges();
+            DbSet.AddRange(listItems);
             return listItems;
         }
 
         public T Add(T item)
         {
-            _context.Set<T>().Add(item);
-            _context.SaveChanges();
+            DbSet.Add(item);
             return item;
         }
 
         public void DeleteById(Guid id)
         {
             var entity = GetAsync(id).GetAwaiter().GetResult();
-            _context.Entry(entity).State = EntityState.Detached;
-            _context.Set<T>().Remove(entity);
-            _context.SaveChanges();
+            DbSet.Entry(entity).State = EntityState.Detached;
+            DbSet.Remove(entity);
         }
 
         public void Delete(T entity)
         {
-            _context.Entry(entity).State = EntityState.Detached;
-            _context.Set<T>().Remove(entity);
-            _context.SaveChanges();
+            DbSet.Entry(entity).State = EntityState.Detached;
+            DbSet.Remove(entity);
         }
 
         public T Update(T item)
         {
-            _context.Entry(item).State = EntityState.Detached;
-            _context.Set<T>().Update(item);
-            _context.SaveChanges();
+            DbSet.Entry(item).State = EntityState.Detached;
+            DbSet.Update(item);
             return item;
+        }
+
+        public void SaveChanges() 
+        {
+            _context.SaveChanges();
         }
 
         #endregion
@@ -95,22 +98,31 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
         public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).ToListAsync();
+                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).ToListAsync();
             else
-                return await _context.Set<T>().Where(predicate).ToListAsync();
+                return await DbSet.AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
+                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
             else
-                return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+                return await DbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await DbSet.AsNoTracking().ToListAsync();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void DbSetEntity() 
+        {
+            DbSet = _context.Set<T>();
         }
 
         #endregion

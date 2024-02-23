@@ -64,7 +64,6 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                             }
                             else
                             {
-                                await this._transactionsRepository.DetachedItemAsync(exists);
                                 await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
                             }
                         }

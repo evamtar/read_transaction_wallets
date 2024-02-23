@@ -9,57 +9,38 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
     public class Repository<T> : IRepository<T> where T : Entity
     {
         private readonly DbContext _context;
+        private DbSet<T> DbSet { get; set; }
+
         public Repository(DbContext context)
         {
             _context = context;
+            this.DbSet = null!;
+            this.DbSetEntity();
         }
 
         public async Task<T> AddAsync(T item)
         {
-            await _context.Set<T>().AddAsync(item);
-            await _context.SaveChangesAsync();
+            await DbSet.AddAsync(item);
             return item;
         }
 
         public async Task<List<T>> AddRangeAsync(List<T> items)
         {
-            await _context.Set<T>().AddRangeAsync(items);
-            await _context.SaveChangesAsync();
+            await DbSet.AddRangeAsync(items);
             return items;
-        }
-
-        public async Task<T> DetachedItemAsync(T item)
-        {
-            try
-            {
-                _context.Entry(item).State = EntityState.Detached;
-                await _context.SaveChangesAsync();
-            }
-            catch { }
-            return item;
-        }
-
-        public async Task<T> AddSingleItemAsync(T item)
-        {
-            _context.Entry(item).State = EntityState.Detached;
-            await _context.Set<T>().AddAsync(item);
-            await _context.SaveChangesAsync();
-            return item;
         }
 
         public async Task DeleteByIdAsync(Guid id)
         {
             var entity = await GetAsync(id);
-            _context.Entry(entity).State = EntityState.Detached;
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            DbSet.Entry(entity).State = EntityState.Detached;
+            DbSet.Remove(entity);
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
-            _context.Entry(entity).State = EntityState.Detached;
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            DbSet.Entry(entity).State = EntityState.Detached;
+            DbSet.Remove(entity);
         }
 
         public async Task TruncateAsync(string tableName)
@@ -78,7 +59,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
         public T Update(T item)
         {
             _context.Entry(item).State = EntityState.Detached;
-            _context.Set<T>().Update(item);
+            DbSet.Update(item);
             _context.SaveChanges();
             return item;
         }
@@ -91,22 +72,46 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
         public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).ToListAsync();
+                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).ToListAsync();
             else
-                return await _context.Set<T>().Where(predicate).ToListAsync();
+                return await DbSet.AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await _context.Set<T>().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
+                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
             else
-                return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+                return await DbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await DbSet.AsNoTracking().ToListAsync();
         }
+
+        public async Task SaveChangesAsync() 
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public void SaveChanges() 
+        { 
+            _context.SaveChanges();
+        }
+
+        public void ChangeTrackerClear() 
+        {
+            _context.ChangeTracker.Clear();
+        }
+
+        #region Private Methods
+
+        private void DbSetEntity()
+        {
+            DbSet = _context.Set<T>();
+        }
+
+        #endregion
     }
 }

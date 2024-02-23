@@ -66,13 +66,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                                 alert.PriceValue += alert.PriceValue - alert.PriceBase;
                             alert.PriceBase = token?.Price;
                             this._alertPriceRepository.Update(alert);
-                            await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                         else
                         {
                             alert.EndDate = DateTime.Now;
                             this._alertPriceRepository.Update(alert);
-                            await this._alertPriceRepository.DetachedItemAsync(alert);
                         }
                     }
                 }

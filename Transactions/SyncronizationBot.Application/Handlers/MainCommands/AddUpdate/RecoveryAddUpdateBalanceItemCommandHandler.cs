@@ -83,7 +83,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                     IsActive = quantity > 0,
                     LastUpdate = DateTime.Now
                 });
-                await this._walletBalanceRepository.DetachedItemAsync(balance);
             }
             else
             {
@@ -99,7 +98,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 }
                 balance.LastUpdate = DateTime.Now;
                 balance = this._walletBalanceRepository.Update(balance);
-                await this._walletBalanceRepository.DetachedItemAsync(balance);
             }
 
             var walletBalanceHistory = await this._walletBalanceHistoryRepository.AddAsync(new WalletBalanceHistory
@@ -118,7 +116,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
                 CreateDate = DateTime.Now,
                 LastUpdate = balance.LastUpdate
             });
-            await this._walletBalanceHistoryRepository.DetachedItemAsync(walletBalanceHistory);
             return new RecoveryAddUpdateBalanceItemCommandResponse
             {
                 Quantity = balance.Quantity,

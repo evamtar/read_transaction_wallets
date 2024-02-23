@@ -43,7 +43,7 @@ namespace SyncronizationBot.Application.Handlers.Base
 
         protected long GetInitialTicks(decimal? initialTicks)
         {
-            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes(_config.Value.UTCTransactionMinutesAdjust ?? -5);
+            var dateAjusted = DateTimeTicks.Instance.ConvertTicksToDateTime((long?)initialTicks ?? 0).AddMinutes(-1);
             return DateTimeTicks.Instance.ConvertDateTimeToTicks(dateAjusted);
         }
 
@@ -55,7 +55,6 @@ namespace SyncronizationBot.Application.Handlers.Base
         protected async Task UpdateUnixTimeSeconds(long? finalTicks, Wallet wallet)
         {
             _walletRepository.Update(wallet);
-            await _walletRepository.DetachedItemAsync(wallet);
         }
         protected async Task UpdateUnixTimeSeconds(Wallet wallet) 
         {

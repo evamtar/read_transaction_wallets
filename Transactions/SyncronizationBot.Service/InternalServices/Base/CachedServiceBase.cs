@@ -47,6 +47,11 @@ namespace SyncronizationBot.Service.InternalServices.Base
             this._cachedRepository.Delete(entity);
         }
 
+        public void SaveChanges() 
+        { 
+            this._cachedRepository.SaveChanges();
+        }
+
         #endregion
 
         #region Rollback cachedMethods

@@ -20,6 +20,7 @@ namespace SyncronizationBot.Domain.Repository.MongoDB.Base
         T Update(T item);
         void DeleteById(Guid id);
         void Delete(T entity);
+        void SaveChanges();
 
         #endregion
 
@@ -29,7 +30,7 @@ namespace SyncronizationBot.Domain.Repository.MongoDB.Base
         Task<T?> GetAsync(Guid id);
         Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
         Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!);
-
+        
         #endregion
     }
 }

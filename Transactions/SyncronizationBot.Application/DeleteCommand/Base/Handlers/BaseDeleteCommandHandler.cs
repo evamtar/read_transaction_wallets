@@ -22,7 +22,7 @@ namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
         {
             if (request.Entity != null)
             {
-                await _repository.DeleteAsync(request.Entity);
+                _repository.Delete(request.Entity);
                 var response = Activator.CreateInstance<W>();
                 response.IsDeleted = true;
                 return response;

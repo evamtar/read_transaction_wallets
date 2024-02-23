@@ -83,6 +83,8 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             var messageEvent = message?.ToMessageEvent<T>();
             var repository = scope.ServiceProvider.GetRequiredService<W>();
             await repository.AddAsync(messageEvent!.Entity!);
+            await repository.SaveChangesAsync();
+            repository.ChangeTrackerClear();
         }
         private void DoUpdate<T, W>(IServiceScope scope, string? message) where T : Entity
                                                                           where W : IRepository<T>
@@ -90,6 +92,8 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             var messageEvent = message?.ToMessageEvent<T>();
             var repository = scope.ServiceProvider.GetRequiredService<W>();
             repository.Update(messageEvent!.Entity!);
+            repository.SaveChanges();
+            repository.ChangeTrackerClear();
         }
     }
 }
