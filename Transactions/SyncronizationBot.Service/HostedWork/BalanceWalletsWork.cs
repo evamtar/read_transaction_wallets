@@ -108,6 +108,7 @@ namespace SyncronizationBot.Service.HostedWork
                         wallet!.DateLoadBalance = balanceResponse?.DateLoadBalance;
                         wallet!.IsLoadBalance = true;
                         this._walletService.Update(wallet);
+                        this._walletService.SaveChanges();
                         await base.PublishMessage(wallet, Constants.INSTRUCTION_UPDATE);
                     }
                 }

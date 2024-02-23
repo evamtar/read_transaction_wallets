@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using SyncronizationBots.RabbitMQ.Connection.Interface;
+using SyncronizationBots.RabbitMQ.Exceptions;
 using SyncronizationBots.RabbitMQ.Queue.Interface;
 using System.Text;
 
@@ -54,7 +55,12 @@ namespace SyncronizationBots.RabbitMQ.Consumer
                 await HandlerAsync(message, CancellationToken.None);
                 this._consumerChannel.BasicAck(@event.DeliveryTag, false);
             }
-            catch(Exception ex)
+            catch (RelationShipInsertException ex) 
+            {
+                this._consumerChannel.BasicReject(@event.DeliveryTag, true);
+                await LogInfo(@$" Problema de relacionamento {ex.Message}. Reenfileirando a mensagem");
+            }
+            catch (Exception ex)
             {
                 await LogInfo(@$" Exceção --> {ex.Message}
                                   StackTrace: {ex.StackTrace}

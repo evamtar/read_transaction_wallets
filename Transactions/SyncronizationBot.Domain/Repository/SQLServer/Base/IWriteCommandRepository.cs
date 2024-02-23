@@ -12,6 +12,5 @@ namespace SyncronizationBot.Domain.Repository.SQLServer.Base
         void Delete(T entity);
         Task SaveChangesAsync();
         void SaveChanges();
-        void ChangeTrackerClear();
     }
 }

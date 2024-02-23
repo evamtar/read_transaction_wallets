@@ -19,7 +19,7 @@ namespace SyncronizationBot.Service.HostedWork.Base
             {
                 CreateDate = DateTime.Now,
                 Entity = entity,
-                EventName = nameof(T) + "_" + instruction,
+                EventName = typeof(T).Name + "_" + instruction,
                 Parameters = null
             });
         }

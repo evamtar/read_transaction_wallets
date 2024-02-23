@@ -10,6 +10,7 @@ namespace SyncronizationBot.Utils
         public const string TOKEN_INSTRUCTION = "TOKEN";
         public const string WALLET_INSTRUCTION = "WALLET";
         public const string WALLET_BALANCE_INSTRUCTION = "WALLETBALANCE";
+        public const string WALLET_BALANCE_HISTORY_INSTRUCTION = "WALLETBALANCEHISTORY";
         public const string RUN_TIME_CONTROLLER_INSTRUCTION = "RUNTIMECONTROLLER";
     }
 }

@@ -10,12 +10,14 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
+using SyncronizationBots.RabbitMQ.Exceptions;
+using System.Threading;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {
     public class UpdateQueueConsumerService : BaseBatchMessageConsumer
     {
-        
+        SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public UpdateQueueConsumerService(IServiceProvider serviceProvider, 
                                           IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, configuration.Value)
@@ -32,17 +34,25 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
                 throw new ArgumentException("Problem in process message");
             var classType = data?[0];
             var instruction = data?[1];
-            switch (instruction) 
+            await _semaphore.WaitAsync();
+            try
             {
-                case Constants.INSTRUCTION_INSERT:
-                    await this.DoProcessInsert(_scope, message, classType);
-                    break;
-                case Constants.INSTRUCTION_UPDATE:
-                    this.DoProcessUpdate(_scope, message, classType);
-                    break;
-                case Constants.INSTRUCTION_DELETE:
-                default:
-                    throw new ArgumentException($"Instruction {instruction} is not valid");
+                switch (instruction)
+                {
+                    case Constants.INSTRUCTION_INSERT:
+                        await this.DoProcessInsert(_scope, message, classType);
+                        break;
+                    case Constants.INSTRUCTION_UPDATE:
+                        this.DoProcessUpdate(_scope, message, classType);
+                        break;
+                    case Constants.INSTRUCTION_DELETE:
+                    default:
+                        throw new ArgumentException($"Instruction {instruction} is not valid");
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
@@ -64,16 +74,27 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
 
         private async Task DoProcessInsert(IServiceScope scope, string? message, string? classType)
         {
-            switch (classType?.ToUpper())
+            try 
             {
-                case Constants.WALLET_BALANCE_INSTRUCTION:
-                    await this.DoInsert<WalletBalance, IWalletBalanceRepository>(scope, message);
-                    break;
-                case Constants.TOKEN_INSTRUCTION:
-                    await this.DoInsert<Token, ITokenRepository>(scope, message);
-                    break;
-                default:
-                    throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
+                switch (classType?.ToUpper())
+                {
+                    case Constants.WALLET_BALANCE_INSTRUCTION:
+                        await this.DoInsert<WalletBalance, IWalletBalanceRepository>(scope, message);
+                        break;
+                    case Constants.TOKEN_INSTRUCTION:
+                        await this.DoInsert<Token, ITokenRepository>(scope, message);
+                        break;
+                    case Constants.WALLET_BALANCE_HISTORY_INSTRUCTION:
+                        await this.DoInsert<WalletBalanceHistory, IWalletBalanceHistoryRepository>(scope, message);
+                        break;
+                    default:
+                        throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
+                }
+            }
+            catch(Exception ex) 
+            {
+                if (ex.Source == "Microsoft.EntityFrameworkCore.Relational")
+                    throw new RelationShipInsertException(ex.Source, ex);
             }
         }
 
@@ -84,8 +105,8 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             var repository = scope.ServiceProvider.GetRequiredService<W>();
             await repository.AddAsync(messageEvent!.Entity!);
             await repository.SaveChangesAsync();
-            repository.ChangeTrackerClear();
         }
+
         private void DoUpdate<T, W>(IServiceScope scope, string? message) where T : Entity
                                                                           where W : IRepository<T>
         {
@@ -93,7 +114,6 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             var repository = scope.ServiceProvider.GetRequiredService<W>();
             repository.Update(messageEvent!.Entity!);
             repository.SaveChanges();
-            repository.ChangeTrackerClear();
         }
     }
 }

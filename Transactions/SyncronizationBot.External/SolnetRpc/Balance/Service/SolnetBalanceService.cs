@@ -1,8 +1,11 @@
-﻿using Solnet.Extensions;
+﻿using Polly;
+using Polly.Retry;
+using Solnet.Extensions;
 using Solnet.Rpc;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
+
 
 namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
 {
@@ -18,7 +21,7 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
             this._tokens = TokenMintResolver.Load();
         }
 
-        public async Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
+        public SolnetBalanceResponse ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
         {
             var listBalances = this.GetBalanceResult(request);
             return new SolnetBalanceResponse { IsSuccess = true, DateLoadBalance = this.ExecuteDateTime, Result = listBalances };
@@ -27,10 +30,16 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
         private List<BalanceResponse> GetBalanceResult(SolnetBalanceRequest request)
         {
             var listBalances = new List<BalanceResponse>();
-            TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
-            /****PRECISO TESTAR ISSO AINDA OU uma forma de trazer pelo menos o supply do tokens via RPC****/
-            var tokens = tokenWallet.TokenAccounts();
-            /**********************/
+            var policy = RetryPolicy.Handle<TokenWalletException>()
+                    .Or<Exception>()
+                    .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) => { }
+                );
+            TokenWallet tokenWallet = null!;
+            policy.Execute(() =>
+            {
+                tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+                this.ExecuteDateTime = DateTime.Now;
+            });
             listBalances.Add(new BalanceResponse
             {
                 Amount = tokenWallet.Sol,
@@ -42,9 +51,8 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
                     Symbol = "SOL"
                 }
             });
-            this.ExecuteDateTime = DateTime.Now;
             var balances = tokenWallet.Balances().ToList();
-            balances.ForEach(balance => 
+            balances.ForEach(balance =>
             {
                 if ((balance.QuantityDecimal == 0 && request?.IgnoreAmountValueZero == false) || balance.QuantityDecimal > 0)
                     listBalances.Add(new BalanceResponse

@@ -93,15 +93,12 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
         public async Task SaveChangesAsync() 
         {
             await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
         }
 
         public void SaveChanges() 
         { 
             _context.SaveChanges();
-        }
-
-        public void ChangeTrackerClear() 
-        {
             _context.ChangeTracker.Clear();
         }
 

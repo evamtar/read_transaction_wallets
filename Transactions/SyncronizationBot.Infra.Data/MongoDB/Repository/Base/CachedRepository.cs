@@ -98,22 +98,22 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
         public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).ToListAsync();
+                return await DbSet.Where(predicate).OrderBy(keySelector).ToListAsync();
             else
-                return await DbSet.AsNoTracking().Where(predicate).ToListAsync();
+                return await DbSet.Where(predicate).ToListAsync();
         }
 
         public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
             if (keySelector != null)
-                return await DbSet.AsNoTracking().Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
+                return await DbSet.Where(predicate).OrderBy(keySelector).FirstOrDefaultAsync();
             else
-                return await DbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
+                return await DbSet.Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await DbSet.AsNoTracking().ToListAsync();
+            return await DbSet.ToListAsync();
         }
 
         #endregion

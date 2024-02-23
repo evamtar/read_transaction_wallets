@@ -5,6 +5,6 @@ namespace SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance
 {
     public interface ISolnetBalanceService
     {
-        Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request);
+        SolnetBalanceResponse ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request);
     }
 }

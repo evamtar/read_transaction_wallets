@@ -4,6 +4,7 @@ using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.S
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.SolnetRpc.Balance.Response;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Request;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
+using System.Net.Sockets;
 
 namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.SolnetRpc.Balance.Handler
 {
@@ -23,7 +24,7 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                 WalletHash = request.WalletHash,
                 IgnoreAmountValueZero = request.IgnoreAmountValueZero
             };
-            var serviceResponse = await this._solnetBalanceService.ExecuteRecoveryWalletBalanceAsync(serviceRequest);
+            var serviceResponse = this._solnetBalanceService.ExecuteRecoveryWalletBalanceAsync(serviceRequest);
             return this._mapper.Map<SolnetBalanceReadCommandResponse>(serviceResponse);
         }
     }

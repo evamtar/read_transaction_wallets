@@ -5,7 +5,8 @@
 --INSERT INTO RunTimeController VALUES(1, '1', 'Main Job Controller', 'Serviço de controle de job''s', '', 1, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Alerta de Transações', 'Serviço de alerta de transações', '', 2, 0, 0, 0, 1, null);
 --INSERT INTO RunTimeController VALUES(1, '1', 'Carregar Tokens das Wallets e Atualizar saldo', 'Serviço de balanço e saldos', '', 2, 0, 0, 0, 1, null);
-INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço e saldos', 'Carregar Tokens das Wallets e Atualizar saldo', 2, 0, 1);
+INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço', 'Carregar Tokens das Wallets', 2, 0, 1);
+INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço', 'Atualizar os saldos das Wallets', 3, 0, 1);
 --INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null, 'Alerta de preços');
 --INSERT INTO RunTimeController VALUES(4, '4', 4, 0, 0, null, 'Excluir mensagens de log antigas');
 --INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null, 'Alerta de Token Alpha');

@@ -3,11 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
-using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork.Base;
@@ -94,13 +92,13 @@ namespace SyncronizationBot.Service.HostedServices.Base
                         {
                             await SetRuntimeControllerAsync(true);
                             LogMessage($"Running --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                            await Task.Delay(10000);
-                            //await this.Work!.DoExecute(this.CancellationToken);
+                            await this.Work!.DoExecute(this.CancellationToken);
                             await SetRuntimeControllerAsync(false);
                             LogMessage($"End --> {this.RunTimeController?.JobName}: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                             await SendAlertExecute();
                             LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {Interval}");
                             this.RunTimeControllerService.SaveChanges();
+                            this.RunTimeController = null;
                             TryStart();
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
@@ -116,6 +114,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                             LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
                             LogMessage($"Waiting for service {this.RunTimeController?.JobName} tick in {Interval}");
                             TryStart();
+                            this.RunTimeController = null;
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
                     }
@@ -128,7 +127,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
                             await SetRuntimeControllerAsync(false);
                             LogMessage($"Recovery Service {this.RunTimeController?.JobName} ---> Waiting for next execute {Interval}");
                             TryStart();
-                            if(!CancellationToken.IsCancellationRequested) return;
+                            this.RunTimeController = null;
+                            if (!CancellationToken.IsCancellationRequested) return;
                         }
                         else
                         {
@@ -172,7 +172,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             {
                 CreateDate = DateTime.Now,
                 Entity = this.RunTimeController,
-                EventName = nameof(RunTimeController) + "_" + "UPDATE",
+                EventName = typeof(RunTimeController).Name + "_" + "UPDATE",
                 Parameters = null
             });
         }
