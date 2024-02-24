@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface ITelegramMessageRepository : IRepository<TelegramMessage>
+    public interface ITelegramMessageRepository : ISqlServerRepository<TelegramMessage>
     {
     }
 }

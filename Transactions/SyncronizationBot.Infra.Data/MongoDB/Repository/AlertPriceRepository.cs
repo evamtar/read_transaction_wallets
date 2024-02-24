@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class AlertPriceRepository : CachedRepository<AlertPrice>, IAlertPriceRepository
+    public class AlertPriceRepository : MongoRepository<AlertPrice>, IAlertPriceRepository
     {
         public AlertPriceRepository(MongoDbContext context) : base(context)
         {

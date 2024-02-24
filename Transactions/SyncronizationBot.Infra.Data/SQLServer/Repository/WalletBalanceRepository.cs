@@ -5,9 +5,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class WalletBalanceRepository : Repository<WalletBalance>, IWalletBalanceRepository
+    public class WalletBalanceRepository : SqlServerRepository<WalletBalance>, IWalletBalanceRepository
     {
-        public WalletBalanceRepository(SqlContext context) : base(context)
+        public WalletBalanceRepository(SqlServerContext context) : base(context)
         {
 
         }

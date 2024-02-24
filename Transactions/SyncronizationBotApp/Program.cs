@@ -78,7 +78,8 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     #region Context / Repositories / Handlers / Services / Auto Mapper / RabbitMq
 
-    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
+    services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
+    services.AddDbContext<SqlServerReadyOnlyContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringReadyOnly"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
     services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB")?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Scoped);
     services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);

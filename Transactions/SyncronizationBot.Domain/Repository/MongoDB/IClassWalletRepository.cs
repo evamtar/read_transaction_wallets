@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface IClassWalletRepository : ICachedRepository<ClassWallet>
+    public interface IClassWalletRepository : IMongoRepository<ClassWallet>
     {
     }
 }

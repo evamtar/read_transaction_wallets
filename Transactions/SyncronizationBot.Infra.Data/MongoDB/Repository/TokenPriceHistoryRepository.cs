@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class TokenPriceHistoryRepository : CachedRepository<TokenPriceHistory>, ITokenPriceHistoryRepository
+    public class TokenPriceHistoryRepository : MongoRepository<TokenPriceHistory>, ITokenPriceHistoryRepository
     {
         public TokenPriceHistoryRepository(MongoDbContext context) : base(context)
         {

@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITokenAlphaRepository : ICachedRepository<TokenAlpha>
+    public interface ITokenAlphaRepository : IMongoRepository<TokenAlpha>
     {
     }
 }

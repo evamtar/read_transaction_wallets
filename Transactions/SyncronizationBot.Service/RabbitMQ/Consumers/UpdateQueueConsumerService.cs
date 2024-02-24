@@ -99,7 +99,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         }
 
         private async Task DoInsert<T, W>(IServiceScope scope, string? message) where T : Entity
-                                                                                where W : IRepository<T>
+                                                                                where W : ISqlServerRepository<T>
         {
             var messageEvent = message?.ToMessageEvent<T>();
             var repository = scope.ServiceProvider.GetRequiredService<W>();
@@ -108,7 +108,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         }
 
         private void DoUpdate<T, W>(IServiceScope scope, string? message) where T : Entity
-                                                                          where W : IRepository<T>
+                                                                          where W : ISqlServerRepository<T>
         {
             var messageEvent = message?.ToMessageEvent<T>();
             var repository = scope.ServiceProvider.GetRequiredService<W>();

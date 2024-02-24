@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Context;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class TokenAlphaWalletRepository : CachedRepository<TokenAlphaWallet>, ITokenAlphaWalletRepository
+    public class TokenAlphaWalletRepository : MongoRepository<TokenAlphaWallet>, ITokenAlphaWalletRepository
     {
         public TokenAlphaWalletRepository(MongoDbContext context) : base(context)
         {

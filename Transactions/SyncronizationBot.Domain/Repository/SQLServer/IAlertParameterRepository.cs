@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface IAlertParameterRepository : IRepository<AlertParameter>
+    public interface IAlertParameterRepository : ISqlServerRepository<AlertParameter>
     {
     }
 }

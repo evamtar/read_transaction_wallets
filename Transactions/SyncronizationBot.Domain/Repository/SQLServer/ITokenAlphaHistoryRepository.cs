@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface ITokenAlphaHistoryRepository : IRepository<TokenAlphaHistory>
+    public interface ITokenAlphaHistoryRepository : ISqlServerRepository<TokenAlphaHistory>
     {
     }
 }

@@ -3,7 +3,7 @@
 
 namespace SyncronizationBot.Domain.Repository.SQLServer.Base
 {
-    public interface IWriteCommandRepository<T> where T : Entity
+    public interface ISqlServerWriteCommandRepository<T> where T : Entity
     {
         Task<List<T>> AddRangeAsync(List<T> items);
         Task<T> AddAsync(T item);

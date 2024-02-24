@@ -5,9 +5,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TokenAlphaWalletRepository : Repository<TokenAlphaWallet>, ITokenAlphaWalletRepository
+    public class TokenAlphaWalletRepository : SqlServerRepository<TokenAlphaWallet>, ITokenAlphaWalletRepository
     {
-        public TokenAlphaWalletRepository(SqlContext context) : base(context)
+        public TokenAlphaWalletRepository(SqlServerContext context) : base(context)
         {
 
         }

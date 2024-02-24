@@ -3,7 +3,8 @@ using System.Linq.Expressions;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB.Base
 {
-    public interface ICachedRepository<T> where T : Entity
+    public interface IMongoRepository<T> where T : Entity
+                                                   
     {
         #region Manage Collections
 

@@ -20,6 +20,7 @@
   <ItemGroup>
     <Folder Include="Model\CrossCutting\SolnetRpc\Transactions\Request\" />
     <Folder Include="Model\CrossCutting\SolnetRpc\Transactions\Response\" />
+    <Folder Include="Repository\SQLServer\ReadyOnly\" />
   </ItemGroup>
 
 </Project>

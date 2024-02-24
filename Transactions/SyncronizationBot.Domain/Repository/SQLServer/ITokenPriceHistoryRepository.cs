@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface ITokenPriceHistoryRepository : IRepository<TokenPriceHistory>
+    public interface ITokenPriceHistoryRepository : ISqlServerRepository<TokenPriceHistory>
     {
     }
 }

@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class ClassWalletRepository : CachedRepository<ClassWallet>, IClassWalletRepository
+    public class ClassWalletRepository : MongoRepository<ClassWallet>, IClassWalletRepository
     {
         public ClassWalletRepository(MongoDbContext context) : base(context)
         {

@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface IWalletRepository : ICachedRepository<Wallet>
+    public interface IWalletRepository : IMongoRepository<Wallet>
     {
     }
 }

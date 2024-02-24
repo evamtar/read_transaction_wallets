@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer.Base
 {
-    public interface IReadCommandRepository<T> where T : Entity
+    public interface ISqlServerReadCommandRepository<T> where T : Entity
     {
         Task<List<T>> GetAllAsync();
         Task<T?> GetAsync(Guid id);

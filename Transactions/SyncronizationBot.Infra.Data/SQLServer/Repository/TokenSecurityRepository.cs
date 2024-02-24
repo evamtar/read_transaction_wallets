@@ -5,9 +5,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TokenSecurityRepository : Repository<TokenSecurity>, ITokenSecurityRepository
+    public class TokenSecurityRepository : SqlServerRepository<TokenSecurity>, ITokenSecurityRepository
     {
-        public TokenSecurityRepository(SqlContext context) : base(context)
+        public TokenSecurityRepository(SqlServerContext context) : base(context)
         {
 
         }

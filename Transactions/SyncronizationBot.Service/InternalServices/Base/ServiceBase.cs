@@ -8,8 +8,8 @@ namespace SyncronizationBot.Service.InternalServices.Base
 {
     public class ServiceBase<T> : IServiceBase<T> where T : Entity
     {
-        private readonly IReadCommandRepository<T> _repository;
-        public ServiceBase(IRepository<T> repository)
+        private readonly ISqlServerReadCommandRepository<T> _repository;
+        public ServiceBase(ISqlServerRepository<T> repository)
         {
             this._repository = repository;
         }

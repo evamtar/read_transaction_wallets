@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class TokenSecurityRepository : CachedRepository<TokenSecurity>, ITokenSecurityRepository
+    public class TokenSecurityRepository : MongoRepository<TokenSecurity>, ITokenSecurityRepository
     {
         public TokenSecurityRepository(MongoDbContext context) : base(context)
         {

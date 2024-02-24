@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface IClassWalletRepository : IRepository<ClassWallet>
+    public interface IClassWalletRepository : ISqlServerRepository<ClassWallet>
     {
     }
 }

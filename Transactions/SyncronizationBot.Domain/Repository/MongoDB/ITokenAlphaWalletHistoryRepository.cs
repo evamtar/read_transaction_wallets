@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITokenAlphaWalletHistoryRepository : ICachedRepository<TokenAlphaWalletHistory>
+    public interface ITokenAlphaWalletHistoryRepository : IMongoRepository<TokenAlphaWalletHistory>
     {
     }
 }

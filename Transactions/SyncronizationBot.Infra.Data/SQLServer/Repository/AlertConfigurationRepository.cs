@@ -6,9 +6,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class AlertConfigurationRepository : Repository<AlertConfiguration>, IAlertConfigurationRepository
+    public class AlertConfigurationRepository : SqlServerRepository<AlertConfiguration>, IAlertConfigurationRepository
     {
-        public AlertConfigurationRepository(SqlContext context) : base(context)
+        public AlertConfigurationRepository(SqlServerContext context) : base(context)
         {
 
         }

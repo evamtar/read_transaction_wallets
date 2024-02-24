@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class TransactionsRepository : CachedRepository<Transactions>, ITransactionsRepository
+    public class TransactionsRepository : MongoRepository<Transactions>, ITransactionsRepository
     {
         public TransactionsRepository(MongoDbContext context) : base(context)
         {

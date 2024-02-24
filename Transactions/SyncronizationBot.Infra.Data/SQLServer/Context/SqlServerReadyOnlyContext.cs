@@ -7,11 +7,11 @@ using SyncronizationBot.Infra.Data.SQLServer.Mapper;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Context
 {
-    public class SqlContext : DbContext
+    public class SqlServerReadyOnlyContext : DbContext
     {
         #region Constructor
 
-        public SqlContext(DbContextOptions<SqlContext> options) : base(options) { }
+        public SqlServerReadyOnlyContext(DbContextOptions<SqlServerReadyOnlyContext> options) : base(options) { }
 
         #endregion
 

@@ -11,9 +11,9 @@ namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
                                            where W : BaseUpdateCommandResponse<T>
                                            where T : Entity
     {
-        private readonly IWriteCommandRepository<T> _repository;
+        private readonly ISqlServerWriteCommandRepository<T> _repository;
 
-        public BaseUpdateCommandHandler(IRepository<T> repository)
+        public BaseUpdateCommandHandler(ISqlServerRepository<T> repository)
         {
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }

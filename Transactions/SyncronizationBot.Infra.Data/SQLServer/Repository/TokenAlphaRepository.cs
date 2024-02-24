@@ -7,9 +7,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TokenAlphaRepository : Repository<TokenAlpha>, ITokenAlphaRepository
+    public class TokenAlphaRepository : SqlServerRepository<TokenAlpha>, ITokenAlphaRepository
     {
-        public TokenAlphaRepository(SqlContext context) : base(context)
+        public TokenAlphaRepository(SqlServerContext context) : base(context)
         {
 
         }

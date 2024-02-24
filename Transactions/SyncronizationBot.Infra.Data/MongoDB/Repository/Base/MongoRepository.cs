@@ -9,13 +9,13 @@ using SyncronizationBot.Infra.Data.MongoDB.Context;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository.Base
 {
-    public class CachedRepository<T> : ICachedRepository<T> where T : Entity
+    public class MongoRepository<T> : IMongoRepository<T> where T : Entity
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoClient _client;
         private readonly MongoDbContext _context;
         private DbSet<T> DbSet { get; set; }
-        public CachedRepository(MongoDbContext context)
+        public MongoRepository(MongoDbContext context)
         {
             _context = context;
             this.DbSet = null!;

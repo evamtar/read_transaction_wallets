@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.SQLServer
 {
-    public interface ITransactionNotMappedRepository : IRepository<TransactionNotMapped>
+    public interface ITransactionNotMappedRepository : ISqlServerRepository<TransactionNotMapped>
     {
     }
 }

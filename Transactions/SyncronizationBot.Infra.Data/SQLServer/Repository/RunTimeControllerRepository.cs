@@ -6,9 +6,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class RunTimeControllerRepository : Repository<RunTimeController>, IRunTimeControllerRepository
+    public class RunTimeControllerRepository : SqlServerRepository<RunTimeController>, IRunTimeControllerRepository
     {
-        public RunTimeControllerRepository(SqlContext context) : base(context)
+        public RunTimeControllerRepository(SqlServerContext context) : base(context)
         {
 
         }

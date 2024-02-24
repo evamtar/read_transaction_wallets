@@ -3,7 +3,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITransactionsRPCRecoveryRepository : ICachedRepository<TransactionRPCRecovery>
+    public interface ITransactionsRPCRecoveryRepository : IMongoRepository<TransactionRPCRecovery>
     {
     }
 }

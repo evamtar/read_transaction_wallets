@@ -7,9 +7,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class AlertParameterRepository : Repository<AlertParameter>, IAlertParameterRepository
+    public class AlertParameterRepository : SqlServerRepository<AlertParameter>, IAlertParameterRepository
     {
-        public AlertParameterRepository(SqlContext context) : base(context)
+        public AlertParameterRepository(SqlServerContext context) : base(context)
         {
 
         }

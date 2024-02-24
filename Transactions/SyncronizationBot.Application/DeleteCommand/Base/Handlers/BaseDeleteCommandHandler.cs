@@ -11,9 +11,9 @@ namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
                                            where W : BaseDeleteCommandResponse
                                            where T : Entity
     {
-        private readonly IWriteCommandRepository<T> _repository;
+        private readonly ISqlServerWriteCommandRepository<T> _repository;
 
-        public BaseDeleteCommandHandler(IRepository<T> repository)
+        public BaseDeleteCommandHandler(ISqlServerRepository<T> repository)
         {
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }

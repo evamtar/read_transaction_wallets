@@ -6,9 +6,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TypeOperationRepository : Repository<TypeOperation>, ITypeOperationRepository
+    public class TypeOperationRepository : SqlServerRepository<TypeOperation>, ITypeOperationRepository
     {
-        public TypeOperationRepository(SqlContext context) : base(context)
+        public TypeOperationRepository(SqlServerContext context) : base(context)
         {
 
         }

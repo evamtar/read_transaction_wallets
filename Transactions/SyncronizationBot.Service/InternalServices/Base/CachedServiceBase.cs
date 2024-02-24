@@ -10,9 +10,9 @@ namespace SyncronizationBot.Service.InternalServices.Base
     public class CachedServiceBase<T> : ICachedServiceBase<T> where T : Entity
     {
         private static ConcurrentDictionary<string, bool> Pairs = new ConcurrentDictionary<string, bool>();
-        private readonly IReadCommandRepository<T> _readRepository;
-        private readonly ICachedRepository<T> _cachedRepository;
-        public CachedServiceBase(IRepository<T> readRepository, ICachedRepository<T> cachedRepository)
+        private readonly ISqlServerReadCommandRepository<T> _readRepository;
+        private readonly IMongoRepository<T> _cachedRepository;
+        public CachedServiceBase(ISqlServerRepository<T> readRepository, IMongoRepository<T> cachedRepository)
         {
             this._readRepository = readRepository;
             this._cachedRepository = cachedRepository;

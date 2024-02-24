@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface IAlertPriceRepository : ICachedRepository<AlertPrice>
+    public interface IAlertPriceRepository : IMongoRepository<AlertPrice>
     {
     }
 }

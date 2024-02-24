@@ -5,7 +5,7 @@ using SyncronizationBot.Domain.Repository.SQLServer.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITransactionsRepository : ICachedRepository<Transactions>
+    public interface ITransactionsRepository : IMongoRepository<Transactions>
     {
     }
 }

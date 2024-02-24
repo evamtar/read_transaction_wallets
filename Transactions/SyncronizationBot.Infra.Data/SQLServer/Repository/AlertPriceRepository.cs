@@ -5,9 +5,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class AlertPriceRepository : Repository<AlertPrice>, IAlertPriceRepository
+    public class AlertPriceRepository : SqlServerRepository<AlertPrice>, IAlertPriceRepository
     {
-        public AlertPriceRepository(SqlContext context) : base(context)
+        public AlertPriceRepository(SqlServerContext context) : base(context)
         {
 
         }

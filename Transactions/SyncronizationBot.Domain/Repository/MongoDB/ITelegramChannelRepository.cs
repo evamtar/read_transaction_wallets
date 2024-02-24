@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Repository.MongoDB.Base;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITelegramChannelRepository : ICachedRepository<TelegramChannel>
+    public interface ITelegramChannelRepository : IMongoRepository<TelegramChannel>
     {
     }
 }

@@ -5,9 +5,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TokenPriceHistoryRepository : Repository<TokenPriceHistory>, ITokenPriceHistoryRepository
+    public class TokenPriceHistoryRepository : SqlServerRepository<TokenPriceHistory>, ITokenPriceHistoryRepository
     {
-        public TokenPriceHistoryRepository(SqlContext context) : base(context)
+        public TokenPriceHistoryRepository(SqlServerContext context) : base(context)
         {
         }
     }

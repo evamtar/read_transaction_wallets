@@ -2,16 +2,17 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Infra.Data.SQLServer.Context;
 
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
 {
-    public class Repository<T> : IRepository<T> where T : Entity
+    public class SqlServerRepository<T> : ISqlServerRepository<T> where T : Entity
     {
-        private readonly DbContext _context;
+        private readonly SqlServerContext _context;
         private DbSet<T> DbSet { get; set; }
 
-        public Repository(DbContext context)
+        public SqlServerRepository(SqlServerContext context)
         {
             _context = context;
             this.DbSet = null!;
@@ -92,14 +93,14 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.Base
 
         public async Task SaveChangesAsync() 
         {
-            await _context.SaveChangesAsync();
             _context.ChangeTracker.Clear();
+            await _context.SaveChangesAsync();
         }
 
         public void SaveChanges() 
-        { 
-            _context.SaveChanges();
+        {
             _context.ChangeTracker.Clear();
+            _context.SaveChanges();
         }
 
         #region Private Methods

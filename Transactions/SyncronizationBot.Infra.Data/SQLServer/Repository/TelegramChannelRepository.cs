@@ -6,9 +6,9 @@ using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.SQLServer.Repository
 {
-    public class TelegramChannelRepository : Repository<TelegramChannel>, ITelegramChannelRepository
+    public class TelegramChannelRepository : SqlServerRepository<TelegramChannel>, ITelegramChannelRepository
     {
-        public TelegramChannelRepository(SqlContext context) : base(context)
+        public TelegramChannelRepository(SqlServerContext context) : base(context)
         {
 
         }

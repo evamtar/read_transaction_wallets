@@ -5,7 +5,7 @@ using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
 
 namespace SyncronizationBot.Infra.Data.MongoDB.Repository
 {
-    public class WalletBalanceHistoryRepository : CachedRepository<WalletBalanceHistory>, IWalletBalanceHistoryRepository
+    public class WalletBalanceHistoryRepository : MongoRepository<WalletBalanceHistory>, IWalletBalanceHistoryRepository
     {
         public WalletBalanceHistoryRepository(MongoDbContext context) : base(context)
         {
