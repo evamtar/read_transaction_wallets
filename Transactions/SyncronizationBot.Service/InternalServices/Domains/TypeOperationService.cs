@@ -8,7 +8,7 @@ namespace SyncronizationBot.Service.InternalServices.Domains
 {
     public class TypeOperationService : CachedServiceBase<TypeOperation>, ITypeOperationService
     {
-        public TypeOperationService(ITypeOperationRepository repository, CACHE.ITypeOperationRepository cachedRepository) : base(repository, cachedRepository)
+        public TypeOperationService(ITypeOperationRepository repository, CACHE.ITypeOperationMongoDBRepository cachedRepository) : base(repository, cachedRepository)
         {
         }
     }

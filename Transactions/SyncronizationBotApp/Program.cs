@@ -50,6 +50,7 @@ using SyncronizationBot.Service.RabbitMQ.Consumers;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Configs;
 using SyncronizationBot.Domain.Service.CrossCutting.Coingecko;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Service;
+using SyncronizationBot.Infra.Data.SQLServerReadyOnly.Context;
 
 
 var builder = Host.CreateApplicationBuilder(args);

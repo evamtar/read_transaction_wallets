@@ -1,6 +1,7 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.MongoDB.Base;
 using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.SQLServerReadyOnly.Base;
 using SyncronizationBot.Domain.Service.InternalService.Base;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;

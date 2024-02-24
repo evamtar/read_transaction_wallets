@@ -8,7 +8,7 @@ namespace SyncronizationBot.Service.InternalServices.Token
 {
     public class TokenService : CachedServiceBase<Entity.Token>, ITokenService
     {
-        public TokenService(ITokenRepository repository, CACHE.ITokenRepository cachedRepository) : base(repository, cachedRepository)
+        public TokenService(ITokenRepository repository, CACHE.ITokenMongoDBRepository cachedRepository) : base(repository, cachedRepository)
         {
         }
     }

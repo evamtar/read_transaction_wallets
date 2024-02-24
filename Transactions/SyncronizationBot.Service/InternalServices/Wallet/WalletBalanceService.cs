@@ -8,7 +8,7 @@ namespace SyncronizationBot.Service.InternalServices.Wallet
 {
     public class WalletBalanceService : CachedServiceBase<Entity.WalletBalance>, IWalletBalanceService
     {
-        public WalletBalanceService(IWalletBalanceRepository repository, CACHE.IWalletBalanceRepository cachedRepository) : base(repository, cachedRepository)
+        public WalletBalanceService(IWalletBalanceRepository repository, CACHE.IWalletBalanceMongoDBRepository cachedRepository) : base(repository, cachedRepository)
         {
         }
     }

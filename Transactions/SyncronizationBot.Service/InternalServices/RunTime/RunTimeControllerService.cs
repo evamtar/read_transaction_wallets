@@ -8,7 +8,7 @@ namespace SyncronizationBot.Service.InternalServices.RunTime
 {
     public class RunTimeControllerService : CachedServiceBase<RunTimeController>, IRunTimeControllerService
     {
-        public RunTimeControllerService(IRunTimeControllerRepository repository, CACHE.IRunTimeControllerRepository cachedRepository) : base(repository, cachedRepository)
+        public RunTimeControllerService(IRunTimeControllerRepository repository, CACHE.IRunTimeControllerMongoDBRepository cachedRepository) : base(repository, cachedRepository)
         {
         }
     }
