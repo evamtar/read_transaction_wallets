@@ -1,10 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITelegramChannelMongoDBRepository : IMongoRepository<TelegramChannel>
+    public interface ITelegramChannelMongoDBRepository : IRepository<TelegramChannel>
     {
     }
 }

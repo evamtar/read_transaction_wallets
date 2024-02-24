@@ -4,7 +4,7 @@ using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using System.Diagnostics;
 using System.Transactions;
 

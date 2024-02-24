@@ -1,7 +1,6 @@
 ﻿using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
-using SyncronizationBot.Domain.Repository.SQLServerReadyOnly.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.InternalService.Base;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
@@ -11,12 +10,16 @@ namespace SyncronizationBot.Service.InternalServices.Base
     public class CachedServiceBase<T> : ICachedServiceBase<T> where T : Entity
     {
         private static ConcurrentDictionary<string, bool> Pairs = new ConcurrentDictionary<string, bool>();
-        private readonly ISqlServerReadCommandRepository<T> _readRepository;
-        private readonly IMongoRepository<T> _cachedRepository;
-        public CachedServiceBase(ISqlServerRepository<T> readRepository, IMongoRepository<T> cachedRepository)
+        private readonly IRepository<T> _sqlServerRepository;
+        private readonly IRepository<T> _mongoRepository;
+        private readonly IUnitOfWorkSqlServerReadyOnly _unitOfWorkSqlServerReadyOnly;
+        private readonly IUnitOfWorkMongo _unitOfWorkMongo;
+        public CachedServiceBase(IUnitOfWorkSqlServerReadyOnly unitOfWorkSqlServerReadyOnly, IUnitOfWorkMongo unitOfWorkMongo)
         {
-            this._readRepository = readRepository;
-            this._cachedRepository = cachedRepository;
+            this._unitOfWorkSqlServerReadyOnly = unitOfWorkSqlServerReadyOnly;
+            this._unitOfWorkMongo = unitOfWorkMongo;
+            this._sqlServerRepository = GetReadyOnlyRepository() ?? throw new ArgumentNullException(nameof(_sqlServerRepository));
+            this._mongoRepository = GetCachedRepository() ?? throw new ArgumentNullException(nameof(_mongoRepository));
             //Esquentar cache
             var cached = this.GetAllAsync().GetAwaiter().GetResult();
         }
@@ -25,32 +28,32 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         public void AddRange(List<T> listItems)
         {
-            this._cachedRepository.BulkWrite(listItems);
+            this.GetCachedRepository().BulkWrite(listItems);
         }
 
         public T Add(T entity)
         {
-            return this._cachedRepository.Add(entity);
+            return this._mongoRepository.Add(entity);
         }
 
         public T Update(T entity)
         {
-            return this._cachedRepository.Update(entity);
+            return this._mongoRepository.Update(entity);
         }
 
         public void DeleteById(Guid id)
         {
-            this._cachedRepository.DeleteById(id);
+            this._mongoRepository.DeleteById(id);
         }
 
         public void Delete(T entity)
         {
-            this._cachedRepository.Delete(entity);
+            this._mongoRepository.Delete(entity);
         }
 
         public void SaveChanges() 
         { 
-            this._cachedRepository.SaveChanges();
+            this._unitOfWorkMongo.SaveChanges();
         }
 
         #endregion
@@ -59,30 +62,30 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         public async Task<T?> FindFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
-            return await _cachedRepository.FindFirstOrDefaultAsync(predicate, keySelector);
+            return await _mongoRepository.FindFirstOrDefaultAsync(predicate, keySelector);
         }
 
         public async Task<T?> GetAsync(Guid id)
         {
-            return await _cachedRepository.GetAsync(id);
+            return await _mongoRepository.GetAsync(id);
         }
 
         public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector = null!)
         {
-            return await this._cachedRepository.GetAsync(predicate, keySelector);
+            return await this._mongoRepository.GetAsync(predicate, keySelector);
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            var listCached = await this._cachedRepository.GetAllAsync();
+            var listCached = await this._mongoRepository.GetAllAsync();
             if (!(listCached?.Any() ?? false)) 
             {
                 if (!IsLoaded())
                 {
-                    var listRelational = await this._readRepository.GetAllAsync();
+                    var listRelational = await this._sqlServerRepository.GetAllAsync();
                     if (listRelational?.Count > 0)
                     {
-                        this._cachedRepository.BulkWrite(listRelational);
+                        this._mongoRepository.BulkWrite(listRelational);
                         listCached = listRelational;
                     }
                     Pairs.TryAdd(typeof(T).Name, true);
@@ -97,12 +100,30 @@ namespace SyncronizationBot.Service.InternalServices.Base
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
+            try
+            {
+                this._unitOfWorkSqlServerReadyOnly.Dispose();
+                this._unitOfWorkMongo.Dispose();
+            }
+            finally 
+            {
+                GC.SuppressFinalize(this);
+            }
         }
 
         #endregion
 
         #region Private methods
+
+        private IRepository<T>? GetReadyOnlyRepository()
+        {
+            return (IRepository<T>?)this._unitOfWorkSqlServerReadyOnly.GetType()?.GetProperty(typeof(T).Name + "Repository")?.GetValue(this._unitOfWorkSqlServerReadyOnly);
+        }
+
+        private IRepository<T>? GetCachedRepository()
+        {
+            return (IRepository<T>?)this._unitOfWorkMongo.GetType()?.GetProperty(typeof(T).Name + "Repository")?.GetValue(this._unitOfWorkMongo);
+        }
 
         private bool IsLoaded() 
         {
@@ -112,5 +133,7 @@ namespace SyncronizationBot.Service.InternalServices.Base
         }
 
         #endregion
+        
+
     }
 }

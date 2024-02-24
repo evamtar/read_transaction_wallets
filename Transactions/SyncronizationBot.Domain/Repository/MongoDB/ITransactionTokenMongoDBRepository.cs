@@ -1,10 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITransactionTokenMongoDBRepository : IMongoRepository<TransactionToken>
+    public interface ITransactionTokenMongoDBRepository : IRepository<TransactionToken>
     {
     }
 }

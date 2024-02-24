@@ -1,10 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface IAlertConfigurationMongoDBRepository : IMongoRepository<AlertConfiguration>
+    public interface IAlertConfigurationMongoDBRepository : IRepository<AlertConfiguration>
     {
     }
 }

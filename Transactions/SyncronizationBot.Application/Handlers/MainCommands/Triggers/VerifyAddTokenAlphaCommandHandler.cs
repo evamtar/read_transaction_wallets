@@ -5,7 +5,7 @@ using SyncronizationBot.Application.Response.MainCommands.Triggers;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
 {

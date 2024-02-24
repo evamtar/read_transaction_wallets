@@ -6,7 +6,7 @@ using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
@@ -16,12 +16,12 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private readonly IMediator _mediator;
         private readonly ITransactionsSignatureForAddressService _transactionsSignatureForAddressService;
         private readonly ITransactionsRepository _transactionsRepository;
-        private readonly ITransactionsRPCRecoveryRepository _transactionsContingencyRepository;
+        private readonly ITransactionRPCRecoveryRepository _transactionsContingencyRepository;
 
         public RecoveryTransactionsSignatureForAddressCommandHandler(IMediator mediator,
                                                                      ITransactionsSignatureForAddressService transactionsSignatureForAddressService,
                                                                      ITransactionsRepository transactionsRepository,
-                                                                     ITransactionsRPCRecoveryRepository transactionsContingencyRepository,
+                                                                     ITransactionRPCRecoveryRepository transactionsContingencyRepository,
                                                                      IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(syncronizationBotConfig)
         {
             this._mediator = mediator;

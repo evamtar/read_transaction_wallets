@@ -6,7 +6,7 @@ using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send

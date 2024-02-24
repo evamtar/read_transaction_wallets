@@ -1,7 +1,7 @@
 ﻿using SyncronizationBot.Application.UpdateCommand.Base.Handler;
 using SyncronizationBot.Application.UpdateCommand.RunTimeController.Command;
 using SyncronizationBot.Application.UpdateCommand.RunTimeController.Response;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using Entity = SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Application.UpdateCommand.RunTimeController.Handler

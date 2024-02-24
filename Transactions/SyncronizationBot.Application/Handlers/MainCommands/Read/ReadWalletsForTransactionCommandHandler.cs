@@ -7,7 +7,7 @@ using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using SyncronizationBot.Utils;
 using System.Collections.Concurrent;
 

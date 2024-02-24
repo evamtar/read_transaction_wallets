@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.DeleteCommands.Base.Commands;
 using SyncronizationBot.Application.DeleteCommands.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
 {
@@ -11,9 +11,9 @@ namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
                                            where W : BaseDeleteCommandResponse
                                            where T : Entity
     {
-        private readonly ISqlServerWriteCommandRepository<T> _repository;
+        private readonly IRepository<T> _repository;
 
-        public BaseDeleteCommandHandler(ISqlServerRepository<T> repository)
+        public BaseDeleteCommandHandler(IRepository<T> repository)
         {
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }

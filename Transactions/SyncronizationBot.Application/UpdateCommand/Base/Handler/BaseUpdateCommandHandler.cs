@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.UpdateCommand.Base.Command;
 using SyncronizationBot.Application.UpdateCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
 {
@@ -11,9 +11,9 @@ namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
                                            where W : BaseUpdateCommandResponse<T>
                                            where T : Entity
     {
-        private readonly ISqlServerWriteCommandRepository<T> _repository;
+        private readonly IRepository<T> _repository;
 
-        public BaseUpdateCommandHandler(ISqlServerRepository<T> repository)
+        public BaseUpdateCommandHandler(IRepository<T> repository)
         {
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }

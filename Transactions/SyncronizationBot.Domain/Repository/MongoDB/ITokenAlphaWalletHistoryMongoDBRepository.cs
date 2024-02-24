@@ -1,11 +1,9 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-
-
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITokenAlphaWalletHistoryMongoDBRepository : IMongoRepository<TokenAlphaWalletHistory>
+    public interface ITokenAlphaWalletHistoryMongoDBRepository : IRepository<TokenAlphaWalletHistory>
     {
     }
 }

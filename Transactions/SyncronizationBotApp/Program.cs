@@ -42,15 +42,15 @@ using System.Reflection;
 using SyncronizationBotApp.Extensions;
 using SyncronizationBot.Service.HostedServices;
 using SyncronizationBot.Application.AutoMapper.Profiles;
-using SyncronizationBot.Infra.Data.MongoDB.Context;
-using SyncronizationBot.Infra.Data.SQLServer.Context;
 using MongoDB.Driver;
 using SyncronizationBots.RabbitMQ.Extension;
 using SyncronizationBot.Service.RabbitMQ.Consumers;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Configs;
 using SyncronizationBot.Domain.Service.CrossCutting.Coingecko;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Service;
-using SyncronizationBot.Infra.Data.SQLServerReadyOnly.Context;
+using SyncronizationBot.Infra.Data.Base.Context;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
+using SyncronizationBot.Infra.Data.UnitOfWork;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -82,7 +82,12 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
     services.AddDbContext<SqlServerReadyOnlyContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringReadyOnly"), actions => actions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)), ServiceLifetime.Transient);
     services.AddDbContext<MongoDbContext>(options => options.UseMongoDB(configuration.GetConnectionString("CacheMongoDB")?? string.Empty, configuration.GetSection("Mongo:Database").Value ?? string.Empty), ServiceLifetime.Scoped);
-    services.AddRepositories(Assembly.Load("SyncronizationBot.Infra.Data"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
+    
+    /* REPOSITORIES */
+    services.AddScoped<IUnitOfWorkMongo, UnitOfWorkMongo>();
+    services.AddScoped<IUnitOfWorkSqlServer, UnitOfWorkSqlServer>();
+    services.AddScoped<IUnitOfWorkSqlServerReadyOnly, UnitOfWorkSqlServerReadyOnly>(); //REPLICA
+    /****************/
     services.AddHandlers(Assembly.Load("SyncronizationBot.Application"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddServices(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);
     services.AddWorkers(Assembly.Load("SyncronizationBot.Service"), SyncronizationBotApp.Extensions.Enum.ETypeService.Scoped);

@@ -2,7 +2,7 @@
 using SyncronizationBot.Application.InsertCommand.Base.Command;
 using SyncronizationBot.Application.InsertCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 namespace SyncronizationBot.Application.InsertCommand.Base.Handler
 {
@@ -11,9 +11,9 @@ namespace SyncronizationBot.Application.InsertCommand.Base.Handler
                                            where W : BaseInsertCommandResponse<T>
                                            where T : Entity
     {
-        private readonly ISqlServerWriteCommandRepository<T> _repository;
+        private readonly IRepository<T> _repository;
 
-        public BaseInsertCommandHandler(ISqlServerRepository<T> repository)
+        public BaseInsertCommandHandler(IRepository<T> repository)
         {
             _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
         }

@@ -1,7 +1,7 @@
 ﻿using SyncronizationBot.Application.InsertCommand.Base.Handler;
 using SyncronizationBot.Application.InsertCommand.Token.Command;
 using SyncronizationBot.Application.InsertCommand.Token.Response;
-using SyncronizationBot.Domain.Repository.SQLServer;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using Entity = SyncronizationBot.Domain.Model.Database;
 
 namespace SyncronizationBot.Application.InsertCommand.Token.Handler

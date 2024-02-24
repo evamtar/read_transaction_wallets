@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
-using SyncronizationBot.Infra.Data.MongoDB.Repository.Base;
-using SyncronizationBot.Infra.Data.SQLServer.Repository.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Infra.Data.Base.Repository;
 using SyncronizationBotApp.Extensions.Enum;
 using System.Reflection;
 
@@ -14,7 +13,7 @@ namespace SyncronizationBotApp.Extensions
         {
             //Repositories (NOT CACHED)
             var repositoryTypes = assembly?.GetTypes()
-                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ISqlServerRepository<>)));
+                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(SyncronizationBot.Domain.Repository.Base.Interfaces.IRepository<>)));
             var nonBaseRepos = repositoryTypes?.Where(t => t != typeof(SqlServerRepository<>));
             if (nonBaseRepos?.Count() > 0) 
             {
@@ -44,7 +43,7 @@ namespace SyncronizationBotApp.Extensions
             }
             //Repositories (CACHED)
             repositoryTypes = assembly?.GetTypes()
-                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IMongoRepository<>)));
+                .Where(type => !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(SyncronizationBot.Domain.Repository.Base.Interfaces.IRepository<>)));
             nonBaseRepos = repositoryTypes?.Where(t => t != typeof(MongoRepository<>));
             if (nonBaseRepos?.Count() > 0)
             {

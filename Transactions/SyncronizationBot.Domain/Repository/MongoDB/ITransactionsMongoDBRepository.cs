@@ -1,11 +1,11 @@
 ﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.MongoDB.Base;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
 
 
 namespace SyncronizationBot.Domain.Repository.MongoDB
 {
-    public interface ITransactionsMongoDBRepository : IMongoRepository<Transactions>
+    public interface ITransactionsMongoDBRepository : IRepository<Transactions>
     {
     }
 }

@@ -5,24 +5,23 @@ using SyncronizationBot.Domain.Extensions;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
-using SyncronizationBot.Domain.Repository.SQLServer;
-using SyncronizationBot.Domain.Repository.SQLServer.Base;
+using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
 using SyncronizationBots.RabbitMQ.Exceptions;
-using System.Threading;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {
     public class UpdateQueueConsumerService : BaseBatchMessageConsumer
     {
-        SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private IUnitOfWorkSqlServer UnitOfWorkSqlServer { get; set; } 
 
         public UpdateQueueConsumerService(IServiceProvider serviceProvider, 
                                           IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, configuration.Value)
         {
-
+            this.UnitOfWorkSqlServer = null!;
         }
 
         public override async Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken)
@@ -34,38 +33,30 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
                 throw new ArgumentException("Problem in process message");
             var classType = data?[0];
             var instruction = data?[1];
-            await _semaphore.WaitAsync();
-            try
+            switch (instruction)
             {
-                switch (instruction)
-                {
-                    case Constants.INSTRUCTION_INSERT:
-                        await this.DoProcessInsert(_scope, message, classType);
-                        break;
-                    case Constants.INSTRUCTION_UPDATE:
-                        this.DoProcessUpdate(_scope, message, classType);
-                        break;
-                    case Constants.INSTRUCTION_DELETE:
-                    default:
-                        throw new ArgumentException($"Instruction {instruction} is not valid");
-                }
-            }
-            finally
-            {
-                _semaphore.Release();
+                case Constants.INSTRUCTION_INSERT:
+                    await this.DoProcessInsert(_scope, message, classType);
+                    break;
+                case Constants.INSTRUCTION_UPDATE:
+                    this.DoProcessUpdate(_scope, message, classType);
+                    break;
+                case Constants.INSTRUCTION_DELETE:
+                default:
+                    throw new ArgumentException($"Instruction {instruction} is not valid");
             }
         }
 
         private void DoProcessUpdate(IServiceScope scope, string? message, string? classType)
         {
-            
+            this.UnitOfWorkSqlServer = UnitOfWorkSqlServer ?? scope.ServiceProvider.GetRequiredService<IUnitOfWorkSqlServer>();
             switch (classType?.ToUpper())
             {
                 case Constants.RUN_TIME_CONTROLLER_INSTRUCTION:
-                    this.DoUpdate<RunTimeController, IRunTimeControllerRepository>(scope, message);
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.RunTimeControllerRepository);
                     break;
                 case Constants.WALLET_INSTRUCTION:
-                    this.DoUpdate<Wallet, IWalletRepository>(scope, message);
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.WalletRepository);
                     break;
                 default:
                     throw new ArgumentException($"Instruction UPDATE is not valid for classType {classType}");
@@ -79,13 +70,14 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
                 switch (classType?.ToUpper())
                 {
                     case Constants.WALLET_BALANCE_INSTRUCTION:
-                        await this.DoInsert<WalletBalance, IWalletBalanceRepository>(scope, message);
+                        
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
                         break;
                     case Constants.TOKEN_INSTRUCTION:
-                        await this.DoInsert<Token, ITokenRepository>(scope, message);
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenRepository);
                         break;
                     case Constants.WALLET_BALANCE_HISTORY_INSTRUCTION:
-                        await this.DoInsert<WalletBalanceHistory, IWalletBalanceHistoryRepository>(scope, message);
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceHistoryRepository);
                         break;
                     default:
                         throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
@@ -98,22 +90,18 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             }
         }
 
-        private async Task DoInsert<T, W>(IServiceScope scope, string? message) where T : Entity
-                                                                                where W : ISqlServerRepository<T>
+        private async Task DoInsert<T>(string? message, IRepository<T> repository) where T : Entity
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            var repository = scope.ServiceProvider.GetRequiredService<W>();
-            await repository.AddAsync(messageEvent!.Entity!);
-            await repository.SaveChangesAsync();
+            await repository!.AddAsync(messageEvent!.Entity!);
+            await UnitOfWorkSqlServer.SaveChangesAsync();
         }
 
-        private void DoUpdate<T, W>(IServiceScope scope, string? message) where T : Entity
-                                                                          where W : ISqlServerRepository<T>
+        private void DoUpdate<T>(string? message, IRepository<T> repository) where T : Entity
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            var repository = scope.ServiceProvider.GetRequiredService<W>();
             repository.Update(messageEvent!.Entity!);
-            repository.SaveChanges();
+            UnitOfWorkSqlServer.SaveChanges();
         }
     }
 }
