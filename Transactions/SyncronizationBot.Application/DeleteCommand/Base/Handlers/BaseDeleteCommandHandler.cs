@@ -3,6 +3,7 @@ using SyncronizationBot.Application.DeleteCommands.Base.Commands;
 using SyncronizationBot.Application.DeleteCommands.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
 {
@@ -11,11 +12,13 @@ namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
                                            where W : BaseDeleteCommandResponse
                                            where T : Entity
     {
+        private readonly IUnitOfWorkSqlServer _unitOfWorkSqlServer;
         private readonly IRepository<T> _repository;
 
-        public BaseDeleteCommandHandler(IRepository<T> repository)
+        public BaseDeleteCommandHandler(IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
-            _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
+            _unitOfWorkSqlServer = unitOfWorkSqlServer ?? throw new ArgumentNullException($"IUnitOfWorkSqlServer --> {typeof(T)} is null here.");
+            _repository = GetRepository() ?? throw new ArgumentNullException($"Repository --> {typeof(T)} is null here.");
         }
 
         public async Task<W> Handle(X request, CancellationToken cancellationToken)
@@ -28,6 +31,11 @@ namespace SyncronizationBot.Application.DeleteCommands.Base.Handlers
                 return response;
             }
             throw new ArgumentException($"Entity --> {typeof(T)} is null here.");
+        }
+
+        private IRepository<T>? GetRepository()
+        {
+            return (IRepository<T>?)this._unitOfWorkSqlServer.GetType()?.GetProperty(typeof(T).Name + "Repository")?.GetValue(this._unitOfWorkSqlServer);
         }
     }
 }

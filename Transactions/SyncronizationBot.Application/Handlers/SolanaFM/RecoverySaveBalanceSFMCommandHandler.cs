@@ -14,6 +14,7 @@ using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.TokensAccountsByOwner
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
@@ -25,15 +26,13 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         private readonly IAccountInfoService _accountInfoService;
         private readonly ITokensAccountsByOwnerService _tokensAccountsByOwnerService;
         public RecoverySaveBalanceSFMCommandHandler(IMediator mediator,
-                                                        IWalletRepository walletRepository,
+                                                        IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                         IOptions<SyncronizationBotConfig> config,
-                                                        IWalletBalanceRepository walletBalanceRepository,
-                                                        IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
                                                         IAccountInfoService accountInfoService,
-                                                        ITokensAccountsByOwnerService tokensAccountsByOwnerService) : base(mediator, walletRepository, EFontType.SOLANA_FM, config)
+                                                        ITokensAccountsByOwnerService tokensAccountsByOwnerService) : base(mediator, unitOfWorkSqlServer, EFontType.SOLANA_FM, config)
         {
-            this._walletBalanceRepository = walletBalanceRepository;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            this._walletBalanceRepository = unitOfWorkSqlServer.WalletBalanceRepository;
+            this._walletBalanceHistoryRepository = unitOfWorkSqlServer.WalletBalanceHistoryRepository;
             this._accountInfoService = accountInfoService;
             this._tokensAccountsByOwnerService = tokensAccountsByOwnerService; 
         }

@@ -6,6 +6,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Utils;
 using System.Linq.Expressions;
 
@@ -18,17 +19,15 @@ namespace SyncronizationBot.Application.Handlers.Base
         protected readonly EFontType _fontType;
         protected readonly IOptions<SyncronizationBotConfig> _config;
         public BaseWalletHandler(IMediator mediator,
-                                 IWalletRepository walletRepository,
+                                 IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                  EFontType fontType,
                                  IOptions<SyncronizationBotConfig> config)
         {
             this._mediator = mediator;
-            this._walletRepository = walletRepository;
+            this._walletRepository = unitOfWorkSqlServer.WalletRepository;
             this._fontType = fontType;
             this._config = config;
         }
-
-        protected int TotalValidTransactions { get; set; } = 0;
 
         protected async Task<List<Wallet>> GetWallets(Expression<Func<Wallet, bool>> predicate)
         {

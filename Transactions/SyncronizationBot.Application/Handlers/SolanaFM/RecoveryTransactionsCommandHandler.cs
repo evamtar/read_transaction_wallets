@@ -6,6 +6,7 @@ using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
@@ -18,12 +19,12 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
         
         public RecoveryTransactionsCommandHandler(IMediator mediator, 
                                                   ITransactionsService transactionsService,
-                                                  ITransactionsRepository transactionsRepository,
+                                                  IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsService = transactionsService;
-            this._transactionsRepository = transactionsRepository;
+            this._transactionsRepository = unitOfWorkSqlServer.TransactionsRepository;
         }
 
         public async Task<RecoveryTransactionsCommandResponse> Handle(RecoveryTransactionsCommand request, CancellationToken cancellationToken)

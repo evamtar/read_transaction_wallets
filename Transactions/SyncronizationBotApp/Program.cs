@@ -48,9 +48,10 @@ using SyncronizationBot.Service.RabbitMQ.Consumers;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Configs;
 using SyncronizationBot.Domain.Service.CrossCutting.Coingecko;
 using SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Service;
-using SyncronizationBot.Infra.Data.Base.Context;
 using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Infra.Data.UnitOfWork;
+using SyncronizationBot.Infra.Data.SQLServer.Context;
+using SyncronizationBot.Infra.Data.MongoDB.Context;
 
 
 var builder = Host.CreateApplicationBuilder(args);

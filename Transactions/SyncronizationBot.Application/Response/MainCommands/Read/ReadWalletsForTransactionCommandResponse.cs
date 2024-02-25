@@ -2,7 +2,6 @@
 {
     public class ReadWalletsForTransactionCommandResponse
     {
-        public bool HasWalletsWithBalanceLoad { get; set; }
-        public int? TotalValidTransactions { get; set; }
+        
     }
 }

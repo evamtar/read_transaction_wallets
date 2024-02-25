@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SyncronizationBot.Domain.Repository.Base.Interfaces;
-using SyncronizationBot.Domain.Repository.Base.Interfaces;
-using SyncronizationBot.Infra.Data.Base.Repository;
+using SyncronizationBot.Infra.Data.MongoDB.Repository;
+using SyncronizationBot.Infra.Data.SQLServer.Repository;
 using SyncronizationBotApp.Extensions.Enum;
 using System.Reflection;
 

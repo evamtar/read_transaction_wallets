@@ -6,6 +6,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 using SyncronizationBot.Utils;
 
@@ -17,18 +18,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
         private readonly ITelegramBotService _telegramBotService;
         private readonly ITelegramMessageRepository _telegramMessageRepository;
         private readonly ITelegramChannelRepository _telegramChannelRepository;
-        private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
+        
         public DeleteTelegramMessageCommandHandler(IMediator mediator,
                                                    ITelegramBotService telegramBotService,
-                                                   ITelegramMessageRepository telegramMessageRepository,
-                                                   ITelegramChannelRepository telegramChannelRepository,
-                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig)
+                                                   IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             this._mediator = mediator;
             this._telegramBotService = telegramBotService;
-            this._telegramMessageRepository = telegramMessageRepository;
-            this._telegramChannelRepository = telegramChannelRepository;
-            this._syncronizationBotConfig = syncronizationBotConfig;
+            this._telegramMessageRepository = unitOfWorkSqlServer.TelegramMessageRepository;
+            this._telegramChannelRepository = unitOfWorkSqlServer.TelegramChannelRepository;
         }
         public async Task<DeleteTelegramMessageCommandResponse> Handle(DeleteTelegramMessageCommand request, CancellationToken cancellationToken)
         {

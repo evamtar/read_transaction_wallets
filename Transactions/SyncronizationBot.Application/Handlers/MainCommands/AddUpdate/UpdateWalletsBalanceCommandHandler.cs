@@ -10,6 +10,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 {
@@ -19,12 +20,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
         private readonly IWalletBalanceRepository _walletBalanceRepository;
 
         public UpdateWalletsBalanceCommandHandler(IMediator mediator,
-                                                  IWalletRepository walletRepository,
-                                                  IOptions<SyncronizationBotConfig> config,
-                                                  IWalletBalanceRepository walletBalanceRepository) : base(mediator, walletRepository, EFontType.ALL, config)
+                                                  IUnitOfWorkSqlServer unitOfWorkSqlServer,
+                                                  IOptions<SyncronizationBotConfig> config) : base(mediator, unitOfWorkSqlServer, EFontType.ALL, config)
         {
             this._mediator = mediator;
-            this._walletBalanceRepository = walletBalanceRepository;
+            this._walletBalanceRepository = unitOfWorkSqlServer.WalletBalanceRepository;
         }
 
         public async Task<UpdateWalletsBalanceCommandResponse> Handle(UpdateWalletsBalanceCommand request, CancellationToken cancellationToken)

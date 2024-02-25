@@ -6,6 +6,7 @@ using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
 {
@@ -18,16 +19,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
         private readonly ITokenAlphaWalletHistoryRepository _tokenAlphaWalletHistoryRepository;
 
         public UpdateTokenAlphaCommandHandler(IMediator mediator,
-                                              ITokenAlphaRepository tokenAlphaRepository,
-                                              ITokenAlphaHistoryRepository tokenAlphaHistoryRepository,
-                                              ITokenAlphaWalletRepository tokenAlphaWalletRepository,
-                                              ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository)
+                                              IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             this._mediator = mediator;
-            this._tokenAlphaRepository = tokenAlphaRepository;
-            this._tokenAlphaHistoryRepository = tokenAlphaHistoryRepository;
-            this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
-            this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
+            this._tokenAlphaRepository = unitOfWorkSqlServer.TokenAlphaRepository;
+            this._tokenAlphaHistoryRepository = unitOfWorkSqlServer.TokenAlphaHistoryRepository;
+            this._tokenAlphaWalletRepository = unitOfWorkSqlServer.TokenAlphaWalletRepository;
+            this._tokenAlphaWalletHistoryRepository = unitOfWorkSqlServer.TokenAlphaWalletHistoryRepository;
         }
         public async Task<UpdateTokenAlphaCommandResponse> Handle(UpdateTokenAlphaCommand request, CancellationToken cancellationToken)
         {

@@ -3,6 +3,7 @@ using SyncronizationBot.Application.UpdateCommand.Base.Command;
 using SyncronizationBot.Application.UpdateCommand.Base.Response;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
 {
@@ -11,11 +12,12 @@ namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
                                            where W : BaseUpdateCommandResponse<T>
                                            where T : Entity
     {
+        private readonly IUnitOfWorkSqlServer _unitOfWorkSqlServer;
         private readonly IRepository<T> _repository;
-
-        public BaseUpdateCommandHandler(IRepository<T> repository)
+        public BaseUpdateCommandHandler(IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
-            _repository = repository ?? throw new ArgumentException($"IRepository<T> --> {typeof(T)} is null here.");
+            _unitOfWorkSqlServer = unitOfWorkSqlServer ?? throw new ArgumentNullException($"IUnitOfWorkSqlServer --> {typeof(T)} is null here.");
+            _repository = GetRepository() ?? throw new ArgumentNullException($"Repository --> {typeof(T)} is null here.");
         }
 
         public async Task<W> Handle(X request, CancellationToken cancellationToken)
@@ -28,6 +30,11 @@ namespace SyncronizationBot.Application.UpdateCommand.Base.Handler
                 return response;
             }
             throw new ArgumentException($"Entity --> {typeof(T)} is null here.");
+        }
+
+        private IRepository<T>? GetRepository()
+        {
+            return (IRepository<T>?)this._unitOfWorkSqlServer.GetType()?.GetProperty(typeof(T).Name + "Repository")?.GetValue(this._unitOfWorkSqlServer);
         }
     }
 }

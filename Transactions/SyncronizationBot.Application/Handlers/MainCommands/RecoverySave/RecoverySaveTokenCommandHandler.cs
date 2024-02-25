@@ -12,6 +12,7 @@ using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 
 
@@ -29,15 +30,14 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         public RecoverySaveTokenCommandHandler(IMediator mediator,
                                                ITokenOverviewService tokensOverviewService,
                                                ITokenSecurityService tokenSecurityService,
-                                               ITokenRepository tokenRepository,
-                                               ITokenSecurityRepository tokenSecurityRepository,
+                                               IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                IDexScreenerTokenService dexScreenerTokenService)
         {
             _mediator = mediator;
             _tokensOverviewService = tokensOverviewService;
             _tokenSecurityService = tokenSecurityService;
-            _tokenRepository = tokenRepository;
-            _tokenSecurityRepository = tokenSecurityRepository;
+            _tokenRepository = unitOfWorkSqlServer.TokenRepository;
+            _tokenSecurityRepository = unitOfWorkSqlServer.TokenSecurityRepository;
             _dexScreenerTokenService = dexScreenerTokenService;
         }
         public async Task<RecoverySaveTokenCommandResponse> Handle(RecoverySaveTokenCommand request, CancellationToken cancellationToken)

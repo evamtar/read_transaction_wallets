@@ -8,6 +8,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Utils;
 using System.Collections.Concurrent;
 
@@ -18,19 +19,16 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         private ConcurrentBag<ClassWallet> ClassWallets = new ConcurrentBag<ClassWallet>();
         private ConcurrentBag<Wallet> WalletsUpdated = new ConcurrentBag<Wallet>();
         private ConcurrentBag<Wallet> WalletsRetry = new ConcurrentBag<Wallet>();
-        private bool? HasWalletsWithBalanceLoad = false;
         private readonly IClassWalletRepository _classWalletRepository;
 
         public ReadWalletsForTransactionCommandHandler(IMediator mediator,
-                                         IWalletRepository walletRepository,
-                                         IClassWalletRepository classWalletRepository,
-                                         IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
+                                                       IUnitOfWorkSqlServer unitOfWorkSqlServer,
+                                                       IOptions<SyncronizationBotConfig> config) : base(mediator, unitOfWorkSqlServer, EFontType.ALL, config)
         {
-            this._classWalletRepository = classWalletRepository;
+            this._classWalletRepository = unitOfWorkSqlServer.ClassWalletRepository;
         }
         public async Task<ReadWalletsForTransactionCommandResponse> Handle(ReadWalletsForTransactionCommand request, CancellationToken cancellationToken)
         {
-            var hasWalletsWithBalanceLoad = false;
             var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.Hash!);
             await this.LoadClassWallets();
             if (walletsTracked?.Count() > 0) 
@@ -52,7 +50,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 foreach (var wallet in this.WalletsUpdated) 
                     await base.UpdateUnixTimeSeconds(wallet);
             }
-            return new ReadWalletsForTransactionCommandResponse { TotalValidTransactions = this.TotalValidTransactions, HasWalletsWithBalanceLoad = hasWalletsWithBalanceLoad };
+            return new ReadWalletsForTransactionCommandResponse { };
         }
 
         private async Task ProcessWallets(ReadWalletsForTransactionCommand request, List<Wallet>? walletsTracked) 
@@ -63,7 +61,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 {
                     try
                     {
-                        HasWalletsWithBalanceLoad = true;
                         var initialTicks = base.GetInitialTicks(DateTimeTicks.Instance.ConvertDateTimeToTicks(DateTime.Now.AddHours(-1)));
                         var finalTicks = base.GetFinalTicks();
                         if (initialTicks > finalTicks)
@@ -79,7 +76,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                             InitialTicks = initialTicks,
                             FinalTicks = finalTicks
                         });
-                        this.TotalValidTransactions += response.TotalValidTransactions ?? 0;
                         walletTracked!.LastUpdate = DateTime.Now;
                         WalletsUpdated.Add(walletTracked!);
                     }

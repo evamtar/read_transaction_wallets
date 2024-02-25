@@ -5,6 +5,7 @@ using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send
@@ -15,10 +16,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         
         public SendTransactionAlertsCommandHandler(IMediator mediator,
-                                                   IWalletBalanceHistoryRepository walletBalanceHistoryRepository)
+                                                   IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             this._mediator = mediator;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            this._walletBalanceHistoryRepository = unitOfWorkSqlServer.WalletBalanceHistoryRepository;
         }
 
         public async Task<SendTransactionAlertsCommandResponse> Handle(SendTransactionAlertsCommand request, CancellationToken cancellationToken)

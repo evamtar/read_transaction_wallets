@@ -7,6 +7,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Send
@@ -19,12 +20,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public SendTelegramMessageCommandHandler(IMediator mediator,
                                                  ITelegramBotService telegramBotService,
-                                                 ITelegramMessageRepository telegramMessageRepository,
+                                                 IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._telegramBotService = telegramBotService;
-            this._telegramMessageRepository = telegramMessageRepository;
+            this._telegramMessageRepository = unitOfWorkSqlServer.TelegramMessageRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 

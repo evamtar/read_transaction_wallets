@@ -7,6 +7,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
@@ -20,14 +21,13 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
 
         public RecoveryTransactionsSignatureForAddressCommandHandler(IMediator mediator,
                                                                      ITransactionsSignatureForAddressService transactionsSignatureForAddressService,
-                                                                     ITransactionsRepository transactionsRepository,
-                                                                     ITransactionRPCRecoveryRepository transactionsContingencyRepository,
+                                                                     IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                                      IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(syncronizationBotConfig)
         {
             this._mediator = mediator;
             this._transactionsSignatureForAddressService = transactionsSignatureForAddressService;
-            this._transactionsRepository = transactionsRepository;
-            this._transactionsContingencyRepository = transactionsContingencyRepository;
+            this._transactionsRepository = unitOfWorkSqlServer.TransactionsRepository;
+            this._transactionsContingencyRepository = unitOfWorkSqlServer.TransactionRPCRecoveryRepository;
         }
 
         public async Task<RecoveryTransactionsSignatureForAddressCommandResponse> Handle(RecoveryTransactionsSignatureForAddressCommand request, CancellationToken cancellationToken)

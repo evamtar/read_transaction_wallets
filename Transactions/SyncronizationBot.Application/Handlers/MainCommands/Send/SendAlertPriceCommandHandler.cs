@@ -6,6 +6,7 @@ using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 
 
@@ -19,14 +20,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private readonly ITypeOperationRepository _typeOperationRepository;
 
         public SendAlertPriceCommandHandler(IMediator mediator,
-                                            IAlertPriceRepository alertPriceRepository,
                                             IJupiterPriceService jupiterPriceService,
-                                            ITypeOperationRepository _typeOperationRepository)
+                                            IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             this._mediator = mediator;
-            this._alertPriceRepository = alertPriceRepository;
+            this._alertPriceRepository = unitOfWorkSqlServer.AlertPriceRepository;
             this._jupiterPriceService = jupiterPriceService;
-            this._typeOperationRepository = _typeOperationRepository;
+            this._typeOperationRepository = unitOfWorkSqlServer.TypeOperationRepository;
         }
 
         public async Task<SendAlertPriceCommandResponse> Handle(SendAlertPriceCommand request, CancellationToken cancellationToken)

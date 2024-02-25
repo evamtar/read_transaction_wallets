@@ -6,6 +6,7 @@ using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
 {
@@ -21,23 +22,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public VerifyAddTokenAlphaCommandHandler(IMediator mediator,
-                                                 ITokenAlphaRepository tokenAlphaRepository,
-                                                 ITokenAlphaHistoryRepository tokenAlphaHistoryRepository,
-                                                 ITokenAlphaConfigurationRepository tokenAlphaConfigurationRepository,
-                                                 ITokenAlphaWalletRepository tokenAlphaWalletRepository,
-                                                 ITokenAlphaWalletHistoryRepository tokenAlphaWalletHistoryRepository,
-                                                 IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
-                                                 ITransactionsRepository transactionsRepository,
+                                                 IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                  IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
-            this._tokenAlphaRepository = tokenAlphaRepository;
-            this._tokenAlphaHistoryRepository = tokenAlphaHistoryRepository;
-            this._tokenAlphaConfigurationRepository = tokenAlphaConfigurationRepository;
-            this._tokenAlphaWalletRepository = tokenAlphaWalletRepository;
-            this._tokenAlphaWalletHistoryRepository = tokenAlphaWalletHistoryRepository;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
-            this._transactionsRepository = transactionsRepository;
+            this._tokenAlphaRepository = unitOfWorkSqlServer.TokenAlphaRepository;
+            this._tokenAlphaHistoryRepository = unitOfWorkSqlServer.TokenAlphaHistoryRepository;
+            this._tokenAlphaConfigurationRepository = unitOfWorkSqlServer.TokenAlphaConfigurationRepository;
+            this._tokenAlphaWalletRepository = unitOfWorkSqlServer.TokenAlphaWalletRepository;
+            this._tokenAlphaWalletHistoryRepository = unitOfWorkSqlServer.TokenAlphaWalletHistoryRepository;
+            this._walletBalanceHistoryRepository = unitOfWorkSqlServer.WalletBalanceHistoryRepository;
+            this._transactionsRepository = unitOfWorkSqlServer.TransactionsRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
         public async Task<VerifyAddTokenAlphaCommandResponse> Handle(VerifyAddTokenAlphaCommand request, CancellationToken cancellationToken)

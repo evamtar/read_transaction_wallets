@@ -5,6 +5,7 @@ using SyncronizationBot.Application.Response.MainCommands.AddUpdate;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using System.Diagnostics;
 using System.Transactions;
 
@@ -16,12 +17,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.AddUpdate
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         public RecoveryAddUpdateBalanceItemCommandHandler(IMediator mediator,
-                                                          IWalletBalanceRepository walletBalanceRepository,
-                                                          IWalletBalanceHistoryRepository walletBalanceHistoryRepository)
+                                                          IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             _mediator = mediator;
-            _walletBalanceRepository = walletBalanceRepository;
-            _walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            _walletBalanceRepository = unitOfWorkSqlServer.WalletBalanceRepository;
+            _walletBalanceHistoryRepository = unitOfWorkSqlServer.WalletBalanceHistoryRepository;
         }
 
         public async Task<RecoveryAddUpdateBalanceItemCommandResponse> Handle(RecoveryAddUpdateBalanceItemCommand request, CancellationToken cancellationToken)

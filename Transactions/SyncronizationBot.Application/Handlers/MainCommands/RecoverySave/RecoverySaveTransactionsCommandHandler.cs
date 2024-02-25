@@ -14,6 +14,7 @@ using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Utils;
 using System.Diagnostics;
@@ -31,14 +32,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
-                                                      ITransactionsRepository transactionsRepository,
-                                                      ITransactionNotMappedRepository transactionNotMappedRepository,
+                                                      IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
             this._transfersService = transfersService;
-            this._transactionsRepository = transactionsRepository;
-            this._transactionNotMappedRepository = transactionNotMappedRepository;
+            this._transactionsRepository = unitOfWorkSqlServer.TransactionsRepository;
+            this._transactionNotMappedRepository = unitOfWorkSqlServer.TransactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
         }
 

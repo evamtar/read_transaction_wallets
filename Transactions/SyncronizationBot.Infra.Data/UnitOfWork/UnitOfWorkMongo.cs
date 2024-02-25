@@ -1,8 +1,7 @@
-﻿using SyncronizationBot.Domain.Model.Database;
-using SyncronizationBot.Domain.Repository.Base.Interfaces;
+﻿using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using SyncronizationBot.Domain.Repository.UnitOfWork;
-using SyncronizationBot.Infra.Data.Base.Context;
-using SyncronizationBot.Infra.Data.Base.Repository;
+using SyncronizationBot.Infra.Data.MongoDB.Context;
+using SyncronizationBot.Infra.Data.MongoDB.Repository;
 
 
 namespace SyncronizationBot.Infra.Data.UnitOfWork
@@ -46,30 +45,30 @@ namespace SyncronizationBot.Infra.Data.UnitOfWork
 
         #region Public Interfaces
 
-        public IAlertConfigurationRepository AlertConfigurationRepository => _alertConfigurationRepository ?? (_alertConfigurationRepository = (IAlertConfigurationRepository) new MongoRepository<AlertConfiguration>(_context));
-        public IAlertInformationRepository AlertInformationRepository => _alertInformationRepository ?? (_alertInformationRepository = (IAlertInformationRepository) new MongoRepository<AlertInformation>(_context));
-        public IAlertParameterRepository AlertParameterRepository => _alertParameterRepository ?? (_alertParameterRepository = (IAlertParameterRepository)new MongoRepository<AlertParameter>(_context));
-        public IAlertPriceRepository AlertPriceRepository => _alertPriceRepository ?? (_alertPriceRepository = (IAlertPriceRepository)new MongoRepository<AlertPrice>(_context));
-        public IClassWalletRepository ClassWalletRepository => _classWalletRepository ?? (_classWalletRepository = (IClassWalletRepository)new MongoRepository<ClassWallet>(_context));
-        public IRunTimeControllerRepository RunTimeControllerRepository => _runTimeControllerRepository ?? (_runTimeControllerRepository = (IRunTimeControllerRepository)new MongoRepository<RunTimeController>(_context));
-        public ITelegramChannelRepository TelegramChannelRepository => _telegramChannelRepository ?? (_telegramChannelRepository = (ITelegramChannelRepository)new MongoRepository<TelegramChannel>(_context));
-        public ITelegramMessageRepository TelegramMessageRepository => _telegramMessageRepository ?? (_telegramMessageRepository = (ITelegramMessageRepository)new MongoRepository<TelegramMessage>(_context));
-        public ITokenAlphaConfigurationRepository TokenAlphaConfigurationRepository => _tokenAlphaConfigurationRepository ?? (_tokenAlphaConfigurationRepository = (ITokenAlphaConfigurationRepository)new MongoRepository<TokenAlphaConfiguration>(_context));
-        public ITokenAlphaHistoryRepository TokenAlphaHistoryRepository => _tokenAlphaHistoryRepository ?? (_tokenAlphaHistoryRepository = (ITokenAlphaHistoryRepository)new MongoRepository<TokenAlphaHistory>(_context));
-        public ITokenAlphaRepository TokenAlphaRepository => _tokenAlphaRepository ?? (_tokenAlphaRepository = (ITokenAlphaRepository)new MongoRepository<TokenAlpha>(_context));
-        public ITokenAlphaWalletHistoryRepository TokenAlphaWalletHistoryRepository => _tokenAlphaWalletHistoryRepository ?? (_tokenAlphaWalletHistoryRepository = (ITokenAlphaWalletHistoryRepository)new MongoRepository<TokenAlphaWallet>(_context));
-        public ITokenAlphaWalletRepository TokenAlphaWalletRepository => _tokenAlphaWalletRepository ?? (_tokenAlphaWalletRepository = (ITokenAlphaWalletRepository)new MongoRepository<TokenAlphaWallet>(_context));
-        public ITokenRepository TokenRepository => _tokenRepository ?? (_tokenRepository = (ITokenRepository)new MongoRepository<Token>(_context));
-        public ITokenPriceHistoryRepository TokenPriceHistoryRepository => _tokenPriceHistoryRepository ?? (_tokenPriceHistoryRepository = (ITokenPriceHistoryRepository)new MongoRepository<TokenPriceHistory>(_context));
-        public ITokenSecurityRepository TokenSecurityRepository => _tokenSecurityRepository ?? (_tokenSecurityRepository = (ITokenSecurityRepository)new MongoRepository<TokenSecurity>(_context));
-        public ITransactionsRepository TransactionsRepository => _transactionsRepository ?? (_transactionsRepository = (ITransactionsRepository)new MongoRepository<Transactions>(_context));
-        public ITransactionNotMappedRepository TransactionNotMappedRepository => _transactionNotMappedRepository ?? (_transactionNotMappedRepository = (ITransactionNotMappedRepository)new MongoRepository<TransactionNotMapped>(_context));
-        public ITransactionRPCRecoveryRepository TransactionRPCRecoveryRepository => _transactionRPCRecoveryRepository ?? (_transactionRPCRecoveryRepository = (ITransactionRPCRecoveryRepository)new MongoRepository<TransactionRPCRecovery>(_context));
-        public ITransactionTokenRepository TransactionTokenRepository => _transactionTokenRepository ?? (_transactionTokenRepository = (ITransactionTokenRepository)new MongoRepository<TransactionToken>(_context));
-        public ITypeOperationRepository TypeOperationRepository => _typeOperationRepository ?? (_typeOperationRepository = (ITypeOperationRepository)new MongoRepository<TypeOperation>(_context));
-        public IWalletBalanceHistoryRepository WalletBalanceHistoryRepository => _walletBalanceHistoryRepository ?? (_walletBalanceHistoryRepository = (IWalletBalanceHistoryRepository)new MongoRepository<WalletBalanceHistory>(_context));
-        public IWalletBalanceRepository WalletBalanceRepository => _walletBalanceRepository ?? (_walletBalanceRepository = (IWalletBalanceRepository)new MongoRepository<WalletBalance>(_context));
-        public IWalletRepository WalletRepository => _walletRepository ?? (_walletRepository = (IWalletRepository)new MongoRepository<Wallet>(_context));
+        public IAlertConfigurationRepository AlertConfigurationRepository => _alertConfigurationRepository ?? (_alertConfigurationRepository = new AlertConfigurationRepository(_context));
+        public IAlertInformationRepository AlertInformationRepository => _alertInformationRepository ?? (_alertInformationRepository = new AlertInformationRepository(_context));
+        public IAlertParameterRepository AlertParameterRepository => _alertParameterRepository ?? (_alertParameterRepository = new AlertParameterRepository(_context));
+        public IAlertPriceRepository AlertPriceRepository => _alertPriceRepository ?? (_alertPriceRepository = new AlertPriceRepository(_context));
+        public IClassWalletRepository ClassWalletRepository => _classWalletRepository ?? (_classWalletRepository = new ClassWalletRepository(_context));
+        public IRunTimeControllerRepository RunTimeControllerRepository => _runTimeControllerRepository ?? (_runTimeControllerRepository = new RunTimeControllerRepository(_context));
+        public ITelegramChannelRepository TelegramChannelRepository => _telegramChannelRepository ?? (_telegramChannelRepository = new TelegramChannelRepository(_context));
+        public ITelegramMessageRepository TelegramMessageRepository => _telegramMessageRepository ?? (_telegramMessageRepository = new TelegramMessageRepository(_context));
+        public ITokenAlphaConfigurationRepository TokenAlphaConfigurationRepository => _tokenAlphaConfigurationRepository ?? (_tokenAlphaConfigurationRepository = new TokenAlphaConfigurationRepository(_context));
+        public ITokenAlphaHistoryRepository TokenAlphaHistoryRepository => _tokenAlphaHistoryRepository ?? (_tokenAlphaHistoryRepository = new TokenAlphaHistoryRepository(_context));
+        public ITokenAlphaRepository TokenAlphaRepository => _tokenAlphaRepository ?? (_tokenAlphaRepository = new TokenAlphaRepository(_context));
+        public ITokenAlphaWalletHistoryRepository TokenAlphaWalletHistoryRepository => _tokenAlphaWalletHistoryRepository ?? (_tokenAlphaWalletHistoryRepository = new TokenAlphaWalletHistoryRepository(_context));
+        public ITokenAlphaWalletRepository TokenAlphaWalletRepository => _tokenAlphaWalletRepository ?? (_tokenAlphaWalletRepository = new TokenAlphaWalletRepository(_context));
+        public ITokenRepository TokenRepository => _tokenRepository ?? (_tokenRepository = new TokenRepository(_context));
+        public ITokenPriceHistoryRepository TokenPriceHistoryRepository => _tokenPriceHistoryRepository ?? (_tokenPriceHistoryRepository = new TokenPriceHistoryRepository(_context));
+        public ITokenSecurityRepository TokenSecurityRepository => _tokenSecurityRepository ?? (_tokenSecurityRepository = new TokenSecurityRepository(_context));
+        public ITransactionsRepository TransactionsRepository => _transactionsRepository ?? (_transactionsRepository = new TransactionsRepository(_context));
+        public ITransactionNotMappedRepository TransactionNotMappedRepository => _transactionNotMappedRepository ?? (_transactionNotMappedRepository = new TransactionNotMappedRepository(_context));
+        public ITransactionRPCRecoveryRepository TransactionRPCRecoveryRepository => _transactionRPCRecoveryRepository ?? (_transactionRPCRecoveryRepository = new TransactionRPCRecoveryRepository(_context));
+        public ITransactionTokenRepository TransactionTokenRepository => _transactionTokenRepository ?? (_transactionTokenRepository = new TransactionTokenRepository(_context));
+        public ITypeOperationRepository TypeOperationRepository => _typeOperationRepository ?? (_typeOperationRepository = new TypeOperationRepository(_context));
+        public IWalletBalanceHistoryRepository WalletBalanceHistoryRepository => _walletBalanceHistoryRepository ?? (_walletBalanceHistoryRepository = new WalletBalanceHistoryRepository(_context));
+        public IWalletBalanceRepository WalletBalanceRepository => _walletBalanceRepository ?? (_walletBalanceRepository = new WalletBalanceRepository(_context));
+        public IWalletRepository WalletRepository => _walletRepository ?? (_walletRepository = new WalletRepository(_context));
 
         #endregion
 

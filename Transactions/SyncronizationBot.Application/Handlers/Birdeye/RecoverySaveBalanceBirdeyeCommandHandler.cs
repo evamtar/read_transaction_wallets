@@ -10,10 +10,10 @@ using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.WalletPortifolio.Response;
-using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.AccountInfo.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 
@@ -24,19 +24,14 @@ namespace SyncronizationBot.Application.Handlers.Birdeye
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly IWalletBalanceHistoryRepository _walletBalanceHistoryRepository;
         private readonly IWalletPortifolioService _walletPortifolioService;
-        private readonly IAccountInfoService _accountInfoService;
         public RecoverySaveBalanceBirdeyeCommandHandler(IMediator mediator,
-                                                        IWalletRepository walletRepository,
+                                                        IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                                         IOptions<SyncronizationBotConfig> config,
-                                                        IWalletBalanceRepository walletBalanceRepository,
-                                                        IWalletBalanceHistoryRepository walletBalanceHistoryRepository,
-                                                        IWalletPortifolioService walletPortifolioService,
-                                                        IAccountInfoService accountInfoService) : base(mediator, walletRepository, EFontType.BIRDEYE, config)
+                                                        IWalletPortifolioService walletPortifolioService) : base(mediator, unitOfWorkSqlServer, EFontType.BIRDEYE, config)
         {
-            this._walletBalanceRepository = walletBalanceRepository;
-            this._walletBalanceHistoryRepository = walletBalanceHistoryRepository;
+            this._walletBalanceRepository = unitOfWorkSqlServer.WalletBalanceRepository;
+            this._walletBalanceHistoryRepository = unitOfWorkSqlServer.WalletBalanceHistoryRepository;
             this._walletPortifolioService = walletPortifolioService;
-            this._accountInfoService = accountInfoService;
         }
 
         public async Task<RecoverySaveBalanceBirdeyeCommandResponse> Handle(RecoverySaveBalanceBirdeyeCommand request, CancellationToken cancellationToken)

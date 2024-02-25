@@ -5,6 +5,7 @@ using SyncronizationBot.Application.Response.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using System.Collections;
 using System.Reflection;
 
@@ -18,15 +19,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
         private readonly IAlertParameterRepository _alertParameterRepository;
         private readonly IOptions<SyncronizationBotConfig> _syncronizationBotConfig;
         public SendAlertMessageCommandHandler(IMediator mediator,
-                                              IAlertConfigurationRepository alertConfigurationRepository,
-                                              IAlertInformationRepository alertInformationRepository,
-                                              IAlertParameterRepository alertParameterRepository,
+                                              IUnitOfWorkSqlServer unitOfWorkSqlServer,
                                               IOptions<SyncronizationBotConfig> syncronizationBotConfig)
         {
             this._mediator = mediator;
-            this._alertConfigurationRepository = alertConfigurationRepository;
-            this._alertInformationRepository = alertInformationRepository;
-            this._alertParameterRepository = alertParameterRepository;
+            this._alertConfigurationRepository = unitOfWorkSqlServer.AlertConfigurationRepository;
+            this._alertInformationRepository = unitOfWorkSqlServer.AlertInformationRepository;
+            this._alertParameterRepository = unitOfWorkSqlServer.AlertParameterRepository;
             this._syncronizationBotConfig = syncronizationBotConfig;
         }
 

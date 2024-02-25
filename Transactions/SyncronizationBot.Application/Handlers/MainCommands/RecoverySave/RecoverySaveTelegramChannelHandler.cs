@@ -7,6 +7,7 @@ using SyncronizationBot.Domain.Model.CrossCutting.Telegram.TelegramBot.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -19,11 +20,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         public RecoverySaveTelegramChannelHandler(IMediator mediator,
                                                   ITelegramBotService telegramBotService,
-                                                  ITelegramChannelRepository telegramChannelRepository)
+                                                  IUnitOfWorkSqlServer unitOfWorkSqlServer)
         {
             this._mediator = mediator;
             this._telegramBotService = telegramBotService;
-            this._telegramChannelRepository = telegramChannelRepository;
+            this._telegramChannelRepository = unitOfWorkSqlServer.TelegramChannelRepository;
         }
 
         public async Task<RecoverySaveTelegramChannelResponse> Handle(RecoverySaveTelegramChannel request, CancellationToken cancellationToken)

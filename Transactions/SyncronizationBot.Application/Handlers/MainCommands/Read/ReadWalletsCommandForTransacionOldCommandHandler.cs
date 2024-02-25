@@ -9,6 +9,7 @@ using SyncronizationBot.Application.Response.MainCommands.Read;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.Read
 {
@@ -17,11 +18,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         private readonly IClassWalletRepository _classWalletRepository;
 
         public ReadWalletsCommandForTransacionOldCommandHandler(IMediator mediator,
-                                                                 IWalletRepository walletRepository,
-                                                                 IClassWalletRepository classWalletRepository,
-                                                                 IOptions<SyncronizationBotConfig> config) : base(mediator, walletRepository, EFontType.ALL, config)
+                                                                 IUnitOfWorkSqlServer unitOfWorkSqlServer,
+                                                                 IOptions<SyncronizationBotConfig> config) : base(mediator, unitOfWorkSqlServer, EFontType.ALL, config)
         {
-            this._classWalletRepository = classWalletRepository;
+            this._classWalletRepository = unitOfWorkSqlServer.ClassWalletRepository;
         }
         public async Task<ReadWalletsCommandForTransacionOldCommandResponse> Handle(ReadWalletsCommandForTransacionOldCommand request, CancellationToken cancellationToken)
         {
