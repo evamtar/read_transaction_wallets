@@ -7,6 +7,7 @@ using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.TokenInfoQueue.Configs;
+using SyncronizationBots.RabbitMQ.Connection.Interface;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {
@@ -15,7 +16,8 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         private IUnitOfWorkSqlServer UnitOfWorkSqlServer { get; set; }
         private IMediator Mediator { get; set; }
         public TokenInfoQueueConsumerService(IServiceProvider serviceProvider,
-                                             IOptions<TokenInfoQueueConfiguration> configuration) : base(serviceProvider, configuration.Value)
+                                             IRabbitMQConnection rabbitMQConnection,
+                                             IOptions<TokenInfoQueueConfiguration> configuration) : base(serviceProvider, rabbitMQConnection, configuration.Value)
         {
             this.UnitOfWorkSqlServer = null!;
             this.Mediator = null!;

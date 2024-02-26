@@ -9,6 +9,7 @@ using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
+using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Exceptions;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
@@ -18,7 +19,8 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         private IUnitOfWorkSqlServer UnitOfWorkSqlServer { get; set; } 
 
         public UpdateQueueConsumerService(IServiceProvider serviceProvider, 
-                                          IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, configuration.Value)
+                                          IRabbitMQConnection rabbitMQConnection,
+                                          IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, rabbitMQConnection, configuration.Value)
         {
             this.UnitOfWorkSqlServer = null!;
         }

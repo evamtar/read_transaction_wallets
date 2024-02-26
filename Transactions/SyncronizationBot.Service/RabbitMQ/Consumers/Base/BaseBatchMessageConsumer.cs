@@ -2,6 +2,7 @@
 using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Consumer;
 using SyncronizationBots.RabbitMQ.Queue.Interface;
+using System;
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
 {
@@ -9,24 +10,26 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
     {
         #region Readonly Variables
 
-        private readonly IServiceScope _scope;
+        private readonly IServiceProvider _serviceProvider;
         public override IRabbitMQConnection RabbitMQConnection { get; set; }
         public override IQueueConfiguration QueueConfiguration { get; set; }
 
         #endregion
 
         public BaseBatchMessageConsumer(IServiceProvider serviceProvider,
+                                        IRabbitMQConnection connection,
                                         IQueueConfiguration queueConfiguration)
         {
-            _scope = serviceProvider.CreateScope();
-            RabbitMQConnection = _scope.ServiceProvider.GetRequiredService<IRabbitMQConnection>();
+            _serviceProvider = serviceProvider;
+            RabbitMQConnection = connection;
             QueueConfiguration = queueConfiguration;
         }
         public abstract Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken);
 
         public override async Task HandlerAsync(string? message, CancellationToken stoppingToken)
         {
-            await HandlerAsync(_scope, message, stoppingToken);
+            using (var _scope = _serviceProvider.CreateScope()) 
+                await HandlerAsync(_scope, message, stoppingToken);
         }
         public override Task LogInfo(string? info)
         {
@@ -39,7 +42,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
         {
             try
             {
-                _scope.Dispose();
+                RabbitMQConnection.Dispose();
             }
             finally
             {
