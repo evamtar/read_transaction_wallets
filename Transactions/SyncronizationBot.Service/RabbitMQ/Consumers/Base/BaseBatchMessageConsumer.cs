@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SyncronizationBot.Domain.Model.Database.Base;
+using SyncronizationBot.Domain.Model.RabbitMQ;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.Base;
 using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Consumer;
 using SyncronizationBots.RabbitMQ.Queue.Interface;
@@ -11,26 +14,30 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
         #region Readonly Variables
 
         private readonly IServiceProvider _serviceProvider;
+        private IServiceScope Scope { get; set; }
         public override IRabbitMQConnection RabbitMQConnection { get; set; }
         public override IQueueConfiguration QueueConfiguration { get; set; }
-
+        
         #endregion
 
         public BaseBatchMessageConsumer(IServiceProvider serviceProvider,
-                                        IRabbitMQConnection connection,
                                         IQueueConfiguration queueConfiguration)
         {
             _serviceProvider = serviceProvider;
-            RabbitMQConnection = connection;
             QueueConfiguration = queueConfiguration;
+            this.RabbitMQConnection = null!;
+            this.Scope = null!;
+            InitServices();
         }
-        public abstract Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken);
+
+        public abstract Task HandlerAsync(IServiceScope scope, string? message, CancellationToken stoppingToken);
 
         public override async Task HandlerAsync(string? message, CancellationToken stoppingToken)
         {
-            using (var _scope = _serviceProvider.CreateScope()) 
-                await HandlerAsync(_scope, message, stoppingToken);
+            using (var scope = _serviceProvider.CreateScope()) 
+                await HandlerAsync(scope, message, stoppingToken);
         }
+
         public override Task LogInfo(string? info)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -48,6 +55,36 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
             {
             }
             return base.StopAsync(cancellationToken);
+        }
+
+        protected virtual async Task TransferQueue<T, W>(T entity, string? instruction, W transferQueueService) where T : Entity
+                                                                                        where W: IPublishBaseService
+        {
+            await transferQueueService.Publish(new MessageEvent<T>
+            {
+                CreateDate = DateTime.Now,
+                Entity = entity,
+                EventName = typeof(T).Name + "_" + instruction,
+                Parameters = null
+            });
+        }
+
+        public override void Dispose()
+        {
+            try
+            {
+                this.Scope.Dispose();
+            }
+            finally 
+            {
+                base.Dispose();
+            }
+        }
+
+        private void InitServices()
+        {
+            this.Scope = this._serviceProvider.CreateScope();
+            this.RabbitMQConnection = this.Scope.ServiceProvider.GetRequiredService<IRabbitMQConnection>();
         }
     }
 }

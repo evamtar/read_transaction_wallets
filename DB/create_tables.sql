@@ -251,22 +251,9 @@ GO
 CREATE TABLE TokenSecurity(
 	ID                 UNIQUEIDENTIFIER,
 	TokenId            UNIQUEIDENTIFIER,
-	CreatorAddress     VARCHAR(100),
 	CreationTime       BIGINT,
-	Top10HolderBalance VARCHAR(150),
-	Top10HolderPercent VARCHAR(150),
-	Top10UserBalance   VARCHAR(150),
-	Top10UserPercent   VARCHAR(150),
-	IsTrueToken        BIT,
-	LockInfo		   NVARCHAR(MAX),
-	Freezeable		   BIT,
 	FreezeAuthority    VARCHAR(100),
-	TransferFeeEnable  VARCHAR(100),
-	TransferFeeData    NVARCHAR(MAX),
-	IsToken2022        BIT,
-	NonTransferable    VARCHAR(100),
 	MintAuthority      VARCHAR(100),
-	IsMutable          BIT,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (TokenId) REFERENCES Token(ID)
 );

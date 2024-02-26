@@ -129,7 +129,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     DateCreation = tokenSecurity?.CreationTimeDate,
                     FreezeAuthority = tokenSecurity?.FreezeAuthority,
                     MintAuthority = tokenSecurity?.MintAuthority,
-                    IsMutable = tokenSecurity?.IsMutable,
                 };
             }
         }
@@ -193,22 +192,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                 tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                 {
                     TokenId = token.ID,
-                    CreatorAddress = null,
                     CreationTime = null,
-                    Top10HolderBalance = null,
-                    Top10HolderPercent = null,
-                    Top10UserBalance = null,
-                    Top10UserPercent = null,
-                    IsTrueToken = null,
-                    LockInfo = null,
-                    Freezeable = null,
                     FreezeAuthority = null,
-                    TransferFeeEnable = null,
-                    TransferFeeData = null,
-                    IsToken2022 = null,
-                    NonTransferable = null,
                     MintAuthority = null,
-                    IsMutable = null
                 });
             }
             else 
@@ -219,22 +205,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                     {
                         TokenId = token.ID,
-                        CreatorAddress = tokenSecurityResponse?.Data?.CreatorAddress,
                         CreationTime = tokenSecurityResponse?.Data?.CreationTime,
-                        Top10HolderBalance = tokenSecurityResponse?.Data?.Top10HolderBalance,
-                        Top10HolderPercent = tokenSecurityResponse?.Data?.Top10HolderPercent,
-                        Top10UserBalance = tokenSecurityResponse?.Data?.Top10UserBalance,
-                        Top10UserPercent = tokenSecurityResponse?.Data?.Top10UserPercent,
-                        IsTrueToken = tokenSecurityResponse?.Data?.IsTrueToken,
-                        LockInfo = this.ConvertObjectToString(tokenSecurityResponse?.Data?.LockInfo),
-                        Freezeable = tokenSecurityResponse?.Data?.Freezeable,
                         FreezeAuthority = tokenSecurityResponse?.Data?.FreezeAuthority,
-                        TransferFeeEnable = this.ConvertObjectToString(tokenSecurityResponse?.Data?.TransferFeeEnable),
-                        TransferFeeData = this.ConvertObjectToString(tokenSecurityResponse?.Data?.TransferFeeData),
-                        IsToken2022 = tokenSecurityResponse?.Data?.IsToken2022,
-                        NonTransferable = this.ConvertObjectToString(tokenSecurityResponse?.Data?.NonTransferable),
                         MintAuthority = tokenSecurityResponse?.Data?.MintTx,
-                        IsMutable = tokenSecurityResponse?.Data?.MutableMetadata
                     });
                 }
                 else
@@ -242,22 +215,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     tokenSecurity = await _tokenSecurityRepository.AddAsync(new TokenSecurity
                     {
                         TokenId = token.ID,
-                        CreatorAddress = null,
                         CreationTime = null,
-                        Top10HolderBalance = null,
-                        Top10HolderPercent = null,
-                        Top10UserBalance = null,
-                        Top10UserPercent = null,
-                        IsTrueToken = null,
-                        LockInfo = null,
-                        Freezeable = null,
                         FreezeAuthority = null,
-                        TransferFeeEnable = null,
-                        TransferFeeData = null,
-                        IsToken2022 = null,
-                        NonTransferable = null,
                         MintAuthority = null,
-                        IsMutable = null
                     });
                 }
             }

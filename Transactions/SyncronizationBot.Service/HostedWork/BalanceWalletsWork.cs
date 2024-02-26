@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Info.Command;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Price.Command;
+using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.TokenFull.Command;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.SolnetRpc.Balance.Command;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
@@ -9,6 +10,7 @@ using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.Token;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TokenInfoQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
 using SyncronizationBot.Domain.Service.RecoveryService.Wallet;
 using SyncronizationBot.Service.HostedWork.Base;
@@ -23,6 +25,7 @@ namespace SyncronizationBot.Service.HostedWork
         private readonly ITokenService _tokenService;
         private readonly IWalletBalanceService _walletBalanceService;
         private readonly IWalletBalanceHistoryService _walletBalanceHistoryService;
+        private readonly IPublishTokenInfoService _publishTokenInfoService;
         public IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
         public ETypeService? TypeService => ETypeService.Balance;
         
@@ -31,20 +34,19 @@ namespace SyncronizationBot.Service.HostedWork
                                   ITokenService tokenService,
                                   IWalletBalanceService walletBalanceService,
                                   IWalletBalanceHistoryService walletBalanceHistoryService,
-                                  IPublishUpdateService publishUpdateService) : base(publishUpdateService) 
+                                  IPublishUpdateService publishUpdateService,
+                                  IPublishTokenInfoService publishTokenInfoService) : base(publishUpdateService) 
         {
             this._mediator = mediator;
             this._walletService = walletService;
             this._tokenService = tokenService;
             this._walletBalanceService = walletBalanceService;
             this._walletBalanceHistoryService = walletBalanceHistoryService;
+            this._publishTokenInfoService = publishTokenInfoService;
         }
 
         public async Task DoExecute(CancellationToken cancellationToken)
         {
-            var tokenInfo = await this._mediator.Send(new ReadTokenInfoCommand { TokenHash = "T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv" });
-            var tokenPrice = await this._mediator.Send(new ReadTokenPriceCommand { TokenHash = "T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv" });
-            tokenPrice = await this._mediator.Send(new ReadTokenPriceCommand { TokenHash = "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm" });
             var wallets = await this._walletService.GetAsync(x => x.IsActive == true && x.IsLoadBalance == false);
             if (wallets?.Count() > 0)
             {

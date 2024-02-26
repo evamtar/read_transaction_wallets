@@ -6,11 +6,12 @@ using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
 using SyncronizationBot.Domain.Repository.UnitOfWork;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TokenInfoQueue;
 using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
-using SyncronizationBots.RabbitMQ.Connection.Interface;
 using SyncronizationBots.RabbitMQ.Exceptions;
+
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
 {
@@ -19,14 +20,14 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         private IUnitOfWorkSqlServer UnitOfWorkSqlServer { get; set; } 
 
         public UpdateQueueConsumerService(IServiceProvider serviceProvider, 
-                                          IRabbitMQConnection rabbitMQConnection,
-                                          IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, rabbitMQConnection, configuration.Value)
+                                          IOptions<UpdateQueueConfiguration> configuration) : base(serviceProvider, configuration.Value)
         {
             this.UnitOfWorkSqlServer = null!;
         }
 
         public override async Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken)
         {
+            this.InitServices(_scope);
             var eventEventName = JsonConvert.DeserializeObject<MessageEvent<Entity>>(message ?? string.Empty)?.EventName;
             var data = eventEventName?.Split("_");
 
@@ -48,6 +49,11 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             }
         }
 
+        private void InitServices(IServiceScope scope)
+        {
+            this.UnitOfWorkSqlServer = scope.ServiceProvider.GetRequiredService<IUnitOfWorkSqlServer>();
+        }
+
         private void DoProcessUpdate(IServiceScope scope, string? message, string? classType)
         {
             this.UnitOfWorkSqlServer = UnitOfWorkSqlServer ?? scope.ServiceProvider.GetRequiredService<IUnitOfWorkSqlServer>();
@@ -55,6 +61,12 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             {
                 case Constants.RUN_TIME_CONTROLLER_INSTRUCTION:
                     this.DoUpdate(message, this.UnitOfWorkSqlServer.RunTimeControllerRepository);
+                    break;
+                case Constants.TOKEN_INSTRUCTION:
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.TokenRepository);
+                    break;
+                case Constants.WALLET_BALANCE_INSTRUCTION:
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
                     break;
                 case Constants.WALLET_INSTRUCTION:
                     this.DoUpdate(message, this.UnitOfWorkSqlServer.WalletRepository);
@@ -70,16 +82,24 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             {
                 switch (classType?.ToUpper())
                 {
-                    case Constants.WALLET_BALANCE_INSTRUCTION:
-                        
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
-                        break;
                     case Constants.TOKEN_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenRepository);
+                        var tokenInserted = await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenRepository);
+                        if (tokenInserted.IsLazyLoad ?? false)
+                            await base.TransferQueue(tokenInserted, string.Empty, scope.ServiceProvider.GetRequiredService<IPublishTokenInfoService>());
+                        break;
+                    case Constants.TOKEN_PRICE_HISTORY_INSTRUCTION:
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenPriceHistoryRepository);
+                        break;
+                    case Constants.TOKEN_SECURITY_INSTRUCTION:
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenSecurityRepository);
+                        break;
+                    case Constants.WALLET_BALANCE_INSTRUCTION:
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
                         break;
                     case Constants.WALLET_BALANCE_HISTORY_INSTRUCTION:
                         await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceHistoryRepository);
                         break;
+
                     default:
                         throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
                 }
@@ -91,18 +111,32 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             }
         }
 
-        private async Task DoInsert<T>(string? message, IRepository<T> repository) where T : Entity
+        private async Task<T> DoInsert<T>(string? message, IRepository<T> repository) where T : Entity
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            await repository!.AddAsync(messageEvent!.Entity!);
+            var entity = await repository!.AddAsync(messageEvent!.Entity!);
             await UnitOfWorkSqlServer.SaveChangesAsync();
+            return entity;
         }
 
-        private void DoUpdate<T>(string? message, IRepository<T> repository) where T : Entity
+        private T DoUpdate<T>(string? message, IRepository<T> repository) where T : Entity
         {
             var messageEvent = message?.ToMessageEvent<T>();
-            repository.Update(messageEvent!.Entity!);
-            UnitOfWorkSqlServer.SaveChanges();
+            var entity = repository.Update(messageEvent!.Entity!);
+            this.UnitOfWorkSqlServer.SaveChanges();
+            return entity;
+        }
+
+        public override void Dispose()
+        {
+            try
+            {
+                this.UnitOfWorkSqlServer.Dispose();
+            }
+            finally 
+            {
+                base.Dispose();
+            }
         }
     }
 }
