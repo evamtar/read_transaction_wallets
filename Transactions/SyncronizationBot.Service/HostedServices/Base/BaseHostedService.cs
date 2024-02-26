@@ -9,6 +9,7 @@ using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.RabbitMQ;
+using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Domain.Service.InternalService.RunTime;
@@ -168,6 +169,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
         {
             RunTimeController!.IsRunning = isRunning;
             this.RunTimeControllerService.Update(RunTimeController!);
+            this.RunTimeControllerService.SaveChanges();
             await this.PublishUpdateService.Publish(new MessageEvent<RunTimeController>
             {
                 CreateDate = DateTime.Now,
@@ -291,6 +293,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 default:
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
             Console.WriteLine(message);

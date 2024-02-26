@@ -3,7 +3,6 @@ using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.M
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Price.Response;
 using SyncronizationBot.Domain.Extensions;
 using SyncronizationBot.Domain.Model.CrossCutting.Birdeye.TokenOverview.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token.Response;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Coingecko;
@@ -12,6 +11,7 @@ using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using DexScreener = SyncronizationBot.Domain.Model.CrossCutting.Dexscreener.Token;
 using Jupiter = SyncronizationBot.Domain.Model.CrossCutting.Jupiter.Prices;
 using CoinGecko = SyncronizationBot.Domain.Model.CrossCutting.Coingecko;
+using SyncronizationBot.Utils;
 
 namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Price.Handler
 {
@@ -52,9 +52,14 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
             if (response?.Data != null) 
             {
                 if (response.Data.ContainsKey(request.TokenHash))
-                    new ReadTokenPriceCommandResponse { IsSuccess = true, FontPrice = EFontType.JUPITER };
+                    return new ReadTokenPriceCommandResponse 
+                    { 
+                        IsSuccess = true, 
+                        PriceUsd = response.Data[request.TokenHash].Price,
+                        Symbol = response.Data[request.TokenHash].MintSymbol,
+                        FontPrice = EFontType.JUPITER 
+                    };
             }
-            
             return new ReadTokenPriceCommandResponse { IsSuccess = false };
         }
 
@@ -62,8 +67,18 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
         {
             var response = await this._coingeckoTokenService.ExecuteRecoveryTokenAsync(new CoinGecko.Request.TokenRequest { TokenHash = request.TokenHash });
             if (response != null) 
-            { 
-
+            {
+                return new ReadTokenPriceCommandResponse
+                {
+                    Name = response.Name,
+                    Symbol = response.Symbol,
+                    NumberOfMarkets = response.Tickers?.Count,
+                    PriceUsd = response?.MarketData?.CurrentPrice?.Usd,
+                    PriceChange24 = response?.MarketData?.PriceChangePercentage24h,
+                    Marketcap = response?.MarketData?.MarketCap?.Usd ?? response?.MarketData?.TotalSupply * response?.MarketData?.CurrentPrice?.Usd,
+                    IsSuccess = true,
+                    FontPrice = EFontType.COIN_GECKO
+                };
             }
             return new ReadTokenPriceCommandResponse { IsSuccess = false };
         }
@@ -76,6 +91,9 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                 
                 return new ReadTokenPriceCommandResponse
                 {
+                    Name = response.Data.Name,
+                    Symbol = response.Data.Symbol,
+                    NumberOfMarkets = response.Data.NumberMarkets,
                     PriceUsd = response.Data.Price,
                     PriceChange30m = response.Data.PriceChange30MPercent,
                     PriceChange4h = response.Data.PriceChange4HPercent,
@@ -86,10 +104,8 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                     UniqueWallet24H = response.Data.UniqueWallet24H,
                     UniqueWalletHistory24H = response.Data.UniqueWalletHistory24H,
                     IsSuccess = true,
-                    FontPrice = EFontType.DEXSCREENER
+                    FontPrice = EFontType.BIRDEYE
                 };
-                
-                
             }
             return new ReadTokenPriceCommandResponse { IsSuccess = false };
         }
@@ -111,13 +127,17 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                     {
                         return new ReadTokenPriceCommandResponse
                         {
-                            PriceUsd = pair.PriceUsd?.ToDecimal(),
-                            PriceChange5m = pair.PriceChange?.M5.ToDecimal(),
-                            PriceChange1h = pair.PriceChange?.H1.ToDecimal(),
-                            PriceChange6h = pair.PriceChange?.H6.ToDecimal(),
-                            PriceChange24 = pair.PriceChange?.H24.ToDecimal(),
-                            Liquidity = pair.Liquidity?.Usd.ToDecimal(),
-                            Marketcap = pair.Fdv?.ToDecimal(),
+                            Name = pair?.BaseToken?.Name,
+                            Symbol = pair?.BaseToken?.Symbol,
+                            NumberOfMarkets = numberOfMarkets,
+                            PriceUsd = pair?.PriceUsd?.ToDecimal(),
+                            PriceChange5m = pair?.PriceChange?.M5.ToDecimal(),
+                            PriceChange1h = pair?.PriceChange?.H1.ToDecimal(),
+                            PriceChange6h = pair?.PriceChange?.H6.ToDecimal(),
+                            PriceChange24 = pair?.PriceChange?.H24.ToDecimal(),
+                            Liquidity = pair?.Liquidity?.Usd.ToDecimal(),
+                            CreateDate = GetCreateDate(response),
+                            Marketcap = pair?.Fdv?.ToDecimal(),
                             IsSuccess = true,
                             FontPrice = EFontType.DEXSCREENER
                         };
@@ -145,6 +165,18 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
             pair = pairs.Find(x => x.DexId == "meteora");
             if (pair != null) return pair;
             return pairs?.FirstOrDefault();
+        }
+
+        private DateTime GetCreateDate(DexScreener.Response.TokenResponse? response) 
+        {
+            var pair = this.GetPairsFromAddress(response, "So11111111111111111111111111111111111111112");
+            if(pair?.PairCreatedAt != null) 
+            {
+                string pairCreateAt = pair!.PairCreatedAt!.ToString().Substring(0, 10);
+                long.TryParse(pairCreateAt, out var longParsed);
+                return DateTimeTicks.Instance.ConvertTicksToDateTime(longParsed);
+            }
+            return DateTime.MinValue;
         }
 
         #endregion

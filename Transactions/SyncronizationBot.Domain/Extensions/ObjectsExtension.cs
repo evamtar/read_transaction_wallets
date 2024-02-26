@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
+using System;
+using System.Globalization;
 
 namespace SyncronizationBot.Domain.Extensions
 {
@@ -15,8 +17,14 @@ namespace SyncronizationBot.Domain.Extensions
 
         public static decimal? ToDecimal(this string value) 
         { 
-            decimal.TryParse(value, out var decimalValue);
+            decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue);
             return decimalValue;
+        }
+
+        public static decimal? ToDecimal(this string value, int? decimals)
+        {
+            decimal.TryParse(value, CultureInfo.InvariantCulture, out var decimalValue);
+            return decimalValue / GetDivisor(decimals);
         }
 
         #endregion
@@ -38,5 +46,14 @@ namespace SyncronizationBot.Domain.Extensions
         }
 
         #endregion
+
+        private static long? GetDivisor(int? decimals)
+        {
+            if (decimals == null) return null!;
+            string number = "1";
+            for (int i = 0; i < decimals; i++)
+                number += "0";
+            return long.Parse(number);
+        }
     }
 }

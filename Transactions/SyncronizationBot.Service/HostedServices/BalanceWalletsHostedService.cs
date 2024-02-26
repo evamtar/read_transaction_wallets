@@ -1,5 +1,4 @@
-﻿using MediatR;
-using SyncronizationBot.Domain.Service.HostedWork;
+﻿using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Service.HostedServices.Base;
 
 

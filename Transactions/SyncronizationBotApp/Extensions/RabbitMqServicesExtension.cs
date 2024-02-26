@@ -18,6 +18,9 @@ using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TokenAlhaQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TransactionsQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TrasanctionQueue;
 using SyncronizationBot.Domain.Service.RabbitMQ.Queue.UpdateQueue;
+using SyncronizationBot.Service.RabbitMQ.Queue.TokenInfoQueue.Configs;
+using SyncronizationBot.Domain.Service.RabbitMQ.Queue.TokenInfoQueue;
+using SyncronizationBot.Service.RabbitMQ.Queue.TokenInfoQueue;
 
 namespace SyncronizationBotApp.Extensions
 {
@@ -27,6 +30,7 @@ namespace SyncronizationBotApp.Extensions
         {
             services.Configure<AlertPriceQueueConfiguration>(configuration.GetSection("AlertPriceQueue"));
             services.Configure<LogMessageQueueConfig>(configuration.GetSection("LogMessageQueue"));
+            services.Configure<TokenInfoQueueConfiguration>(configuration.GetSection("TokenInfoQueue"));
             services.Configure<TokenAlhaQueueConfig>(configuration.GetSection("TokenAlhaQueue"));
             services.Configure<TransactionsQueueConfig>(configuration.GetSection("TransactionsQueue"));
             services.Configure<TrasanctionQueueConfig>(configuration.GetSection("TrasanctionQueue"));
@@ -35,6 +39,7 @@ namespace SyncronizationBotApp.Extensions
             services.AddScoped<IPublishAlertPriceService, PublishAlertPriceService>();
             services.AddScoped<IPublishLogService, PublishLogService>();
             services.AddScoped<IPublishTokenAlphaService, PublishTokenAlphaService>();
+            services.AddScoped<IPublishTokenInfoService, PublishTokenInfoService>();
             services.AddScoped<IPublishTransactionsService, PublishTransactionsService>();
             services.AddScoped<IPublishTransactionService, PublishTransactionService>();
             services.AddScoped<IPublishUpdateService, PublishUpdateService>();

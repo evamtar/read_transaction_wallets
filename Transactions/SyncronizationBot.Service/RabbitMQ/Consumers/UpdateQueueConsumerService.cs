@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Extensions;
-using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;

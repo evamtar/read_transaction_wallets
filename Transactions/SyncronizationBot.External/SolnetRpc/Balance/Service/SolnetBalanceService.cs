@@ -15,10 +15,13 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
 
         private readonly IRpcClient _client;
         private readonly ITokenMintResolver _tokens;
+        private readonly RetryPolicy _retryPolicy;
+
         public SolnetBalanceService()
         {
             this._client = ClientFactory.GetClient(Cluster.MainNet);
             this._tokens = TokenMintResolver.Load();
+            this._retryPolicy = RetryPolicy.Handle<TokenWalletException>().Or<Exception>().WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) => { });
         }
 
         public SolnetBalanceResponse ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
@@ -30,12 +33,8 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
         private List<BalanceResponse> GetBalanceResult(SolnetBalanceRequest request)
         {
             var listBalances = new List<BalanceResponse>();
-            var policy = RetryPolicy.Handle<TokenWalletException>()
-                    .Or<Exception>()
-                    .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) => { }
-                );
             TokenWallet tokenWallet = null!;
-            policy.Execute(() =>
+            this._retryPolicy.Execute(() =>
             {
                 tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
                 this.ExecuteDateTime = DateTime.Now;

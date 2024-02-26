@@ -19,6 +19,8 @@ namespace SyncronizationBot.Infra.CrossCutting.Coingecko.Token.Service
             _httpClient = httpClient;
             _config = config;
             _httpClient.BaseAddress = new Uri(_config.Value.BaseUrl ?? string.Empty);
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            //_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<TokenResponse> ExecuteRecoveryTokenAsync(TokenRequest request)

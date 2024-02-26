@@ -52,6 +52,8 @@ using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Infra.Data.UnitOfWork;
 using SyncronizationBot.Infra.Data.SQLServer.Context;
 using SyncronizationBot.Infra.Data.MongoDB.Context;
+using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Token;
+using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Token.Service;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -100,7 +102,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
 
     #region Hosted Service
     services.AddHostedService<BalanceWalletsHostedService>();
-    services.AddHostedService<UpdateQueueConsumerService>();
+    //services.AddHostedService<UpdateQueueConsumerService>();
     //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<AlertPriceService>();
     //services.AddHostedService<DeleteOldsMessagesLogService>();
@@ -303,6 +305,7 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     #region Solnet
 
     services.AddTransient<ISolnetBalanceService, SolnetBalanceService>();
+    services.AddTransient<ISolnetTokenService, SolnetTokenService>();
     services.AddTransient<ISolnetTransactionService, SolnetTransactionService>();
 
     #endregion

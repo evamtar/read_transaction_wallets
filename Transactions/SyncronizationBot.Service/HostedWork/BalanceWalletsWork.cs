@@ -1,13 +1,11 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
+using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Info.Command;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Price.Command;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.SolnetRpc.Balance.Command;
-using SyncronizationBot.Application.InsertCommand.WalletBalanceHistory.Command;
-using SyncronizationBot.Application.UpdateCommand.Wallet.Command;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
-using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.Token;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
@@ -44,7 +42,9 @@ namespace SyncronizationBot.Service.HostedWork
 
         public async Task DoExecute(CancellationToken cancellationToken)
         {
-            var response = await this._mediator.Send(new ReadTokenPriceCommand { TokenHash = "T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv" });
+            var tokenInfo = await this._mediator.Send(new ReadTokenInfoCommand { TokenHash = "T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv" });
+            var tokenPrice = await this._mediator.Send(new ReadTokenPriceCommand { TokenHash = "T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv" });
+            tokenPrice = await this._mediator.Send(new ReadTokenPriceCommand { TokenHash = "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm" });
             var wallets = await this._walletService.GetAsync(x => x.IsActive == true && x.IsLoadBalance == false);
             if (wallets?.Count() > 0)
             {
