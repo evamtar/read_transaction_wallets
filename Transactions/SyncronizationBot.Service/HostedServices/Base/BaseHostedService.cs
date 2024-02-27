@@ -2,14 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Domain.Model.Alerts;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.Enum;
 using SyncronizationBot.Domain.Model.RabbitMQ;
-using SyncronizationBot.Domain.Repository.UnitOfWork;
 using SyncronizationBot.Domain.Service.HostedWork.Base;
 using SyncronizationBot.Domain.Service.InternalService.Domains;
 using SyncronizationBot.Domain.Service.InternalService.RunTime;
@@ -309,6 +307,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
             {
                 TryStop();
                 Timer?.Dispose();
+                Work?.Dispose();
             }
             finally
             {

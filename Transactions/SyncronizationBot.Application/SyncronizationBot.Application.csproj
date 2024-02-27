@@ -16,8 +16,4 @@
     <ProjectReference Include="..\SyncronizationBot.Domain\SyncronizationBot.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ExternalServiceCommand\ExternalServiceExecute\" />
-  </ItemGroup>
-
 </Project>

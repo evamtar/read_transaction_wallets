@@ -4,7 +4,7 @@ using SyncronizationBot.Domain.Model.Enum;
 
 namespace SyncronizationBot.Domain.Service.HostedWork.Base
 {
-    public interface IHostWorkService
+    public interface IHostWorkService : IDisposable
     {
         IOptions<SyncronizationBotConfig>? Options { get; }
 

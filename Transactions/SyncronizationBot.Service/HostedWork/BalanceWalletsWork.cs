@@ -1,8 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Info.Command;
-using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.Price.Command;
-using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.MultExternal.TokenFull.Command;
 using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.SolnetRpc.Balance.Command;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
@@ -25,7 +22,6 @@ namespace SyncronizationBot.Service.HostedWork
         private readonly ITokenService _tokenService;
         private readonly IWalletBalanceService _walletBalanceService;
         private readonly IWalletBalanceHistoryService _walletBalanceHistoryService;
-        private readonly IPublishTokenInfoService _publishTokenInfoService;
         public IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
         public ETypeService? TypeService => ETypeService.Balance;
         
@@ -34,15 +30,13 @@ namespace SyncronizationBot.Service.HostedWork
                                   ITokenService tokenService,
                                   IWalletBalanceService walletBalanceService,
                                   IWalletBalanceHistoryService walletBalanceHistoryService,
-                                  IPublishUpdateService publishUpdateService,
-                                  IPublishTokenInfoService publishTokenInfoService) : base(publishUpdateService) 
+                                  IPublishUpdateService publishUpdateService) : base(publishUpdateService) 
         {
             this._mediator = mediator;
             this._walletService = walletService;
             this._tokenService = tokenService;
             this._walletBalanceService = walletBalanceService;
             this._walletBalanceHistoryService = walletBalanceHistoryService;
-            this._publishTokenInfoService = publishTokenInfoService;
         }
 
         public async Task DoExecute(CancellationToken cancellationToken)
@@ -116,6 +110,21 @@ namespace SyncronizationBot.Service.HostedWork
                         await base.PublishMessage(wallet, Constants.INSTRUCTION_UPDATE);
                     }
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                this._walletService.Dispose();
+                this._tokenService.Dispose();
+                this._walletBalanceService.Dispose();
+                this._walletBalanceHistoryService.Dispose();
+            }
+            finally 
+            { 
+                GC.SuppressFinalize(this);
             }
         }
     }

@@ -101,15 +101,23 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     #endregion
 
     #region Hosted Service
-    //services.AddHostedService<BalanceWalletsHostedService>();
-    services.AddHostedService<UpdateQueueConsumerService>();
-    services.AddHostedService<TokenInfoQueueConsumerService>();
+
+    //Services
+    services.AddHostedService<BalanceWalletsHostedService>();
+
+    services.AddHostedService<PriceAlertHostedService>();
     //services.AddHostedService<ReadTransactionWalletsService>();
-    //services.AddHostedService<AlertPriceService>();
     //services.AddHostedService<DeleteOldsMessagesLogService>();
-    //services.AddHostedService<AlertTokenAlphaService>();
     //services.AddHostedService<ReadTransactionsOldForMapping>();
-    //services.AddHostedService<LoadNewTokensForBetAwardsService>();
+
+    //Queue's
+    services.AddHostedService<AlertPriceMessageQueueConsumerService>();
+    services.AddHostedService<LogMessageQueueConsumerService>();
+    services.AddHostedService<TokenAlphaMessageQueeConsumerService>();
+    services.AddHostedService<TokenInfoQueueConsumerService>();
+    services.AddHostedService<TransactionMessageQueueConsumerService>();
+    services.AddHostedService<UpdateQueueConsumerService>();
+
     #region Only For Test
 
     //services.AddHostedService<TestService>();

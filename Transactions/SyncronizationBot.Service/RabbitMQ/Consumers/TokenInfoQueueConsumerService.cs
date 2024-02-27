@@ -22,9 +22,9 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             this.Mediator = null!;
             this.PublishUpdateService = null!;
         }
-        public override async Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken) 
+        public override async Task HandlerAsync(IServiceScope scope, string? message, CancellationToken stoppingToken) 
         {
-            this.InitServices(_scope);
+            this.InitServices(scope);
             var @event = JsonConvert.DeserializeObject<MessageEvent<Token>>(message ?? string.Empty);
             if (@event?.Entity?.IsLazyLoad ?? false) 
             {

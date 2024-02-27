@@ -59,8 +59,14 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             this.UnitOfWorkSqlServer = UnitOfWorkSqlServer ?? scope.ServiceProvider.GetRequiredService<IUnitOfWorkSqlServer>();
             switch (classType?.ToUpper())
             {
+                case Constants.ALERT_PRICE_INSTRUCTION:
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.AlertPriceRepository);
+                    break;
                 case Constants.RUN_TIME_CONTROLLER_INSTRUCTION:
                     this.DoUpdate(message, this.UnitOfWorkSqlServer.RunTimeControllerRepository);
+                    break;
+                case Constants.TELEGRAM_MESSAGE_INSTRUCTION:
+                    this.DoUpdate(message, this.UnitOfWorkSqlServer.TelegramMessageRepository);
                     break;
                 case Constants.TOKEN_INSTRUCTION:
                     this.DoUpdate(message, this.UnitOfWorkSqlServer.TokenRepository);
@@ -82,6 +88,9 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             {
                 switch (classType?.ToUpper())
                 {
+                    case Constants.TELEGRAM_MESSAGE_INSTRUCTION:
+                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TelegramMessageRepository);
+                        break;
                     case Constants.TOKEN_INSTRUCTION:
                         var tokenInserted = await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenRepository);
                         if (tokenInserted.IsLazyLoad ?? false)
