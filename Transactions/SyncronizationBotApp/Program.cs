@@ -100,12 +100,9 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region Context
-    #if DEBUG
-        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("MonitoringDev")), ServiceLifetime.Transient);
-    #else
-        services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring")), ServiceLifetime.Transient);
-    #endif
-
+    
+    services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null)), ServiceLifetime.Transient);
+    
     #endregion
 
     #region Hosted Service
@@ -266,30 +263,35 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHttpClient<ITransactionsService, TransactionsService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TransfersConfig>(configuration.GetSection("Transfers"));
     services.AddHttpClient<ITransfersService, TransfersService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<TokensConfig>(configuration.GetSection("Tokens"));
     services.AddHttpClient<ITokensService, TokensService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     
     services.Configure<TokensAccountsByOwnerConfig>(configuration.GetSection("TokensAccountByOwner"));
     services.AddHttpClient<ITokensAccountsByOwnerService, TokensAccountsByOwnerService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
     services.Configure<AccountInfoConfig>(configuration.GetSection("AccountInfo"));
     services.AddHttpClient<IAccountInfoService, AccountInfoService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.Content.ReadAsStringAsync().GetAwaiter().GetResult().Contains("rate limit"))
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     #endregion
 

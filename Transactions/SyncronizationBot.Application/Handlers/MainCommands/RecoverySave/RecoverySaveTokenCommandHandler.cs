@@ -304,11 +304,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
 
         private async Task<(Token Token, TokenSecurity? TokenSecurity)> UpdateTokenAsync(RecoverySaveTokenCommand request, Token token) 
         {
-            var tokenResponse = await _tokensOverviewService.ExecuteRecoveryTokenOverviewAsync(new TokenOverviewRequest { TokenHash = request.TokenHash });
-            if (tokenResponse != null)
-                return await UpdateTokenFromBirdeyeExternalFontASync(token!, tokenResponse);
-            else
-                return await UpdateTokenContingencyASync(request, token!);
+            return await UpdateTokenContingencyASync(request, token!);
         }
 
         private async Task<(Token Token, TokenSecurity? TokenSecurity)> UpdateTokenFromBirdeyeExternalFontASync(Token token, TokenOverviewResponse tokenResponse) 

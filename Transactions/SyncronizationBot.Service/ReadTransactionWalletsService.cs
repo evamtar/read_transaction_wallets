@@ -20,6 +20,7 @@ namespace SyncronizationBot.Service
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
         {
+            Console.Clear();
             base.LogMessage($"Init Read: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             if (base.RunTimeController != null && (!base.RunTimeController!.IsRunning ?? true))
             {
