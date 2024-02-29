@@ -105,17 +105,17 @@ static async Task ConfigureServices(IServiceCollection services, IConfiguration 
     //Services
     services.AddHostedService<BalanceWalletsHostedService>();
 
-    services.AddHostedService<PriceAlertHostedService>();
+    //services.AddHostedService<PriceAlertHostedService>();
     //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<DeleteOldsMessagesLogService>();
     //services.AddHostedService<ReadTransactionsOldForMapping>();
 
     //Queue's
-    services.AddHostedService<AlertPriceMessageQueueConsumerService>();
-    services.AddHostedService<LogMessageQueueConsumerService>();
-    services.AddHostedService<TokenAlphaMessageQueeConsumerService>();
+    //services.AddHostedService<AlertPriceMessageQueueConsumerService>();
+    //services.AddHostedService<LogMessageQueueConsumerService>();
+    //services.AddHostedService<TokenAlphaMessageQueeConsumerService>();
     services.AddHostedService<TokenInfoQueueConsumerService>();
-    services.AddHostedService<TransactionMessageQueueConsumerService>();
+    //services.AddHostedService<TransactionMessageQueueConsumerService>();
     services.AddHostedService<UpdateQueueConsumerService>();
 
     #region Only For Test

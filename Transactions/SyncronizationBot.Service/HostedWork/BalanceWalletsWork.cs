@@ -4,6 +4,7 @@ using SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRead.S
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Enum;
+using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Service.HostedWork;
 using SyncronizationBot.Domain.Service.InternalService.Token;
 using SyncronizationBot.Domain.Service.InternalService.Wallet;
@@ -22,25 +23,47 @@ namespace SyncronizationBot.Service.HostedWork
         private readonly ITokenService _tokenService;
         private readonly IWalletBalanceService _walletBalanceService;
         private readonly IWalletBalanceHistoryService _walletBalanceHistoryService;
+        private readonly IPublishTokenInfoService _publishTokenInfoService;
         public IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
-        public ETypeService? TypeService => ETypeService.Balance;
+        public ETypeService? TypeService => ETypeService.BalanceInsert;
         
         public BalanceWalletsWork(IMediator mediator,
                                   IWalletService walletService,
                                   ITokenService tokenService,
                                   IWalletBalanceService walletBalanceService,
                                   IWalletBalanceHistoryService walletBalanceHistoryService,
-                                  IPublishUpdateService publishUpdateService) : base(publishUpdateService) 
+                                  IPublishUpdateService publishUpdateService,
+                                  IPublishTokenInfoService publishTokenInfoService) : base(publishUpdateService) 
         {
             this._mediator = mediator;
             this._walletService = walletService;
             this._tokenService = tokenService;
             this._walletBalanceService = walletBalanceService;
             this._walletBalanceHistoryService = walletBalanceHistoryService;
+            this._publishTokenInfoService = publishTokenInfoService;
         }
 
         public async Task DoExecute(CancellationToken cancellationToken)
         {
+            var tokens = await this._tokenService.GetAsync(x => x.IsLazyLoad == true);
+            var maxCount = 5;
+            var count = 0;
+            foreach (var token in tokens)
+            {
+                if (count == maxCount) 
+                { 
+                    count = 0;
+                    await Task.Delay(40000);
+                }
+                var @event = new MessageEvent<Token> 
+                { 
+                    EventName = string.Empty,
+                    Entity = token,
+                    CreateDate = DateTime.UtcNow,
+                };
+                await this._publishTokenInfoService.Publish(@event);
+                count++;
+            }
             var wallets = await this._walletService.GetAsync(x => x.IsActive == true && x.IsLoadBalance == false);
             if (wallets?.Count() > 0)
             {

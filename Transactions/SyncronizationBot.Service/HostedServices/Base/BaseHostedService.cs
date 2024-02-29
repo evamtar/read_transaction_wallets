@@ -98,8 +98,8 @@ namespace SyncronizationBot.Service.HostedServices.Base
                             await SendAlertExecute();
                             LogMessage($"Waiting for service {this.RunTimeController?.JobName} next tick in {Interval}");
                             this.RunTimeControllerService.SaveChanges();
-                            this.RunTimeController = null;
                             TryStart();
+                            DisposeServices();
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
                         catch (Exception ex)
@@ -114,7 +114,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                             LogMessage($"InnerException--> StackTrace: {ex.InnerException?.StackTrace}");
                             LogMessage($"Waiting for service {this.RunTimeController?.JobName} tick in {Interval}");
                             TryStart();
-                            this.RunTimeController = null;
+                            DisposeServices();
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
                     }
@@ -127,7 +127,7 @@ namespace SyncronizationBot.Service.HostedServices.Base
                             await SetRuntimeControllerAsync(false);
                             LogMessage($"Recovery Service {this.RunTimeController?.JobName} ---> Waiting for next execute {Interval}");
                             TryStart();
-                            this.RunTimeController = null;
+                            DisposeServices();
                             if (!CancellationToken.IsCancellationRequested) return;
                         }
                         else
@@ -156,6 +156,18 @@ namespace SyncronizationBot.Service.HostedServices.Base
             this.Work = scope.ServiceProvider.GetRequiredService<T>();
             this.PublishLogService = scope.ServiceProvider.GetRequiredService<IPublishLogService>();
             this.PublishUpdateService = scope.ServiceProvider.GetRequiredService<IPublishUpdateService>();
+        }
+
+        private void DisposeServices()
+        {
+            try
+            {
+                this.TypeOperationService.Dispose();
+                this.RunTimeControllerService.Dispose();
+                this.Work!.Dispose();
+                this.RunTimeController = null;
+            }
+            finally { }
         }
 
         private async Task<RunTimeController?> GetRunTimeControllerAsync()
@@ -269,25 +281,25 @@ namespace SyncronizationBot.Service.HostedServices.Base
         {
             switch (RunTimeController?.TypeService)
             {
-                case ETypeService.Transaction:
+                case ETypeService.TransactionService:
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
-                case ETypeService.Balance:
+                case ETypeService.BalanceInsert:
                     Console.ForegroundColor = ConsoleColor.Blue;
                     break;
-                case ETypeService.Price:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case ETypeService.DeleteOldMessages:
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    break;
-                case ETypeService.AlertTokenAlpha:
+                case ETypeService.BalanceUpdate:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
-                case ETypeService.TransactionOldForMapping:
+                case ETypeService.PriceAlert:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case ETypeService.DeleteFromChannels:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case ETypeService.TransactionForHistory:
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     break;
-                case ETypeService.NewTokensBetAwards:
+                case ETypeService.NewTokensFromRaydium:
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 default:

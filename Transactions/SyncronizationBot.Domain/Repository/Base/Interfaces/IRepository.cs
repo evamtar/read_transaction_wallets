@@ -38,7 +38,7 @@ namespace SyncronizationBot.Domain.Repository.Base.Interfaces
         Task<List<T>> AddRangeAsync(List<T> items);
         Task<T> AddAsync(T item);
         Task DeleteByIdAsync(Guid id);
-
+        
         #endregion
     }
 }

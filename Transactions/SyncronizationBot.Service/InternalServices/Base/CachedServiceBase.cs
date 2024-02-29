@@ -11,7 +11,7 @@ namespace SyncronizationBot.Service.InternalServices.Base
     {
         private static ConcurrentDictionary<string, bool> Pairs = new ConcurrentDictionary<string, bool>();
         private readonly IRepository<T> _sqlServerRepository;
-        private readonly IRepository<T> _mongoRepository;
+        protected readonly IRepository<T> _mongoRepository;
         private readonly IUnitOfWorkSqlServerReadyOnly _unitOfWorkSqlServerReadyOnly;
         private readonly IUnitOfWorkMongo _unitOfWorkMongo;
         public CachedServiceBase(IUnitOfWorkSqlServerReadyOnly unitOfWorkSqlServerReadyOnly, IUnitOfWorkMongo unitOfWorkMongo)

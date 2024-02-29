@@ -81,7 +81,7 @@ namespace SyncronizationBotApp.Extensions
                 foreach (var workType in workersTypes)
                 {
                     var interfaces = workType.GetInterfaces()
-                        .Where(@interface => !@interface.IsGenericType && !@interface.Name.Contains("IHostWorkService"))
+                        .Where(@interface => !@interface.IsGenericType && !@interface.Name.Contains("IHostWorkService") && !@interface.Name.Contains("IDisposable"))
                         .ToList();
 
                     if (interfaces.Count != 1)

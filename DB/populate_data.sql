@@ -1,19 +1,16 @@
 ﻿--SELECT * FROM TypeOperation
---UPDATE RunTimeController SET IsRunning = 0
---SELECT * FROM RunTimeController WHERE TypeService = 2
+--UPDATE RunTimeController SET IsRunning = 0 WHERE TypeService = 4
+--SELECT * FROM RunTimeController WHERE TypeService = 4
+--DELETE FROM RunTimeController
 /*********** RUNTIME CONTROLLER ***********/ 
---INSERT INTO RunTimeController VALUES(1, '1', 'Main Job Controller', 'Serviço de controle de job''s', '', 1, 0, 0, 1, null);
---INSERT INTO RunTimeController VALUES(1, '1', 'Alerta de Transações', 'Serviço de alerta de transações', '', 2, 0, 0, 0, 1, null);
---INSERT INTO RunTimeController VALUES(1, '1', 'Carregar Tokens das Wallets e Atualizar saldo', 'Serviço de balanço e saldos', '', 2, 0, 0, 0, 1, null);
-INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço', 'Carregar Tokens das Wallets', 2, 0, 1);
-INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de balanço', 'Atualizar os saldos das Wallets', 3, 0, 1);
---INSERT INTO RunTimeController VALUES(3, '1', 3, 0, 0, null, 'Alerta de preços');
---INSERT INTO RunTimeController VALUES(4, '4', 4, 0, 0, null, 'Excluir mensagens de log antigas');
---INSERT INTO RunTimeController VALUES(5, '1', 5, 0, 0, null, 'Alerta de Token Alpha');
---INSERT INTO RunTimeController VALUES(6, '1', 6, 0, 0, null, 'Transacões Antigas para Mapear');
---INSERT INTO RunTimeController VALUES(7, '1', 6, 0, 0, null, 'Carregar Listagem de Novos Tokens');
-
+INSERT INTO RunTimeController VALUES(1, '1', 'Serviço de transações das carteiras mapeadas', 'Recuperar transações e colocar na fila de processamento', 1, 0, 1);
+INSERT INTO RunTimeController VALUES(2, '1', 'Serviço de balanço', 'Carregar Tokens das Wallets', 2, 0, 1);
+INSERT INTO RunTimeController VALUES(3, '60', 'Serviço de balanço', 'Atualizar os saldos das Wallets', 3, 0, 1);
+INSERT INTO RunTimeController VALUES(4, '1', 'Serviço de alerta de preços', 'Enviar alerta de preços para canal', 4, 0, 1);
+INSERT INTO RunTimeController VALUES(5, '1', 'Serviço de exclusão de mensagens', 'Exclusão de mensagens antigas dos canais', 5, 0, 1);
+INSERT INTO RunTimeController VALUES(6, '30', 'Serviço de transações antigas', 'Processamento de transações antigas apenas para histórico', 6, 0, 1);
 /*********** TYPE OPERATION ***********/ 
+
 /***** SPECIAL TYPE OPERATION *****/ 
 INSERT INTO TypeOperation VALUES(NEWID(), 'Log Execute', 0, 1);
 INSERT INTO TypeOperation VALUES(NEWID(), 'Log Error', 0, 2);

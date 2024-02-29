@@ -25,7 +25,7 @@ namespace SyncronizationBot.Service.HostedWork
         private readonly IPublishAlertPriceService _publishAlertPriceService;
         private readonly IPublishUpdateService _publishUpdateService;
         public IOptions<SyncronizationBotConfig>? Options => throw new NotImplementedException();
-        public ETypeService? TypeService => ETypeService.Price;
+        public ETypeService? TypeService => ETypeService.PriceAlert;
 
         public PriceAlertWork(IMediator mediator, 
                               IAlertPriceService alertPriceService,

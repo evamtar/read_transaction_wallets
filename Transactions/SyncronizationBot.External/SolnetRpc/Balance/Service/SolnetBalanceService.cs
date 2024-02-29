@@ -1,7 +1,7 @@
 ﻿using Polly;
 using Polly.Retry;
-using Solnet.Extensions;
-using Solnet.Rpc;
+using Solana.Unity.Extensions;
+using Solana.Unity.Rpc;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
@@ -24,19 +24,19 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
             this._retryPolicy = RetryPolicy.Handle<TokenWalletException>().Or<Exception>().WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) => { });
         }
 
-        public SolnetBalanceResponse ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
+        public async Task<SolnetBalanceResponse> ExecuteRecoveryWalletBalanceAsync(SolnetBalanceRequest request)
         {
-            var listBalances = this.GetBalanceResult(request);
+            var listBalances = await this.GetBalanceResult(request);
             return new SolnetBalanceResponse { IsSuccess = true, DateLoadBalance = this.ExecuteDateTime, Result = listBalances };
         }
 
-        private List<BalanceResponse> GetBalanceResult(SolnetBalanceRequest request)
+        private async Task<List<BalanceResponse>> GetBalanceResult(SolnetBalanceRequest request)
         {
             var listBalances = new List<BalanceResponse>();
             TokenWallet tokenWallet = null!;
-            this._retryPolicy.Execute(() =>
+            await this._retryPolicy.Execute(async () =>
             {
-                tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+                tokenWallet = await TokenWallet.LoadAsync(this._client, this._tokens, request?.WalletHash ?? string.Empty);
                 this.ExecuteDateTime = DateTime.Now;
             });
             listBalances.Add(new BalanceResponse

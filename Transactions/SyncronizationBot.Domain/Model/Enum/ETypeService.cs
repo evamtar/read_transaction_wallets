@@ -1,25 +1,15 @@
 ﻿
-
-using System.ComponentModel;
-
 namespace SyncronizationBot.Domain.Model.Enum
 {
     public enum ETypeService
     {
         NONE = 0,
-        [DescriptionAttribute("Alerta de Transações")]
-        Transaction = 1,
-        [DescriptionAttribute("Carregar balanços das wallets")]
-        Balance,
-        [DescriptionAttribute("Alerta de preços")]
-        Price,
-        [DescriptionAttribute("Excluir mensagens de log antigas")]
-        DeleteOldMessages,
-        [DescriptionAttribute("Alerta de Token Alpha")]
-        AlertTokenAlpha,
-        [DescriptionAttribute("Transacões Antigas para Mapear")]
-        TransactionOldForMapping,
-        [DescriptionAttribute("Carregar Listagem de Novos Tokens")]
-        NewTokensBetAwards
+        TransactionService = 1,
+        BalanceInsert = 2,
+        BalanceUpdate = 3,
+        PriceAlert = 4,
+        DeleteFromChannels = 5,
+        TransactionForHistory = 6,
+        NewTokensFromRaydium = 7 //Futuro com API da Raydium
     }
 }

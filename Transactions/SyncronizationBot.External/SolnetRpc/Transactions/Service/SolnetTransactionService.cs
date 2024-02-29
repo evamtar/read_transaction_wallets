@@ -1,7 +1,7 @@
 ﻿using Polly;
 using Polly.Retry;
-using Solnet.Extensions;
-using Solnet.Rpc;
+using Solana.Unity.Extensions;
+using Solana.Unity.Rpc;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Transactions;
 
 namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Service

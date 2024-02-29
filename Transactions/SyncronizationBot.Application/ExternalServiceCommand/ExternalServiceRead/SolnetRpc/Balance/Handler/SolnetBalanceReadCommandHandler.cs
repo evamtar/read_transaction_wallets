@@ -24,7 +24,7 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                 WalletHash = request.WalletHash,
                 IgnoreAmountValueZero = request.IgnoreAmountValueZero
             };
-            var serviceResponse = this._solnetBalanceService.ExecuteRecoveryWalletBalanceAsync(serviceRequest);
+            var serviceResponse = await this._solnetBalanceService.ExecuteRecoveryWalletBalanceAsync(serviceRequest);
             return this._mapper.Map<SolnetBalanceReadCommandResponse>(serviceResponse);
         }
     }

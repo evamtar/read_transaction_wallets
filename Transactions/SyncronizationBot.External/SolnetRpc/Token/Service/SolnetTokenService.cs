@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
-using Solnet.Rpc;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
+using Solana.Unity.Rpc;
+using Solana.Unity.Rpc.Core.Http;
+using Solana.Unity.Rpc.Messages;
+using Solana.Unity.Rpc.Models;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Token;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Token.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Token.Response;

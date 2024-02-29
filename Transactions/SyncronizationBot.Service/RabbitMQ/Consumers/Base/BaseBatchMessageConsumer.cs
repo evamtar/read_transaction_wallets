@@ -34,8 +34,7 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers.Base
 
         public override async Task HandlerAsync(string? message, CancellationToken stoppingToken)
         {
-            using (var scope = _serviceProvider.CreateScope()) 
-                await HandlerAsync(scope, message, stoppingToken);
+            await HandlerAsync(this.Scope, message, stoppingToken);
         }
 
         public override Task LogInfo(string? info)
