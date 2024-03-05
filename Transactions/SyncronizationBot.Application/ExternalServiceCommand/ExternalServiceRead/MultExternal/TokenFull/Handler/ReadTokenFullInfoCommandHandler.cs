@@ -55,7 +55,7 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
         private DateTime? GetDateTime(DateTime? dateTime) 
         {
             var returnValue = dateTime ?? DateTime.Now.AddHours(-5);
-            return returnValue <= new DateTime(1970, 1, 1) ? returnValue : DateTime.Now.AddHours(-5);
+            return returnValue > new DateTime(1970, 1, 1) ? returnValue : DateTime.Now.AddHours(-5);
         }
     }
 }
