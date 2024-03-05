@@ -48,8 +48,14 @@ namespace SyncronizationBot.Application.ExternalServiceCommand.ExternalServiceRe
                 FreezeAuthority = resultInfo.FreezeAuthority,
                 UniqueWallet24H = resultPrice.UniqueWallet24H,
                 UniqueWalletHistory24H = resultPrice.UniqueWalletHistory24H,
-                CreateDate = resultPrice.CreateDate ?? DateTime.Now.AddHours(-5)
+                CreateDate = GetDateTime(resultPrice.CreateDate)
             };
+        }
+
+        private DateTime? GetDateTime(DateTime? dateTime) 
+        {
+            var returnValue = dateTime ?? DateTime.Now.AddHours(-5);
+            return returnValue <= new DateTime(1970, 1, 1) ? returnValue : DateTime.Now.AddHours(-5);
         }
     }
 }
