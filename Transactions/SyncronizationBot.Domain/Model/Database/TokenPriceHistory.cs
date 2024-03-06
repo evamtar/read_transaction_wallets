@@ -17,6 +17,28 @@ namespace SyncronizationBot.Domain.Model.Database
         public int? UniqueWallet24h { get; set; }
         public int? UniqueWalletHistory24h { get; set; }
         public int? NumberMarkets { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceUsd { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent5m { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent30m { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent1h { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent4h { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent6h { get; set; }
+
+        [DbSqlServerMapper(SqlServerTarget.HasConvertion, typeof(string))]
+        public decimal? PriceChangePercent24h { get; set; }
+
         public EFontType FontPrice { get; set; }
         public DateTime? CreateDate { get; set; }
 

@@ -17,5 +17,10 @@ namespace SyncronizationBot.Service.InternalServices.Wallet
         {
             return await ((IWalletBalanceRepository)base._mongoRepository).GetAllTokensForUpdateAsync(expression);
         }
+
+        public void UpdateAllBalancesWithToken(Entity.TokenPriceHistory tokenPriceHistory)
+        {
+            ((IWalletBalanceRepository)base._mongoRepository).UpdateAllBalancesWithToken(tokenPriceHistory);
+        }
     }
 }

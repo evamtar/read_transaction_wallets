@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SyncronizationBot.Domain.Extensions;
+using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Model.Database.Base;
 using SyncronizationBot.Domain.Model.RabbitMQ;
 using SyncronizationBot.Domain.Repository.Base.Interfaces;
@@ -11,6 +12,7 @@ using SyncronizationBot.Service.RabbitMQ.Consumers.Base;
 using SyncronizationBot.Service.RabbitMQ.Queue.UpdateQueue.Configs;
 using SyncronizationBot.Utils;
 using SyncronizationBots.RabbitMQ.Exceptions;
+using System.Reflection;
 
 
 namespace SyncronizationBot.Service.RabbitMQ.Consumers
@@ -25,9 +27,9 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             this.UnitOfWorkSqlServer = null!;
         }
 
-        public override async Task HandlerAsync(IServiceScope _scope, string? message, CancellationToken stoppingToken)
+        public override async Task HandlerAsync(IServiceScope scope, string? message, CancellationToken stoppingToken)
         {
-            this.InitServices(_scope);
+            this.InitServices(scope);
             var eventEventName = JsonConvert.DeserializeObject<MessageEvent<Entity>>(message ?? string.Empty)?.EventName;
             var data = eventEventName?.Split("_");
 
@@ -38,10 +40,13 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             switch (instruction)
             {
                 case Constants.INSTRUCTION_INSERT:
-                    await this.DoProcessInsert(_scope, message, classType);
+                    await this.DoProcessInsertAsync(scope, message, classType);
                     break;
                 case Constants.INSTRUCTION_UPDATE:
-                    this.DoProcessUpdate(_scope, message, classType);
+                    this.DoProcessUpdate(scope, message, classType);
+                    break;
+                case Constants.INSTRUCTION_UPDATE_RANGE_WB:
+                    this.DoProcessUpdateSpecial(scope, message, classType);
                     break;
                 case Constants.INSTRUCTION_DELETE:
                 default:
@@ -52,6 +57,44 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
         private void InitServices(IServiceScope scope)
         {
             this.UnitOfWorkSqlServer = scope.ServiceProvider.GetRequiredService<IUnitOfWorkSqlServer>();
+        }
+
+        private async Task DoProcessInsertAsync(IServiceScope scope, string? message, string? classType)
+        {
+            try
+            {
+                switch (classType?.ToUpper())
+                {
+                    case Constants.TELEGRAM_MESSAGE_INSTRUCTION:
+                        await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.TelegramMessageRepository);
+                        break;
+                    case Constants.TOKEN_INSTRUCTION:
+                        var tokenInserted = await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.TokenRepository);
+                        if (tokenInserted.IsLazyLoad ?? false)
+                            await base.TransferQueue(tokenInserted, string.Empty, scope.ServiceProvider.GetRequiredService<IPublishTokenInfoService>());
+                        break;
+                    case Constants.TOKEN_PRICE_HISTORY_INSTRUCTION:
+                        await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.TokenPriceHistoryRepository);
+                        break;
+                    case Constants.TOKEN_SECURITY_INSTRUCTION:
+                        await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.TokenSecurityRepository);
+                        break;
+                    case Constants.WALLET_BALANCE_INSTRUCTION:
+                        await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
+                        break;
+                    case Constants.WALLET_BALANCE_HISTORY_INSTRUCTION:
+                        await this.DoInsertAsync(message, this.UnitOfWorkSqlServer.WalletBalanceHistoryRepository);
+                        break;
+
+                    default:
+                        throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Source == "Microsoft.EntityFrameworkCore.Relational")
+                    throw new RelationShipInsertException(ex.Source, ex);
+            }
         }
 
         private void DoProcessUpdate(IServiceScope scope, string? message, string? classType)
@@ -82,45 +125,27 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             }
         }
 
-        private async Task DoProcessInsert(IServiceScope scope, string? message, string? classType)
+        private void DoProcessUpdateSpecial(IServiceScope scope, string? message, string? classType)
         {
-            try 
+            try
             {
                 switch (classType?.ToUpper())
                 {
-                    case Constants.TELEGRAM_MESSAGE_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TelegramMessageRepository);
-                        break;
-                    case Constants.TOKEN_INSTRUCTION:
-                        var tokenInserted = await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenRepository);
-                        if (tokenInserted.IsLazyLoad ?? false)
-                            await base.TransferQueue(tokenInserted, string.Empty, scope.ServiceProvider.GetRequiredService<IPublishTokenInfoService>());
-                        break;
-                    case Constants.TOKEN_PRICE_HISTORY_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenPriceHistoryRepository);
-                        break;
-                    case Constants.TOKEN_SECURITY_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.TokenSecurityRepository);
-                        break;
                     case Constants.WALLET_BALANCE_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceRepository);
+                        this.DoInvokeMethod<TokenPriceHistory, WalletBalance>(message, this.UnitOfWorkSqlServer.WalletBalanceRepository, "UpdateAllBalancesWithToken");
                         break;
-                    case Constants.WALLET_BALANCE_HISTORY_INSTRUCTION:
-                        await this.DoInsert(message, this.UnitOfWorkSqlServer.WalletBalanceHistoryRepository);
-                        break;
-
                     default:
                         throw new ArgumentException($"Instruction INSERT is not valid for classType {classType}");
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 if (ex.Source == "Microsoft.EntityFrameworkCore.Relational")
                     throw new RelationShipInsertException(ex.Source, ex);
             }
         }
 
-        private async Task<T> DoInsert<T>(string? message, IRepository<T> repository) where T : Entity
+        private async Task<T> DoInsertAsync<T>(string? message, IRepository<T> repository) where T : Entity
         {
             var messageEvent = message?.ToMessageEvent<T>();
             var entity = await repository!.AddAsync(messageEvent!.Entity!);
@@ -134,6 +159,13 @@ namespace SyncronizationBot.Service.RabbitMQ.Consumers
             var entity = repository.Update(messageEvent!.Entity!);
             this.UnitOfWorkSqlServer.SaveChanges();
             return entity;
+        }
+        private void DoInvokeMethod<TParameter, WTarget>(string? message, IRepository<WTarget> repository, string method) where TParameter : Entity
+                                                                                                                          where WTarget: Entity
+        {
+            var messageEvent = message?.ToMessageEvent<TParameter>();
+            _ = repository.GetType().GetMethod(method)?.Invoke(repository, [messageEvent!.Entity!]);
+            this.UnitOfWorkSqlServer.SaveChanges();
         }
 
         public override void Dispose()

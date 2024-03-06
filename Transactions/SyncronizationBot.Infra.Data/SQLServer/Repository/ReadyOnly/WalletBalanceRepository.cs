@@ -13,7 +13,7 @@ namespace SyncronizationBot.Infra.Data.SQLServer.Repository.ReadyOnly
 
         public Task<List<Token>> GetAllTokensForUpdateAsync(Expression<Func<WalletBalance, bool>> expression) => throw new NotImplementedException();
 
-        public void UpdateAllBalancesWithToken(Token token) => throw new NotImplementedException();
+        public void UpdateAllBalancesWithToken(TokenPriceHistory tokenPriceHistory) => throw new NotImplementedException();
         
     }
 }

@@ -4,9 +4,13 @@ namespace SyncronizationBot.Utils
 {
     public static class Constants
     {
+        /* COMMOM INSTRUCTIONS */
         public const string INSTRUCTION_INSERT = "INSERT";
         public const string INSTRUCTION_UPDATE = "UPDATE";
         public const string INSTRUCTION_DELETE = "DELETE";
+        
+        /* SPECIAL INSTRUCTION */
+        public const string INSTRUCTION_UPDATE_RANGE_WB = "UPDATE_RANGE_WALLET_BALANCE";
 
         public const string ALERT_PRICE_INSTRUCTION = "ALERTPRICE";
         public const string RUN_TIME_CONTROLLER_INSTRUCTION = "RUNTIMECONTROLLER";

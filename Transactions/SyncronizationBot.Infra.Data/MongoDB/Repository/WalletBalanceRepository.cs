@@ -20,9 +20,10 @@ namespace SyncronizationBot.Infra.Data.MongoDB.Repository
             return await _dbContext.Tokens.Where(x => listTokensForUpdate.Contains(x.ID)).ToListAsync();
         }
 
-        public void UpdateAllBalancesWithToken(Token token) 
+        public void UpdateAllBalancesWithToken(TokenPriceHistory tokenPriceHistory) 
         {
-            throw new NotImplementedException();
+            _dbContext.WalletBalances.Where(x => x.TokenId == tokenPriceHistory.TokenId).ExecuteUpdate(wbl => wbl.SetProperty(w => w.TotalValueUSD, w => w.Quantity * tokenPriceHistory.PriceUsd));
         }
+        
     }
 }

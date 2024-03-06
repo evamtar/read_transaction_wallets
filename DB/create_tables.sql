@@ -235,6 +235,7 @@ CREATE TABLE TokenPriceHistory(
 	UniqueWallet24h        INT,
 	UniqueWalletHistory24h INT,
 	NumberMarkets          INT,
+	PriceUsd			   VARCHAR(100),
 	PriceChangePercent5m   VARCHAR(100),
 	PriceChangePercent30m  VARCHAR(100),
 	PriceChangePercent1h   VARCHAR(100),
