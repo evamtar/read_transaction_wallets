@@ -133,6 +133,8 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     ClassWallet = request?.ClassWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
+                                if (request?.ClassWallet?.IdClassification == 6 && (transactionDB?.PriceTokenSourceUSD * transactionDB?.AmountValueSource) < 500)
+                                    continue;
                                 await this._transactionsRepository.DetachedItem(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
                                 {
