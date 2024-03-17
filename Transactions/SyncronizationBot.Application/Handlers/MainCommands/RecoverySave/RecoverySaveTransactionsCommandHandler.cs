@@ -196,6 +196,29 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokensMapped = this._mappedTokensConfig.Value.Tokens
                                 });
+                                if (request?.ClassWallet?.IdClassification == 7 & this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation) > 9500)
+                                {
+                                    try
+                                    {
+                                        await this._mediator.Send(new SendAlertMessageCommand
+                                        {
+                                            EntityId = transactionDB?.ID,
+                                            Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
+                                                                                    {
+                                                                                        transactionDB!,
+                                                                                        transferInfo!,
+                                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
+                                                                                        balancePosition
+                                                                                    }),
+                                            TypeAlert = ETypeAlert.ALERT_WHALE_TRANSACTION
+
+                                        });
+                                    }
+                                    catch
+                                    {
+                                        throw new Exception("TRANSACAO WHALE PROBLEMA");
+                                    }
+                                }
                             }
                             else
                             {

@@ -16,6 +16,7 @@ namespace SyncronizationBot.Domain.Model.Enum
         POOL_CREATE = 5,
         POOL_FINISH = 6,
         ALERT_PRICE = 7,
-        ALERT_TOKEN_ALPHA = 8
+        ALERT_TOKEN_ALPHA = 8,
+        ALERT_WHALE_TRANSACTION = 9
     }
 }
