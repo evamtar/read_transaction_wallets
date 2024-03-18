@@ -2,6 +2,6 @@
 {
     public class RecoverySaveTransactionsCommandResponse
     {
-        public int? TotalValidTransactions { get; set; }
+        
     }
 }

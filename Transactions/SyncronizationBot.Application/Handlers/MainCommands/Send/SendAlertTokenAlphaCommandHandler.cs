@@ -51,9 +51,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                         TypeAlert = ETypeAlert.ALERT_TOKEN_ALPHA
                     });
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.Edit(publicMessage!);
+                    this._publishMessageRepository.Edit(publicMessage!);
                     await this._publishMessageRepository.DetachedItem(publicMessage!);
                 }
+                await this._publishMessageRepository.SaveChangesASync();
             }
             return new SendAlertTokenAlphaCommandResponse{ };
         }
@@ -68,7 +69,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                 {
                     listOfEntity.Add(JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty));
                     publicMessage!.ItWasPublished = true;
-                    await this._publishMessageRepository.Edit(publicMessage);
+                    this._publishMessageRepository.Edit(publicMessage);
                     await this._publishMessageRepository.DetachedItem(publicMessage);
                 }
             }
@@ -81,7 +82,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
             if (publicMessage != null) 
             {
                 publicMessage.ItWasPublished = true;
-                await this._publishMessageRepository.Edit(publicMessage);
+                this._publishMessageRepository.Edit(publicMessage);
                 await this._publishMessageRepository.DetachedItem(publicMessage);
                 return JsonConvert.DeserializeObject<T>(publicMessage?.JsonValue ?? string.Empty);
             }

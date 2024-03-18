@@ -61,15 +61,16 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             if (alert.PricePercent == null)
                                 alert.PriceValue += alert.PriceValue - alert.PriceBase;
                             alert.PriceBase = token?.Price;
-                            await this._alertPriceRepository.Edit(alert);
+                            this._alertPriceRepository.Edit(alert);
                             await this._alertPriceRepository.DetachedItem(alert);
                         }
                         else
                         {
                             alert.EndDate = DateTime.Now;
-                            await this._alertPriceRepository.Edit(alert);
+                            this._alertPriceRepository.Edit(alert);
                             await this._alertPriceRepository.DetachedItem(alert);
                         }
+                        await this._alertPriceRepository.SaveChangesASync();
                     }
                 }
             }

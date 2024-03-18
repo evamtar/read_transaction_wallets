@@ -4,9 +4,7 @@ using SyncronizationBot.Application.Commands.MainCommands.AddUpdate;
 using SyncronizationBot.Application.Commands.MainCommands.RecoverySave;
 using SyncronizationBot.Application.Commands.MainCommands.Send;
 using SyncronizationBot.Application.Commands.MainCommands.Triggers;
-using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.MainCommands.RecoverySave;
-using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transfers.Request;
 using SyncronizationBot.Domain.Model.Database;
@@ -15,9 +13,7 @@ using SyncronizationBot.Domain.Model.Utils.Helpers;
 using SyncronizationBot.Domain.Model.Utils.Transfer;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
-using SyncronizationBot.Utils;
-using System.Diagnostics;
-using System.Transactions;
+using System.Collections.Concurrent;
 
 
 namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
@@ -26,56 +22,41 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
     {
         private readonly IMediator _mediator;
         private readonly ITransfersService _transfersService;
+        private readonly IWalletRepository _walletRepository;
+        private readonly IClassWalletRepository _classWalletRepository;
         private readonly ITransactionsRepository _transactionsRepository;
+        private readonly ITransactionsRPCRecoveryRepository _transactionsRPCRecoveryRepository;
         private readonly ITransactionNotMappedRepository _transactionNotMappedRepository;
         private readonly IOptions<MappedTokensConfig> _mappedTokensConfig;
+        private ConcurrentBag<ClassWallet> ClassWallets = new ConcurrentBag<ClassWallet>();
+        private ConcurrentBag<Wallet> Wallets = new ConcurrentBag<Wallet>();
         public RecoverySaveTransactionsCommandHandler(IMediator mediator,
                                                       ITransfersService transfersService,
+                                                      IWalletRepository walletRepository,
+                                                      IClassWalletRepository classWalletRepository,
                                                       ITransactionsRepository transactionsRepository,
+                                                      ITransactionsRPCRecoveryRepository transactionsRPCRecoveryRepository,
                                                       ITransactionNotMappedRepository transactionNotMappedRepository,
                                                       IOptions<MappedTokensConfig> mappedTokensConfig)
         {
             this._mediator = mediator;
             this._transfersService = transfersService;
+            this._walletRepository = walletRepository;
+            this._classWalletRepository = classWalletRepository;
             this._transactionsRepository = transactionsRepository;
+            this._transactionsRPCRecoveryRepository = transactionsRPCRecoveryRepository;
             this._transactionNotMappedRepository = transactionNotMappedRepository;
             this._mappedTokensConfig = mappedTokensConfig;
         }
 
+        
         public async Task<RecoverySaveTransactionsCommandResponse> Handle(RecoverySaveTransactionsCommand request, CancellationToken cancellationToken)
         {
-            var totalValidTransactions = 0;
-            var listTransactions = (List<TransactionsResponse>?)null!;
-            if (request.IsContingecyTransactions ?? false)
-            {
-                var responseContingency = await _mediator.Send(new RecoveryTransactionsSignatureForAddressCommand
-                {
-                    WalletId = request.WalletId,
-                    WalletHash = request.WalletHash,
-                    DateLoadBalance = request.DateLoadBalance,
-                    InitialTicks = request.InitialTicks,
-                    FinalTicks = request.FinalTicks
-                });
-                if (responseContingency != null)
-                    listTransactions = responseContingency.Result;
-
-            }
-            else
-            {
-                var responseTransactions = await _mediator.Send(new RecoveryTransactionsCommand
-                {
-                    WalletId = request.WalletId,
-                    WalletHash = request.WalletHash,
-                    DateLoadBalance = request.DateLoadBalance,
-                    InitialTicks = request.InitialTicks,
-                    FinalTicks = request.FinalTicks
-                });
-                if (responseTransactions != null)
-                    listTransactions = responseTransactions.Result;
-            }
+            await this.LoadClassWallets();
+            await this.LoadWallets();
+            var listTransactions = await this._transactionsRPCRecoveryRepository.Get(x => x.IsIntegrated == false, x => x.DateOfTransaction!);
             if (listTransactions != null)
             {
-                totalValidTransactions = listTransactions.Count;
                 foreach (var transaction in listTransactions)
                 {
                     var transactionDetails = await _transfersService.ExecuteRecoveryTransfersAsync(new TransfersRequest { Signature = transaction.Signature });
@@ -83,8 +64,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                     {
                         try
                         {
+                            var wallet = this.Wallets.FirstOrDefault(x => x.ID == transaction.WalletId);
+                            var classWallet = this.ClassWallets.FirstOrDefault(x => x.ID == wallet?.ClassWalletId);
+
                             var transferManager = await TransferManagerHelper.GetTransferManager(transactionDetails?.Result?.Data);
-                            var transferAccount = TransferManagerHelper.GetTransferAccount(request?.WalletHash, transactionDetails?.Result.Data[0].Source, transferManager);
+                            var transferAccount = TransferManagerHelper.GetTransferAccount(wallet?.Hash, transactionDetails?.Result.Data[0].Source, transferManager);
                             var transferInfo = TransferManagerHelper.GetTransferInfo(transferAccount, _mappedTokensConfig.Value);
                             if (transferInfo.TransactionType != ETransactionType.INDEFINED)
                             {
@@ -128,12 +112,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenSourcePoolId = tokenSendedPool?.TokenId,
                                     TokenDestinationId = tokenReceived?.TokenId,
                                     TokenDestinationPoolId = tokenReceivedPool?.TokenId,
-                                    WalletId = request?.WalletId,
-                                    WalletHash = request?.WalletHash,
-                                    ClassWallet = request?.ClassWallet?.Description,
+                                    WalletId = wallet?.ID,
+                                    WalletHash = wallet?.Hash,
+                                    ClassWallet = classWallet?.Description,
                                     TypeOperation = (ETypeOperation)(int)(transferInfo?.TransactionType ?? ETransactionType.INDEFINED)
                                 });
-                                if (request?.ClassWallet?.IdClassification == 6 && (transactionDB?.PriceTokenSourceUSD * transactionDB?.AmountValueSource) < 500)
+                                if (classWallet?.IdClassification == 6 && (transactionDB?.PriceTokenSourceUSD * transactionDB?.AmountValueSource) < 500)
                                     continue;
                                 await this._transactionsRepository.DetachedItem(transactionDB!);
                                 var balancePosition = await this._mediator.Send(new RecoveryAddUpdateBalanceItemCommand
@@ -148,9 +132,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 {
                                     await this._mediator.Send(new VerifyAddTokenAlphaCommand
                                     {
-                                        WalletId = request?.WalletId,
-                                        WalletHash = request?.WalletHash,
-                                        ClassWalletDescription = request?.ClassWallet?.Description,
+                                        WalletId = wallet?.ID,
+                                        WalletHash = wallet?.Hash,
+                                        ClassWalletDescription = classWallet?.Description,
                                         TokenId = transactionDB?.TokenDestinationId,
                                         TokenHash = tokenReceived?.Hash,
                                         TokenName = tokenReceived?.Name,
@@ -169,7 +153,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 {
                                     await this._mediator.Send(new UpdateTokenAlphaCommand
                                     {
-                                        WalletId = request?.WalletId,
+                                        WalletId = wallet?.ID,
                                         TokenId = transactionDB?.TokenSourceId,
                                         AmountTokenSol = this.CalculatedTotalSol(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
                                         AmountTokenUSDC = this.CalculatedTotalUSD(transferInfo?.TokenReceived?.Token, transactionDB?.AmountValueDestination, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation),
@@ -189,14 +173,21 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                                                                         new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
                                                                                         balancePosition
                                                                                     }),
-                                    IdClassification = request?.ClassWallet?.IdClassification,
-                                    WalletId = request?.WalletId,
+                                    IdClassification = classWallet?.IdClassification,
+                                    WalletId = wallet?.ID,
                                     Transactions = transactionDB,
                                     TokenSendedHash = tokenSended?.Hash,
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokensMapped = this._mappedTokensConfig.Value.Tokens
                                 });
-                                if (request?.ClassWallet?.IdClassification == 7 & this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation) > 9500)
+                                if (
+                                 
+                                    (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
+                                 && classWallet?.IdClassification == 7 
+                                 && this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation) > 9500
+                                 && (!this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!) || !this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!))
+                                 
+                                   )
                                 {
                                     try
                                     {
@@ -216,7 +207,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     }
                                     catch
                                     {
-                                        throw new Exception("TRANSACAO WHALE PROBLEMA");
+                                        throw new Exception("TRANSACAO WHALE PROBLEM");
                                     }
                                 }
                             }
@@ -225,7 +216,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 var transactionNotMapped = await _transactionNotMappedRepository.Add(new TransactionNotMapped
                                 {
                                     Signature = transaction.Signature,
-                                    WalletId = request?.WalletId,
+                                    WalletId = wallet?.ID,
                                     Link = "https://solscan.io/tx/" + transaction.Signature,
                                     Error = ETransactionType.INDEFINED.ToString(),
                                     StackTrace = null,
@@ -233,6 +224,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 });
                                 await this._transactionNotMappedRepository.DetachedItem(transactionNotMapped!);
                             }
+                            transaction!.IsIntegrated = true;
                         }
                         catch (Exception ex)
                         {
@@ -244,11 +236,13 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                 StackTrace = ex.StackTrace,
                                 DateTimeRunner = DateTime.Now
                             });
+                            transaction!.IsIntegrated = true;
                         }
                     }
                 }
+                await this._transactionsRepository.SaveChangesASync();
             }
-            return new RecoverySaveTransactionsCommandResponse { TotalValidTransactions = totalValidTransactions };
+            return new RecoverySaveTransactionsCommandResponse { };
         }
 
         private decimal? CalculatedAmoutValue(decimal? value, int? divisor)
@@ -308,5 +302,17 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
             return null;
         }
 
+        private async Task LoadClassWallets()
+        {
+            var classWallets = await _classWalletRepository.GetAll();
+            foreach (var classWallet in classWallets)
+                this.ClassWallets.Add(classWallet);
+        }
+        private async Task LoadWallets()
+        {
+            var wallets = await _walletRepository.GetAll();
+            foreach (var wallet in wallets)
+                this.Wallets.Add(wallet);
+        }
     }
 }

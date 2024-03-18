@@ -55,7 +55,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                     tokenAlphaBuyBefore.ValueSpentUSDC += request?.ValueBuyUSDC;
                     tokenAlphaBuyBefore.ValueSpentUSDT += request?.ValueBuyUSDT;
                     tokenAlphaBuyBefore.QuantityToken += request?.QuantityTokenReceived;
-                    await this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
+                    this._tokenAlphaWalletRepository.Edit(tokenAlphaBuyBefore);
                     await this._tokenAlphaWalletRepository.DetachedItem(tokenAlphaBuyBefore);
                     await SaveTokenAlphaWalletsHistory(request, tokenAlphaBuyBefore);
                 }
@@ -83,7 +83,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Triggers
                 tokenAlphaCalled.TokenName = request?.TokenName;
                 tokenAlphaCalled.TokenSymbol = request?.TokenSymbol;
                 tokenAlphaCalled.LastUpdate = DateTime.Now;
-                await this._tokenAlphaRepository.Edit(tokenAlphaCalled);
+                this._tokenAlphaRepository.Edit(tokenAlphaCalled);
                 await this._tokenAlphaRepository.DetachedItem(tokenAlphaCalled);
                 await SaveTokenAlphaHistory(request, tokenAlphaCalled);
                 var tokenAlphaConfiguration = await this._tokenAlphaConfigurationRepository.FindFirstOrDefault(x => x.ID == tokenAlphaCalled.TokenAlphaConfigurationId);

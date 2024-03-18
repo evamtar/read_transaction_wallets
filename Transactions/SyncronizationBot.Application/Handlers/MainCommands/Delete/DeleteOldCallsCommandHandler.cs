@@ -33,7 +33,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                     var telegramChannel = await this._telegramChannelRepository.FindFirstOrDefault(x => x.ID == oldCallsMessage!.TelegramChannelId);
                     var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = oldCallsMessage!.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
                     oldCallsMessage.IsDeleted = true;
-                    await this._telegramMessageRepository.Edit(oldCallsMessage);
+                    this._telegramMessageRepository.Edit(oldCallsMessage);
                     await this._telegramChannelRepository.DetachedItem(telegramChannel!);
                     await this._telegramMessageRepository.DetachedItem(oldCallsMessage);
                 }

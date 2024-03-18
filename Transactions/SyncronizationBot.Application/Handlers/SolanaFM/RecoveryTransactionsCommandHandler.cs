@@ -1,79 +1,76 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Solana.Unity.Wallet;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
+using SyncronizationBot.Domain.Model.CrossCutting.SolanaRpc.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
+using SyncronizationBot.Domain.Service.CrossCutting.SolanaRpc.Transactions;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
 {
     public class RecoveryTransactionsCommandHandler : BaseTransactionsHandler, IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>
     {
         private readonly IMediator _mediator;
-        private readonly ITransactionsService _transactionsService;
-        private readonly ITransactionsRepository _transactionsRepository;
+        private readonly ISolanaTransactionService _solanaTransactionService;
+        private readonly ITransactionsRPCRecoveryRepository _transactionsRPCRecoveryRepository;
         
-        public RecoveryTransactionsCommandHandler(IMediator mediator, 
-                                                  ITransactionsService transactionsService,
-                                                  ITransactionsRepository transactionsRepository,
+        public RecoveryTransactionsCommandHandler(IMediator mediator,
+                                                  ISolanaTransactionService solanaTransactionService,
+                                                  ITransactionsRPCRecoveryRepository transactionsRPCRecoveryRepository,
                                                   ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {
             this._mediator = mediator;
-            this._transactionsService = transactionsService;
-            this._transactionsRepository = transactionsRepository;
+            this._solanaTransactionService = solanaTransactionService;
+            this._transactionsRPCRecoveryRepository = transactionsRPCRecoveryRepository;
         }
 
         public async Task<RecoveryTransactionsCommandResponse> Handle(RecoveryTransactionsCommand request, CancellationToken cancellationToken)
         {
             var listTransactions = new List<TransactionsResponse>();
-            var page = 1;
-            var hasNextPage = true;
-            while (hasNextPage)
+            var transactionResponse = await this._solanaTransactionService.ExecuteRecoveryTransactionsAsync(new TransactionRPCRequest
             {
-                var transactionResponse = await this._transactionsService.ExecuteRecoveryTransactionsAsync(new TransactionsRequest
+                WalletHash = request?.WalletHash
+            });
+            if (transactionResponse != null && transactionResponse.Any())
+            {
+                if (transactionResponse.Count > 0)
                 {
-                    Page = page,
-                    UtcFrom = request?.InitialTicks,
-                    UtcTo = request?.FinalTicks,
-                    WalletPublicKey = request?.WalletHash
-                });
-                if (transactionResponse.Result != null)
-                {
-                    if (transactionResponse.Result?.Data?.Count > 0)
+                    int brokenCount = 0;
+                    foreach (var transaction in transactionResponse)
                     {
-                        var responseDataOrdened = transactionResponse.Result!.Data.OrderBy(x => x.BlockTime).ThenBy(x => x.DateOfTransaction);
-                        foreach (var transaction in responseDataOrdened)
+                        if (brokenCount == 20)
+                            break;
+                        var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                        if (exists == null)
                         {
-                            var exists = await this._transactionsRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
-                            if (exists == null)
+                            var transactionRPCAdded = await this._transactionsRPCRecoveryRepository.Add(new TransactionsRPCRecovery
                             {
-                                if (request.DateLoadBalance < AdjustDateTimeToPtBR(transaction?.DateOfTransaction))
-                                {
-                                    listTransactions.Add(new TransactionsResponse
-                                    {
-                                        Signature = transaction?.Signature,
-                                        BlockTime = transaction?.BlockTime
-                                    });
-                                }
-                                else
-                                    await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
-
-                            }
-                            else
-                            {
-                                await this._transactionsRepository.DetachedItem(exists);
-                                await this.SaveTransactionsOldForMapping(transaction, request?.WalletId);
-                            }
+                                ID = Guid.NewGuid(),
+                                Signature = transaction?.Signature,
+                                DateOfTransaction = transaction?.DateOfTransaction,
+                                BlockTime = transaction?.BlockTime,
+                                WalletId = request?.WalletId,
+                                CreateDate = DateTime.Now,
+                                IsIntegrated = false,
+                            });
+                            await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
+                            brokenCount = 0;
+                        }
+                        else
+                        {
+                            brokenCount++;
+                            await this._transactionsRPCRecoveryRepository.DetachedItem(exists);
                         }
                     }
                 }
-                page++;
-                hasNextPage = transactionResponse.Result?.Pagination?.TotalPages > page;
             }
             return new RecoveryTransactionsCommandResponse { Result = listTransactions };
         }

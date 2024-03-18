@@ -13,7 +13,8 @@ namespace SyncronizationBot.Domain.Repository.Base
         Task<T> Add(T item);
         Task<T> DetachedItem(T item);
         Task<T> AddSingleItem(T item);
-        Task<T> Edit(T item);
+        Task SaveChangesASync();
+        T Edit(T item);
         Task Delete(Guid id);
         Task Delete(T entity);
         Task Truncate(string tableName);

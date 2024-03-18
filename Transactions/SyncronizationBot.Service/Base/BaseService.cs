@@ -78,7 +78,7 @@ namespace SyncronizationBot.Service.Base
         protected async Task SetRuntimeControllerAsync(bool isRunning, bool detachedItem)
         {
             this.RunTimeController!.IsRunning = isRunning;
-            this.RunTimeController = await this._runTimeControllerRepository.Edit(this.RunTimeController);
+            this.RunTimeController = this._runTimeControllerRepository.Edit(this.RunTimeController);
             if (detachedItem)
                 this.RunTimeController = await DetachedRuntimeControllerAsync();
         }

@@ -43,10 +43,12 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                         foreach (var message in messages)
                         {
                             var response = await this._telegramBotService.ExecuteDeleteMessagesAsync(new TelegramBotMessageDeleteRequest { MessageId = message!.MessageId, ChatId = (long?)telegramChannel?.ChannelId });
-                            message.IsDeleted = true;
-                            await this._telegramMessageRepository.Edit(message);
+                            if(response.Ok != null)
+                               message.IsDeleted = true;
+                            this._telegramMessageRepository.Edit(message);
                             await this._telegramMessageRepository.DetachedItem(message);
                         }
+                        await this._telegramMessageRepository.SaveChangesASync();
                     }
                 }
             }

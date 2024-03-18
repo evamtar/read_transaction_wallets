@@ -39,6 +39,7 @@ using SyncronizationBot.Domain.Service.CrossCutting.Birdeye;
 using SyncronizationBot.Domain.Service.CrossCutting.Dexscreener;
 using SyncronizationBot.Domain.Service.CrossCutting.Jupiter;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
+using SyncronizationBot.Domain.Service.CrossCutting.SolanaRpc.Transactions;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Transactions;
 using SyncronizationBot.Domain.Service.CrossCutting.Telegram;
@@ -62,6 +63,7 @@ using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Configs;
 using SyncronizationBot.Infra.CrossCutting.Solanafm.Transfers.Service;
+using SyncronizationBot.Infra.CrossCutting.SolanaRpc.Transactions.Service;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Configs;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service;
 using SyncronizationBot.Infra.CrossCutting.SolnetRpc.Transactions.Configs;
@@ -319,6 +321,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<ISolnetBalanceService, SolnetBalanceService>();
     services.AddTransient<ISolnetTransactionService, SolnetTransactionService>();
+
+    #endregion
+
+    #region Solana RPC
+
+    services.AddTransient<ISolanaTransactionService, SolanaTransactionService>();
 
     #endregion
 

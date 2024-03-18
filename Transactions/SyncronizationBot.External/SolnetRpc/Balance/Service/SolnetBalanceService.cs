@@ -1,7 +1,7 @@
-﻿using Solnet.Extensions;
-using Solnet.Rpc;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Messages;
+﻿using Solana.Unity.Extensions;
+using Solana.Unity.Rpc;
+using Solana.Unity.Rpc.Core.Http;
+using Solana.Unity.Rpc.Messages;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolnetRpc.Balance.Response;
 using SyncronizationBot.Domain.Service.CrossCutting.SolnetRpc.Balance;
@@ -27,7 +27,7 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
             var accountInfo = await this._client.GetAccountInfoAsync(request?.WalletHash ?? string.Empty);
             listBalances.Add(await this.GetBalanceResult(balance, accountInfo));
 
-            TokenWallet tokenWallet = TokenWallet.Load(this._client, this._tokens, request?.WalletHash ?? string.Empty);
+            TokenWallet tokenWallet = await TokenWallet.LoadAsync(this._client, this._tokens, request?.WalletHash ?? string.Empty);
             var balances = tokenWallet.Balances();
             foreach (var tokenBalance in balances)
                 listBalances.Add(await this.GetBalanceResult(tokenBalance));
@@ -35,7 +35,7 @@ namespace SyncronizationBot.Infra.CrossCutting.SolnetRpc.Balance.Service
             return new SolnetBalanceResponse { IsSuccess = true, ExecutionDate = DateTime.Now, Result = listBalances };
         }
 
-        private Task<BalanceResponse> GetBalanceResult(RequestResult<ResponseValue<ulong>> balance, RequestResult<ResponseValue<Solnet.Rpc.Models.AccountInfo>> accountInfo) 
+        private Task<BalanceResponse> GetBalanceResult(RequestResult<ResponseValue<ulong>> balance, RequestResult<ResponseValue<Solana.Unity.Rpc.Models.AccountInfo>> accountInfo) 
         {
             //TODO
             //balance - {"jsonrpc":"2.0","result":{"context":{"apiVersion":"1.17.21","slot":247983600},"value":1082851562},"id":1}
