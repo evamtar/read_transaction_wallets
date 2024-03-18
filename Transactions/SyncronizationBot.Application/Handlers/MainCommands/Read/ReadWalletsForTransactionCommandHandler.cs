@@ -27,7 +27,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         public async Task<ReadWalletsForTransactionCommandResponse> Handle(ReadWalletsForTransactionCommand request, CancellationToken cancellationToken)
         {
             var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
-            await _mediator.Send(new RecoverySaveTransactionsCommand { });
             if (walletsTracked?.Count() > 0) 
             {
                 var finalTicks = base.GetFinalTicks();
@@ -43,7 +42,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     });
                     walletTracked!.UnixTimeSeconds = finalTicks;
                     await base.UpdateUnixTimeSeconds(walletTracked);
+                    await Task.Delay(100);
                 }
+                await Task.Delay(100);
                 await _mediator.Send(new RecoverySaveTransactionsCommand { });
             }
             return new ReadWalletsForTransactionCommandResponse {  };

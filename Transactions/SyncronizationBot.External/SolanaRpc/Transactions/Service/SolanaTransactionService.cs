@@ -23,8 +23,8 @@ namespace SyncronizationBot.Infra.CrossCutting.SolanaRpc.Transactions.Service
         {
             var response = (HttpResponseMessage?)null!;
             var responseBody = string.Empty;
-            var data = "{\"method\":\"getSignaturesForAddress\",\"params\":[\"{{WalletHash}}\",{\"encoding\":\"jsonParsed\",\"maxSupportedTransactionVersion\":0,\"limit\":200}],\"jsonrpc\":\"2.0\",\"id\":0}";
-            data = data.Replace("{{Signature}}", request.WalletHash);
+            var data = "{\"method\":\"getSignaturesForAddress\",\"params\":[\"{{WalletHash}}\",{\"encoding\":\"jsonParsed\",\"maxSupportedTransactionVersion\":0,\"limit\":1000}],\"jsonrpc\":\"2.0\",\"id\":0}";
+            data = data.Replace("{{WalletHash}}", request.WalletHash);
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             response = await _httpClient.PostAsync("", content);
             responseBody = await response.Content.ReadAsStringAsync();

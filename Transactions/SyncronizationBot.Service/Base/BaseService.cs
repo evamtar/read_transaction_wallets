@@ -154,6 +154,9 @@ namespace SyncronizationBot.Service.Base
                 case ETypeService.Transaction:
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
+                case ETypeService.TransactionDCA:
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
                 case ETypeService.Balance:
                     Console.ForegroundColor = ConsoleColor.Blue;
                     break;

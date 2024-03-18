@@ -108,12 +108,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #endregion
 
     #region Hosted Service
-    //services.AddHostedService<ReadTransactionDCAService>();
-    services.AddHostedService<ReadTransactionWalletsService>();
+    services.AddHostedService<ReadTransactionDCAService>();
+    //services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<LoadBalanceWalletsService>();
     //services.AddHostedService<AlertPriceService>();
-    services.AddHostedService<DeleteOldsMessagesLogService>();
-    services.AddHostedService<AlertTokenAlphaService>();
+    //services.AddHostedService<DeleteOldsMessagesLogService>();
+    //services.AddHostedService<AlertTokenAlphaService>();
     //services.AddHostedService<ReadTransactionsOldForMapping>();
     //services.AddHostedService<LoadNewTokensForBetAwardsService>();
 

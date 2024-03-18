@@ -15,7 +15,7 @@ namespace SyncronizationBot.Service
                                              IRunTimeControllerRepository runTimeControllerRepository, 
                                              IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(mediator, runTimeControllerRepository, ETypeService.TransactionDCA, syncronizationBotConfig)
         {
-            base.LogMessage("Iniciando o serviço de leitura de transações efetuadas nas wallets mapeadas");
+            base.LogMessage("Iniciando o serviço de leitura de transações DCA");
         }
 
         protected override async Task DoExecute(PeriodicTimer timer, CancellationToken stoppingToken)
