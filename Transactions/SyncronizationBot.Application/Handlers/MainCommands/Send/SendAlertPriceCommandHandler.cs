@@ -70,7 +70,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                             this._alertPriceRepository.Edit(alert);
                             await this._alertPriceRepository.DetachedItem(alert);
                         }
-                        await this._alertPriceRepository.SaveChangesASync();
                     }
                 }
             }

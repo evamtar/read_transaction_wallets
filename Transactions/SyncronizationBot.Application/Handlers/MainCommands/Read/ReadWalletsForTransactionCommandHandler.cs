@@ -32,7 +32,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                 var finalTicks = base.GetFinalTicks();
                 var options = new ParallelOptions()
                 {
-                    MaxDegreeOfParallelism = 10
+                    MaxDegreeOfParallelism = 3
                 };
                 await Parallel.ForEachAsync(walletsTracked, options, async (walletTracked, cancellationToken) =>
                 {
@@ -45,7 +45,11 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                         FinalTicks = finalTicks
                     });
                 });
-                await this._walletRepository.SaveChangesASync();
+                walletsTracked.ForEach(async delegate (Wallet wallet)
+                {
+                    wallet.UnixTimeSeconds = finalTicks;
+                    await base.UpdateUnixTimeSeconds(wallet);
+                });
                 var response = await _mediator.Send(new RecoverySaveTransactionsCommand{ });
             }
             return new ReadWalletsForTransactionCommandResponse {  };

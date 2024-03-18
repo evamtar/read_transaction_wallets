@@ -54,7 +54,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Send
                     this._publishMessageRepository.Edit(publicMessage!);
                     await this._publishMessageRepository.DetachedItem(publicMessage!);
                 }
-                await this._publishMessageRepository.SaveChangesASync();
             }
             return new SendAlertTokenAlphaCommandResponse{ };
         }

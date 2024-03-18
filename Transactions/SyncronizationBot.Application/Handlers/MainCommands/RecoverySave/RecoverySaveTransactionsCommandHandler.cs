@@ -240,7 +240,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                         }
                     }
                 }
-                await this._transactionsRepository.SaveChangesASync();
             }
             return new RecoverySaveTransactionsCommandResponse { };
         }

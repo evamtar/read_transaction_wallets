@@ -17,6 +17,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
         public async Task<T> Add(T item)
         {
             await _context.Set<T>().AddAsync(item);
+            await _context.SaveChangesAsync();
             return item;
         }
 
@@ -33,6 +34,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
         {
             _context.Entry(item).State = EntityState.Detached;
             await _context.Set<T>().AddAsync(item);
+            await _context.SaveChangesAsync();
             return item;
         }
 
@@ -43,16 +45,17 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
 
         public async Task Delete(Guid id)
         {
-            
             var entity = await Get(id);
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
+            _context.SaveChanges();
         }
 
-        public async Task Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Entry(entity).State = EntityState.Detached;
             _context.Set<T>().Remove(entity);
+            _context.SaveChanges();
         }
 
 
@@ -72,6 +75,7 @@ namespace SyncronizationBot.Infra.Data.Repository.Base
         {
             _context.Entry(item).State = EntityState.Detached;
             _context.Set<T>().Update(item);
+            _context.SaveChanges();
             return item;
         }
 

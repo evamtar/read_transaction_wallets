@@ -49,8 +49,12 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         {
                             if (transaction.Err == null) 
                             {
-                                if (brokenCount == 20)
+                                if (brokenCount == 10) 
+                                {
+                                    hasNextPage = false;
                                     break;
+                                }
+                                    
                                 var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
                                 if (exists == null)
                                 {
@@ -77,9 +81,8 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                     }
                 }
                 page++;
-                hasNextPage = transactionResponse?.Result?.Pagination?.TotalPages > page;
+                hasNextPage = !hasNextPage ? hasNextPage : transactionResponse?.Result?.Pagination?.TotalPages > page;
             }
-            
             return new RecoveryTransactionsCommandResponse { };
         }
     }

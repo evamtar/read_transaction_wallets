@@ -48,7 +48,6 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Delete
                             this._telegramMessageRepository.Edit(message);
                             await this._telegramMessageRepository.DetachedItem(message);
                         }
-                        await this._telegramMessageRepository.SaveChangesASync();
                     }
                 }
             }
