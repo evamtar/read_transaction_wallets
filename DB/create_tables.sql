@@ -222,6 +222,8 @@ GO
 
 GO
 
+
+ 
 CREATE TABLE Wallet(
 	ID                   UNIQUEIDENTIFIER,
 	[Hash]               VARCHAR(50),
@@ -345,6 +347,7 @@ CREATE TABLE TransactionsRPCRecovery
 	WalletId                     UNIQUEIDENTIFIER,
 	CreateDate				     DATETIME2,
 	IsIntegrated				 BIT,
+	IsDCA                        BIT
 	PRIMARY KEY (ID),
 	FOREIGN KEY (WalletId) REFERENCES Wallet(ID),
 );

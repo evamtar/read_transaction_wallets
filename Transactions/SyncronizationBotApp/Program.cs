@@ -135,8 +135,10 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region SolanaFM
 
-    services.AddTransient<IRequestHandler<RecoverySaveBalanceSFMCommand, RecoverySaveBalanceSFMCommandResponse>, RecoverySaveBalanceSFMCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadDCATransactionCommand, ReadDCATransactionCommandResponse>, ReadDCATransactionCommandHandler>();
 
+    services.AddTransient<IRequestHandler<RecoverySaveBalanceSFMCommand, RecoverySaveBalanceSFMCommandResponse>, RecoverySaveBalanceSFMCommandHandler>();
+    
     services.AddTransient<IRequestHandler<RecoverySaveTransactionsCommand, RecoverySaveTransactionsCommandResponse>, RecoverySaveTransactionsCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>, RecoveryTransactionsCommandHandler>();
     services.AddTransient<IRequestHandler<RecoveryTransactionsSignatureForAddressCommand, RecoveryTransactionsSignatureForAddressCommandResponse>, RecoveryTransactionsSignatureForAddressCommandHandler>();
@@ -161,7 +163,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
 
-    services.AddTransient<IRequestHandler<ReadDCATransactionCommand, ReadDCATransactionCommandResponse>, ReadDCATransactionCommandHandler>();
+    services.AddTransient<IRequestHandler<ReadDCATransactionsCommand, ReadDCATransactionsCommandResponse>, ReadDCATransactionsCommandHandler>(); 
     services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();
