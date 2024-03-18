@@ -1,17 +1,12 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Solana.Unity.Wallet;
 using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM;
-using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
 using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
-using SyncronizationBot.Domain.Model.CrossCutting.SolanaRpc.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
 using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
-using SyncronizationBot.Domain.Service.CrossCutting.SolanaRpc.Transactions;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
 {
@@ -40,7 +35,10 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
             {
                 var transactionResponse = await this._transactionsService.ExecuteRecoveryTransactionsAsync(new TransactionsRequest
                 {
-                    WalletPublicKey = request?.WalletHash
+                    WalletPublicKey = request?.WalletHash,
+                    UtcFrom = request?.InitialTicks,
+                    UtcTo = request?.FinalTicks,
+                    Page = page,
                 });
                 if (transactionResponse?.Result != null)
                 {
@@ -49,28 +47,31 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                         int brokenCount = 0;
                         foreach (var transaction in transactionResponse.Result.Data)
                         {
-                            if (brokenCount == 20)
-                                break;
-                            var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
-                            if (exists == null)
+                            if (transaction.Err == null) 
                             {
-                                var transactionRPCAdded = await this._transactionsRPCRecoveryRepository.Add(new TransactionsRPCRecovery
+                                if (brokenCount == 20)
+                                    break;
+                                var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                                if (exists == null)
                                 {
-                                    ID = Guid.NewGuid(),
-                                    Signature = transaction?.Signature,
-                                    DateOfTransaction = transaction?.DateOfTransaction,
-                                    BlockTime = transaction?.BlockTime,
-                                    WalletId = request?.WalletId,
-                                    CreateDate = DateTime.Now,
-                                    IsIntegrated = false,
-                                });
-                                await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
-                                brokenCount = 0;
-                            }
-                            else
-                            {
-                                brokenCount++;
-                                await this._transactionsRPCRecoveryRepository.DetachedItem(exists);
+                                    var transactionRPCAdded = await this._transactionsRPCRecoveryRepository.Add(new TransactionsRPCRecovery
+                                    {
+                                        ID = Guid.NewGuid(),
+                                        Signature = transaction?.Signature,
+                                        DateOfTransaction = transaction?.DateOfTransaction,
+                                        BlockTime = transaction?.BlockTime,
+                                        WalletId = request?.WalletId,
+                                        CreateDate = DateTime.Now,
+                                        IsIntegrated = false,
+                                    });
+                                    await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
+                                    brokenCount = 0;
+                                }
+                                else
+                                {
+                                    brokenCount++;
+                                    await this._transactionsRPCRecoveryRepository.DetachedItem(exists);
+                                }
                             }
                         }
                     }

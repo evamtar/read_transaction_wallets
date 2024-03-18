@@ -27,30 +27,24 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
         public async Task<ReadWalletsForTransactionCommandResponse> Handle(ReadWalletsForTransactionCommand request, CancellationToken cancellationToken)
         {
             var walletsTracked = await GetWallets(x => x.IsActive == true && x.IsLoadBalance == true, x => x.UnixTimeSeconds!);
-            
             if (walletsTracked?.Count() > 0) 
             {
+                var finalTicks = base.GetFinalTicks();
                 var options = new ParallelOptions()
                 {
-                    MaxDegreeOfParallelism = 2
+                    MaxDegreeOfParallelism = 30
                 };
                 await Parallel.ForEachAsync(walletsTracked, options, async (walletTracked, cancellationToken) =>
                 {
+                    var initialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds);
                     var response = await _mediator.Send(new RecoveryTransactionsCommand
                     {
                         WalletId = walletTracked?.ID,
-                        WalletHash = walletTracked?.Hash
+                        WalletHash = walletTracked?.Hash,
+                        InitialTicks = initialTicks,
+                        FinalTicks = finalTicks
                     });
                 });
-                //foreach (var walletTracked in walletsTracked) 
-                //{
-                //    await _mediator.Send(new RecoveryTransactionsCommand
-                //    {
-                //        WalletId = walletTracked?.ID,
-                //        WalletHash = walletTracked?.Hash
-                //    });
-                    
-                //}
                 await this._walletRepository.SaveChangesASync();
                 var response = await _mediator.Send(new RecoverySaveTransactionsCommand{ });
             }
