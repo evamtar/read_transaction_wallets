@@ -329,6 +329,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHttpClient<ISolanaTransactionService, SolanaTransactionService>().AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
     
     #endregion

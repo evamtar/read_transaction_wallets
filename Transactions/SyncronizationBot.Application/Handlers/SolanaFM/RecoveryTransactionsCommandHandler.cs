@@ -6,9 +6,11 @@ using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
+using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolanaRpc.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
+using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Domain.Service.CrossCutting.SolanaRpc.Transactions;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM
@@ -16,61 +18,68 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
     public class RecoveryTransactionsCommandHandler : BaseTransactionsHandler, IRequestHandler<RecoveryTransactionsCommand, RecoveryTransactionsCommandResponse>
     {
         private readonly IMediator _mediator;
-        private readonly ISolanaTransactionService _solanaTransactionService;
+        private readonly ITransactionsService _transactionsService;
         private readonly ITransactionsRPCRecoveryRepository _transactionsRPCRecoveryRepository;
         
         public RecoveryTransactionsCommandHandler(IMediator mediator,
-                                                  ISolanaTransactionService solanaTransactionService,
+                                                  ITransactionsService transactionsService,
                                                   ITransactionsRPCRecoveryRepository transactionsRPCRecoveryRepository,
                                                   ITransactionsOldForMappingRepository transactionsOldForMappingRepository,
                                                   IOptions<SyncronizationBotConfig> syncronizationBotConfig) : base(transactionsOldForMappingRepository, syncronizationBotConfig)
         {
             this._mediator = mediator;
-            this._solanaTransactionService = solanaTransactionService;
+            this._transactionsService = transactionsService;
             this._transactionsRPCRecoveryRepository = transactionsRPCRecoveryRepository;
         }
 
         public async Task<RecoveryTransactionsCommandResponse> Handle(RecoveryTransactionsCommand request, CancellationToken cancellationToken)
         {
-            var listTransactions = new List<TransactionsResponse>();
-            var transactionResponse = await this._solanaTransactionService.ExecuteRecoveryTransactionsAsync(new TransactionRPCRequest
+            var page = 1;
+            var hasNextPage = true;
+            while (hasNextPage)
             {
-                WalletHash = request?.WalletHash
-            });
-            if (transactionResponse != null && transactionResponse.Any())
-            {
-                if (transactionResponse.Count > 0)
+                var transactionResponse = await this._transactionsService.ExecuteRecoveryTransactionsAsync(new TransactionsRequest
                 {
-                    int brokenCount = 0;
-                    foreach (var transaction in transactionResponse)
+                    WalletPublicKey = request?.WalletHash
+                });
+                if (transactionResponse?.Result != null)
+                {
+                    if (transactionResponse?.Result?.Data?.Count > 0)
                     {
-                        if (brokenCount == 20)
-                            break;
-                        var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
-                        if (exists == null)
+                        int brokenCount = 0;
+                        foreach (var transaction in transactionResponse.Result.Data)
                         {
-                            var transactionRPCAdded = await this._transactionsRPCRecoveryRepository.Add(new TransactionsRPCRecovery
+                            if (brokenCount == 20)
+                                break;
+                            var exists = await this._transactionsRPCRecoveryRepository.FindFirstOrDefault(x => x.Signature == transaction.Signature);
+                            if (exists == null)
                             {
-                                ID = Guid.NewGuid(),
-                                Signature = transaction?.Signature,
-                                DateOfTransaction = transaction?.DateOfTransaction,
-                                BlockTime = transaction?.BlockTime,
-                                WalletId = request?.WalletId,
-                                CreateDate = DateTime.Now,
-                                IsIntegrated = false,
-                            });
-                            await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
-                            brokenCount = 0;
-                        }
-                        else
-                        {
-                            brokenCount++;
-                            await this._transactionsRPCRecoveryRepository.DetachedItem(exists);
+                                var transactionRPCAdded = await this._transactionsRPCRecoveryRepository.Add(new TransactionsRPCRecovery
+                                {
+                                    ID = Guid.NewGuid(),
+                                    Signature = transaction?.Signature,
+                                    DateOfTransaction = transaction?.DateOfTransaction,
+                                    BlockTime = transaction?.BlockTime,
+                                    WalletId = request?.WalletId,
+                                    CreateDate = DateTime.Now,
+                                    IsIntegrated = false,
+                                });
+                                await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
+                                brokenCount = 0;
+                            }
+                            else
+                            {
+                                brokenCount++;
+                                await this._transactionsRPCRecoveryRepository.DetachedItem(exists);
+                            }
                         }
                     }
                 }
+                page++;
+                hasNextPage = transactionResponse?.Result?.Pagination?.TotalPages > page;
             }
-            return new RecoveryTransactionsCommandResponse { Result = listTransactions };
+            
+            return new RecoveryTransactionsCommandResponse { };
         }
     }
 }

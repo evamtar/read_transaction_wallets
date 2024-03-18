@@ -32,7 +32,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
             {
                 var options = new ParallelOptions()
                 {
-                    MaxDegreeOfParallelism = 3
+                    MaxDegreeOfParallelism = 2
                 };
                 await Parallel.ForEachAsync(walletsTracked, options, async (walletTracked, cancellationToken) =>
                 {
