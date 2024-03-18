@@ -30,27 +30,20 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
             if (walletsTracked?.Count() > 0) 
             {
                 var finalTicks = base.GetFinalTicks();
-                var options = new ParallelOptions()
-                {
-                    MaxDegreeOfParallelism = 3
-                };
-                await Parallel.ForEachAsync(walletsTracked, options, async (walletTracked, cancellationToken) =>
+                foreach (var walletTracked in walletsTracked) 
                 {
                     var initialTicks = base.GetInitialTicks(walletTracked?.UnixTimeSeconds);
-                    var response = await _mediator.Send(new RecoveryTransactionsCommand
+                    await _mediator.Send(new RecoveryTransactionsCommand
                     {
                         WalletId = walletTracked?.ID,
                         WalletHash = walletTracked?.Hash,
                         InitialTicks = initialTicks,
                         FinalTicks = finalTicks
                     });
-                });
-                walletsTracked.ForEach(async delegate (Wallet wallet)
-                {
-                    wallet.UnixTimeSeconds = finalTicks;
-                    await base.UpdateUnixTimeSeconds(wallet);
-                });
-                var response = await _mediator.Send(new RecoverySaveTransactionsCommand{ });
+                    walletTracked!.UnixTimeSeconds = finalTicks;
+                    await base.UpdateUnixTimeSeconds(walletTracked);
+                }
+                await _mediator.Send(new RecoverySaveTransactionsCommand { });
             }
             return new ReadWalletsForTransactionCommandResponse {  };
         }

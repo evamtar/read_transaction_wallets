@@ -180,36 +180,33 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                     TokenReceivedHash = tokenReceived?.Hash,
                                     TokensMapped = this._mappedTokensConfig.Value.Tokens
                                 });
-                                if (
-                                 
-                                    (transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP)
-                                 && classWallet?.IdClassification == 7 
-                                 && this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation) > 9500
-                                 && (!this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!) || !this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!))
-                                 
-                                   )
+                                if ((transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP) && classWallet?.IdClassification == 7  && this.CalculatedTotalUSD(transferInfo?.TokenSended?.Token, transactionDB?.AmountValueSource, tokenSolForPrice.Price, tokenSended?.Price, transactionDB?.TypeOperation) > 9500)
                                 {
-                                    try
+                                    if (!this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!) && !this._mappedTokensConfig!.Value!.Tokens!.Contains(tokenSended!.Hash!)) 
                                     {
-                                        await this._mediator.Send(new SendAlertMessageCommand
+                                        try
                                         {
-                                            EntityId = transactionDB?.ID,
-                                            Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
-                                                                                    {
+                                            await this._mediator.Send(new SendAlertMessageCommand
+                                            {
+                                                EntityId = transactionDB?.ID,
+                                                Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
+                                                                                        {
                                                                                         transactionDB!,
                                                                                         transferInfo!,
                                                                                         new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
                                                                                         balancePosition
-                                                                                    }),
-                                            TypeAlert = ETypeAlert.ALERT_WHALE_TRANSACTION
+                                                                                        }),
+                                                TypeAlert = ETypeAlert.ALERT_WHALE_TRANSACTION
 
-                                        });
-                                    }
-                                    catch
-                                    {
-                                        throw new Exception("TRANSACAO WHALE PROBLEM");
+                                            });
+                                        }
+                                        catch
+                                        {
+                                            throw new Exception("TRANSACAO WHALE PROBLEM");
+                                        }
                                     }
                                 }
+                                transaction!.IsIntegrated = true;
                             }
                             else
                             {
@@ -238,8 +235,10 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                             });
                             transaction!.IsIntegrated = true;
                         }
+                        this._transactionsRPCRecoveryRepository.Edit(transaction);
                     }
                 }
+                
             }
             return new RecoverySaveTransactionsCommandResponse { };
         }
