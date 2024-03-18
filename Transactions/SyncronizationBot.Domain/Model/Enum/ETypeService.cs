@@ -20,6 +20,8 @@ namespace SyncronizationBot.Domain.Model.Enum
         [DescriptionAttribute("Transacões Antigas para Mapear")]
         TransactionsOldForMapping,
         [DescriptionAttribute("Carregar Listagem de Novos Tokens")]
-        NewTokensBetAwards
+        NewTokensBetAwards,
+        [DescriptionAttribute("Leitor de Transações DCA")]
+        TransactionDCA
     }
 }

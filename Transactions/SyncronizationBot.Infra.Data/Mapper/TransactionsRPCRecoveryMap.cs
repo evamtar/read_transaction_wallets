@@ -17,6 +17,7 @@ namespace SyncronizationBot.Infra.Data.Mapper
             builder.Property(tc => tc.WalletId);
             builder.Property(tc => tc.CreateDate);
             builder.Property(tc => tc.IsIntegrated);
+            builder.Property(tc => tc.IsDCA);
             builder.HasOne(tc => tc.Wallet).WithMany(w => w.TransactionsContingencies).HasForeignKey(tc => tc.WalletId);
             builder.HasKey(tc => tc.ID);
         }

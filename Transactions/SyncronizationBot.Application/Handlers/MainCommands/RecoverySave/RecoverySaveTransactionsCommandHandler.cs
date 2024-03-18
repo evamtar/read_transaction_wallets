@@ -54,7 +54,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
         {
             await this.LoadClassWallets();
             await this.LoadWallets();
-            var listTransactions = await this._transactionsRPCRecoveryRepository.Get(x => x.IsIntegrated == false, x => x.DateOfTransaction!);
+            var listTransactions = await this._transactionsRPCRecoveryRepository.Get(x => x.IsIntegrated == false && x.IsDCA == false, x => x.DateOfTransaction!);
             if (listTransactions != null)
             {
                 foreach (var transaction in listTransactions)

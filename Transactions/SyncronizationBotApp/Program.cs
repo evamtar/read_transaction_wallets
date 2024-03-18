@@ -104,14 +104,14 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     #region Context
     
     services.AddDbContext<SqlContext>(options => options.UseSqlServer(configuration.GetConnectionString("Monitoring"), actions => actions.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null)), ServiceLifetime.Transient);
-    
+
     #endregion
 
     #region Hosted Service
-
+    //services.AddHostedService<ReadTransactionDCAService>();
     services.AddHostedService<ReadTransactionWalletsService>();
     //services.AddHostedService<LoadBalanceWalletsService>();
-    services.AddHostedService<AlertPriceService>();
+    //services.AddHostedService<AlertPriceService>();
     services.AddHostedService<DeleteOldsMessagesLogService>();
     services.AddHostedService<AlertTokenAlphaService>();
     //services.AddHostedService<ReadTransactionsOldForMapping>();
@@ -161,6 +161,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     services.AddTransient<IRequestHandler<DeleteOldCallsCommand, DeleteOldCallsCommandResponse>, DeleteOldCallsCommandHandler>();
 
+    services.AddTransient<IRequestHandler<ReadDCATransactionCommand, ReadDCATransactionCommandResponse>, ReadDCATransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsForTransactionCommand, ReadWalletsForTransactionCommandResponse>, ReadWalletsForTransactionCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsBalanceCommand, ReadWalletsBalanceCommandResponse>, ReadWalletsBalanceCommandHandler>();
     services.AddTransient<IRequestHandler<ReadWalletsCommandForTransacionsOldCommand, ReadWalletsCommandForTransacionsOldCommandResponse>, ReadWalletsCommandForTransacionsOldCommandHandler>();

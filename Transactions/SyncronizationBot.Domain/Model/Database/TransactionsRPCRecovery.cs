@@ -11,6 +11,7 @@ namespace SyncronizationBot.Domain.Model.Database
         public Guid? WalletId { get; set; }
         public DateTime? CreateDate { get; set; }
         public bool IsIntegrated { get; set; }
+        public bool IsDCA { get; set; }
         public virtual Wallet? Wallet { get; set; }
     }
 }

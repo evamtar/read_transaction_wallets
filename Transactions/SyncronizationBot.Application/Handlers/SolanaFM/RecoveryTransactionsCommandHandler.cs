@@ -67,6 +67,7 @@ namespace SyncronizationBot.Application.Handlers.SolanaFM
                                         WalletId = request?.WalletId,
                                         CreateDate = DateTime.Now,
                                         IsIntegrated = false,
+                                        IsDCA = false
                                     });
                                     await this._transactionsRPCRecoveryRepository.DetachedItem(transactionRPCAdded);
                                     brokenCount = 0;
