@@ -326,8 +326,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     #region Solana RPC
 
-    services.AddTransient<ISolanaTransactionService, SolanaTransactionService>();
-
+    services.AddHttpClient<ISolanaTransactionService, SolanaTransactionService>().AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+    
     #endregion
 
     #endregion

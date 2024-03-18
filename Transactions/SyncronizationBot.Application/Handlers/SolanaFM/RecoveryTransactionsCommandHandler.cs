@@ -6,11 +6,9 @@ using SyncronizationBot.Application.Commands.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM;
 using SyncronizationBot.Application.Response.SolanaFM.Base;
 using SyncronizationBot.Domain.Model.Configs;
-using SyncronizationBot.Domain.Model.CrossCutting.Solanafm.Transactions.Request;
 using SyncronizationBot.Domain.Model.CrossCutting.SolanaRpc.Transactions.Request;
 using SyncronizationBot.Domain.Model.Database;
 using SyncronizationBot.Domain.Repository;
-using SyncronizationBot.Domain.Service.CrossCutting.Solanafm;
 using SyncronizationBot.Domain.Service.CrossCutting.SolanaRpc.Transactions;
 
 namespace SyncronizationBot.Application.Handlers.SolanaFM

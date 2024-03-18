@@ -32,9 +32,9 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
             {
                 var options = new ParallelOptions()
                 {
-                    MaxDegreeOfParallelism = 75
+                    MaxDegreeOfParallelism = 3
                 };
-                await Parallel.ForEachAsync(walletsTracked, options,  async (walletTracked, cancellationToken) =>
+                await Parallel.ForEachAsync(walletsTracked, options, async (walletTracked, cancellationToken) =>
                 {
                     var response = await _mediator.Send(new RecoveryTransactionsCommand
                     {
@@ -42,6 +42,15 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                         WalletHash = walletTracked?.Hash
                     });
                 });
+                //foreach (var walletTracked in walletsTracked) 
+                //{
+                //    await _mediator.Send(new RecoveryTransactionsCommand
+                //    {
+                //        WalletId = walletTracked?.ID,
+                //        WalletHash = walletTracked?.Hash
+                //    });
+                    
+                //}
                 await this._walletRepository.SaveChangesASync();
                 var response = await _mediator.Send(new RecoverySaveTransactionsCommand{ });
             }

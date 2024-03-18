@@ -320,9 +320,15 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{QuantityTokenSell}}', @IdAlertInf
 INSERT INTO AlertParameter VALUES (NEWID(), '{{RangeWallets}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'RANGE-ALL|WalletHash', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Classifications}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Domain.Model.Database.TokenAlphaWallet]', 'AGGREGATE|ClassWalletDescription', NULL, NULL, NULL, 0, 0, 0);
 
+DELETE FROM AlertParameter WHERE AlertInformationId IN(SELECT ID FROM AlertInformation WHERE AlertConfigurationId IN(SELECT ID FROM AlertConfiguration WHERE TypeAlert = 9))
+DELETE FROM AlertInformation WHERE AlertConfigurationId IN(SELECT ID FROM AlertConfiguration WHERE TypeAlert = 9)
+
+DECLARE @IdAlertConfiguration UNIQUEIDENTIFIER;
+DECLARE @IdAlertInformation UNIQUEIDENTIFIER;
 SELECT @IdAlertConfiguration = ID FROM AlertConfiguration WHERE TypeAlert = 9; 
 SELECT @IdAlertInformation = NEWID();
-INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** ALERTA DE TRANSACAO DE WHALE PUMP ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🐳🐳🐳🐳🐳🐳🐳🐳🐳🐳🐳</tg-emoji>{{NEWLINE}}📰 🔒 <b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}⚠ <b>Name:</b> {{TokenName}}{{NEWLINE}}🪙 <b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💰 <b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}💲 <b>Price:</b> {{Price}}{{NEWLINE}}💰 TransactionValue: {{TransactionValue}} - {{TransactionSymbol}} {{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', 1, @IdAlertConfiguration);
+
+INSERT INTO AlertInformation VALUES(@IdAlertInformation, N'<b>*** ALERTA DE TRANSACAO DE WHALE PUMP ***</b>{{NEWLINE}}<tg-emoji emoji-id=''5368324170671202286''>🐳🐳🐳🐳🐳🐳🐳🐳🐳🐳🐳</tg-emoji>{{NEWLINE}}📰 🖌 <b>Signature:</b> {{Signature}}{{NEWLINE}} 💼 <b>WalletHash:</b> {{WalletHash}}{{NEWLINE}}🔒 <b>Token Ca:</b> {{TokenCa}}{{NEWLINE}}⚠ <b>Name:</b> {{TokenName}}{{NEWLINE}}🪙 <b>Symbol:</b> {{TokenSymbol}}{{NEWLINE}}💰 <b>MarketCap:</b> {{MarketCap}}{{NEWLINE}}💲 <b>Price:</b> {{Price}}{{NEWLINE}}💰 TransactionValue: {{TransactionValue}} - {{TransactionSymbol}} {{NEWLINE}}📊 <a href=''https://birdeye.so/token/{{TokenCa}}?chain=solana''>Chart</a>', 1, @IdAlertConfiguration);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Signature}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'Signature', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{WalletHash}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'WalletHash', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenCa}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[2].Hash', NULL, NULL, NULL, 0, 0, 0);
@@ -331,4 +337,4 @@ INSERT INTO AlertParameter VALUES (NEWID(), '{{TokenSymbol}}', @IdAlertInformati
 INSERT INTO AlertParameter VALUES (NEWID(), '{{MarketCap}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'MtkcapTokenDestination', NULL, NULL, 'N2', 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{Price}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'PriceTokenDestinationUSD', NULL, NULL, NULL, 0, 0, 0);
 INSERT INTO AlertParameter VALUES (NEWID(), '{{TransactionValue}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', 'AmountValueSource', NULL, NULL, NULL, 0, 0, 0);
-INSERT INTO AlertParameter VALUES (NEWID(), '{{TransactionSymbol}}', @IdAlertInformation, 'SyncronizationBot.Domain.Model.Database.Transactions', '[1].Symbol', NULL, NULL, NULL, 0, 0, 0);
+INSERT INTO AlertParameter VALUES (NEWID(), '{{TransactionSymbol}}', @IdAlertInformation, 'System.Collections.Generic.List`1[SyncronizationBot.Application.Response.MainCommands.RecoverySave.RecoverySaveTokenCommandResponse]', '[0].Symbol', NULL, NULL, NULL, 0, 0, 0);
