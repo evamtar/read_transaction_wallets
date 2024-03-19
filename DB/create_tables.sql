@@ -338,6 +338,21 @@ CREATE TABLE TransactionsOldForMapping
 );
 GO
 
+CREATE TABLE DcaWalletCreate(
+	ID                           UNIQUEIDENTIFIER,   
+	WalletDCAId                  UNIQUEIDENTIFIER, 
+	WalletHash                   VARCHAR(100),
+	Amount                       VARCHAR(150),
+	AmountExecuted               VARCHAR(150),
+	ExecutionTimeApproximated    INT,
+	TypeTimeExecution		     INT, --1 Seconds, 2 Minute, 3 Hours, 4 Days, 5 - Week, 6 - Month
+	TypeOperation                INT, -- 1 For Buy, 2 For Sell
+	IsCancelled                  BIT,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (WalletDCAId) REFERENCES Wallet(ID),
+);
+
+
 CREATE TABLE TransactionsRPCRecovery
 (
 	ID                           UNIQUEIDENTIFIER,

@@ -31,6 +31,26 @@ namespace SyncronizationBot.Infra.CrossCutting.SolanaRpc.Transactions.Service
             var jsonParsed = JsonConvert.DeserializeObject<TransacionRPC>(responseBody);
             return jsonParsed?.Result?.Where(x => x!.Err == null).Select(x => new TransactionRPCResponse { WalletHash = request.WalletHash, Signature = x!.Signature, BlockTime = x.BlockTime }).ToList();
         }
-        
+
+        public async Task<TransactionRPCDetailResponse> ExecuteRecoveryTransactionDetailAsync(TransactionRPCDetailRequest request)
+        {
+            var response = (HttpResponseMessage?)null!;
+            var responseBody = string.Empty;
+            var data = "{ \"method\": \"getTransaction\", \"params\": [ \"{{Signature}}\", { \"encoding\": \"jsonParsed\", \"maxSupportedTransactionVersion\": 0 }], \"jsonrpc\": \"2.0\",\"id\": 1 }";
+            data = data.Replace("{{Signature}}", request.Signature);
+            var content = new StringContent(data, Encoding.UTF8, "application/json");
+            response = await _httpClient.PostAsync("", content);
+            responseBody = await response.Content.ReadAsStringAsync();
+            //var jsonResponse = JsonConvert.DeserializeObject<TransactionDetailRPCResponse>(responseBody);
+            return null!;
+            //return response.IsSuccessStatusCode ? new TransactionRPCDetailResponse
+            //{
+            //    IsSuccess = true,
+            //    BlockTime = jsonResponse?.Result?.BlockTime,
+            //    Fee = jsonResponse?.Result?.Meta?.Fee,
+            //    Signature = jsonResponse?.Result?.Transaction?.Signatures?.FirstOrDefault(),
+            //    Instructions = this.ConvertInstructionsFromRPC(jsonResponse?.Result?.Meta?.InnerInstructions)
+            //} : new TransactionRPCDetailResponse { IsSuccess = false };
+        }
     }
 }
