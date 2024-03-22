@@ -42,7 +42,7 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.Read
                     });
                     walletTracked!.UnixTimeSeconds = finalTicks;
                     await base.UpdateUnixTimeSeconds(walletTracked);
-                    await Task.Delay(125);
+                    await Task.Delay(111);
                 }
                 await _mediator.Send(new RecoverySaveTransactionsCommand { });
             }
