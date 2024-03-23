@@ -206,6 +206,29 @@ namespace SyncronizationBot.Application.Handlers.MainCommands.RecoverySave
                                         }
                                     }
                                 }
+                                if ((transactionDB?.TypeOperation == ETypeOperation.BUY || transactionDB?.TypeOperation == ETypeOperation.SWAP) && classWallet?.IdClassification == 8)
+                                {
+                                    try
+                                    {
+                                        await this._mediator.Send(new SendAlertMessageCommand
+                                        {
+                                            EntityId = transactionDB?.ID,
+                                            Parameters = SendTransactionAlertsCommand.GetParameters(new object[]
+                                                                                    {
+                                                                                        transactionDB!,
+                                                                                        transferInfo!,
+                                                                                        new List<RecoverySaveTokenCommandResponse?> { tokenSended, tokenSendedPool, tokenReceived, tokenReceivedPool } ,
+                                                                                        balancePosition
+                                                                                    }),
+                                            TypeAlert = ETypeAlert.ALERT_INFLUENCER_TRANSACTION
+
+                                        });
+                                    }
+                                    catch
+                                    {
+                                        throw new Exception("TRANSACAO INFLUENCER PROBLEM");
+                                    }
+                                }
                                 transaction!.IsIntegrated = true;
                             }
                             else
